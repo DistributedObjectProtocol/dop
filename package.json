@@ -1,5 +1,5 @@
 {
-	"name": "sangular-node",
+	"name": "sangular-nodejs",
 	"version": "0.1.0",
 	"devDependencies": {
 		"sockjs": "0.3.11"
