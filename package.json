@@ -1,7 +1,7 @@
 {
-	"name": "sangular-nodejs",
+	"name": "syncio-nodejs",
 	"version": "0.1.0",
 	"devDependencies": {
-		"sockjs": "0.3.11"
+		"sockjs": ">= 0.3.11"
 	}
 }

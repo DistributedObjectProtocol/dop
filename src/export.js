@@ -1,5 +1,5 @@
 
 
-sangular.SockJS = SockJS;
+syncio.sockjs = sockjs;
 
-module.exports = sangular;
+module.exports = syncio;

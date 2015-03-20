@@ -1,2 +1,2 @@
 
-module.exports = require('./lib/sangular-nodejs');
+module.exports = require('./lib/syncio-nodejs');
