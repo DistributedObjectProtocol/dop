@@ -1,10 +1,12 @@
 
+var EventEmitter = require('events').EventEmitter;
 
-var syncio = {
+module.exports = syncio = {
 	VERSION: '0.1.0',
-	NAME: 'syncio'
+	NAME: 'syncio',
+	sockjs: require('sockjs'),
+	app: {},
+	scope: {},
+	client: {},
 };
 
-var sockjs = require('sockjs');
-
-var EventEmitter = require('events').EventEmitter;

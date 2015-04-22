@@ -19,6 +19,9 @@ module.exports = function(grunt) {
                 files: [{
                     src: '../browser/src/core/protocol.js',
                     dest: 'src/core/protocol.js'
+                }, {
+                    src: '../browser/src/core/typeof.js',
+                    dest: 'src/core/typeof.js'
                 }],
             }
         },
@@ -34,7 +37,9 @@ module.exports = function(grunt) {
                 src: [
                     'src/syncio.js',
                     'src/core/*',
-                    'src/sockjs/*',
+                    'src/app/*',
+                    'src/scope/*',
+                    'src/client/*',
                     'src/export.js'
                 ],
                 dest: 'lib/<%= pkg.name %>.js'

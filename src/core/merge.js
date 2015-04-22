@@ -1,5 +1,5 @@
 
-// Based on: https://github.com/unclechu/node-deep-extend (Performace: http://jsperf.com/deepmerge-comparisions/2)
+// Based on: https://github.com/unclechu/node-deep-extend (Performace: http://jsperf.com/deepmerge-comparisions/3)
 syncio.merge = (function() {
 
 	return function merge(first, second) {
@@ -57,6 +57,44 @@ syncio.merge = (function() {
 })();
 
 
+// // Based in syncio.path && syncio.getset
+// syncio.merge = (function() {
+
+// 	var destiny;
+
+// 	function callback(path, value){
+
+// 		if ( value && typeof value == 'object' )
+
+// 			value = (Array.isArray( value )) ? [] : {};
+
+// 		syncio.getset(destiny, path, value);
+
+// 	};
+
+// 	return function merge(first, second) {
+
+// 		var args = arguments;
+
+// 		if (args.length > 2) {
+// 			// Remove the first 2 arguments of the arguments and add thoose arguments as merged at the begining
+// 			Array.prototype.splice.call(args, 0, 2, merge(first, second));
+// 			// Recursion
+// 			return merge.apply(this, args);
+// 		}
+
+// 		destiny = first;
+
+// 		syncio.path(second, callback);
+
+// 		return first;
+
+// 	};
+
+// })();
+
+
+
 // var obj1 = {
 // 	a: 11,
 // 	b: 12,
@@ -96,9 +134,11 @@ syncio.merge = (function() {
 // 	},
 
 // };
-// r=syncio.merge({},obj2,obj1)
-// //r=deepExtend(obj1, obj2)
+
+// //r=syncio.merge2(obj2,obj1)
+// r=syncio.merge({},obj2,obj1);
+// console.log( r );
 // console.log( r.obj === obj2.obj );
 // console.log( r.fun === obj2.fun );
 // console.log( r.arr === obj2.arr );
-// console.log( r );
+
