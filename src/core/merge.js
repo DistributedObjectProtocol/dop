@@ -2,57 +2,57 @@
 // Based on: https://github.com/unclechu/node-deep-extend (Performace: http://jsperf.com/deepmerge-comparisions/3)
 syncio.merge = (function() {
 
-	return function merge(first, second) {
+    return function merge(first, second) {
 
-		var args = arguments,
-			key, val, src, clone;
+        var args = arguments,
+            key, val, src, clone;
 
-		if (args.length < 2) return first;
+        if (args.length < 2) return first;
 
-		if (args.length > 2) {
-			// Remove the first 2 arguments of the arguments and add thoose arguments as merged at the begining
-			Array.prototype.splice.call(args, 0, 2, merge(first, second));
-			// Recursion
-			return merge.apply(this, args);
-		}
-
-
-		for (key in second) {
-
-			if (!(key in second)) continue;
-
-			src = first[key];
-			val = second[key];
-
-			if (val === first) continue;
-
-			if (typeof val !== 'object' && !Array.isArray(val)) {
-			//if (!first.hasOwnProperty(key) || (typeof val !== 'object' && !Array.isArray(val))) {
-				first[key] = val;
-				continue;
-			}
+        if (args.length > 2) {
+            // Remove the first 2 arguments of the arguments and add thoose arguments as merged at the begining
+            Array.prototype.splice.call(args, 0, 2, merge(first, second));
+            // Recursion
+            return merge.apply(this, args);
+        }
 
 
-			if ( typeof src !== 'object' || src === null ) {
-				clone = (Array.isArray(val)) ? [] : {};
-				first[key] = merge(clone, val);
-				continue;
-			}
+        for (key in second) {
+
+            if (!(key in second)) continue;
+
+            src = first[key];
+            val = second[key];
+
+            if (val === first) continue;
+
+            if (typeof val !== 'object' && !Array.isArray(val)) {
+            //if (!first.hasOwnProperty(key) || (typeof val !== 'object' && !Array.isArray(val))) {
+                first[key] = val;
+                continue;
+            }
 
 
-			clone = (Array.isArray(val)) ?
+            if ( typeof src !== 'object' || src === null ) {
+                clone = (Array.isArray(val)) ? [] : {};
+                first[key] = merge(clone, val);
+                continue;
+            }
 
-				(Array.isArray(src)) ? src : []
-			:
-				(!Array.isArray(src)) ? src : {};
+
+            clone = (Array.isArray(val)) ?
+
+                (Array.isArray(src)) ? src : []
+            :
+                (!Array.isArray(src)) ? src : {};
 
 
 
-			first[key] = merge(clone, val);
-		}
+            first[key] = merge(clone, val);
+        }
 
-		return first;
-	}
+        return first;
+    }
 
 })();
 
@@ -60,78 +60,78 @@ syncio.merge = (function() {
 // // Based in syncio.path && syncio.getset
 // syncio.merge = (function() {
 
-// 	var destiny;
+//     var destiny;
 
-// 	function callback(path, value){
+//     function callback(path, value){
 
-// 		if ( value && typeof value == 'object' )
+//         if ( value && typeof value == 'object' )
 
-// 			value = (Array.isArray( value )) ? [] : {};
+//             value = (Array.isArray( value )) ? [] : {};
 
-// 		syncio.getset(destiny, path, value);
+//         syncio.getset(destiny, path, value);
 
-// 	};
+//     };
 
-// 	return function merge(first, second) {
+//     return function merge(first, second) {
 
-// 		var args = arguments;
+//         var args = arguments;
 
-// 		if (args.length > 2) {
-// 			// Remove the first 2 arguments of the arguments and add thoose arguments as merged at the begining
-// 			Array.prototype.splice.call(args, 0, 2, merge(first, second));
-// 			// Recursion
-// 			return merge.apply(this, args);
-// 		}
+//         if (args.length > 2) {
+//             // Remove the first 2 arguments of the arguments and add thoose arguments as merged at the begining
+//             Array.prototype.splice.call(args, 0, 2, merge(first, second));
+//             // Recursion
+//             return merge.apply(this, args);
+//         }
 
-// 		destiny = first;
+//         destiny = first;
 
-// 		syncio.path(second, callback);
+//         syncio.path(second, callback);
 
-// 		return first;
+//         return first;
 
-// 	};
+//     };
 
 // })();
 
 
 
 // var obj1 = {
-// 	a: 11,
-// 	b: 12,
-// 	array: [1,2,3,{abc:123}],
-// 	d: {
-// 		d1: 13,
-// 		d2: {
-// 			d21: 123,
-// 			d22: {
-// 				d221: 12,
-// 				d223: { 
-// 				  hola: 'hola',
-// 				  static: 'static'
-// 				}
-// 			}
-// 		}
-// 	},
-// 	f: 5,
-// 	g: 123
+//     a: 11,
+//     b: 12,
+//     array: [1,2,3,{abc:123}],
+//     d: {
+//         d1: 13,
+//         d2: {
+//             d21: 123,
+//             d22: {
+//                 d221: 12,
+//                 d223: { 
+//                   hola: 'hola',
+//                   static: 'static'
+//                 }
+//             }
+//         }
+//     },
+//     f: 5,
+//     g: 123
 // };
 // var obj2 = {
-// 	b: 3,
-// 	c: 5,
-// 	obj: {lolo:111},
-// 	fun: function(){},
-// 	arr: [1,2,3,{La:123}],
-// 	array: [567],
-// 	d: {
-// 		d2: {
-// 			d22: {
-// 				d222: 25,
-// 				d223: {
-// 				  hola:'mundo'
-// 				}
-// 			}
-// 		}
-// 	},
+//     b: 3,
+//     c: 5,
+//     obj: {lolo:111},
+//     fun: function(){},
+//     arr: [1,2,3,{La:123}],
+//     array: [567],
+//     d: {
+//         d2: {
+//             d22: {
+//                 d222: 25,
+//                 d223: {
+//                   hola:'mundo'
+//                 }
+//             }
+//         }
+//     },
 
 // };
 

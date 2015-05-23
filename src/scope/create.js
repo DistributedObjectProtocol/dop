@@ -2,24 +2,24 @@
 
 syncio.scope.create = function( name, data_scope, data_client ) {
 
-	var scope = {
+    var scope = {
 
-		app: this,
+        app: this,
 
-		name: name,
+        name: name,
 
-		data: data_scope,
+        data: data_scope,
 
-		data_client: data_client,
+        data_client: data_client,
 
-		clients: []
+        clients: []
 
-	};
+    };
 
-	scope.index = this.scope.push(scope)-1;
+    scope.index = this.scope.push(scope)-1;
 
-	this.scope_name.push(name);
+    this.scope_name.push(name);
 
-	return scope;
+    return scope;
 
 };
