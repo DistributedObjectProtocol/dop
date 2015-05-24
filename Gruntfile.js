@@ -14,17 +14,17 @@ module.exports = function(grunt) {
         //     }
         // },
 
-        symlink: {
-            expanded: {
-                files: [{
-                    src: '../browser/src/core/protocol.js',
-                    dest: 'src/core/protocol.js'
-                }, {
-                    src: '../browser/src/core/typeof.js',
-                    dest: 'src/core/typeof.js'
-                }],
-            }
-        },
+        // symlink: {
+        //     expanded: {
+        //         files: [{
+        //             src: 'src/core/protocol.js',
+        //             dest: '../browser/src/core/protocol.js'
+        //         }, {
+        //             src: 'src/util/typeof.js',
+        //             dest: '../browser/src/core/typeof.js'
+        //         }],
+        //     }
+        // },
 
 
         concat: {
@@ -37,10 +37,8 @@ module.exports = function(grunt) {
                 src: [
                     'src/syncio.js',
                     'src/core/*',
-                    'src/app/*',
-                    'src/scope/*',
-                    'src/client/*',
-                    'src/export.js'
+                    'src/util/*',
+                    'src/adapter/*'
                 ],
                 dest: 'lib/<%= pkg.name %>.js'
             }
@@ -49,11 +47,11 @@ module.exports = function(grunt) {
 
 
 
-    grunt.loadNpmTasks('grunt-contrib-symlink');
+    // grunt.loadNpmTasks('grunt-contrib-symlink');
     grunt.loadNpmTasks('grunt-contrib-concat');
 
-    //grunt.registerTask('default', ['concat', 'uglify', 'jshint', 'watch']);
-    grunt.registerTask('default', ['symlink', 'concat']);
+    //grunt.registerTask('default', ['symlink', 'concat', 'uglify', 'jshint', 'watch']);
+    grunt.registerTask('default', ['concat']);
 
 
 

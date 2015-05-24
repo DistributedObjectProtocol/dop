@@ -6,7 +6,6 @@ syncio.wrap = {
     type_date: /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/, //http://jsperf.com/serializing-date-on-json-parse
 
 
-
     stringify: function (k, v){
 
         if (typeof v == 'function')
