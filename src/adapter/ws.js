@@ -1,7 +1,5 @@
 
 
-var ws = require('ws');
-
 syncio.ws = function ( options, on ) {
 
 
@@ -12,11 +10,10 @@ syncio.ws = function ( options, on ) {
         options.port = syncio.port;
 
 
-    var $this = new ws.Server( options );
+    var $this = new syncio.ws.api.Server( options );
 
     $this.on('connection', function( user ){
 
-        on.open( user );
 
         user.on('message', function(message) {
             on.message( user, message );
@@ -26,6 +23,9 @@ syncio.ws = function ( options, on ) {
             on.close( user );
         });
 
+        user.$send = syncio.ws.$send;
+
+        on.open( user );
 
     });
 
@@ -33,6 +33,14 @@ syncio.ws = function ( options, on ) {
     return $this;
 
 };
+
+syncio.ws.api = require('ws');
+syncio.ws.name_adapter = 'ws';
+
+syncio.ws.$send = function( data ) {
+    this.send( data );
+};
+
 
 
 /*

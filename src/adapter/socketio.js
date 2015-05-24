@@ -1,10 +1,8 @@
 
 
-var socketio = require('socket.io');
-
 syncio.socketio = function ( options, on ) {
 
-    var $this = new socketio( options.http_server );
+    var $this = new syncio.socketio.api( options.http_server, options );
 
 
     if (typeof options.http_server == 'undefined') {
@@ -17,17 +15,21 @@ syncio.socketio = function ( options, on ) {
     }
 
 
-    $this.on('connection', function( user ){
+    $this.of('/syncio').on('connection', function( user ){
 
-        on.open( user );
+        user.emit('open');
 
-        user.on('event', function(message){
+        user.on('message', function(message){
             on.message( user, message );
         });
 
         user.on('disconnect', function(){
             on.close( user );
         });
+
+        user.$send = syncio.socketio.$send;
+
+        on.open( user );
 
     });
 
@@ -36,13 +38,18 @@ syncio.socketio = function ( options, on ) {
 
 };
 
+syncio.socketio.api = require('socket.io');
+syncio.socketio.name_adapter = 'socketio';
+
+syncio.socketio.$send = function( data ) {
+    this.emit('message', data);
+};
+
+
 
 /*
 
 Url-Server: /syncio
-Url-Client: http://localhost:9999/syncio
-
-Url-Server: http://localhost:9999/syncio
 Url-Client: http://localhost:9999/syncio
 
 */

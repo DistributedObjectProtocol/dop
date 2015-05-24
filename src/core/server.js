@@ -26,7 +26,8 @@ syncio.server = function( adapter, options ) {
 
     };
 
-    $this.adapter = adapter( options, on );
+    $this.adapter = $this[adapter.name_adapter] = adapter( options, on );
+
 
     return $this;
 

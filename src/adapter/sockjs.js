@@ -1,7 +1,5 @@
 
 
-var sockjs = require('sockjs');
-
 syncio.SockJS = function ( options, on ) {
 
     if (typeof options.http_server == 'undefined')
@@ -9,11 +7,9 @@ syncio.SockJS = function ( options, on ) {
 
     options.prefix = options.url;
 
-    var $this = sockjs.createServer( options );
+    var $this = syncio.SockJS.api.createServer( options );
 
     $this.on('connection', function(user) {
-
-        on.open( user );
 
         user.on('data', function(message) {
             on.message( user, message );
@@ -23,12 +19,23 @@ syncio.SockJS = function ( options, on ) {
             on.close( user );
         });
 
+        user.$send = syncio.SockJS.$send;
+
+        on.open( user );
+
     });
 
     $this.installHandlers( options.http_server, options );
 
     return $this;
 
+};
+
+syncio.SockJS.api = require('sockjs');
+syncio.SockJS.name_adapter = 'SockJS';
+
+syncio.SockJS.$send = function( data ) {
+    this.write( data );
 };
 
 
