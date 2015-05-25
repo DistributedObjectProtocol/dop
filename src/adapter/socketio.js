@@ -1,11 +1,12 @@
 
-
+// http://socket.io/docs/server-api/
 syncio.socketio = function ( options, on ) {
 
-    var $this = new syncio.socketio.api( options.http_server, options );
+    options.adapter = options._adapter; // Need it because socketio accept the option adapter as parameter natively
 
+    var $this = new syncio.socketio.api( options.httpServer, options );
 
-    if (typeof options.http_server == 'undefined') {
+    if (typeof options.httpServer == 'undefined') {
 
         if (typeof options.port != 'number')
             options.port = syncio.port;
@@ -14,8 +15,7 @@ syncio.socketio = function ( options, on ) {
 
     }
 
-
-    $this.of('/syncio').on('connection', function( user ){
+    $this.of( options.namespace ).on('connection', function( user ){
 
         user.emit('open');
 
@@ -27,7 +27,9 @@ syncio.socketio = function ( options, on ) {
             on.close( user );
         });
 
-        user.$send = syncio.socketio.$send;
+        user.send = syncio.socketio.send;
+
+        user.close = syncio.socketio.close;
 
         on.open( user );
 
@@ -41,8 +43,11 @@ syncio.socketio = function ( options, on ) {
 syncio.socketio.api = require('socket.io');
 syncio.socketio.name_adapter = 'socketio';
 
-syncio.socketio.$send = function( data ) {
+syncio.socketio.send = function( data ) {
     this.emit('message', data);
+};
+syncio.socketio.close = function( data ) {
+    this.disconnect();
 };
 
 

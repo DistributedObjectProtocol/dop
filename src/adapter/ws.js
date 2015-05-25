@@ -1,10 +1,11 @@
 
-
+// https://github.com/websockets/ws
 syncio.ws = function ( options, on ) {
 
+    var id = 1;
 
-    if (typeof options.http_server != 'undefined')
-        options.server = options.http_server;
+    if (typeof options.httpServer != 'undefined')
+        options.server = options.httpServer;
 
     else if (typeof options.port != 'number')
         options.port = syncio.port;
@@ -14,6 +15,7 @@ syncio.ws = function ( options, on ) {
 
     $this.on('connection', function( user ){
 
+        user.id = id++;
 
         user.on('message', function(message) {
             on.message( user, message );
@@ -22,8 +24,6 @@ syncio.ws = function ( options, on ) {
         user.on('close', function() {
             on.close( user );
         });
-
-        user.$send = syncio.ws.$send;
 
         on.open( user );
 
@@ -36,10 +36,6 @@ syncio.ws = function ( options, on ) {
 
 syncio.ws.api = require('ws');
 syncio.ws.name_adapter = 'ws';
-
-syncio.ws.$send = function( data ) {
-    this.send( data );
-};
 
 
 

@@ -1,11 +1,11 @@
 
-
+// https://github.com/sockjs/sockjs-node
 syncio.SockJS = function ( options, on ) {
 
-    if (typeof options.http_server == 'undefined')
-        throw Error('The adapter SockJS needs the parameter http_server passed in the options');
+    if (typeof options.httpServer == 'undefined')
+        throw Error('The adapter SockJS needs the parameter httpServer passed in the options');
 
-    options.prefix = options.url;
+    options.prefix = options.namespace;
 
     var $this = syncio.SockJS.api.createServer( options );
 
@@ -19,13 +19,13 @@ syncio.SockJS = function ( options, on ) {
             on.close( user );
         });
 
-        user.$send = syncio.SockJS.$send;
+        user.send = syncio.SockJS.send;
 
         on.open( user );
 
     });
 
-    $this.installHandlers( options.http_server, options );
+    $this.installHandlers( options.httpServer, options );
 
     return $this;
 
@@ -34,7 +34,7 @@ syncio.SockJS = function ( options, on ) {
 syncio.SockJS.api = require('sockjs');
 syncio.SockJS.name_adapter = 'SockJS';
 
-syncio.SockJS.$send = function( data ) {
+syncio.SockJS.send = function( data ) {
     this.write( data );
 };
 

@@ -1,32 +1,67 @@
 
 
-syncio.server = function( adapter, options ) {
+syncio.server = function( options ) {
 
     if (typeof options == 'undefined')
         options = {};
 
-    if (typeof options.url != 'string')
-        options.url = '/' + syncio.name;
+    if (typeof options.adapter != 'function')
+        options.adapter = syncio.SockJS;
 
-    var $this = new EventEmitter,
+    if (typeof options.namespace != 'string')
+        options.namespace = '/' + syncio.name;
 
-    on = {
 
-        open: function(user){ 
+    var on = {
+
+        open: function(user){
+            $this.users[ user.id ] = user;
             $this.emit( syncio.on.open, user);
         },
 
-        message: function(user, message){ 
-            $this.emit( syncio.on.message, user, message );
+        message: function(user, message){
+
+            message_json = undefined;
+
+            if (typeof message == 'string') {
+                try { message_json = JSON.parse( message ); } 
+                catch(e) {}
+            }
+            else 
+                message_json = message;
+
+            $this.emit( syncio.on.message, user, message, message_json );
         },
 
-        close: function(user){ 
+        close: function(user){
             $this.emit( syncio.on.close, user );
+            delete $this.users[ user.id ];
         }
 
-    };
+    },
 
-    $this.adapter = $this[adapter.name_adapter] = adapter( options, on );
+    message_json,
+
+    $this = new EventEmitter;
+
+    $this.apps = {};
+
+    $this.appsid = {};
+
+    $this.users = {};
+
+    $this.adapter = $this[options.adapter.name_adapter] = options.adapter( options, on );
+
+    $this._app_inc = 0;
+
+    $this.app = syncio.app.bind( $this );
+
+
+    // // Broadcast data to all users
+    // $this.send = function( data ) {
+    //     for (var id in $this.users)
+    //         $this.users[id].$send( data );
+    // };
 
 
     return $this;
