@@ -32,7 +32,7 @@ syncio.protocol = {
     set: 4,             // [ 1234, 4, <object_id>, ['path','path'], 'value']    ->   If value is not defined then is a delete
                         // [-1234, 0]
 
-    custom: 5,          // [ 1234, 5, <params...>]
+    request: 5,          // [ 1234, 5, <params...>]
                         // [-1234, 0]
 
 };

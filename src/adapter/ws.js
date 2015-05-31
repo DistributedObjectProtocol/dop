@@ -2,8 +2,6 @@
 // https://github.com/websockets/ws
 syncio.ws = function ( options, on ) {
 
-    var id = 1;
-
     if (typeof options.httpServer != 'undefined')
         options.server = options.httpServer;
 
@@ -14,8 +12,6 @@ syncio.ws = function ( options, on ) {
     var $this = new syncio.ws.api.Server( options );
 
     $this.on('connection', function( user ){
-
-        user.id = id++;
 
         user.on('message', function(message) {
             on.message( user, message );

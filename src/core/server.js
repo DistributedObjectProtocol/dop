@@ -14,9 +14,23 @@ syncio.server = function( options ) {
 
     var on = {
 
-        open: function(user){
-            $this.users[ user.id ] = user;
-            $this.emit( syncio.on.open, user);
+        open: function( user ){
+
+            // Setup new user
+            token = (Math.random() * Math.pow(10,17));
+            user[syncio.user_token_key] = token; // http://jsperf.com/token-generator
+            user[syncio.user_server_key] = $this;
+
+            // Setup server for new user
+            $this.users[ token ] = user;
+            $this.emit( syncio.on.open, user );
+
+            // Sending token to the user
+            user.send( JSON.stringify( syncio.request.call($this, syncio.protocol.connect, token) ) );
+            // For broadcast
+            // request = syncio.request.call($this, syncio.protocol.connect, token);
+            // $this.requests[ request[0] ].total += 1;
+
         },
 
         message: function(user, message){
@@ -30,38 +44,33 @@ syncio.server = function( options ) {
             else 
                 message_json = message;
 
-            $this.emit( syncio.on.message, user, message, message_json );
+            $this.emit( syncio.on.message, user, message_json, message );
         },
 
         close: function(user){
             $this.emit( syncio.on.close, user );
-            delete $this.users[ user.id ];
+            delete $this.users[ user[syncio.user_token_key] ];
         }
 
     },
 
-    message_json,
+    message_json, token,
 
     $this = new EventEmitter;
 
-    $this.apps = {};
+    $this.request_id = 1;
 
-    $this.appsid = {};
+    $this.requests = {};
+
+    $this.responses = {};
+
+    $this.objects = {};
 
     $this.users = {};
 
+    $this._object_inc = 0;
+
     $this.adapter = $this[options.adapter.name_adapter] = options.adapter( options, on );
-
-    $this._app_inc = 0;
-
-    $this.app = syncio.app.bind( $this );
-
-
-    // // Broadcast data to all users
-    // $this.send = function( data ) {
-    //     for (var id in $this.users)
-    //         $this.users[id].$send( data );
-    // };
 
 
     return $this;
