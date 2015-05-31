@@ -38,7 +38,7 @@ syncio.server = function( options ) {
             message_json = undefined;
 
             if (typeof message == 'string') {
-                try { message_json = JSON.parse( message ); } 
+                try { message_json = syncio.parse( message ); } 
                 catch(e) {}
             }
             else 

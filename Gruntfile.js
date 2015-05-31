@@ -5,14 +5,17 @@ module.exports = function(grunt) {
 
         pkg: grunt.file.readJSON('package.json'),
 
-        // copy: {
-        //     main: { 
-        //         files: [{
-        //             src: '../browser/src/core/protocol.js',
-        //             dest: 'src/core/protocol.js',
-        //         }],
-        //     }
-        // },
+        copy: {
+            main: { 
+                files: [{
+                    src: 'src/util/stringify.js',
+                    dest: '../browser/src/util/stringify.js',
+                },{
+                    src: 'src/util/parse.js',
+                    dest: '../browser/src/util/parse.js',
+                }],
+            }
+        },
 
         // symlink: {
         //     expanded: {
@@ -48,10 +51,11 @@ module.exports = function(grunt) {
 
 
     // grunt.loadNpmTasks('grunt-contrib-symlink');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-concat');
 
     //grunt.registerTask('default', ['symlink', 'concat', 'uglify', 'jshint', 'watch']);
-    grunt.registerTask('default', ['concat']);
+    grunt.registerTask('default', ['copy','concat']);
 
 
 
