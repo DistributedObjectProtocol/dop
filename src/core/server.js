@@ -17,7 +17,7 @@ syncio.server = function( options ) {
         open: function( user ){
 
             // Setup new user
-            token = (Math.random() * Math.pow(10,17));
+            var token = (Math.random() * Math.pow(10,18));
             user[syncio.user_token_key] = token; // http://jsperf.com/token-generator
             user[syncio.user_server_key] = $this;
 
@@ -35,7 +35,7 @@ syncio.server = function( options ) {
 
         message: function(user, message){
 
-            message_json = undefined;
+            var message_json = undefined;
 
             if (typeof message == 'string') {
                 try { message_json = syncio.parse( message ); } 
@@ -54,7 +54,6 @@ syncio.server = function( options ) {
 
     },
 
-    message_json, token,
 
     $this = new EventEmitter;
 

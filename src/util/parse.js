@@ -1,6 +1,6 @@
 
 
-syncio.parse = function() {
+syncio.parse = function( data ) {
 
     return JSON.parse( data, syncio.parse.callback );
 
