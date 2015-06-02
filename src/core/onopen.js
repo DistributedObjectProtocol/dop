@@ -12,7 +12,7 @@ syncio.onopen = function( user ){
     this.emit( syncio.on.open, user );
 
     // Sending token to the user
-    user.send( JSON.stringify( syncio.request.call(this, syncio.protocol.connect, token) ) );
+    user.send( JSON.stringify( this.request(syncio.protocol.connect, token) ) );
     // For broadcast
     // request = syncio.request.call(this, syncio.protocol.connect, token);
     // this.requests[ request[0] ].total += 1;

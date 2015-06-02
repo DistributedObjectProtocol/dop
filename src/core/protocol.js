@@ -29,8 +29,8 @@ syncio.protocol = {
     request: 1,         // [ 1234, 1, <params...>]
                         // [-1234, 0]
 
-    sync: 2,
-
+    sync: 2,            // [ 1234, 2, <object_id>, <writable 0 | 1>]
+                        // [-1234, 0]
 
     unsync: 3,          // [ 1234, 3, <object_id>]
                         // [-1234, 0]

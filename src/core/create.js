@@ -27,13 +27,9 @@ syncio.create = function( options ) {
 
     this.requests = {};
 
-    this.responses = {};
-
     this.objects = {};
 
     this.users = {};
-
-    this._object_inc = 0;
 
     this.adapter = this[options.adapter.name_adapter] = options.adapter( options, on );
 

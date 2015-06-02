@@ -49,6 +49,7 @@ module.exports = function(grunt) {
                 src: [
                     'src/syncio.js',
                     'src/core/*',
+                    'src/create/*',
                     'src/util/*',
                     'src/adapter/*'
                 ],

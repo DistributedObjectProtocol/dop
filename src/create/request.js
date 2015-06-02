@@ -1,6 +1,6 @@
 
 
-syncio.request = function () {
+syncio.create.prototype.request = function () {
 
     var request = Array.prototype.slice.call(arguments, 0),
     request_id = this.request_id++;
