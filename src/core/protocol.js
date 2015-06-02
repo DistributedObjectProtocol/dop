@@ -26,19 +26,19 @@ syncio.protocol = {
     connect: 0,         // [ 1234, 0, <user_token>]    ->    If the response of connect (0) have more than 2 parameters means its trying to reconnect/resync
                         // [-1234, 0, <user_token_old>, [[<object_id>,<last_request>], [<object_id>,<last_request>], ...]]
 
-    sync: 1,
-
-
-    unsync: 2,
-
-
-    get: 3,             // [ 1234, 3, <object_id>, ['path','path'], 'param', 'param', ...]
-                        // [-1234, 0, <data_returned>]
-
-    set: 4,             // [ 1234, 4, <object_id>, ['path','path'], 'value']    ->   If value is not defined then is a delete
+    request: 1,         // [ 1234, 1, <params...>]
                         // [-1234, 0]
 
-    request: 5,         // [ 1234, 5, <params...>]
+    sync: 2,
+
+
+    unsync: 3,          // [ 1234, 3, <object_id>]
+                        // [-1234, 0]
+
+    get: 4,             // [ 1234, 4, <object_id>, ['path','path'], 'param', 'param', ...]
+                        // [-1234, 0, <data_returned>]
+
+    set: 5,             // [ 1234, 5, <object_id>, ['path','path'], 'value']    ->   If value is not defined then is a delete
                         // [-1234, 0]
 
 };

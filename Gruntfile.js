@@ -17,6 +17,9 @@ module.exports = function(grunt) {
                     src: 'src/util/typeof.js',
                     dest: '../browser/src/util/typeof.js',
                 },{
+                    src: 'src/util/promise.js',
+                    dest: '../browser/src/util/promise.js',
+                },{
                     src: 'src/core/on.js',
                     dest: '../browser/src/core/on.js',
                 }],

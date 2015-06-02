@@ -2,12 +2,12 @@
 
 syncio.parse = function( data ) {
 
-    return JSON.parse( data, syncio.parse.callback );
+    return JSON.parse( data, syncio.parse_callback );
 
 };
 
-syncio.parse.type_date = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/; //http://jsperf.com/serializing-date-on-json-parse
-syncio.parse.callback = function (k, v) {
+syncio.parse_type_date = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/; //http://jsperf.com/serializing-date-on-json-parse
+syncio.parse_callback = function (k, v) {
         
     //http://jsperf.com/serializing-date-on-json-parse
     if ( typeof v === 'string' ) {

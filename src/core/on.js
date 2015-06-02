@@ -2,7 +2,7 @@
 
 syncio.on = {
 
-	// standar from adapters
+	// WebSockets / adapters
 	open: 'open',
 	message: 'message',
 	close: 'close',
