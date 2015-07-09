@@ -2,12 +2,13 @@
 
 syncio.on = {
 
-	// WebSockets / adapters
-	open: 'open',
-	message: 'message',
-	close: 'close',
+    // WebSockets / adapters
+    open: 'open',
+    message: 'message',
+    close: 'close',
 
-	// OSP
-	connect: 'connect',
+    // OSP
+    connect: 'connect',
+    sync: 'sync',
 
 };

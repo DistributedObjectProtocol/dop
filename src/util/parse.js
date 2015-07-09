@@ -11,7 +11,7 @@ syncio.parse_callback = function (k, v) {
         
     //http://jsperf.com/serializing-date-on-json-parse
     if ( typeof v === 'string' ) {
-        var regexp = syncio.protocol.type_date.exec(v);
+        var regexp = syncio.parse_type_date.exec(v);
         if ( regexp )
             return new Date(v);
     }

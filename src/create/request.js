@@ -2,10 +2,13 @@
 
 syncio.create.prototype.request = function () {
 
-    var request = Array.prototype.slice.call(arguments, 0),
+    var data = Array.prototype.slice.call(arguments, 0),
     request_id = this.request_id++;
-    request.unshift( this.request_id++ );
-    this.requests[ request_id ] = {request: request, total: 1};
-    return request;
+    data.unshift( request_id );
+    return this.requests[ request_id ] = {
+        id: request_id, 
+        data: data, 
+        promise: syncio.promise()
+    };
 
 };

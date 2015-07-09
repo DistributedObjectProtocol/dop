@@ -6,7 +6,7 @@ syncio.create = function( options ) {
         options = {};
 
     if (typeof options.adapter != 'function')
-        options.adapter = syncio.SockJS;
+        options.adapter = syncio.ws;
 
     if (typeof options.namespace != 'string')
         options.namespace = '/' + syncio.name;
@@ -27,12 +27,13 @@ syncio.create = function( options ) {
 
     this.requests = {};
 
-    this.objects = {};
+    this.object_original = {};
+
+    this.objects = [];
 
     this.users = {};
 
     this.adapter = this[options.adapter.name_adapter] = options.adapter( options, on );
-
 
 };
 

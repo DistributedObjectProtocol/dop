@@ -20,6 +20,12 @@ module.exports = function(grunt) {
                     src: 'src/util/promise.js',
                     dest: '../browser/src/util/promise.js',
                 },{
+                    src: 'src/util/merge.js',
+                    dest: '../browser/src/util/merge.js',
+                },{
+                    src: 'src/core/protocol.js',
+                    dest: '../browser/src/core/protocol.js',
+                },{
                     src: 'src/core/on.js',
                     dest: '../browser/src/core/on.js',
                 }],
