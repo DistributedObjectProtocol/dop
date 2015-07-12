@@ -15,6 +15,6 @@ syncio.create.prototype.sync = function( name, object, options ) {
         options.observable = (typeof Object.observe == 'function'); // observe changes with Object.observe
 
 
-    this.object_original[name] = {object:object, options:options, ids:[]};
+    this.object_original[name] = {object:object, options:options};
 
 };

@@ -23,16 +23,16 @@ syncio.create = function( options ) {
     };
 
 
-    this.request_id = 1;
-
-    this.requests = {};
-
     this.object_original = {};
 
-    this.objects = [];
+    this.objects = {};
+    this.object_id = 1;
 
     this.users = {};
 
+    this.requests = {};
+    this.request_id = 1;
+    
     this.adapter = this[options.adapter.name_adapter] = options.adapter( options, on );
 
 };

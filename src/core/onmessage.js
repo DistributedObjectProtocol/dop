@@ -47,22 +47,31 @@ syncio.onmessage = function( user, message ) {
 
                     else {
 
-                        var object, object_id;
-
                         response.push( action );
 
-                        if (!this.object_original[object_name].options.unique || this.object_original[object_name].ids.length==0) {
-                            object = syncio.merge({}, this.object_original[object_name].object);
-                            object_id = this.objects.push( {object:object, users: [user.token]} )-1; // The second parameter is an array of the users than are subscribed to this object
-                            this.object_original[object_name].ids.push( object_id );
+
+                        // We create a copy of the object if is unique
+                        var
+                        object_id,
+                        object = ( this.object_original[object_name].options.unique ) ?
+                            syncio.merge({}, this.object_original[object_name].object)
+                        :
+                            this.object_original[object_name].object;
+
+
+                        // If the object is unique or doesn't exist yet
+                        if ( this.object_original[object_name].options.unique || typeof object[syncio.key_object_id] == 'undefined' ) {
+                            this.objects[ this.object_id ] = {object:object, name:object_name, users:[ user[syncio.key_user_token] ]}; // The second parameter is an array of the users than are subscribed to this object
+                            object_id = this.object_id++;
+                            Object.defineProperty(object, syncio.key_object_id, {value: object_id});
                         }
+                        // Getting the object_id
                         else {
-                            object_id = this.object_original[object_name].ids[0];
-                            object = this.objects[object_id].object;
-                            this.objects[object_id].users.push( user.token );
+                            object_id = object[syncio.key_object_id];
+                            this.objects[ object_id ].users.push( user[syncio.key_user_token] );
                         }
-                        response.push(object_id);
-                        response.push(object);
+
+                        response.push(object_id, object);
                     }
 
                     params = [syncio.on.sync, user, response].concat( request.slice(2) );
