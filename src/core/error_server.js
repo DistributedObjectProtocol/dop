@@ -1,5 +1,5 @@
 
 
 syncio.error.server = {
-    notfound: -1
+    object_not_found: -1
 };

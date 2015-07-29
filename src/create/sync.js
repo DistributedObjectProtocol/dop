@@ -1,12 +1,12 @@
 
 
-syncio.create.prototype.sync = function( name, object, options ) {
+syncio.create.prototype.sync = function( name, options ) {
 
     if (typeof options != 'object')
         options = {};
 
-    if (typeof options.unique == 'undefined')
-        options.unique = false; // create a copy/clone for any user that subscribe this object
+    if (options.object == null || (typeof options.object != 'object' && typeof options.object != 'function'))
+        options.object = {}; // create a copy/clone for any user that subscribe this object
 
     if (typeof options.writable == 'undefined')
         options.writable = false; // user can edit it from the browser
@@ -14,7 +14,6 @@ syncio.create.prototype.sync = function( name, object, options ) {
     if (typeof options.observable == 'undefined')
         options.observable = (typeof Object.observe == 'function'); // observe changes with Object.observe
 
-
-    this.object_original[name] = {object:object, options:options};
+    this.objects_original[name] = options;
 
 };

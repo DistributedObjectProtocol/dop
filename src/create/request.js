@@ -8,7 +8,7 @@ syncio.create.prototype.request = function () {
     return this.requests[ request_id ] = {
         id: request_id, 
         data: data, 
-        promise: syncio.promise()
+        promise: new syncio.promise()
     };
 
 };

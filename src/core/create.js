@@ -23,12 +23,13 @@ syncio.create = function( options ) {
     };
 
 
-    this.object_original = {};
+    this.objects_original = {};
 
     this.objects = {};
     this.object_id = 1;
 
     this.users = {};
+    this.user_id = 1;
 
     this.requests = {};
     this.request_id = 1;

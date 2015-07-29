@@ -36,11 +36,11 @@ syncio.protocol = {
 
 
     sync: 3,            // Server
-                        // [ 1234, 3, <object_id>, <data_object>, <writable 0|1>]
+                        // [ 1234, 3, <object_id>, <writable 0|1>, <data_object>]
                         // [-1234, 3]
                         // Client
-                        // [ 1234, 3, <name_or_id>, <params...>]
-                        // [-1234, 3, <object_id>, <data_object>, <writable 0|1>]
+                        // [ 1234, 3, <name>, <params...>]
+                        // [-1234, 3, <object_id>, <writable 0|1>, <data_object>]
 
 
 
