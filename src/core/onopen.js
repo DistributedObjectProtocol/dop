@@ -11,9 +11,9 @@ syncio.onopen = function( user_socket ){
     this.emit( syncio.on.open, user );
 
     // Sending token to the user
-    user_socket.send( JSON.stringify( this.request(syncio.protocol.connect, user.token).data ) );
+    user_socket.send( JSON.stringify( this.request_create(syncio.protocol.connect, user.token).data ) );
     // For broadcast
-    // request = this.request(syncio.protocol.connect, user[syncio.key_user_token]).data );
+    // request = this.request_create(syncio.protocol.connect, user[syncio.key_user_token]).data );
     // this.requests[ request[0] ].total += 1;
 
 };

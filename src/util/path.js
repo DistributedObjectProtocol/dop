@@ -1,0 +1,60 @@
+
+// http://jsperf.com/stringify-path-vs-custom-path/2 - http://jsperf.com/stringify-path-vs-custom-path/3
+syncio.path = function (obj, callback) {
+
+    syncio.path.recursive.call({circular:[]}, obj, callback, []);
+
+};
+syncio.path.recursive = function (obj, callback, path ) {
+
+    for (var key in obj) {
+
+        //if ( obj.hasOwnProperty(key) ) {
+        
+            path.push( key );
+
+            if ( this.stop == false )
+                return;
+
+            this.stop = callback(path, obj[key], key, obj);
+
+            // Avoiding circular loops
+            if ( obj[key] && typeof obj[key] == "object" && obj[key] !== obj && this.circular.indexOf(obj[key])==-1 ) {
+
+                this.circular.push(obj[key]);
+
+                syncio.path.recursive.call(this, obj[key], callback, path );
+
+            }
+
+            path.pop();
+
+        //}
+
+    }
+
+};
+
+
+
+// // http://jsperf.com/stringify-clousured-or-not - 
+// syncio.stringify_path = function(obj, callback) {
+
+//     var path = [];
+
+//     return JSON.stringify(obj, function(k,v){
+
+//         if (v !== obj) {
+
+//             while ( path.length>0 && syncio.getset(obj, path) !== this )
+//                 path.pop();
+
+//             path.push(k);
+
+//         }
+
+//         return (typeof callback == 'function') ? callback.call(this, k, v, path) : v;
+
+//     });
+
+// };

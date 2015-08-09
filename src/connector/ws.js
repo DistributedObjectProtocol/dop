@@ -31,7 +31,7 @@ syncio.ws = function ( options, on ) {
 };
 
 syncio.ws.api = require('ws');
-syncio.ws.name_adapter = 'ws';
+syncio.ws.name_connector = 'ws';
 
 
 

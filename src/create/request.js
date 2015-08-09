@@ -1,6 +1,6 @@
 
 
-syncio.create.prototype.request = function () {
+syncio.create.prototype.request_create = function () {
 
     var data = Array.prototype.slice.call(arguments, 0),
     request_id = this.request_id++;
@@ -11,4 +11,10 @@ syncio.create.prototype.request = function () {
         promise: new syncio.promise()
     };
 
+};
+
+
+syncio.create.prototype.request = function () {
+    var request = this.request_create.apply(this, arguments);
+    return request.promise;
 };

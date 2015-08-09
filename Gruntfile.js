@@ -8,6 +8,9 @@ module.exports = function(grunt) {
         copy: {
             main: { 
                 files: [{
+                    src: 'src/create/request.js',
+                    dest: '../browser/src/create/request.js',
+                },{
                     src: 'src/util/stringify.js',
                     dest: '../browser/src/util/stringify.js',
                 },{
@@ -20,11 +23,17 @@ module.exports = function(grunt) {
                     src: 'src/util/promise.js',
                     dest: '../browser/src/util/promise.js',
                 },{
+                    src: 'src/util/path.js',
+                    dest: '../browser/src/util/path.js',
+                },{
                     src: 'src/util/merge.js',
                     dest: '../browser/src/util/merge.js',
                 },{
                     src: 'src/core/protocol.js',
                     dest: '../browser/src/core/protocol.js',
+                },{
+                    src: 'src/core/errorserver.js',
+                    dest: '../browser/src/core/errorserver.js',
                 },{
                     src: 'src/core/on.js',
                     dest: '../browser/src/core/on.js',
@@ -57,7 +66,7 @@ module.exports = function(grunt) {
                     'src/core/*',
                     'src/create/*',
                     'src/util/*',
-                    'src/adapter/*'
+                    'src/connector/*'
                 ],
                 dest: 'lib/<%= pkg.name %>.js'
             }

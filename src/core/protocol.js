@@ -20,15 +20,15 @@ syncio.protocol = {
     // [-1234, 'My custom message error']
 
     // You can always pass more extra parameters on any action
-    // [ 1234, 1, <user_token>, <extra_params...>]
+    // [ 1234, 2, <user_token>, <extra_params...>]
 
 
 
 
 
                         // Server
-    connect: 1,         // [ 1234, 1, <user_token>]    ->    If the response of connect (1) have more than 2 parameters means its trying to reconnect/resync
-                        // [-1234, 1, <user_token_old>, [[<object_id>,<last_request>], [<object_id>,<last_request>], ...]]
+    connect: 1,         // [ 1234, 1, <user_token>]
+                        // [-1234, 1, <user_token_old>, [[<object_id>,<last_request>], [<object_id>,<last_request>], ...]]   ->   If the user response with a old token means is trying to resync because it lost the connection
     
 
     request: 2,         // [ 1234, 2, <params...>]

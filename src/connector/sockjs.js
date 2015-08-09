@@ -3,7 +3,7 @@
 syncio.SockJS = function ( options, on ) {
 
     if (typeof options.httpServer == 'undefined')
-        throw Error('The adapter SockJS needs the parameter httpServer passed in the options');
+        throw Error('The connector SockJS needs the parameter httpServer passed in the options');
 
     options.prefix = options.namespace;
 
@@ -32,7 +32,7 @@ syncio.SockJS = function ( options, on ) {
 };
 
 syncio.SockJS.api = require('sockjs');
-syncio.SockJS.name_adapter = 'SockJS';
+syncio.SockJS.name_connector = 'SockJS';
 
 syncio.SockJS.send = function( data ) {
     this.write( data );

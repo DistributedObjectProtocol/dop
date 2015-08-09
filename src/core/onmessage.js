@@ -1,101 +1,136 @@
 
 
-syncio.onmessage = function( user, message ) {
+syncio.onmessage = function( user, message_raw ) {
 
     var user = this.users[ user[syncio.key_user_token] ],
-        requests = undefined;
+        messages = undefined;
 
-    if (typeof message == 'string') {
-        try { requests = syncio.parse( message ); } 
+    if (typeof message_raw == 'string') {
+        try { messages = syncio.parse( message_raw ); } 
         catch(e) {}
     }
     else 
-        requests = message;
+        messages = message_raw;
 
 
-    this.emit( syncio.on.message, user, requests, message );
+    this.emit( syncio.on.message, user, messages, message_raw );
 
 
     // Managing protocol
-    if ( typeof requests == 'object' ) {
+    if ( typeof messages == 'object' ) {
 
 
-        if (typeof requests[0] != 'object')
-            requests = [requests];
+        if (typeof messages[0] != 'object')
+            messages = [messages];
 
 
-        // Managing all requests one by one
-        for (var i=0, t=requests.length, request, requests_id, action; i<t; i++) {
+        // Managing all messages one by one
+        for (var i=0, t=messages.length, request, messages_id, action; i<t; i++) {
 
-            request = requests[i];
+            request = messages[i];
             request_id = request[0];
             action = request[1];
 
+            // If is a number we manage the OSP request
+            if ( typeof request_id == 'number' ){
 
-            // Is a request?
-            if (request_id > 0) {
+                // Is a request?
+                if ( request_id > 0 ) {
 
-                var response = [request_id * -1];
+                    var response = [request_id * -1];
 
-                // SYNC
-                if ( syncio.protocol.sync === action ) {
+                    // SYNC
+                    if ( syncio.protocol.sync === action ) {
 
-                    var object_name = request[2];
+                        var object_name = request[2];
 
-                    // If Object not found
-                    if (typeof this.objects_original[object_name] != 'object')
-                        response.push( syncio.error.server.object_not_found );
+                        // If Object not found
+                        if (typeof this.objects_original[object_name] != 'object') {
+                            response.push( syncio.error.client.OBJECT_NOT_FOUND );
+                            syncio.onmessage.response.call(this, syncio.on.error, user, request, response );
+                        }
 
-                    else {
+                        // If the user already is subscribed to this object
+                        else if ( typeof user.objects[object_name] == 'object' ) {
+                            response.push( syncio.error.client.ALREADY_SYNCED );
+                            syncio.onmessage.response.call(this, syncio.on.error, user, request, response );
+                        }
 
-                        response.push( action );
+                        else {
 
-                        var sync_object = function( object ) {
+                            response.push( action );
 
-                            // If the object doesn't exist yet
-                            if ( typeof object[syncio.key_object_id] == 'undefined' ) {
-                                console.log( this );
-                                this.objects[ this.object_id ] = {object:object, name:object_name, users:{}}; // users is an objects of the users than are subscribed to this object
-                                var object_id = this.object_id++;
-                                Object.defineProperty(object, syncio.key_object_id, {value: object_id});
-                            }
-                            // If the object exists we get the object_id
-                            else
-                                var object_id = object[syncio.key_object_id];
+                            var sync_object = function( object ) {
 
-                            // Set to the user if the object is writable for him or not
-                            user.writables[object_name] = this.objects_original[object_name].writable;
+                                // If the object doesn't exist yet
+                                if ( typeof object[syncio.key_object_id] == 'undefined' ) {
+                                    this.objects[ this.object_id ] = {object:object, name:object_name, users:{}}; // users is an objects of the users than are subscribed to this object
+                                    var object_id = this.object_id++;
+                                    Object.defineProperty(object, syncio.key_object_id, {value: object_id});
 
-                            // Adding the user as subscriber of this object
-                            this.objects[ object_id ].users[ user.token ] = 0; 
-                            
-                            // Forming the response
-                            response.push(
-                                object_id,
-                                user.writables[object_name]*1, // false*1 === 0
-                                object
-                            );
+                                    // // If the object is observable
+                                    // if ( this.objects_original[object_name].observable )
+                                    //     syncio.observe.call( this, object );
+                                }
+                                // If the object exists we get the object_id
+                                else {
+                                    var object_id = object[syncio.key_object_id];
+                                    if ( object !== this.objects[ object_id ] ) {
+                                        new TypeError('No se puede syncronizar objetos que estan dentro de otros objetos');
+                                        // object = this.objects[ object_id ];
+                                    }
+                                }
 
-                            syncio.onmessage.request.call(this, user, request, response);
+                                // Setting the object to the user
+                                user.objects[object_name] = object;
 
-                        };
+                                // Set to the user if the object is writable for him or not
+                                user.writables[object_name] = this.objects_original[object_name].writable;
 
-                        // Getting the object
-                        return ( typeof this.objects_original[object_name].object == 'function' ) ?
-                            this.objects_original[object_name].object( user, requests, sync_object.bind(this) )
-                        :
-                            sync_object.call(this, this.objects_original[object_name].object );
+                                // Adding the user as subscriber of this object
+                                this.objects[ object_id ].users[ user.token ] = 0; 
+                                
+                                // Forming the response
+                                response.push(
+                                    object_id,
+                                    user.writables[object_name]*1, // false*1 === 0
+                                    object
+                                );
+
+                                // Sending response
+                                syncio.onmessage.response.call(this, syncio.on.sync, user, request, response );
+
+                            };
+
+                            // Getting the object
+                            ( typeof this.objects_original[object_name].object == 'function' ) ?
+                                this.objects_original[object_name].object( user, messages, sync_object.bind(this) )
+                            :
+                                sync_object.call(this, this.objects_original[object_name].object );
+
+                        }
 
                     }
 
                 }
 
-                
+                // Then is a response.
+                else {
 
-            }
+                    request_id = request_id*-1;
 
-            // Then is a response.
-            else {
+                    if ( this.requests[ request_id ] !== null && typeof this.requests[ request_id ] == 'object' ) {
+
+                    // Connect
+                    if ( syncio.protocol.connect === action )
+                        this.emit( syncio.on.connect, user );
+
+                    }
+
+                    // Removing request
+                    delete this.requests[request_id];
+
+                }
 
             }
 
@@ -106,13 +141,13 @@ syncio.onmessage = function( user, message ) {
 };
 
 
-syncio.onmessage.request = function( user, request, response ) {
+syncio.onmessage.response = function( eventype, user, request, response ) {
 
     // Forming params for the event onsync
-    var params = [syncio.on.sync, user, response].concat( request.slice(2) );
+    var emit_params = [eventype, user, request, response];
 
     // We emit the event
-    this.emit.apply( this, params );
+    this.emit.apply( this, emit_params );
 
     // Sending the response
     this.response( user, response );

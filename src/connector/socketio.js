@@ -2,7 +2,7 @@
 // http://socket.io/docs/server-api/
 syncio.socketio = function ( options, on ) {
 
-    options.adapter = options._adapter; // Need it because socketio accept the option adapter as parameter natively
+    options.connector = options._connector; // Need it because socketio accept the option connector as parameter natively
 
     var $this = new syncio.socketio.api( options.httpServer, options );
 
@@ -41,7 +41,7 @@ syncio.socketio = function ( options, on ) {
 };
 
 syncio.socketio.api = require('socket.io');
-syncio.socketio.name_adapter = 'socketio';
+syncio.socketio.name_connector = 'socketio';
 
 syncio.socketio.send = function( data ) {
     this.emit('message', data);

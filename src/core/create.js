@@ -5,8 +5,8 @@ syncio.create = function( options ) {
     if (typeof options == 'undefined')
         options = {};
 
-    if (typeof options.adapter != 'function')
-        options.adapter = syncio.ws;
+    if (typeof options.connector != 'function')
+        options.connector = syncio.ws;
 
     if (typeof options.namespace != 'string')
         options.namespace = '/' + syncio.name;
@@ -34,7 +34,7 @@ syncio.create = function( options ) {
     this.requests = {};
     this.request_id = 1;
     
-    this.adapter = this[options.adapter.name_adapter] = options.adapter( options, on );
+    this.connector = this[options.connector.name_connector] = options.connector( options, on );
 
 };
 
