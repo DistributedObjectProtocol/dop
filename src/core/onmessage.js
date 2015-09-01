@@ -62,24 +62,47 @@ syncio.onmessage = function( user, message_raw ) {
 
                             var sync_object = function( object ) {
 
-                                // If the object doesn't exist yet
-                                if ( typeof object[syncio.key_object_id] == 'undefined' ) {
-                                    this.objects[ this.object_id ] = {object:object, name:object_name, users:{}}; // users is an objects of the users than are subscribed to this object
-                                    var object_id = this.object_id++;
-                                    Object.defineProperty(object, syncio.key_object_id, {value: object_id});
+                                // object must be an array or object
+                                if ( object == null || typeof object != 'object' )
+                                    throw new TypeError( syncio.error.SYNC_MUST_BE_OBJECT );
 
-                                    // // If the object is observable
-                                    // if ( this.objects_original[object_name].observable )
-                                    //     syncio.observe.call( this, object );
-                                }
                                 // If the object exists we get the object_id
-                                else {
-                                    var object_id = object[syncio.key_object_id];
-                                    if ( object !== this.objects[ object_id ] ) {
-                                        new TypeError('No se puede syncronizar objetos que estan dentro de otros objetos');
-                                        // object = this.objects[ object_id ];
-                                    }
+                                if ( syncio.typeof( object[syncio.key_object_path] ) == 'array' && typeof this.objects[object[syncio.key_object_path][0]] == 'object' ) {
+
+                                    // Checking if the object is already synced with other name
+                                    if ( this.objects[object[syncio.key_object_path][0]].name !== object_name )
+                                        throw new TypeError( syncio.error.SYNC_NO_REPEAT );
+
+                                    // // Checking if the object is inside into another object already synced
+                                    // else if ( object[syncio.key_object_path].length > 1 && object === syncio.getset(
+                                    //         this.objects[object[syncio.key_object_path][0]].object,
+                                    //         object[syncio.key_object_path].slice(1)
+                                    //     ) 
+                                    // )
+                                    //     throw new TypeError( syncio.error.SYNC_NO_INNER );
+
+                                    var object_id = object[syncio.key_object_path][0];
+
+                                    this.objects[object[syncio.key_object_path][0]].subscribed += 1;
+
                                 }
+
+
+                                // If the object doesn't exist yet
+                                else {
+
+                                    this.objects[ this.object_id ] = {object:object, name:object_name, users:{}, subscribed:1}; // users is an objects of the users than are subscribed to this object
+                                    var object_id = this.object_id++;
+
+                                    // If the object is observable
+                                    if ( this.objects_original[object_name].observable )
+                                        syncio.observe( object, this.observe, [object_id] );
+                                    else
+                                        Object.defineProperty(object, syncio.key_object_path, {value: [object_id] });
+
+                                }
+
+
 
                                 // Setting the object to the user
                                 user.objects[object_name] = object;
@@ -88,7 +111,7 @@ syncio.onmessage = function( user, message_raw ) {
                                 user.writables[object_name] = this.objects_original[object_name].writable;
 
                                 // Adding the user as subscriber of this object
-                                this.objects[ object_id ].users[ user.token ] = 0; 
+                                this.objects[ object_id ].users[ user.token ] = true; 
                                 
                                 // Forming the response
                                 response.push(
@@ -117,13 +140,13 @@ syncio.onmessage = function( user, message_raw ) {
                 // Then is a response.
                 else {
 
-                    request_id = request_id*-1;
+                    request_id *= -1;
 
                     if ( this.requests[ request_id ] !== null && typeof this.requests[ request_id ] == 'object' ) {
 
-                    // Connect
-                    if ( syncio.protocol.connect === action )
-                        this.emit( syncio.on.connect, user );
+                        // Connect
+                        if ( syncio.protocol.connect === action )
+                            this.emit( syncio.on.connect, user );
 
                     }
 

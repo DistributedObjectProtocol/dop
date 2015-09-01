@@ -8,7 +8,7 @@ syncio.return = function( data ) {
 
         _return = args.callee.caller.arguments[args.callee.caller.arguments.length-1];
 
-        if ( typeof _return == 'function' && _return.name == syncio.name_return_function ) {
+        if ( typeof _return == 'function'/* && _return.name == syncio.name_return_function*/ ) {
             _return( data );
             return data;
         }

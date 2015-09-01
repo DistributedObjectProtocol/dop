@@ -1,53 +1,53 @@
-syncio={create: function(){}}
-syncio.path=function(a,b){syncio.path.recursive.call({circular:[]},a,b,[])},syncio.path.recursive=function(a,b,c){for(var d in a){if(c.push(d),0==this.stop)return;this.stop=b(c,a[d],d,a),a[d]&&"object"==typeof a[d]&&a[d]!==a&&-1==this.circular.indexOf(a[d])&&(this.circular.push(a[d]),syncio.path.recursive.call(this,a[d],b,c)),c.pop()}};
 
 
+syncio.observe = function( object, callback_changes, path ) {
 
+    Object.defineProperty( object, syncio.key_object_path, {value: path});
 
-syncio.observe = function( object, callback, path ) {
+    Object.observe(object, callback_changes);
 
-	Object.defineProperty( object, '_path', {value: path});
+    syncio.path(object, function(subpath, object) {
 
-	Object.observe(object, callback);
+        var newpath = path.concat(subpath);
 
-	syncio.path(object, function(subpath, object) {
+        if ( object !== null && typeof object == 'object' ) {
 
-		var newpath = path.concat(subpath);
+            Object.defineProperty( object, syncio.key_object_path, {value: newpath} );
 
-		if ( object !== null && typeof object == 'object' ) {
+            Object.observe(object, callback_changes);
 
-			Object.defineProperty( object, '_path', {value: newpath} );
+        }
 
-			Object.observe(object, callback);
-
-		}
-
-	});
+    });
 
 };
+
+
+
+
+/*
 
 syncio.create.prototype.observe = function(changes) {
 
-	for (var i=0; i<changes.length; i++) {
-		
-		var path = changes[i].object._path.slice(0);
-		path.push( changes[i].name )
+    for (var i=0; i<changes.length; i++) {
+        
+        var path = changes[i].object._path.slice(0);
+        path.push( changes[i].name )
 
-		if (
-			(changes[i].type == 'update' || changes[i].type == 'add') &&
-			changes[i].object[changes[i].name] !== null &&
-			typeof changes[i].object[changes[i].name] == 'object'
-		) {
-			syncio.observe(changes[i].object[changes[i].name], this.observe, path );
-		}
+        if (
+            (changes[i].type == 'update' || changes[i].type == 'add') &&
+            changes[i].object[changes[i].name] !== null &&
+            typeof changes[i].object[changes[i].name] == 'object'
+        ) {
+            syncio.observe(changes[i].object[changes[i].name], this.observe, path );
+        }
 
-		console.log( changes[i].type, path, changes[i].oldValue );
-		console.log()
+        console.log( changes[i].type, path, changes[i].oldValue );
+        console.log()
 
-	}
+    }
 
 };
-
 
 
 
@@ -74,9 +74,10 @@ MYOBJECT.bar = 'FOUR';
 // delete MYOBJECT.obj.arr;
 MYOBJECT.obj.arr = [1,2,3,{paco:'pil'}];
 setTimeout(function(){
-	console.log('reobserve')
-	MYOBJECT.obj.arr[3].paco = 'porras';
+    console.log('reobserve')
+    MYOBJECT.obj.arr[3].paco = 'porras';
 },1)
 
 
 // },5000)
+*/

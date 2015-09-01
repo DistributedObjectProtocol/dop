@@ -6,7 +6,7 @@ module.exports = syncio = {
     name: 'syncio',
     port: 4444,
     name_return_function: 'name_return_function',
-    key_object_id: '$$id',
+    key_object_path: '$$path',
     key_user_token: '$$token',
 };
 

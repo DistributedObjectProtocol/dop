@@ -8,9 +8,6 @@ module.exports = function(grunt) {
         copy: {
             main: { 
                 files: [{
-                    src: 'src/create/request.js',
-                    dest: '../browser/src/create/request.js',
-                },{
                     src: 'src/util/stringify.js',
                     dest: '../browser/src/util/stringify.js',
                 },{
@@ -37,6 +34,15 @@ module.exports = function(grunt) {
                 },{
                     src: 'src/core/on.js',
                     dest: '../browser/src/core/on.js',
+                },{
+                    src: 'src/core/observe.js',
+                    dest: '../browser/src/core/observe.js',
+                },{
+                    src: 'src/create/observe.js',
+                    dest: '../browser/src/create/observe.js',
+                },{
+                    src: 'src/create/request.js',
+                    dest: '../browser/src/create/request.js',
                 }],
             }
         },

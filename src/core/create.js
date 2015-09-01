@@ -36,6 +36,8 @@ syncio.create = function( options ) {
     
     this.connector = this[options.connector.name_connector] = options.connector( options, on );
 
+    this.observe = this.observe.bind(this);
+
 };
 
 
