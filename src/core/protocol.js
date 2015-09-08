@@ -48,12 +48,12 @@ syncio.protocol = {
                         // [-1234, 4]
 
 
-    get: 5,             // [ 1234, 5, <object_id>, ['path','path'], 'param', 'param', ...]
+    call: 5,            // [ 1234, 5, <object_id>, ['path','path'], 'param', 'param', ...]
                         // [-1234, 5, <data_returned>]
 
 
     set: 6,             // [ 1234, 6, <object_id>, ['path','path'], 'value']              -> Server ->  If value is not defined then is a delete
-                        // [ 1234, 6, <object_id>, ['path','path'], 'oldvalue', 'value']  -> Client ->  Oldvalue is required only for the client
+                        // [ 1234, 6, <object_id>, ['path','path'], 'oldvalue', 'value']  -> Client ->  Oldvalue is required only when the client send
                         // [-1234, 6]
 
 

@@ -6,12 +6,10 @@ syncio.stringify = function( data ) {
 
 };
 
-syncio.stringify_type_function = '$f';
-syncio.stringify_type_binary = '$b';
 syncio.stringify_callback = function (k, v){
 
     if (typeof v == 'function')
-        return syncio.stringify_type_function;
+        return syncio.remote_function;
     
     return v;
 };

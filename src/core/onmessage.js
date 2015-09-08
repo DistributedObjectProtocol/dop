@@ -66,6 +66,13 @@ syncio.onmessage = function( user, message_raw ) {
                                 if ( object == null || typeof object != 'object' )
                                     throw new TypeError( syncio.error.SYNC_MUST_BE_OBJECT );
 
+
+                                // Merging client object with the current object if is writable
+                                if ( this.objects_original[object_name].writable && syncio.typeof(request[3]) == syncio.typeof(object) ) {
+                                    syncio.merge( object, request[3] );
+                                }
+
+
                                 // If the object exists we get the object_id
                                 if ( syncio.typeof( object[syncio.key_object_path] ) == 'array' && typeof this.objects[object[syncio.key_object_path][0]] == 'object' ) {
 
@@ -103,7 +110,6 @@ syncio.onmessage = function( user, message_raw ) {
                                 }
 
 
-
                                 // Setting the object to the user
                                 user.objects[object_name] = object;
 
@@ -129,7 +135,7 @@ syncio.onmessage = function( user, message_raw ) {
                             ( typeof this.objects_original[object_name].object == 'function' ) ?
                                 this.objects_original[object_name].object( user, messages, sync_object.bind(this) )
                             :
-                                sync_object.call(this, this.objects_original[object_name].object );
+                                sync_object.call( this, this.objects_original[object_name].object );
 
                         }
 

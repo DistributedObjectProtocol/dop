@@ -26,7 +26,7 @@ syncio.merge = (function() {
 
             if (val === first) continue;
 
-            if (typeof val !== 'object' && !Array.isArray(val)) {
+            if ( (typeof val != 'object' && !Array.isArray(val)) || val instanceof Date ) {
             //if (!first.hasOwnProperty(key) || (typeof val !== 'object' && !Array.isArray(val))) {
                 first[key] = val;
                 continue;
