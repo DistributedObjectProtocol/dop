@@ -14,7 +14,6 @@ syncio.onclose = function( user ){
             this.objects[ user.objects[object_name][syncio.key_object_path][0] ].subscribed == 1 // The object only have had one subscribed
             // && !syncio.onclose.multipleusers(this.objects[ user.objects[object_name][syncio.key_object_path][0]].users, user.token )
         )
-
             delete this.objects[ user.objects[object_name][syncio.key_object_path][0] ];
 
         // Remove user listener from the object
