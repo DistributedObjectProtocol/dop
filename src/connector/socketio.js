@@ -4,18 +4,18 @@ syncio.socketio = function ( options, on ) {
 
     options.connector = options._connector; // Need it because socketio accept the option connector as parameter natively
 
-    var $this = new syncio.socketio.api( options.httpServer, options );
+    var that = new syncio.socketio.api( options.httpServer, options );
 
     if (typeof options.httpServer == 'undefined') {
 
         if (typeof options.port != 'number')
             options.port = syncio.port;
 
-        $this.listen( options.port );
+        that.listen( options.port );
 
     }
 
-    $this.of( options.namespace ).on('connection', function( user ){
+    that.of( options.namespace ).on('connection', function( user ){
 
         user.emit('open');
 
@@ -36,7 +36,7 @@ syncio.socketio = function ( options, on ) {
     });
 
 
-    return $this;
+    return that;
 
 };
 

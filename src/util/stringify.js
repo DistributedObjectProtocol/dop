@@ -8,7 +8,7 @@ syncio.stringify = function( data ) {
 
 syncio.stringify_callback = function (k, v){
 
-    if (typeof v == 'function')
+    if ( typeof v == 'function' && v.name !== syncio.remote_function )
         return syncio.remote_function;
     
     return v;

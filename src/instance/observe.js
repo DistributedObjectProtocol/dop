@@ -1,11 +1,12 @@
 
 
-syncio.create.prototype.observe = function(changes) {
+syncio.instance.prototype.observe = function(changes) {
 
     for (var i=0; i<changes.length; i++) {
         
         var path = changes[i].object[syncio.key_object_path].slice(0);
-        path.push( changes[i].name )
+        
+        path.push( changes[i].name );
 
         if (
             (changes[i].type == 'update' || changes[i].type == 'add') &&

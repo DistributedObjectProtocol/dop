@@ -1,6 +1,6 @@
 
 
-syncio.create.prototype.sync = function( name, options ) {
+syncio.instance.prototype.sync = function( name, options ) {
 
     if (typeof options != 'object')
         options = {};

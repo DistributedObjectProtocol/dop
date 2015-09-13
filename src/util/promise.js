@@ -18,14 +18,14 @@ syncio.promise = function( resolver ) {
 
         return this;
         // if ( this._chain )
-        //     var _this = this;
+        //     var that = this;
         // else{
-        //     var _this = Object.create(this);
-        //     _this._chain = 0;
+        //     var that = Object.create(this);
+        //     that._chain = 0;
         // }
 
-        // _this._chain++;
-        // return _this;
+        // that._chain++;
+        // return that;
     };
 
 
@@ -83,10 +83,10 @@ syncio.promise = function( resolver ) {
 
             // 2.3.2. If x is a promise, adopt its state 
             else if ( values[0] instanceof this.constructor ) {
-                (function(_this, _i, _promise) {
+                (function(that, _i, _promise) {
                     var goingup = function(){
-                        _this.type = this.type;
-                        loop.call(_this, _i, arguments);
+                        that.type = this.type;
+                        loop.call(that, _i, arguments);
                     };
                     goingup.hasToGoUp = true;
                     _promise.then(goingup, goingup);

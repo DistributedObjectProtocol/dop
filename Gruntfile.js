@@ -35,14 +35,20 @@ module.exports = function(grunt) {
                     src: 'src/core/on.js',
                     dest: '../browser/src/core/on.js',
                 },{
-                    src: 'src/core/observe.js',
-                    dest: '../browser/src/core/observe.js',
+                    src: 'src/instance/configure.js',
+                    dest: '../browser/src/instance/configure.js',
                 },{
-                    src: 'src/create/observe.js',
-                    dest: '../browser/src/create/observe.js',
+                    src: 'src/instance/observe.js',
+                    dest: '../browser/src/instance/observe.js',
                 },{
-                    src: 'src/create/request.js',
-                    dest: '../browser/src/create/request.js',
+                    src: 'src/instance/request.js',
+                    dest: '../browser/src/instance/request.js',
+                },{
+                    src: 'src/instance/call.js',
+                    dest: '../browser/src/instance/call.js',
+                },{
+                    src: 'src/instance/create_remote_function.js',
+                    dest: '../browser/src/instance/create_remote_function.js',
                 }],
             }
         },
@@ -70,7 +76,7 @@ module.exports = function(grunt) {
                 src: [
                     'src/syncio.js',
                     'src/core/*',
-                    'src/create/*',
+                    'src/instance/*',
                     'src/util/*',
                     'src/connector/*'
                 ],

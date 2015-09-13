@@ -49,7 +49,7 @@ syncio.protocol = {
 
 
     call: 5,            // [ 1234, 5, <object_id>, ['path','path'], 'param', 'param', ...]
-                        // [-1234, 5, <data_returned>]
+                        // [-1234, 5, [<params_returneds>], 2]
 
 
     set: 6,             // [ 1234, 6, <object_id>, ['path','path'], 'value']              -> Server ->  If value is not defined then is a delete

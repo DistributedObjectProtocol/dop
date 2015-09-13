@@ -31,10 +31,10 @@ syncio.onmessage = function( user, message_raw ) {
             request_id = request[0];
             action = request[1];
 
-            // If is a number we manage the OSP request
+            // If is a number we manage the OSP message
             if ( typeof request_id == 'number' ){
 
-                // Is a request?
+                // REQUEST ===============================================================
                 if ( request_id > 0 ) {
 
                     var response = [request_id * -1];
@@ -67,11 +67,6 @@ syncio.onmessage = function( user, message_raw ) {
                                     throw new TypeError( syncio.error.SYNC_MUST_BE_OBJECT );
 
 
-                                // // Merging client object with the current object if is writable
-                                // if ( this.objects_original[object_name].writable && syncio.typeof(request[3]) == syncio.typeof(object) ) {
-                                //     syncio.merge( object, request[3] );
-                                // }
-
 
                                 // If the object exists we get the object_id
                                 if ( syncio.typeof( object[syncio.key_object_path] ) == 'array' ) {
@@ -102,15 +97,19 @@ syncio.onmessage = function( user, message_raw ) {
                                 // If the object doesn't exist yet
                                 else {
 
-                                    var object_id = this.object_id++;
+                                    var object_id = this.object_id++,
+                                        path = [object_id];
 
-                                    // If the object is observable
-                                    if ( this.objects_original[object_name].observable )
-                                        syncio.observe( object, this.observe, [object_id] );
-                                    else
-                                        Object.defineProperty(object, syncio.key_object_path, {value: [object_id] });
+
+                                    this.configure(
+                                        object, 
+                                        path, 
+                                        this.objects_original[object_name].observable
+                                    );
 
                                 }
+
+
 
                                 // Storing object
                                 if ( typeof this.objects[object_id] != 'object' || this.objects[object_id].object !== object )
@@ -149,7 +148,7 @@ syncio.onmessage = function( user, message_raw ) {
 
                 }
 
-                // Then is a response.
+                // RESPONSE ===============================================================
                 else {
 
                     request_id *= -1;
@@ -185,7 +184,7 @@ syncio.onmessage.response = function( eventype, user, request, response ) {
     this.emit.apply( this, emit_params );
 
     // Sending the response
-    this.response( user, response );
+    user.send( syncio.stringify(response) );
 
 };
 

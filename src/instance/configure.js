@@ -1,20 +1,28 @@
 
 
-syncio.observe = function( object, callback_changes, path ) {
+syncio.instance.prototype.configure = function( object, path, observable ) {
 
-    Object.defineProperty( object, syncio.key_object_path, {value: path});
+    var that = this;
 
-    Object.observe(object, callback_changes);
+    // Setting the object path/id to the object itself
+    Object.defineProperty( object, syncio.key_object_path, {value: path} );
 
-    syncio.path(object, function(subpath, object) {
+    if ( observable )
+        Object.observe( object, this.observe );
+
+
+    syncio.path( object, function(subpath, value, key, obj ) {
 
         var newpath = path.concat(subpath);
 
-        if ( object !== null && typeof object == 'object' ) {
+        if ( value === syncio.remote_function )
+            obj[key] = that.create_remote_function( newpath );
 
-            Object.defineProperty( object, syncio.key_object_path, {value: newpath} );
+        if ( observable && value !== null && typeof value == 'object' ) {
 
-            Object.observe(object, callback_changes);
+            Object.defineProperty( value, syncio.key_object_path, {value: newpath} );
+
+            Object.observe( value, that.observe );
 
         }
 
@@ -27,7 +35,7 @@ syncio.observe = function( object, callback_changes, path ) {
 
 /*
 
-syncio.create.prototype.observe = function(changes) {
+syncio.instance.prototype.observe = function(changes) {
 
     for (var i=0; i<changes.length; i++) {
         
@@ -39,7 +47,7 @@ syncio.create.prototype.observe = function(changes) {
             changes[i].object[changes[i].name] !== null &&
             typeof changes[i].object[changes[i].name] == 'object'
         ) {
-            syncio.observe(changes[i].object[changes[i].name], this.observe, path );
+            syncio.observe(changes[i].object[changes[i].name], tcallback_observer, path );
         }
 
         console.log( changes[i].type, path, changes[i].oldValue );
@@ -54,7 +62,7 @@ syncio.create.prototype.observe = function(changes) {
 
 // setTimeout(function(){
 
-MYSERVE = new syncio.create();
+MYSERVE = new syncio.instance();
 MYOBJECT = {
     foo: 0,
     bar: 1,
