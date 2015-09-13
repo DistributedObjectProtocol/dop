@@ -1,6 +1,6 @@
 
 
-syncio.instance.prototype.configure = function( object, path, observable ) {
+syncio.configure = function( object, path, observable ) {
 
     var that = this;
 
@@ -16,7 +16,7 @@ syncio.instance.prototype.configure = function( object, path, observable ) {
         var newpath = path.concat(subpath);
 
         if ( value === syncio.remote_function )
-            obj[key] = that.create_remote_function( newpath );
+            obj[key] = syncio.create_remote_function.call( this, newpath );
 
         if ( observable && value !== null && typeof value == 'object' ) {
 
@@ -35,7 +35,7 @@ syncio.instance.prototype.configure = function( object, path, observable ) {
 
 /*
 
-syncio.instance.prototype.observe = function(changes) {
+syncio.api.prototype.observe = function(changes) {
 
     for (var i=0; i<changes.length; i++) {
         

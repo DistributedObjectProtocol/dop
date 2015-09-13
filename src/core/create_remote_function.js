@@ -1,6 +1,6 @@
 
 // Create a remote function
-syncio.instance.prototype.create_remote_function = function ( path ) {
+syncio.create_remote_function = function ( path ) {
 
     var that = this;
     // return function remote_function() {

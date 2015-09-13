@@ -1,6 +1,6 @@
 
 
-syncio.instance.prototype.call = function ( path, args ) {
+syncio.api.prototype.call = function ( path, args ) {
 
 	console.log(this, path, args)
 

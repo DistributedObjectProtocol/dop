@@ -1,6 +1,6 @@
 
 
-syncio.instance.prototype.observe = function(changes) {
+syncio.observe = function(changes) {
 
     for (var i=0; i<changes.length; i++) {
         
@@ -13,7 +13,7 @@ syncio.instance.prototype.observe = function(changes) {
             changes[i].object[changes[i].name] !== null &&
             typeof changes[i].object[changes[i].name] == 'object'
         ) {
-            syncio.observe(changes[i].object[changes[i].name], this.observe, path );
+            syncio.configure.call(this, changes[i].object[changes[i].name], path, true );
         }
 
         // console.log( changes[i].type, path, changes[i].oldValue );

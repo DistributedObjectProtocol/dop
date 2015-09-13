@@ -1,6 +1,6 @@
 
 
-syncio.instance = function( options ) {
+syncio.api = function( options ) {
 
     if (typeof options == 'undefined')
         options = {};
@@ -36,10 +36,10 @@ syncio.instance = function( options ) {
     
     this.connector = this[options.connector.name_connector] = options.connector( options, on );
 
-    this.observe = this.observe.bind(this);
+    this.observe = syncio.observe.bind(this);
 
 };
 
 
-syncio.instance.prototype = Object.create( EventEmitter.prototype );
+syncio.api.prototype = Object.create( EventEmitter.prototype );
 

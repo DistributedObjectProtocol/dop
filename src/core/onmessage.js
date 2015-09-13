@@ -101,7 +101,8 @@ syncio.onmessage = function( user, message_raw ) {
                                         path = [object_id];
 
 
-                                    this.configure(
+                                    syncio.configure.call(
+                                        this,
                                         object, 
                                         path, 
                                         this.objects_original[object_name].observable

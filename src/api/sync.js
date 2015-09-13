@@ -1,6 +1,6 @@
 
 
-syncio.instance.prototype.sync = function( name, options ) {
+syncio.api.prototype.sync = function( name, options ) {
 
     if (typeof options != 'object')
         options = {};
