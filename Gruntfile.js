@@ -8,9 +8,6 @@ module.exports = function(grunt) {
         copy: {
             main: { 
                 files: [{
-                    src: 'src/util/stringify.js',
-                    dest: '../browser/src/util/stringify.js',
-                },{
                     src: 'src/util/parse.js',
                     dest: '../browser/src/util/parse.js',
                 },{
@@ -25,6 +22,9 @@ module.exports = function(grunt) {
                 },{
                     src: 'src/util/merge.js',
                     dest: '../browser/src/util/merge.js',
+                },{
+                    src: 'src/core/stringify.js',
+                    dest: '../browser/src/core/stringify.js',
                 },{
                     src: 'src/core/protocol.js',
                     dest: '../browser/src/core/protocol.js',
@@ -43,6 +43,9 @@ module.exports = function(grunt) {
                 },{
                     src: 'src/core/create_remote_function.js',
                     dest: '../browser/src/core/create_remote_function.js',
+                },{
+                    src: 'src/core/request.js',
+                    dest: '../browser/src/core/request.js',
                 },{
                     src: 'src/api/request.js',
                     dest: '../browser/src/api/request.js',

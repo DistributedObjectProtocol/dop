@@ -1,5 +1,4 @@
 
-var EventEmitter = require('events').EventEmitter;
 
 module.exports = syncio = {
     version: '1.0.0',

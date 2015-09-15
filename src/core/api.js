@@ -14,11 +14,11 @@ syncio.api = function( options ) {
 
     var on = {
 
-        open: syncio.onopen.bind(this),
+        open: syncio.onopen.bind( this ),
 
-        message: syncio.onmessage.bind(this),
+        message: syncio.onmessage.bind( this ),
 
-        close: syncio.onclose.bind(this)
+        close: syncio.onclose.bind( this )
 
     };
 
@@ -41,5 +41,5 @@ syncio.api = function( options ) {
 };
 
 
-syncio.api.prototype = Object.create( EventEmitter.prototype );
+syncio.api.prototype = Object.create( require('events').EventEmitter.prototype );
 
