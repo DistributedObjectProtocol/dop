@@ -30,14 +30,14 @@ syncio.protocol = {
 
                         // Server
     connect: 1,         // [ 1234, 1, <user_token>]
-                        // [-1234, 1, <user_token_old>, [[<object_id>,<last_request>], [<object_id>,<last_request>], ...]]   ->   If the user response with a old token means is trying to resync because it lost the connection
+                        // [-1234, 1]
 
 
     sync: 2,            // Server
-                        // [ 1234, 2, <object_id>, <writable 0|1>, <data_object>]
+                        // [ 1234, 2, <object_id>, <writable 0|1>, <data_object>, <name>]
                         // [-1234, 2]
                         // Client
-                        // [ 1234, 2, <name>, <params...>]
+                        // [ 1234, 2, <name>]
                         // [-1234, 2, <object_id>, <writable 0|1>, <data_object>]
 
 
@@ -45,7 +45,7 @@ syncio.protocol = {
                         // [-1234, 3]
 
 
-    call: 4,            // [ 1234, 4, <object_id>, ['path','path'], 'param', 'param', ...]
+    call: 4,            // [ 1234, 4, <object_id>, ['path','path'], ['param', 'param', ...]]
                         // [-1234, 4, [<params_returneds>], 2]
 
 

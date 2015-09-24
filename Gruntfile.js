@@ -8,6 +8,8 @@ module.exports = function(grunt) {
         copy: {
             main: { 
                 files: [{
+
+                    // Util
                     src: 'src/util/parse.js',
                     dest: '../browser/src/util/parse.js',
                 },{
@@ -23,6 +25,7 @@ module.exports = function(grunt) {
                     src: 'src/util/merge.js',
                     dest: '../browser/src/util/merge.js',
                 },{
+                    // Core
                     src: 'src/core/stringify.js',
                     dest: '../browser/src/core/stringify.js',
                 },{
@@ -46,12 +49,6 @@ module.exports = function(grunt) {
                 },{
                     src: 'src/core/request.js',
                     dest: '../browser/src/core/request.js',
-                },{
-                    src: 'src/api/request.js',
-                    dest: '../browser/src/api/request.js',
-                },{
-                    src: 'src/api/call.js',
-                    dest: '../browser/src/api/call.js',
                 }],
             }
         },
@@ -80,6 +77,7 @@ module.exports = function(grunt) {
                     'src/syncio.js',
                     'src/core/*',
                     'src/api/*',
+                    'src/user/*',
                     'src/util/*',
                     'src/connector/*'
                 ],

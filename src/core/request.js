@@ -1,13 +1,12 @@
 
 
-syncio.request = function () {
+syncio.request = function ( request_data ) {
 
-    var data = Array.prototype.slice.call(arguments, 0),
-    request_id = this.request_id++;
-    data.unshift( request_id );
+    var request_id = this.request_id++;
+    request_data.unshift( request_id );
     return this.requests[ request_id ] = {
         id: request_id, 
-        data: data, 
+        data: request_data, 
         promise: new syncio.promise()
     };
 
