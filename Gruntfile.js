@@ -38,11 +38,8 @@ module.exports = function(grunt) {
                     src: 'src/core/errorserver.js',
                     dest: '../browser/src/core/errorserver.js',
                 },{
-                    src: 'src/core/on.js',
-                    dest: '../browser/src/core/on.js',
-                },{
-                    src: 'src/core/onmessage.js',
-                    dest: '../browser/src/core/onmessage.js',
+                    src: 'src/core/osp.js',
+                    dest: '../browser/src/core/osp.js',
                 },{
                     src: 'src/core/configure.js',
                     dest: '../browser/src/core/configure.js',
@@ -83,7 +80,7 @@ module.exports = function(grunt) {
                     'src/syncio.js',
                     'src/core/*',
                     'src/api/*',
-                    'src/osp/*',
+                    'src/on/*',
                     'src/user/*',
                     'src/util/*',
                     'src/connector/*'

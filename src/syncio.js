@@ -7,6 +7,6 @@ module.exports = syncio = {
     key_user_token: '~TOKEN',
     key_object_path: '~PATH',
 	remote_function: '~F',
-    osp: {},
+    on: {},
 };
 

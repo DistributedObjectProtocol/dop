@@ -12,7 +12,7 @@ syncio.SockJS = function ( options, on ) {
     that.on('connection', function(user) {
 
         user.on('data', function(message) {
-            on.message( message, user );
+            on.message( user, message );
         });
 
         user.on('close', function() {

@@ -1,10 +1,10 @@
 
 
-syncio.onclose = function( user ){
+syncio.on.close = function close( user_socket ){
 
-    user = this.users[ user[syncio.key_user_token] ];
+    var user = this.users[ user_socket[syncio.key_user_token] ];
 
-    this.emit( syncio.on.close, user );
+    this.emit( 'close', user );
 
     for ( var object_name in user.objects ) {
 

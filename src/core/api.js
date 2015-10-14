@@ -14,11 +14,11 @@ syncio.api = function( options ) {
 
     var on = {
 
-        open: syncio.onopen.bind( this ),
+        open: syncio.on.open.bind( this ),
 
-        message: syncio.onmessage.bind( this ),
+        message: syncio.on.message.bind( this ),
 
-        close: syncio.onclose.bind( this )
+        close: syncio.on.close.bind( this )
 
     };
 
