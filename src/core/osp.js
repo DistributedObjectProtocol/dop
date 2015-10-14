@@ -20,16 +20,14 @@ syncio.osp = function( sender, messages ) {
             // REQUEST ===============================================================
             if (request_id > 0) {
 
-                var response = [request_id * -1]; // Array of the response
-
                 switch( action ) {
 
                     case syncio.protocol.request:
-                        syncio.on.request.call( this, sender, request, response );
+                        syncio.on.request.call( this, sender, request );
                         break;
 
                     case syncio.protocol.connect:
-                        syncio.on.connect.call( this, sender, request, response );
+                        syncio.on.connect.call( this, sender, request );
                         break;
                         
                     // case syncio.protocol.sync:

@@ -24,13 +24,14 @@ syncio.protocol = {
 
 
 
-    request: 0,         // [ 1234, 0, <params...>]
-                        // [-1234, 0, <params...>]
+                        // Client
+    connect: 0,         // [ 1234, 0]
+                        // [-1234, 0, <user_token>, '~F']
 
 
-                        // Server
-    connect: 1,         // [ 1234, 1, <user_token>, '~F']
-                        // [-1234, 1]
+    request: 1,         // [ 1234, 1, <params...>]
+                        // [-1234, 1, <params...>]
+
 
 
     sync: 2,            // Server

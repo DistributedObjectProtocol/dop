@@ -2,7 +2,11 @@
 
 syncio.on.message = function message( user_socket, message_raw ) {
 
-    var messages, user = this.users[ user_socket[syncio.key_user_token] ];
+    var messages, 
+        user = (typeof user_socket[syncio.key_user_token] == 'undefined' ) ?
+            user_socket
+        :
+            this.users[ user_socket[syncio.key_user_token] ];
 
     // Parsing message
     if (typeof message_raw == 'string') {

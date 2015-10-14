@@ -1,11 +1,20 @@
 
 
-syncio.on.connect = function connect( user ) {
+syncio.on.connect = function connect( user_socket, request ) {
 
-	var request = syncio.request.call(this, [syncio.protocol.connect, user.token, this.remote_function] );
+    var response = [request[0] * -1],
+        user = new syncio.user( this, user_socket, this.user_id++ );
 
-    this.emit( 'connect', user, request );
+    user_socket[ syncio.key_user_token ] = user.token;
 
-    user.send( JSON.stringify( request.data ) );
+    // Setup server for new user
+    this.users[ user.token ] = user;
+
+    response.push( syncio.protocol.connect, user.token, syncio.remote_function );
+    
+    user.send( JSON.stringify( response ) );
+
+    this.emit( 'connect', user, request, response );
+
 
 };
