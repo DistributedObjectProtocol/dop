@@ -1,9 +1,8 @@
 
 
-syncio.onmessage = function( user, message_raw ) {
+syncio.onmessage = function( message_raw, user ) {
 
-    var user = this.users[ user[syncio.key_user_token] ],
-        messages = undefined;
+    var user = this.users[ user[syncio.key_user_token] ], messages = undefined;
 
     if (typeof message_raw == 'string') {
         try { messages = syncio.parse( message_raw ); } 

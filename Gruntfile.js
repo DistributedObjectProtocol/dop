@@ -7,12 +7,10 @@ module.exports = function(grunt) {
 
         copy: {
             main: { 
-                files: [{
+                files: [
 
-                    // Util
-                    src: 'src/util/parse.js',
-                    dest: '../browser/src/util/parse.js',
-                },{
+                // Util
+                {
                     src: 'src/util/typeof.js',
                     dest: '../browser/src/util/typeof.js',
                 },{
@@ -24,8 +22,13 @@ module.exports = function(grunt) {
                 },{
                     src: 'src/util/merge.js',
                     dest: '../browser/src/util/merge.js',
+                }
+
+                // Core
+                ,{
+                    src: 'src/core/parse.js',
+                    dest: '../browser/src/core/parse.js',
                 },{
-                    // Core
                     src: 'src/core/stringify.js',
                     dest: '../browser/src/core/stringify.js',
                 },{

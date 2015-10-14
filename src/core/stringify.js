@@ -2,14 +2,14 @@
 
 syncio.stringify = function( data ) {
 
-    return JSON.stringify( data, syncio.stringify.callback );
+    var remote_function = this.remote_function;
 
-};
+    return JSON.stringify( data, function (k, v){
 
-syncio.stringify.callback = function (k, v){
+        if ( typeof v == 'function' && v.name !== remote_function )
+            return syncio.remote_function;
+        
+        return v;
+    });
 
-    if ( typeof v == 'function' && v.name !== syncio.remote_function )
-        return syncio.remote_function;
-    
-    return v;
 };

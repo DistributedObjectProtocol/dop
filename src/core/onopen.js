@@ -12,6 +12,6 @@ syncio.onopen = function( user_socket ){
     this.emit( syncio.on.open, user );
 
     // Sending token to the user
-    user_socket.send( JSON.stringify( syncio.request.call(this, [syncio.protocol.connect, user.token] ).data ) );
+    user_socket.send( JSON.stringify( syncio.request.call(this, [syncio.protocol.connect, user.token, this.remote_function] ).data ) );
 
 };

@@ -1,5 +1,5 @@
 
-
+// Send a new request
 syncio.user.prototype.request = function () {
 
     var request, args = Array.prototype.slice.call(arguments, 0);

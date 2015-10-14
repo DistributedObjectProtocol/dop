@@ -29,7 +29,7 @@ syncio.protocol = {
 
 
                         // Server
-    connect: 1,         // [ 1234, 1, <user_token>]
+    connect: 1,         // [ 1234, 1, <user_token>, '~F']
                         // [-1234, 1]
 
 

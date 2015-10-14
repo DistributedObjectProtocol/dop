@@ -1,5 +1,5 @@
 
-
+// Create a new request
 syncio.request = function ( request_data ) {
 
     var request_id = this.request_id++;
