@@ -2,12 +2,12 @@
 
 syncio.stringify = function( data ) {
 
-    var remote_function = this.remote_function;
+    var key_remote_function = this.key_remote_function;
 
     return JSON.stringify( data, function (k, v){
 
-        if ( typeof v == 'function' && v.name !== remote_function )
-            return syncio.remote_function;
+        if ( typeof v == 'function' && v.name !== key_remote_function )
+            return key_remote_function;
         
         return v;
     });

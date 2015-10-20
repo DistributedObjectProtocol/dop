@@ -22,14 +22,14 @@ syncio.osp = function( sender, messages ) {
 
                 switch( action ) {
 
+                    case syncio.protocol.connect:
+                        syncio.on.connect.call( this, sender, request );
+                        break;
+
                     case syncio.protocol.request:
                         syncio.on.request.call( this, sender, request );
                         break;
 
-                    case syncio.protocol.connect:
-                        syncio.on.connect.call( this, sender, request );
-                        break;
-                        
                     // case syncio.protocol.sync:
                         // console.log('SYNC');
                         // break;

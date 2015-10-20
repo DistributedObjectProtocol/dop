@@ -3,7 +3,7 @@
 syncio.create_remote_function = function ( path ) {
 
     var that = this;
-    // return function remote_function() {
+    // return function key_remote_function() {
 
     //     return that.call( path, arguments );
 
@@ -11,7 +11,7 @@ syncio.create_remote_function = function ( path ) {
 	
 	// http://jsperf.com/dynamic-name-of-functions
     return new Function(
-        "return function " + syncio.remote_function + "(){  return that.call( path, arguments ); }"
+        "return function " + syncio.key_remote_function + "(){  return that.call( path, arguments ); }"
     )();
 
 };

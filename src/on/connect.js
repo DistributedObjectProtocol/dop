@@ -10,7 +10,10 @@ syncio.on.connect = function connect( user_socket, request ) {
     // Setup server for new user
     this.users[ user.token ] = user;
 
-    response.push( syncio.protocol.connect, user.token, syncio.remote_function );
+    response.push( syncio.protocol.connect, user.token );
+
+    if ( this.key_remote_function !== syncio.key_remote_function )
+        response.push( this.key_remote_function );
     
     user.send( JSON.stringify( response ) );
 

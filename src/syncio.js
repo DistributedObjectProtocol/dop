@@ -6,7 +6,7 @@ module.exports = syncio = {
     port: 4444,
     key_user_token: '~TOKEN',
     key_object_path: '~PATH',
-	remote_function: '~F',
+    key_remote_function: '~F',
     on: {},
 };
 

@@ -13,10 +13,10 @@ syncio.configure = function( object, path, observable ) {
 
     syncio.path( object, function(subpath, value, key, obj ) {
 
-        var newpath = path.concat(subpath);
+        var newpath = that.concat(subpath);
 
-        if ( value === syncio.remote_function )
-            obj[key] = syncio.create_remote_function.call( this, newpath );
+        if ( value === that.key_remote_function )
+            obj[key] = syncio.create_key_remote_function.call( this, newpath );
 
         if ( observable && value !== null && typeof value == 'object' ) {
 
