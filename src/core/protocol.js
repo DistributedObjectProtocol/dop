@@ -9,7 +9,7 @@ syncio.protocol = {
     // Is possible send multiple requests in one message, just wrapping it in an Array
     // [[<request_one>, <action>, <params...>], [<request_two>, <action>, <params...>]]
 
-    // If the response have a number greater than -1 as second parameter means the response it's fulfilled
+    // If the response have a number greater than -1 as second parameter and is the same value than the request, means the response it's fulfilled
     // [-1234, 2, <params...>]
 
     // If the response have a second parameter defined as number less than 0 means is an error on any case of 
@@ -29,8 +29,8 @@ syncio.protocol = {
                         // [-1234, 0, <user_token>, '~F']
 
 
-    request: 1,         // [ 1234, 1, <params...>]
-                        // [-1234, 1, <params...>]
+    request: 1,         // [ 1234, 1, [<params...>]]
+                        // [-1234, 1, [<params...>]]
 
 
 
@@ -46,8 +46,8 @@ syncio.protocol = {
                         // [-1234, 3]
 
 
-    call: 4,            // [ 1234, 4, <object_id>, ['path','path'], ['param', 'param', ...]]
-                        // [-1234, 4, [<params_returneds>], 2]
+    call: 4,            // [ 1234, 4, <object_id>, ['path','path'], [<params...>]]
+                        // [-1234, 4, [<params...>]]
 
 
     set: 5,             // [ 1234, 5, <object_id>, ['path','path'], 'value']              -> Server ->  If value is not defined then is a delete

@@ -46,13 +46,16 @@ syncio.osp = function( sender, messages ) {
 
                     switch( action ) {
 
-                        // case syncio.protocol.request:
-                        //     syncio.on._request.call( this, sender, request );
-                        //     break;
-
                         case syncio.protocol.connect:
                             syncio.on._connect.call( this, sender, request );
                             break;
+
+                        case syncio.protocol.request:
+                            syncio.on._request.call( this, sender, request, request_id, action );
+                            break;
+
+                        default:
+                            syncio.on.reject.call( this, sender, request, request_id, action );
 
                     }
 

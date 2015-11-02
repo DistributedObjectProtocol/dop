@@ -15,9 +15,9 @@ syncio.on.connect = function connect( user_socket, request ) {
     if ( this.key_remote_function !== syncio.key_remote_function )
         response.push( this.key_remote_function );
     
-    user.send( JSON.stringify( response ) );
 
     this.emit( 'connect', user, request, response );
 
+    user.send( JSON.stringify( response ) );
 
 };

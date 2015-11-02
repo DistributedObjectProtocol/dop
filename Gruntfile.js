@@ -22,6 +22,9 @@ module.exports = function(grunt) {
                 },{
                     src: 'src/util/merge.js',
                     dest: '../browser/src/util/merge.js',
+                },{
+                    src: 'src/util/arguments.js',
+                    dest: '../browser/src/util/arguments.js',
                 }
 
                 // Core
@@ -52,7 +55,38 @@ module.exports = function(grunt) {
                 },{
                     src: 'src/core/request.js',
                     dest: '../browser/src/core/request.js',
-                }],
+                },{
+                    src: 'src/core/response.js',
+                    dest: '../browser/src/core/response.js',
+                },{
+                    src: 'src/core/resolve.js',
+                    dest: '../browser/src/core/resolve.js',
+                },{
+                    src: 'src/core/reject.js',
+                    dest: '../browser/src/core/reject.js',
+                }
+
+
+                // OSP
+                ,{
+                    src: 'src/on/request.js',
+                    dest: '../browser/src/on/request.js',
+                },{
+                    src: 'src/on/_request.js',
+                    dest: '../browser/src/on/_request.js',
+                }
+
+
+
+                // API
+                ,{
+                    src: 'src/user/request.js',
+                    dest: '../browser/src/api/request.js',
+                }
+
+
+
+                ],
             }
         },
 
