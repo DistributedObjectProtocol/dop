@@ -24,5 +24,4 @@ syncio.on.message = function message( user_socket, message_raw ) {
     if ( syncio.typeof( messages ) == 'array' )
         syncio.osp.call( this, user, messages );
 
-
 };

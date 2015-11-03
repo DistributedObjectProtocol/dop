@@ -12,8 +12,8 @@ syncio.configure = function( object, path, observable ) {
 
 
     syncio.path( object, function(subpath, value, key, obj ) {
-
-        var newpath = that.concat(subpath);
+        
+        var newpath = path.concat(subpath);
 
         if ( value === that.key_remote_function )
             obj[key] = syncio.create_key_remote_function.call( this, newpath );

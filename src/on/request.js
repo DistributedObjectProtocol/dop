@@ -1,10 +1,10 @@
 
 
-syncio.on.request = function request( sender, request ) {
+syncio.on.request = function request( user, request ) {
 
     var response = [ request[0] * -1, request[1] ];
 
-    var promise = { request: request, response: response, sender: sender };
+    var promise = { request: request, response: response, user: user };
     promise.resolve = syncio.response.resolve.bind( promise );
     promise.reject = syncio.response.reject.bind( promise );
 

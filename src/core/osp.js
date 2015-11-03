@@ -1,6 +1,6 @@
 
 
-syncio.osp = function( sender, messages ) {
+syncio.osp = function( user, messages ) {
 
 
     if (typeof messages[0] != 'object')
@@ -23,16 +23,17 @@ syncio.osp = function( sender, messages ) {
                 switch( action ) {
 
                     case syncio.protocol.connect:
-                        syncio.on.connect.call( this, sender, request );
+                        syncio.on.connect.call( this, user, request );
                         break;
 
                     case syncio.protocol.request:
-                        syncio.on.request.call( this, sender, request );
+                        syncio.on.request.call( this, user, request );
                         break;
 
-                    // case syncio.protocol.sync:
-                        // console.log('SYNC');
-                        // break;
+                    case syncio.protocol.sync:
+                        syncio.on.sync.call( this, user, request );
+                        break;
+
                 }
 
             }
@@ -47,15 +48,19 @@ syncio.osp = function( sender, messages ) {
                     switch( action ) {
 
                         case syncio.protocol.connect:
-                            syncio.on._connect.call( this, sender, request );
+                            syncio.on._connect.call( this, user, request );
                             break;
 
                         case syncio.protocol.request:
-                            syncio.on._request.call( this, sender, request, request_id, action );
+                            syncio.on._request.call( this, user, request, request_id, action );
+                            break;
+
+                        case syncio.protocol.sync:
+                            syncio.on._sync.call( this, user, request );
                             break;
 
                         default:
-                            syncio.on.reject.call( this, sender, request, request_id, action );
+                            syncio.on.reject.call( this, user, request, request_id, action );
 
                     }
 
