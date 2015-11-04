@@ -29,9 +29,10 @@ syncio.on.sync = function sync( user, request ) {
 
 
 
-            // If the object exists we get the object_id
+            // If the object already exists
             if ( syncio.typeof( object[syncio.key_object_path] ) == 'array' ) {
 
+                // we get the object_id
                 var object_id = object[syncio.key_object_path][0];
 
                 if ( typeof this.objects[object_id] == 'object' ) {
@@ -95,13 +96,12 @@ syncio.on.sync = function sync( user, request ) {
 
             // Sending response
             user.send( syncio.stringify(response) );
-            // syncio.onmessage.response.call(this, syncio.on.sync, user, request, response );
 
         };
 
         // Getting the object
         ( typeof this.objects_original[object_name].object == 'function' ) ?
-            this.objects_original[object_name].object( user, messages, sync_object.bind(this) )
+            this.objects_original[object_name].object( user, request, sync_object.bind(this) )
         :
             sync_object.call( this, this.objects_original[object_name].object );
 

@@ -43,7 +43,7 @@ syncio.osp = function( user, messages ) {
 
                 request_id *= -1;
 
-                if ( this.requests[ request_id ] !== null && typeof this.requests[ request_id ] == 'object' ) {
+                if ( user.requests[ request_id ] !== null && typeof user.requests[ request_id ] == 'object' ) {
 
                     switch( action ) {
 
@@ -65,7 +65,7 @@ syncio.osp = function( user, messages ) {
                     }
 
                     // Removing request
-                    delete this.requests[request_id];
+                    delete user.requests[request_id];
 
                 }
 

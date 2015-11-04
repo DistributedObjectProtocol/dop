@@ -1,28 +1,27 @@
 
 // ?????
-syncio.configure = function( object, path, observable ) {
+syncio.configure = function( object, path, isobservable ) {
 
     var that = this;
 
-    // Setting the object path/id to the object itself
     Object.defineProperty( object, syncio.key_object_path, {value: path} );
 
-    if ( observable )
+    if ( isobservable )
         Object.observe( object, this.observe );
-
 
     syncio.path( object, function(subpath, value, key, obj ) {
         
         var newpath = path.concat(subpath);
 
         if ( value === that.key_remote_function )
-            obj[key] = syncio.create_key_remote_function.call( this, newpath );
+            obj[key] = syncio.create_remote_function.call( that, newpath );
 
-        if ( observable && value !== null && typeof value == 'object' ) {
-
+        if ( value !== null && typeof value == 'object' ) {
+        
             Object.defineProperty( value, syncio.key_object_path, {value: newpath} );
-
-            Object.observe( value, that.observe );
+            
+            if ( isobservable )
+                Object.observe( value, that.observe );
 
         }
 
