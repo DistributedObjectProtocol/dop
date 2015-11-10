@@ -18,25 +18,9 @@ syncio.osp = function( user, messages ) {
         if ( typeof request_id == 'number' ) {
 
             // REQUEST ===============================================================
-            if (request_id > 0) {
+            if (request_id > 0 && typeof syncio.on[syncio.protocol_keys[action]] == 'function' )
+                syncio.on[syncio.protocol_keys[action]].call( this, user, request );
 
-                switch( action ) {
-
-                    case syncio.protocol.connect:
-                        syncio.on.connect.call( this, user, request );
-                        break;
-
-                    case syncio.protocol.request:
-                        syncio.on.request.call( this, user, request );
-                        break;
-
-                    case syncio.protocol.sync:
-                        syncio.on.sync.call( this, user, request );
-                        break;
-
-                }
-
-            }
 
             // RESPONSE ===============================================================
             else {
@@ -45,24 +29,11 @@ syncio.osp = function( user, messages ) {
 
                 if ( user.requests[ request_id ] !== null && typeof user.requests[ request_id ] == 'object' ) {
 
-                    switch( action ) {
+                    if ( typeof syncio.on['_' + syncio.protocol_keys[action]] == 'function' )
+                        syncio.on['_' + syncio.protocol_keys[action]].call( this, user, request );
 
-                        case syncio.protocol.connect:
-                            syncio.on._connect.call( this, user, request );
-                            break;
-
-                        case syncio.protocol.request:
-                            syncio.on._request.call( this, user, request );
-                            break;
-
-                        case syncio.protocol.sync:
-                            syncio.on._sync.call( this, user, request );
-                            break;
-
-                        default:
-                            syncio.on.reject.call( this, user, request );
-
-                    }
+                    else
+                        syncio.on.reject.call( this, user, request );
 
                     // Removing request
                     delete user.requests[request_id];

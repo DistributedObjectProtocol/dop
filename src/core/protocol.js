@@ -55,3 +55,8 @@ syncio.protocol = {
 };
 
 
+syncio.protocol_keys = {};
+for (var key in syncio.protocol)
+    syncio.protocol_keys[ syncio.protocol[key] ] = key;
+
+

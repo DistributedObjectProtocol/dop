@@ -24,7 +24,7 @@ syncio.response.resolve = function() {
 
     this.response.push( Array.prototype.slice.call( arguments, 0 ) );
 
-    this.user.send( this.stringify( this.response ) );
+    this.user.send( this.user.syncio.stringify( this.response ) );
 
 };
 
@@ -32,7 +32,7 @@ syncio.response.reject = function( error ) {
 
     this.response[1] = error;
 
-    this.user.send( this.stringify( this.response ) );
+    this.user.send( this.user.syncio.stringify( this.response ) );
 
 };
 
