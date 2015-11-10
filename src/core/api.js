@@ -23,16 +23,11 @@ syncio.api = function( options ) {
     };
 
 
-    this.objects_original = {};
-
     this.objects = {};
-    this.object_id = 1;
+    this.object_id = 0;
 
     this.users = {};
-    this.user_id = 1;
-
-    this.requests = {};
-    this.request_id = 1;
+    this.user_id = 0;
 
     this.key_remote_function = syncio.key_remote_function;
     

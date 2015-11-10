@@ -3,7 +3,7 @@
 syncio.on.connect = function connect( user_socket, request ) {
 
     var response = [request[0] * -1],
-        user = new syncio.user( this, user_socket, this.user_id++ );
+        user = new syncio.user( this, user_socket );
 
     user_socket[ syncio.key_user_token ] = user.token;
 

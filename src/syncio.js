@@ -9,5 +9,8 @@ module.exports = syncio = {
     key_object_path: '~PATH',
     key_remote_function: '~F',
     on: {},
+    user_inc: 0,
+    objects: {},
+    object_inc: 0,
 };
 

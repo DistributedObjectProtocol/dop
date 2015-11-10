@@ -33,13 +33,9 @@ syncio.protocol = {
                         // [-1234, 1, [<params...>]]
 
 
-
     sync: 2,            // Server
                         // [ 1234, 2, <object_id>, <writable 0|1>, <data_object>, <name>]
-                        // [-1234, 2]
-                        // Client
-                        // [ 1234, 2, <name>]
-                        // [-1234, 2, <object_id>, <writable 0|1>, <data_object>]
+                        // [-1234, 2, <data_object_merged>]
 
 
     unsync: 3,          // [ 1234, 3, <object_id>]

@@ -52,7 +52,7 @@ syncio.osp = function( user, messages ) {
                             break;
 
                         case syncio.protocol.request:
-                            syncio.on._request.call( this, user, request, request_id, action );
+                            syncio.on._request.call( this, user, request );
                             break;
 
                         case syncio.protocol.sync:
@@ -60,7 +60,7 @@ syncio.osp = function( user, messages ) {
                             break;
 
                         default:
-                            syncio.on.reject.call( this, user, request, request_id, action );
+                            syncio.on.reject.call( this, user, request );
 
                     }
 

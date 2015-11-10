@@ -1,6 +1,6 @@
 
 
-syncio.stringify = function( data ) {
+syncio.api.prototype.stringify = function( data ) {
 
     var key_remote_function = this.key_remote_function;
 
