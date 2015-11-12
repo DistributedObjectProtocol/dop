@@ -1,6 +1,6 @@
 
 
-syncio.on.request = function request( user, request ) {
+syncio.on.request = function( user, request ) {
 
     var response = [ request[0] * -1, request[1] ];
 

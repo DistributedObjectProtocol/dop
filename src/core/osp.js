@@ -29,8 +29,8 @@ syncio.osp = function( user, messages ) {
 
                 if ( user.requests[ request_id ] !== null && typeof user.requests[ request_id ] == 'object' ) {
 
-                    if ( typeof syncio.on['_' + syncio.protocol_keys[action]] == 'function' )
-                        syncio.on['_' + syncio.protocol_keys[action]].call( this, user, request );
+                    if ( typeof syncio._on[syncio.protocol_keys[action]] == 'function' )
+                        syncio._on[syncio.protocol_keys[action]].call( this, user, request );
 
                     else
                         syncio.on.reject.call( this, user, request );

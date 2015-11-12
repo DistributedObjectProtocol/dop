@@ -1,6 +1,6 @@
 
 
-syncio.on.open = function open( user_socket ){
+syncio.on.open = function( user_socket ){
 
     this.emit( 'open', user_socket );
 

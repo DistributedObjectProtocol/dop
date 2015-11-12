@@ -1,6 +1,6 @@
 
 
-syncio.on.message = function message( user_socket, message_raw ) {
+syncio.on.message = function( user_socket, message_raw ) {
 
     var messages, 
         user = (typeof user_socket[syncio.key_user_token] == 'undefined' ) ?

@@ -1,6 +1,6 @@
 
 
-syncio.on._sync = function _sync( user, response ) {
+syncio._on.sync = function( user, response ) {
 
     var object_id = user.requests[ response[0]*-1 ].data[2],
         object_name = user.requests[ response[0]*-1 ].data[5],

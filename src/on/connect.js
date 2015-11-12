@@ -1,6 +1,6 @@
 
 
-syncio.on.connect = function connect( user_socket, request ) {
+syncio.on.connect = function( user_socket, request ) {
 
     var response = [request[0] * -1],
         user = new syncio.user( this, user_socket );

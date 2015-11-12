@@ -1,6 +1,6 @@
 
 
-syncio.on.close = function close( user_socket ){
+syncio.on.close = function( user_socket ){
 
     var object_name, object_id, user = this.users[ user_socket[syncio.key_user_token] ];
 
