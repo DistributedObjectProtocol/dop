@@ -8,7 +8,7 @@ syncio.user.prototype.sync = function( object_name, object, options ) {
 
     // If the user already is subscribed to this object
     if ( typeof user.objects[object_name] == 'object' )
-        throw new TypeError( syncio.error.SYNC_NO_REPEAT );
+        throw new TypeError( syncio.error.SYNC_NO_REPEAT_NAME );
 
     // Must be an object
     if ( typeof object != 'object' )
