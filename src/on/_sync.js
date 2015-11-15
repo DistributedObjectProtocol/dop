@@ -2,15 +2,16 @@
 
 syncio._on.sync = function( user, response ) {
 
-    var object_id = user.requests[ response[0]*-1 ].data[2],
-        object_name = user.requests[ response[0]*-1 ].data[5],
-        object_remote = response[2];
+    var request_id = response[0]*-1,
+        object_id = user.requests[ request_id ].data[2],
+        object_name = user.requests[ request_id ].data[5],
+        object_remote = response[2],
+        object = syncio.objects[ object_id] .object;
+
 
 
     // If the object is writable and the response has an object to merge
     if ( user.writables[object_name] && typeof object_remote == 'object' ) {
-
-        var object = syncio.objects[object_id].object;
 
         syncio.merge( object_remote, object );
 
@@ -20,7 +21,6 @@ syncio._on.sync = function( user, response ) {
 
     }
 
-    console.log( object_name, user.writables[object_name], object );
-
+    user.requests[ request_id ].promise.resolve( object, object_id );
 
 };

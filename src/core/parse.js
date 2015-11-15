@@ -12,7 +12,7 @@
             
         //http://jsperf.com/serializing-date-on-json-parse
         if ( typeof v === 'string' ) {
-            var regexp = syncio.parse_type_date.exec(v);
+            var regexp = parse_type_date.exec(v);
             if ( regexp )
                 return new Date(v);
         }
