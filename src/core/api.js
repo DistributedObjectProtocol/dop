@@ -27,7 +27,7 @@ syncio.api = function( options ) {
     this.object_id = 0;
 
     this.users = {};
-    this.user_id = 0;
+    this.user_inc = 0;
 
     this.key_remote_function = syncio.key_remote_function;
     
