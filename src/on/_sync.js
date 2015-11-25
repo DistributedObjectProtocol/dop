@@ -3,8 +3,8 @@
 syncio._on.sync = function( user, response ) {
 
     var request_id = response[0]*-1,
-        object_id = user.requests[ request_id ].data[2],
-        object_name = user.requests[ request_id ].data[5],
+        object_id = this.requests[ request_id ].data[2],
+        object_name = this.requests[ request_id ].data[5],
         object_remote = response[2],
         object = syncio.objects[ object_id] .object;
 
@@ -21,6 +21,6 @@ syncio._on.sync = function( user, response ) {
 
     }
 
-    user.requests[ request_id ].promise.resolve( object, object_id );
+    this.requests[ request_id ].promise.resolve( object, object_id );
 
 };

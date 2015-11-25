@@ -67,7 +67,7 @@ syncio.user.prototype.sync = function( object_name, object, options ) {
     user.writables[object_name] = options.writable;
 
 
-    var request = syncio.request.call( user, [
+    var request = syncio.request.call( instance, [
         syncio.protocol.sync,
         object_id,
         options.writable*1, // false*1 === 0

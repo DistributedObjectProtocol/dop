@@ -29,6 +29,9 @@ syncio.api = function( options ) {
     this.users = {};
     this.user_inc = 0;
 
+    this.requests = {};
+    this.requests_inc = 1;
+
     this.key_remote_function = syncio.key_remote_function;
     
     this.connector = this[options.connector.name_connector] = options.connector( options, on );
