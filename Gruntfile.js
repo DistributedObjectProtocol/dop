@@ -122,7 +122,18 @@ module.exports = function(grunt) {
                 ],
                 dest: 'lib/<%= pkg.name %>.js'
             }
-        }
+        },
+
+        watch: {
+            scripts: {
+                files: ['src/*','src/*/*'],
+                tasks: ['default'],
+                options: {
+                    spawn: false,
+                },
+            },
+        },
+
     });
 
 
@@ -130,9 +141,10 @@ module.exports = function(grunt) {
     // grunt.loadNpmTasks('grunt-contrib-symlink');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     //grunt.registerTask('default', ['symlink', 'concat', 'uglify', 'jshint', 'watch']);
-    grunt.registerTask('default', ['copy','concat']);
+    grunt.registerTask('default', ['copy','concat','watch']);
 
 
 
