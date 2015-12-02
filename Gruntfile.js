@@ -25,6 +25,9 @@ module.exports = function(grunt) {
                 },{
                     src: 'src/util/arguments.js',
                     dest: '../browser/src/util/arguments.js',
+                },{
+                    src: 'src/util/getsetdelete.js',
+                    dest: '../browser/src/util/getsetdelete.js',
                 }
 
                 // Core
@@ -71,9 +74,6 @@ module.exports = function(grunt) {
                 },{
                     src: 'src/on/_request.js',
                     dest: '../browser/src/on/_request.js',
-                },{
-                    src: 'src/on/reject.js',
-                    dest: '../browser/src/on/reject.js',
                 }
 
 

@@ -36,7 +36,8 @@ syncio.osp = function( user, messages ) {
                         syncio.on.reject.call( this, user, request );
 
                     // Removing request
-                    delete this.requests[request_id];
+                    if ( --this.requests[request_id].users === 0 )
+                        delete this.requests[request_id];
 
                 }
 

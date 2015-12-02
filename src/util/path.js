@@ -46,7 +46,7 @@ syncio.path.recursive = function (obj, callback, path ) {
 
 //         if (v !== obj) {
 
-//             while ( path.length>0 && syncio.getset(obj, path) !== this )
+//             while ( path.length>0 && syncio.get(obj, path) !== this )
 //                 path.pop();
 
 //             path.push(k);

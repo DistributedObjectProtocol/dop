@@ -8,7 +8,7 @@ syncio.on.call = function( user, request ) {
     
     if ( typeof syncio.objects[ object_id ] == 'object' && syncio.objects[ object_id ].users[user.token] === user ) {
         
-        var fn = syncio.getset( syncio.objects[ object_id ].object, path );
+        var fn = syncio.get( syncio.objects[ object_id ].object, path );
         if ( typeof fn == 'function' ) {
 
             response.push( request[1] );

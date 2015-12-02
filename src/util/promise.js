@@ -6,6 +6,7 @@ syncio.promise = function( resolver ) {
     var state = 0; /* 0 = pending, 1 = fulfilled, 2 = rejected */
     var type, type_variable;
     
+    this.state = state;
     // this._chain = 0;
 
 
@@ -35,14 +36,14 @@ syncio.promise = function( resolver ) {
 
     this.resolve = function() {
         if (state != 0) { return this; }
-        state = 1;
+        state = this.state = 1;
         type = this.type = 0;
         schedule.call(this, 0, arguments);
     };
 
     this.reject = function() {
         if (state != 0) { return this; }
-        state = 2;
+        state = this.state = 2;
         type = this.type = 1;
         schedule.call(this, 0, arguments);
     };

@@ -57,7 +57,7 @@ syncio.merge = (function() {
 })();
 
 
-// // Based in syncio.path && syncio.getset
+// // Based in syncio.path && syncio.get.set
 // syncio.merge = (function() {
 
 //     var destiny;
@@ -68,7 +68,7 @@ syncio.merge = (function() {
 
 //             value = (Array.isArray( value )) ? [] : {};
 
-//         syncio.getset(destiny, path, value);
+//         syncio.get.set(destiny, path, value);
 
 //     };
 

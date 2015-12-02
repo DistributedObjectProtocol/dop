@@ -3,7 +3,7 @@
 syncio.create_remote_function = function ( path ) {
 
     var that = this;
-    return function syncio_remote_function() {
+    return function $syncio_remote_function() {
 
         return that.call( path, Array.prototype.slice.call( arguments ) );
 

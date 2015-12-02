@@ -6,7 +6,7 @@ syncio.api.prototype.stringify = function( data ) {
 
     return JSON.stringify( data, function (k, v){
 
-        if ( typeof v == 'function' && v.name !== key_remote_function )
+        if ( typeof v == 'function' && v.name !== '$syncio_remote_function' )
             return key_remote_function;
         
         return v;
