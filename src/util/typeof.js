@@ -6,7 +6,7 @@ syncio.typeof = function(value) {
 
     if ( s == 'object' ) {
         if (value) {
-            if (value instanceof Array)
+            if (Array.isArray( value ))
                 s = 'array';
         }
         else

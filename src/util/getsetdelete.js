@@ -34,6 +34,7 @@ syncio.get = function ( obj, path, create ) {
 
 syncio.get.set = function ( obj, path, value ) {
 
+    path = path.slice(0);
     var prop = path.pop();
 
     obj = syncio.get(obj, path, true);
@@ -47,6 +48,7 @@ syncio.get.set = function ( obj, path, value ) {
 
 syncio.get.delete = function ( obj, path ) {
 
+    path = path.slice(0);
     var prop = path.pop();
 
     obj = syncio.get(obj, path);

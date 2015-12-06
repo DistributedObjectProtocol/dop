@@ -39,22 +39,83 @@ syncio.merge = (function() {
                 continue;
             }
 
+            // // This lines do not allow merge
+            // clone = (Array.isArray(val)) ?
 
-            clone = (Array.isArray(val)) ?
+            //     (Array.isArray(src)) ? src : []
+            // :
+            //     (!Array.isArray(src)) ? src : {};
 
-                (Array.isArray(src)) ? src : []
-            :
-                (!Array.isArray(src)) ? src : {};
-
-
+            clone = src;
 
             first[key] = merge(clone, val);
+
         }
 
         return first;
     }
 
 })();
+
+
+
+
+// var obj1 = {
+//     a: 11,
+//     b: 12,
+//     array: [1,2,3,{abc:123}],
+//     d: {
+//         d1: 13,
+//         d2: {
+//             d21: 123,
+//             d22: {
+//                 d221: 12,
+//                 d223: { 
+//                   hola: 'hola',
+//                   static: 'static'
+//                 }
+//             }
+//         }
+//     },
+//     arrobj: ['a','b','c','d'],
+//     f: 5,
+//     g: 123
+// };
+// var obj2 = {
+//     b: 3,
+//     c: 5,
+//     obj: {lolo:111},
+//     fun: function(){},
+//     arr: [1,2,3,{La:123}],
+//     array: [567],
+//     arrobj: {0:1,1:2},
+//     d: {
+//         d2: {
+//             d22: {
+//                 d222: 25,
+//                 d223: {
+//                   hola:'mundo'
+//                 }
+//             }
+//         }
+//     },
+
+// };
+
+// resu=syncio.merge(obj1, obj2);
+// console.log( resu );
+// console.log( resu.obj === obj2.obj );
+// console.log( resu.fun === obj2.fun );
+// console.log( resu.arr === obj2.arr );
+
+
+
+
+
+
+
+
+
 
 
 // // Based in syncio.path && syncio.get.set
@@ -92,62 +153,5 @@ syncio.merge = (function() {
 //     };
 
 // })();
-
-
-
-// var obj1 = {
-//     a: 11,
-//     b: 12,
-//     array: [1,2,3,{abc:123}],
-//     d: {
-//         d1: 13,
-//         d2: {
-//             d21: 123,
-//             d22: {
-//                 d221: 12,
-//                 d223: { 
-//                   hola: 'hola',
-//                   static: 'static'
-//                 }
-//             }
-//         }
-//     },
-//     f: 5,
-//     g: 123
-// };
-// var obj2 = {
-//     b: 3,
-//     c: 5,
-//     obj: {lolo:111},
-//     fun: function(){},
-//     arr: [1,2,3,{La:123}],
-//     array: [567],
-//     d: {
-//         d2: {
-//             d22: {
-//                 d222: 25,
-//                 d223: {
-//                   hola:'mundo'
-//                 }
-//             }
-//         }
-//     },
-
-// };
-
-// //r=syncio.merge2(obj2,obj1)
-// r=Object.assign({},obj2);
-// console.log( r );
-// console.log( r.obj === obj2.obj );
-// console.log( r.fun === obj2.fun );
-// console.log( r.arr === obj2.arr );
-
-
-// r2=merge({},obj2);
-// console.log( r2 );
-// console.log( r2.obj === obj2.obj );
-// console.log( r2.fun === obj2.fun );
-// console.log( r2.arr === obj2.arr );
-
 
 
