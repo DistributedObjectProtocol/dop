@@ -8,11 +8,14 @@ module.exports = syncio = {
     key_user_token: '~TOKEN',
     key_object_path: '~PATH',
     key_remote_function: '~F',
-    remote: '~SYNCIO_REMOTE_FUNCTION',
     on: {},
     _on: {},
     user_inc: 0,
     objects: {},
     object_inc: 0,
+    remote: function() {
+        return this.key_remote_function;
+    },
+
 };
 
