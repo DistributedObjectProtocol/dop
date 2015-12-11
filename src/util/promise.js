@@ -5,7 +5,8 @@ syncio.promise = function( resolver ) {
     var thens = [];
     var state = 0; /* 0 = pending, 1 = fulfilled, 2 = rejected */
     var type, type_variable;
-    
+    var that = this;
+
     this.state = state;
     // this._chain = 0;
 
@@ -31,50 +32,50 @@ syncio.promise = function( resolver ) {
 
 
     this.catch = function(onRejected) {
-        return this.then(0, onRejected);
+        return that.then(0, onRejected);
     };
 
     this.resolve = function() {
-        if (state != 0) { return this; }
-        state = this.state = 1;
-        type = this.type = 0;
-        schedule.call(this, 0, arguments);
+        if (state != 0) { return that; }
+        state = that.state = 1;
+        type = that.type = 0;
+        schedule.call(that, 0, this, arguments);
     };
 
     this.reject = function() {
-        if (state != 0) { return this; }
-        state = this.state = 2;
-        type = this.type = 1;
-        schedule.call(this, 0, arguments);
+        if (state != 0) { return that; }
+        state = that.state = 2;
+        type = that.type = 1;
+        schedule.call(that, 0, this, arguments);
     };
 
     this.multiresolve = function() {
-        type = this.type = 0;
-        schedule.call(this, 0, arguments);
+        type = that.type = 0;
+        schedule.call(that, 0, this, arguments);
     };
 
     this.multireject = function() {
-        type = this.type = 1;
-        schedule.call(this, 0, arguments);
+        type = that.type = 1;
+        schedule.call(that, 0, this, arguments);
     };
 
 
-    var schedule = function(i, values) {
+    var schedule = function(i, scope, params) {
         setTimeout(function(){
-            loop.call(this, i, values);
-        }.bind(this),0);
+            loop.call(that, i, scope, params);
+        },0);
     };
 
-    var loop = function( i, values ) {
+    var loop = function( i, scope, params ) {
 
         var iplus = i+1;
 
         if ( typeof thens[i] == 'object' && typeof thens[i][this.type] == 'function' ) {
 
             try {
-                values = [thens[i][this.type].apply(
-                    ( thens[i][this.type].hasToGoUp ) ? this : undefined, // 2.2.5 `onFulfilled` and `onRejected` must be called as functions (i.e. with no `this` value).
-                    values
+                params = [thens[i][this.type].apply(
+                    ( thens[i][this.type].hasToGoUp ) ? this : scope, // 2.2.5 `onFulfilled` and `onRejected` must be called as functions (i.e. with no `this` value).
+                    params
                 )];
 
                 if (this.type && !type)
@@ -82,53 +83,51 @@ syncio.promise = function( resolver ) {
             }
             catch (e) {
                 this.type = 1;
-                values = [e];
+                params = [e];
             }
 
 
 
             // 2.3.1. If promise and x refer to the same object, reject promise with a TypeError as the reason.
-            if (values[0] === this) {
+            if (params[0] === this) {
                 this.type = 1;
-                values[0] = new TypeError("Promise resolved by its own instance");
+                params[0] = new TypeError("Promise resolved by its own instance");
             }
 
             // 2.3.2. If x is a promise, adopt its state 
-            else if ( values[0] instanceof this.constructor ) {
-                (function(that, _i, _promise) {
-                    var goingup = function(){
-                        that.type = this.type;
-                        loop.call(that, _i, arguments);
-                    };
-                    goingup.hasToGoUp = true;
-                    _promise.then(goingup, goingup);
-                })(this, iplus, values[0]);
+            else if ( params[0] instanceof this.constructor ) {
+                var goingup = function(){
+                    that.type = this.type;
+                    loop.call(that, iplus, scope, arguments);
+                };
+                goingup.hasToGoUp = true;
+                params[0].then(goingup, goingup);
                 return;
             }
 
             /*
             // 2.3.3: Otherwise, if `x` is an object or function
-            else if ( values[0] !== null && (typeof values[0] == 'object' || typeof values[0] == 'function') ) {
+            else if ( params[0] !== null && (typeof params[0] == 'object' || typeof params[0] == 'function') ) {
 
                 try {
                     // 
-                    var then = values[0].then;
+                    var then = params[0].then;
                     console.log(typeof then)
                 } catch (e) {
                     // 2.3.3.2. If retrieving the property x.then results in a thrown exception e, reject promise with e as the reason.
-                    values[0] = e;
-                    return this.loop.call(this, iplus, values);
+                    params[0] = e;
+                    return this.loop.call(this, iplus, scope, params);
                 }
 
                 if ( typeof then == 'function' ) {
                     // 2.3.3.3. If then is a function, call it
                     var called = false;
                     var resolvePromise = function(y) {
-                    // console.log(iplus, values)
+                    // console.log(iplus, params)
                         // 2.3.3.3.1. If/when resolvePromise is called with a value y, run [[Resolve]](promise, y).
                         if (called) { return; }
                         called = true;
-                        return loop.call(this, iplus, values);
+                        return loop.call(this, iplus, scope, params);
                     }
                     var rejectPromise = function(r) {
                     // console.log(22222)
@@ -136,18 +135,18 @@ syncio.promise = function( resolver ) {
                         if (called) { return; }
                         called = true;
                         this.type = 1;
-                        return loop.call(this, iplus, values);
+                        return loop.call(this, iplus, scope, params);
                     }
 
                     try {
-                        then.call(values[0], resolvePromise.bind(this), rejectPromise.bind(this));
+                        then.call(params[0], resolvePromise.bind(this), rejectPromise.bind(this));
                     } catch (e) { // 2.3.3.3.4. If calling then throws an exception e,
                         // console.log(333333)
                         // 2.3.3.3.4.1. If resolvePromise or rejectPromise have been called, ignore it.
                         if (called) { return; }
                         // 2.3.3.3.4.2. Otherwise, reject promise with e as the reason.
                         this.type = 1;
-                        return loop.call(this, iplus, values);
+                        return loop.call(this, iplus, scope, params);
                     }
 
                 }
@@ -159,15 +158,15 @@ syncio.promise = function( resolver ) {
 
         // Next .then()
         if ( iplus < thens.length )
-            loop.call(this, iplus, values);
+            loop.call(this, iplus, scope, params);
 
     };
 
 
     if ( typeof resolver == 'function' )
         resolver( 
-            this.resolve.bind(this),
-            this.reject.bind(this)
+            this.resolve,
+            this.reject
         );
 
 };
@@ -185,6 +184,4 @@ syncio.promise.reject = function(reason) {
         reject(reason);
     });
 };
-
-
 
