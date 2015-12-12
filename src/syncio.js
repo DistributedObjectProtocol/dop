@@ -1,7 +1,7 @@
 
 
 module.exports = syncio = {
-    version: '1.0.0',
+    version: '0.2.1',
     name: 'syncio',
     port: 4444,
     side: 'user',
@@ -12,10 +12,6 @@ module.exports = syncio = {
     _on: {},
     user_inc: 0,
     objects: {},
-    object_inc: 0,
-    remote: function() {
-        return this.key_remote_function;
-    },
-
+    object_inc: 0
 };
 

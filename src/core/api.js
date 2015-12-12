@@ -11,6 +11,9 @@ syncio.api = function( options ) {
     if (typeof options.namespace != 'string')
         options.namespace = '/' + syncio.name;
 
+    if (typeof options.key_remote_function != 'string')
+        options.key_remote_function = syncio.key_remote_function;
+
 
     var on = {
 
@@ -32,7 +35,7 @@ syncio.api = function( options ) {
     this.requests = {};
     this.requests_inc = 1;
 
-    this.key_remote_function = syncio.key_remote_function;
+    this.key_remote_function = options.key_remote_function;
     
     this.connector = this[options.connector.name_connector] = options.connector( options, on );
 
