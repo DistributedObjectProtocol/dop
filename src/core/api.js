@@ -2,7 +2,7 @@
 
 syncio.api = function( options ) {
 
-    if (typeof options == 'undefined')
+    if (syncio.typeof(options) != 'object')
         options = {};
 
     if (typeof options.connector != 'function')
