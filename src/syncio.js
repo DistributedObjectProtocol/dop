@@ -1,7 +1,7 @@
 
 
 module.exports = syncio = {
-    version: '0.2.4',
+    version: '0.2.5',
     name: 'syncio',
     port: 4444,
     side: 'user',
