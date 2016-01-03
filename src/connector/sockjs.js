@@ -7,9 +7,9 @@ syncio.SockJS = function ( options, on ) {
 
     options.prefix = options.namespace;
 
-    var that = syncio.SockJS.api.createServer( options );
+    var socket_server = syncio.SockJS.api.createServer( options );
 
-    that.on('connection', function(user) {
+    socket_server.on('connection', function(user) {
 
         user.on('data', function(message) {
             on.message( user, message );
@@ -25,9 +25,9 @@ syncio.SockJS = function ( options, on ) {
 
     });
 
-    that.installHandlers( options.httpServer, options );
+    socket_server.installHandlers( options.httpServer, options );
 
-    return that;
+    return socket_server;
 
 };
 

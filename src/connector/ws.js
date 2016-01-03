@@ -9,9 +9,9 @@ syncio.ws = function ( options, on ) {
         options.port = syncio.port;
 
 
-    var that = new syncio.ws.api.Server( options );
+    var socket_server = new syncio.ws.api.Server( options );
 
-    that.on('connection', function( user ){
+    socket_server.on('connection', function( user ){
 
         user.on('message', function(message) {
             on.message( user, message );
@@ -26,7 +26,7 @@ syncio.ws = function ( options, on ) {
     });
 
 
-    return that;
+    return socket_server;
 
 };
 
