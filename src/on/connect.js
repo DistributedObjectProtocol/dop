@@ -18,8 +18,8 @@ syncio.on.connect = function( user_socket, request ) {
 
     response.push( syncio.protocol.connect, user.token );
 
-    if ( this.key_remote_function !== syncio.key_remote_function )
-        response.push( this.key_remote_function );
+    if ( this.stringify_function !== syncio.stringify_function )
+        response.push( this.stringify_function );
     
 
     this.emit( 'connect', user, request, response );

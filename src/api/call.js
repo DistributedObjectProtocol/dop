@@ -7,7 +7,7 @@ syncio.api.prototype.call = function( path, params ) {
         users = syncio.objects[path[0]].users,
         data = [ syncio.protocol.call, path, params ],
         request = syncio.request.call( this, data ),
-        data_string = this.stringify( request.data );
+        data_string = syncio.stringify.call(this, request.data );
 
     for (token in users) {
         users_n += 1;

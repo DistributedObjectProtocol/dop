@@ -1,5 +1,5 @@
 
-
+// Useful to create remote functions before the sync: myobject = {remotefun: myserver.remote()};
 syncio.api.prototype.remote = function() {
-    return this.key_remote_function;
+    return this.stringify_function;
 };

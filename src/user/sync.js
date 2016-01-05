@@ -75,7 +75,7 @@ syncio.user.prototype.sync = function( object_name, object, options ) {
         object_name
     ]);
 
-    user.send( instance.stringify(request.data) );
+    user.send( syncio.stringify.call(instance, request.data) );
     return request.promise;
 
 };

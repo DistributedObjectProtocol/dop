@@ -11,8 +11,14 @@ syncio.api = function( options ) {
     if (typeof options.namespace != 'string')
         options.namespace = '/' + syncio.name;
 
-    if (typeof options.key_remote_function != 'string')
-        options.key_remote_function = syncio.key_remote_function;
+    if (typeof options.stringify_function != 'string')
+        options.stringify_function = syncio.stringify_function;
+
+    if (typeof options.stringify_undefined != 'string')
+        options.stringify_undefined = syncio.stringify_undefined;
+
+    if (typeof options.stringify_regexp != 'string')
+        options.stringify_regexp = syncio.stringify_regexp;
 
 
     var on = {
@@ -35,7 +41,9 @@ syncio.api = function( options ) {
     this.requests = {};
     this.requests_inc = 1;
 
-    this.key_remote_function = options.key_remote_function;
+    this.stringify_function = options.stringify_function;
+    this.stringify_undefined = options.stringify_undefined;
+    this.stringify_regexp = options.stringify_regexp;
     
     this.connector = this[options.connector.name_connector] = options.connector( options, on );
 

@@ -1,6 +1,6 @@
 {
     "name": "syncio-nodejs",
-    "version": "0.2.5",
+    "version": "0.5.0",
     "main": "index.js",
     "license": "MIT",
     "repository": "https://github.com/syncio/syncio-nodejs",
