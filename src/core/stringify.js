@@ -1,4 +1,5 @@
 
+
 syncio.stringify = function(data) {
 
     var that = this, tof;
@@ -10,7 +11,7 @@ syncio.stringify = function(data) {
         if (tof == 'undefined')
             return that.stringify_undefined;
 
-        else if (tof == 'function' && v.name !== '$syncio_remote_function')
+        else if (tof == 'function' && v.name !== syncio.name_remote_function)
             return that.stringify_function;
 
         else if (tof == 'object' && v instanceof RegExp)
@@ -23,33 +24,32 @@ syncio.stringify = function(data) {
 };
 
 
-
-
-
-
 // types = [
-//     1,
+//     123,
+//     false,
+//     'my string',
+//     'string to be deleted',
 //     undefined, 
 //     null, 
 //     function caca() {}, 
-//     /^AB\/$/g, 
+//     /^A\wB$/g, 
 //     new RegExp("AB", "gi"),
 //     new Date(),
 //     {a: 12},
 //     Symbol("caca"), 
 // ];
-// delete types[0];
+// delete types[3];
 
 // instance = {stringify_function:'~F', stringify_undefined:'~U', stringify_regexp:'~R'}
-// stringify=stringify.bind(instance);
+// stringify=syncio.stringify.bind(instance);
 // to = stringify(types);
-// // parse=parse.bind(instance);
-// // from = parse(to);
+// parse=syncio.parse.bind(instance);
+// from = parse(to);
 
 
 // console.log(types);
 // console.log(to);
-// // console.log(from);
+// console.log(from);
 
 
 

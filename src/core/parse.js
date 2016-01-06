@@ -2,22 +2,20 @@
 
 syncio.parse = function parse(data) {
 
-    var that = this, tof;
+    var that = this;
 
     return JSON.parse(data, function(k, v) {
 
-        tof = typeof v;
+        if ( typeof v == 'string' ) {
 
-        if (v == that.stringify_undefined)
-            return undefined;
+            if ( v == that.stringify_undefined )
+                return undefined;
 
-        else if (tof == 'string') {
-
-            if ( parse.parse_type_date.exec(v) )
+            else if ( parse.parse_type_date.exec(v) )
                 return new Date(v);
 
             else if ( v.substr(0, that.stringify_regexp.length) == that.stringify_regexp ) {
-                var split = /\/(.+)\/([gmi]{0,3})/.exec(v.substr(that.stringify_regexp.length));
+                var split = /\/(.+)\/([gimuy]{0,5})/.exec(v.substr(that.stringify_regexp.length)); // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/RegExp
                 return new RegExp(split[1], split[2]);
             }
 

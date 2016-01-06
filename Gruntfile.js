@@ -26,8 +26,8 @@ module.exports = function(grunt) {
                     src: 'src/util/arguments.js',
                     dest: '../browser/src/util/arguments.js',
                 },{
-                    src: 'src/util/getsetdelete.js',
-                    dest: '../browser/src/util/getsetdelete.js',
+                    src: 'src/util/get.js',
+                    dest: '../browser/src/util/get.js',
                 }
 
                 // Core

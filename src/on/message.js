@@ -10,10 +10,7 @@ syncio.on.message = function( user_socket, message_raw ) {
 
     // Parsing message
     if (typeof message_raw == 'string') {
-        try { 
-            console.log(123);
-            messages = syncio.parse.call(this, message_raw );
-        } 
+        try { messages = syncio.parse.call(this, message_raw ); } 
         catch(e) {}
     }
     else 

@@ -26,7 +26,7 @@ syncio.merge = (function() {
 
             if (val === first) continue;
 
-            if ( (typeof val != 'object' && !Array.isArray(val)) || val instanceof Date ) {
+            if ( val === null || (typeof val != 'object' && !Array.isArray(val)) || val instanceof Date || val instanceof RegExp ) {
             //if (!first.hasOwnProperty(key) || (typeof val !== 'object' && !Array.isArray(val))) {
                 first[key] = val;
                 continue;
@@ -101,8 +101,26 @@ syncio.merge = (function() {
 //     },
 
 // };
+// var data = {
+//     types: [
+//         123,
+//         true,
+//         'my string',
+//         'string to be deleted',
+//         undefined, 
+//         null,
+//         function caca() {}, 
+//         /^A\wB$/g, 
+//         new RegExp("AB", "gi"),
+//         new Date(),
+//         {a: 12},
+//         Symbol("caca"), 
+//     ]
+// };
+// delete data.types[3];
+// console.log(syncio.merge({},data));
 
-// resu=syncio.merge(obj1, obj2);
+// resu=syncio.merge(obj1, obj2, );
 // console.log( resu );
 // console.log( resu.obj === obj2.obj );
 // console.log( resu.fun === obj2.fun );

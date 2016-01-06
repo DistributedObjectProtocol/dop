@@ -8,6 +8,10 @@ syncio.typeof = function(value) {
         if (value) {
             if (Array.isArray( value ))
                 s = 'array';
+            else if ( value instanceof Date )
+                s = 'date';
+            else if ( value instanceof RegExp )
+                s = 'regexp';
         }
         else
             s = 'null';
