@@ -1,6 +1,6 @@
 
 // This method find arguments from inside to outside, and if the callback return true will stop
-syncio.arguments = function( args, callback ) {
+syncio.util.arguments = function( args, callback ) {
 
     var finder = args;
 

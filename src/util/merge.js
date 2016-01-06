@@ -1,6 +1,6 @@
 
 // Based on: https://github.com/unclechu/node-deep-extend (Performace: http://jsperf.com/deepmerge-comparisions/3)
-syncio.merge = (function() {
+syncio.util.merge = (function() {
 
     return function merge(first, second) {
 
@@ -118,9 +118,9 @@ syncio.merge = (function() {
 //     ]
 // };
 // delete data.types[3];
-// console.log(syncio.merge({},data));
+// console.log(syncio.util.merge({},data));
 
-// resu=syncio.merge(obj1, obj2, );
+// resu=syncio.util.merge(obj1, obj2, );
 // console.log( resu );
 // console.log( resu.obj === obj2.obj );
 // console.log( resu.fun === obj2.fun );
@@ -136,8 +136,8 @@ syncio.merge = (function() {
 
 
 
-// // Based in syncio.path && syncio.get.set
-// syncio.merge = (function() {
+// // Based in syncio.util.path && syncio.util.get.set
+// syncio.util.merge = (function() {
 
 //     var destiny;
 
@@ -147,7 +147,7 @@ syncio.merge = (function() {
 
 //             value = (Array.isArray( value )) ? [] : {};
 
-//         syncio.get.set(destiny, path, value);
+//         syncio.util.get.set(destiny, path, value);
 
 //     };
 
@@ -164,7 +164,7 @@ syncio.merge = (function() {
 
 //         destiny = first;
 
-//         syncio.path(second, callback);
+//         syncio.util.path(second, callback);
 
 //         return first;
 

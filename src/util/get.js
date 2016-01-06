@@ -1,6 +1,6 @@
 
 
-syncio.get = function ( obj, path, callback_create ) {
+syncio.util.get = function ( obj, path, callback_create ) {
 
     for (var i=0, l=path.length; i<l-1; i++) {
 
@@ -22,12 +22,12 @@ syncio.get = function ( obj, path, callback_create ) {
 
 /*
 
-syncio.get.set = function ( obj, path, value, callback_create ) {
+syncio.util.get.set = function ( obj, path, value, callback_create ) {
 
     path = path.slice(0);
     var prop = path.pop();
 
-    obj = syncio.get(obj, path, callback_create);
+    obj = syncio.util.get(obj, path, callback_create);
 
     obj[prop] = value;
 
@@ -36,14 +36,14 @@ syncio.get.set = function ( obj, path, value, callback_create ) {
 };
 
 
-syncio.get.delete = function ( obj, path, callback_create ) {
+syncio.util.get.delete = function ( obj, path, callback_create ) {
 
     path = path.slice(0);
     var prop = path.pop();
 
-    obj = syncio.get(obj, path);
+    obj = syncio.util.get(obj, path);
 
-    ( syncio.typeof(obj) == 'array' && !isNaN(prop) ) ?
+    ( syncio.util.typeof(obj) == 'array' && !isNaN(prop) ) ?
         obj.splice(prop, 1)
     :
         delete obj[prop];
@@ -79,7 +79,7 @@ var obj1 = {
 };
 
 exists = true;
-resu = syncio.get(obj1, ['d', 'd2', 'd1','a'], function(obj, property, i){ 
+resu = syncio.util.get(obj1, ['d', 'd2', 'd1','a'], function(obj, property, i){ 
     exists = false;
     // console.log(obj.hasOwnProperty(property), i); 
     return !obj.hasOwnProperty(property); 

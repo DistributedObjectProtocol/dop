@@ -27,7 +27,7 @@ syncio.user.prototype.sync = function( object_name, object, options ) {
 
 
     // If the object doesn't exist yet
-    if ( syncio.typeof( object[syncio.key_object_path] ) != 'array' ) {
+    if ( syncio.util.typeof( object[syncio.key_object_path] ) != 'array' ) {
 
         var object_id = syncio.object_inc++,
             path = [object_id];

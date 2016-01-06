@@ -4,7 +4,7 @@ syncio.response = function( action, params ) {
 
     var promise;
 
-    return syncio.arguments( params, function( args ) {
+    return syncio.util.arguments( params, function( args ) {
 
         promise = args[args.length-1];
 

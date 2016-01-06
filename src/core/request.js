@@ -7,7 +7,7 @@ syncio.request = function ( request_data ) {
     return this.requests[ request_id ] = {
         id: request_id, 
         data: request_data, 
-        promise: new syncio.promise(),
+        promise: new syncio.util.promise(),
         users: 1
     };
 

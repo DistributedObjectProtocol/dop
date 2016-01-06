@@ -21,7 +21,7 @@ syncio.on.message = function( user_socket, message_raw ) {
 
 
     // Managing OSP protocol
-    if ( syncio.typeof( messages ) == 'array' )
+    if ( syncio.util.typeof( messages ) == 'array' )
         syncio.osp.call( this, user, messages );
 
 };

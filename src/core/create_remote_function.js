@@ -11,7 +11,7 @@ syncio.create_remote_function = function ( path ) {
 
     // // http://jsperf.com/dynamic-name-of-functions
     // return new Function(
-    //     "return function " + that.stringify_function + "(){  return that.call( path, arguments ); }"
+    //     "return function " + syncio.name_remote_function + "(){  return that.call( path, arguments ); }"
     // )();
 
 };

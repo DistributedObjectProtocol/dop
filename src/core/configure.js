@@ -9,7 +9,7 @@ syncio.configure = function( object, path, isobservable ) {
     // if ( isobservable )
         // Object.observe( object, this.observe );
 
-    syncio.path( object, function(subpath, value, key, obj ) {
+    syncio.util.path( object, function(subpath, value, key, obj ) {
 
         var newpath = path.concat(subpath);
 

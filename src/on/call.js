@@ -4,14 +4,14 @@ syncio.on.call = function( user, request ) {
     
     var response = [ request[0] * -1 ];
 
-    if (syncio.typeof( request[2] ) == 'array' ) {
+    if (syncio.util.typeof( request[2] ) == 'array' ) {
         
         var path = request[2],
             object_id = path.shift();
     
         if ( typeof syncio.objects[ object_id ] == 'object' && syncio.objects[ object_id ].users[user.token] === user ) {
             
-            var fn = syncio.get( syncio.objects[ object_id ].object, path );
+            var fn = syncio.util.get( syncio.objects[ object_id ].object, path );
             if ( typeof fn == 'function' ) {
 
                 response.push( request[1] );
