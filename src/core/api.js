@@ -2,23 +2,32 @@
 
 syncio.api = function( options ) {
 
-    if (syncio.util.typeof(options) != 'object')
-        options = {};
+    this.options = (syncio.util.typeof(options) == 'object') ? options : {};
+    this.options.stringify_params = {};
 
-    if (typeof options.connector != 'function')
-        options.connector = syncio.ws;
+    if (typeof this.options.connector != 'function')
+        this.options.connector = syncio.ws;
 
-    if (typeof options.namespace != 'string')
-        options.namespace = '/' + syncio.name;
+    if (typeof this.options.namespace != 'string')
+        this.options.namespace = '/' + syncio.name;
 
-    if (typeof options.stringify_function != 'string')
-        options.stringify_function = syncio.stringify_function;
 
-    if (typeof options.stringify_undefined != 'string')
-        options.stringify_undefined = syncio.stringify_undefined;
+    if (typeof this.options.stringify_function != 'string')
+        this.options.stringify_function = syncio.stringify_function;
+    else
+        this.options.stringify_params[syncio.stringify_function] = this.options.stringify_function;
 
-    if (typeof options.stringify_regexp != 'string')
-        options.stringify_regexp = syncio.stringify_regexp;
+    if (typeof this.options.stringify_undefined != 'string')
+        this.options.stringify_undefined = syncio.stringify_undefined;
+    else
+        this.options.stringify_params[syncio.stringify_undefined] = this.options.stringify_undefined;
+
+    if (typeof this.options.stringify_regexp != 'string')
+        this.options.stringify_regexp = syncio.stringify_regexp;
+    else
+        this.options.stringify_params[syncio.stringify_regexp] = this.options.stringify_regexp;
+
+
 
 
     var on = {
@@ -40,12 +49,8 @@ syncio.api = function( options ) {
 
     this.requests = {};
     this.requests_inc = 1;
-
-    this.stringify_function = options.stringify_function;
-    this.stringify_undefined = options.stringify_undefined;
-    this.stringify_regexp = options.stringify_regexp;
     
-    this.connector = this[options.connector.name_connector] = options.connector( options, on );
+    this.connector = this[this.options.connector.name_connector] = this.options.connector( this.options, on );
 
     this.observe = syncio.observe.bind(this);
 

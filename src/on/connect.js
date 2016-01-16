@@ -18,10 +18,11 @@ syncio.on.connect = function( user_socket, request ) {
 
     response.push( syncio.protocol.connect, user.token );
 
-    if ( this.stringify_function !== syncio.stringify_function )
-        response.push( this.stringify_function );
+    if ( typeof this.options.stringify_params[syncio.stringify_function] == 'string' || 
+         typeof this.options.stringify_params[syncio.stringify_undefined] == 'string' || 
+         typeof this.options.stringify_params[syncio.stringify_regexp] == 'string'  )
+        response.push( this.options.stringify_params );
     
-
     this.emit( 'connect', user, request, response );
 
     user.send( JSON.stringify( response ) );

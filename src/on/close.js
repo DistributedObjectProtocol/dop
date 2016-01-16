@@ -2,11 +2,11 @@
 
 syncio.on.close = function( user_socket ){
 
+    this.emit( 'close', user );
+
     if ( typeof user_socket[syncio.key_user_token] == 'string' ) {
 
         var object_name, object_id, user = this.users[ user_socket[syncio.key_user_token] ];
-
-        this.emit( 'close', user );
 
         for ( object_name in user.objects ) {
 
@@ -23,6 +23,8 @@ syncio.on.close = function( user_socket ){
             }
 
         }
+
+        this.emit( 'disconnect', user );
 
         // Remove user
         delete this.users[ user.token ];

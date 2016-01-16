@@ -9,13 +9,13 @@ syncio.stringify = function(data) {
         tof = typeof v;
 
         if (tof == 'undefined')
-            return that.stringify_undefined;
+            return that.options.stringify_undefined;
 
         else if (tof == 'function' && v.name !== syncio.name_remote_function)
-            return that.stringify_function;
+            return that.options.stringify_function;
 
         else if (tof == 'object' && v instanceof RegExp)
-            return that.stringify_regexp + v.toString();
+            return that.options.stringify_regexp + v.toString();
 
         return v;
 

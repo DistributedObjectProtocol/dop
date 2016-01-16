@@ -19,14 +19,12 @@ syncio.protocol = {
     // Also the error response could be custom if is an string
     // [-1234, 'My custom message error']
 
-    // You can always pass more extra parameters on any requests
-    // [ 1234, 2, <user_token>, <extra_params...>]
 
 
 
                         // Client
     connect: 0,         // [ 1234, 0]
-                        // [-1234, 0, <user_token>, '~F']
+                        // [-1234, 0, <user_token>, {'~F':'$custom_F','~U':'$custom_U','~R':'$custom_R'}]
 
 
     request: 1,         // [ 1234, 1, [<params...>]]
