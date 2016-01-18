@@ -2,16 +2,21 @@
 
 syncio.util.get = function ( obj, path, callback_create ) {
 
-    for (var i=0, l=path.length; i<l-1; i++) {
+    for (var i=0, l=path.length, tof; i<l; i++) {
 
-        if ( obj[ path[i] ] !== null && typeof obj[ path[i] ] == 'object' )
+        tof = syncio.util.typeof( obj[ path[i] ] );
+
+        if ( i+1<l && obj[ path[i] ] !== null && (tof == 'object' || tof == 'array') )
             obj = obj[ path[i] ];
+
+        else if ( obj.hasOwnProperty(path[i]) )
+            return obj[ path[i] ];
 
         else if ( callback_create && callback_create(obj, path[i], i) )
             obj[ path[i] ] = {};
 
         else
-            return obj;
+            return undefined;
 
     }
 
@@ -53,7 +58,6 @@ syncio.util.get.delete = function ( obj, path, callback_create ) {
 };
 
 
-
 var obj1 = {
     a: 11,
     b: 12,
@@ -82,11 +86,12 @@ exists = true;
 resu = syncio.util.get(obj1, ['d', 'd2', 'd1','a'], function(obj, property, i){ 
     exists = false;
     // console.log(obj.hasOwnProperty(property), i); 
-    return !obj.hasOwnProperty(property); 
+    return !obj.hasOwnProperty(property);  // If the path does not exists and we return true, the path will be create to set the property
     return false;
 });
 
 console.log('RESU:',exists,resu,obj1)
 
-
 */
+
+

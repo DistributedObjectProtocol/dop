@@ -2,10 +2,10 @@
 
 syncio.util.promise = function( resolver ) {
 
-    var thens = [];
-    var state = 0; /* 0 = pending, 1 = fulfilled, 2 = rejected */
-    var type, type_variable;
-    var that = this;
+    var thens = [],
+        state = 0, /* 0 = pending, 1 = fulfilled, 2 = rejected */
+        type,
+        that = this;
 
     this.state = state;
     // this._chain = 0;

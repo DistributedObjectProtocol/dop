@@ -4,7 +4,8 @@ syncio.user.prototype.sync = function( object_name, object, options ) {
 
     var user = this,
         instance = this.syncio;
-        object_name = object_name.trim();
+        object_name = object_name.trim(),
+        object_id;
 
     // If the user already is subscribed to this object
     if ( typeof user.objects[object_name] == 'object' )
@@ -29,13 +30,12 @@ syncio.user.prototype.sync = function( object_name, object, options ) {
     // If the object doesn't exist yet
     if ( syncio.util.typeof( object[syncio.key_object_path] ) != 'array' ) {
 
-        var object_id = syncio.object_inc++,
-            path = [object_id];
+        object_id = syncio.object_inc++;
 
         syncio.configure.call(
             instance,
             object, 
-            path
+            [object_id]
         );
 
         syncio.objects[ object_id ] = {object:object, users:{}, subscribed:0, observable:options.observable}; // users is an objects of the users than are subscribed to this object
@@ -64,7 +64,7 @@ syncio.user.prototype.sync = function( object_name, object, options ) {
     syncio.objects[ object_id ].subscribed += 1;
 
     user.objects[object_name] = object;
-    user.writables[object_name] = options.writable;
+    user.writables[object_id] = options.writable;
 
 
     var request = syncio.request.call( instance, [

@@ -46,7 +46,7 @@ syncio.socketio.name_connector = 'socketio';
 syncio.socketio.send = function( data ) {
     this.emit('message', data);
 };
-syncio.socketio.close = function( data ) {
+syncio.socketio.close = function( ) {
     this.disconnect();
 };
 
