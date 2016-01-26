@@ -3,12 +3,11 @@
 syncio.util.promise = function( resolver ) {
 
     var thens = [],
-        state = 0, /* 0 = pending, 1 = fulfilled, 2 = rejected */
+        state = 0, /* 0 = pending, 1 = fulfilled, 2 = rejected, 3 = completed/canceled */
         type,
         that = this;
 
     this.state = state;
-    // this._chain = 0;
 
 
     this.then = function(onFulfilled, onRejected) {
@@ -35,36 +34,42 @@ syncio.util.promise = function( resolver ) {
         return that.then(0, onRejected);
     };
 
+
+    this.completed = function( onCompleted ) {
+        that.onCompleted = function() {
+            state = that.state = 3;
+            onCompleted.apply(this, arguments);
+        };
+        return that;
+    };
+
+
     this.resolve = function() {
-        if (state != 0) { return that; }
+        // if (state != 0) return that; // https://promisesaplus.com/#point-14
+        if (state === 3) return that;
         state = that.state = 1;
         type = that.type = 0;
-        schedule.call(that, 0, this, arguments);
+        loop.call(that, 0, this, arguments);
     };
 
     this.reject = function() {
-        if (state != 0) { return that; }
+        // if (state != 0) return that; // https://promisesaplus.com/#point-17
+        if (state === 3) return that;
         state = that.state = 2;
         type = that.type = 1;
-        schedule.call(that, 0, this, arguments);
+        loop.call(that, 0, this, arguments);
     };
 
-    this.multiresolve = function() {
-        type = that.type = 0;
-        schedule.call(that, 0, this, arguments);
-    };
+    // this.multiresolve = function() {
+    //     type = that.type = 0;
+    //     loop.call(that, 0, this, arguments);
+    // };
 
-    this.multireject = function() {
-        type = that.type = 1;
-        schedule.call(that, 0, this, arguments);
-    };
+    // this.multireject = function() {
+    //     type = that.type = 1;
+    //     loop.call(that, 0, this, arguments);
+    // };
 
-
-    var schedule = function(i, scope, params) {
-        setTimeout(function(){
-            loop.call(that, i, scope, params);
-        },0);
-    };
 
     var loop = function( i, scope, params ) {
 
@@ -73,6 +78,7 @@ syncio.util.promise = function( resolver ) {
         if ( typeof thens[i] == 'object' && typeof thens[i][this.type] == 'function' ) {
 
             try {
+
                 params = [thens[i][this.type].apply(
                     ( thens[i][this.type].hasToGoUp ) ? this : scope, // 2.2.5 `onFulfilled` and `onRejected` must be called as functions (i.e. with no `this` value).
                     params
@@ -80,6 +86,7 @@ syncio.util.promise = function( resolver ) {
 
                 if (this.type && !type)
                     this.type = 0;
+
             }
             catch (e) {
                 this.type = 1;
@@ -93,6 +100,7 @@ syncio.util.promise = function( resolver ) {
                 this.type = 1;
                 params[0] = new TypeError("Promise resolved by its own instance");
             }
+
 
             // 2.3.2. If x is a promise, adopt its state 
             else if ( params[0] instanceof this.constructor ) {
@@ -164,24 +172,24 @@ syncio.util.promise = function( resolver ) {
 
 
     if ( typeof resolver == 'function' )
-        resolver( 
-            this.resolve,
-            this.reject
-        );
+        setTimeout(function(){
+            resolver(
+                // this.resolve.bind(null) # 3.2 That is, in strict mode this will be undefined inside of them; in sloppy mode, it will be the global object.
+                that.resolve, 
+                that.reject
+            );
+        }, 0);
 
 };
 
-// Need it for Promises/A+ specifications
-syncio.util.promise.resolve = function(value) {
-    return new this(function(resolve) {
-        resolve(value);
-    });
-};
+// syncio.util.promise.resolve = function(value) {
+//     return new this(function(resolve, reject) {
+//         resolve(value);
+//     });
+// };
 
-// Need it for Promises/A+ specifications
-syncio.util.promise.reject = function(reason) {
-    return new this(function(resolve, reject) {
-        reject(reason);
-    });
-};
-
+// syncio.util.promise.reject = function(reason) {
+//     return new this(function(resolve, reject) {
+//         reject(reason);
+//     });
+// };
