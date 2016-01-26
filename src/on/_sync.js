@@ -11,7 +11,7 @@ syncio._on.sync = function( user, response ) {
 
 
     // If the object is writable and the response has an object to merge
-    if ( user.writables[object_name] && typeof object_remote == 'object' ) {
+    if ( user.writables[object_id] && typeof object_remote == 'object' ) {
 
         syncio.util.merge( object_remote, object );
 
