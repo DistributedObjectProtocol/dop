@@ -16,7 +16,7 @@ syncio.on.connect = function( user_socket, request ) {
     // Setup server for new user
     this.users[ user.token ] = user;
 
-    response.push( syncio.protocol.connect, user.token );
+    response.push( syncio.protocol.fulfilled, user.token );
 
     if ( typeof this.options.stringify_params[syncio.stringify_function] == 'string' || 
          typeof this.options.stringify_params[syncio.stringify_undefined] == 'string' || 

@@ -14,7 +14,7 @@ syncio.on.call = function( user, request ) {
             var fn = syncio.util.get( syncio.objects[ object_id ].object, path );
             if ( typeof fn == 'function' ) {
 
-                response.push( request[1] );
+                response.push( syncio.protocol.fulfilled );
 
                 var params = request[3],
                 

@@ -9,17 +9,18 @@ syncio.protocol = {
     // Is possible send multiple requests in one message, just wrapping it in an Array
     // [[<request_one>, <action>, <params...>], [<request_two>, <action>, <params...>]]
 
-    // If the response have a number greater than -1 as second parameter and is the same value than the request, means the response it's fulfilled
-    // [-1234, 2, <params...>]
+    // If the response has a 0 as second parameter, means the response it's fulfilled. Any other value is an error
+    // [-1234, 0, <params...>]
 
-    // If the response have a second parameter defined as number less than 0 means is an error on any case of 
-    // the requests's bellow, The number of the error is negative so to get the corret code_error we must make it positive
-    // [-1234, -23]   -> -23 * -1 == code_error
-
-    // Also the error response could be custom if is an string
+    // Also the error response could be custom an string
     // [-1234, 'My custom message error']
 
+    // Sending the same request without parameters means a cancel/abort of the request
+    // [1234]
 
+
+
+    fulfilled: 0,
 
 
                         // Client
@@ -28,26 +29,25 @@ syncio.protocol = {
 
 
     request: 1,         // [ 1234, 1, [<params...>]]
-                        // [-1234, 1, [<params...>]]
+                        // [-1234, 0, [<params...>]]
 
 
     sync: 2,            // Server
                         // [ 1234, 2, <object_id>, <writable 0|1>, <data_object>, <name>]
-                        // [-1234, 2, <data_object_merged>]
+                        // [-1234, 0, <data_object_merged>]
 
 
     unsync: 3,          // [ 1234, 3, <object_id>]
-                        // [-1234, 3]
+                        // [-1234, 0]
 
 
     call: 4,            // [ 1234, 4, [<object_id>, 'path','path'], [<params...>]]
-                        // [-1234, 4, [<params...>]]
+                        // [-1234, 0, [<params...>]]
 
 
     set: 5,             // [ 1234, 5, [<object_id>, 'path','path'], 'value']              -> Server ->  If value is not defined then is a delete
                         // [ 1234, 5, [<object_id>, 'path','path'], 'oldvalue', 'value']  -> Client ->  Oldvalue is required only when the client send
-                        // [-1234, 5]
-
+                        // [-1234, 0]
 
 
 };
