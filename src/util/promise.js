@@ -78,35 +78,35 @@ syncio.util.promise = function( resolver ) {
 
         var iplus = i+1;
 
-        if ( typeof thens[i] == 'object' && typeof thens[i][this.type] == 'function' ) {
+        if ( typeof thens[i] == 'object' && typeof thens[i][that.type] == 'function' ) {
 
             try {
 
-                params = [thens[i][this.type].apply(
-                    ( thens[i][this.type].hasToGoUp ) ? this : scope, // 2.2.5 `onFulfilled` and `onRejected` must be called as functions (i.e. with no `this` value).
+                params = [thens[i][that.type].apply(
+                    ( thens[i][that.type].hasToGoUp ) ? that : scope, // 2.2.5 `onFulfilled` and `onRejected` must be called as functions (i.e. with no `that` value).
                     params
                 )];
 
-                if (this.type && !type)
-                    this.type = 0;
+                if (that.type && !type)
+                    that.type = 0;
 
             }
             catch (e) {
-                this.type = 1;
+                that.type = 1;
                 params = [e];
             }
 
 
 
             // 2.3.1. If promise and x refer to the same object, reject promise with a TypeError as the reason.
-            if (params[0] === this) {
-                this.type = 1;
+            if (params[0] === that) {
+                that.type = 1;
                 params[0] = new TypeError("Promise resolved by its own instance");
             }
 
 
             // 2.3.2. If x is a promise, adopt its state 
-            else if ( params[0] instanceof this.constructor ) {
+            else if ( params[0] instanceof that.constructor ) {
                 var goingup = function(){
                     that.type = this.type;
                     loop.call(that, iplus, scope, arguments);
@@ -127,7 +127,7 @@ syncio.util.promise = function( resolver ) {
                 } catch (e) {
                     // 2.3.3.2. If retrieving the property x.then results in a thrown exception e, reject promise with e as the reason.
                     params[0] = e;
-                    return this.loop.call(this, iplus, scope, params);
+                    return that.loop.call(that, iplus, scope, params);
                 }
 
                 if ( typeof then == 'function' ) {
@@ -138,26 +138,26 @@ syncio.util.promise = function( resolver ) {
                         // 2.3.3.3.1. If/when resolvePromise is called with a value y, run [[Resolve]](promise, y).
                         if (called) { return; }
                         called = true;
-                        return loop.call(this, iplus, scope, params);
+                        return loop.call(that, iplus, scope, params);
                     }
                     var rejectPromise = function(r) {
                     // console.log(22222)
                         // 2.3.3.3.2. If/when rejectPromise is called with a reason r, reject promise with r.
                         if (called) { return; }
                         called = true;
-                        this.type = 1;
-                        return loop.call(this, iplus, scope, params);
+                        that.type = 1;
+                        return loop.call(that, iplus, scope, params);
                     }
 
                     try {
-                        then.call(params[0], resolvePromise.bind(this), rejectPromise.bind(this));
+                        then.call(params[0], resolvePromise.bind(that), rejectPromise.bind(that));
                     } catch (e) { // 2.3.3.3.4. If calling then throws an exception e,
                         // console.log(333333)
                         // 2.3.3.3.4.1. If resolvePromise or rejectPromise have been called, ignore it.
                         if (called) { return; }
                         // 2.3.3.3.4.2. Otherwise, reject promise with e as the reason.
-                        this.type = 1;
-                        return loop.call(this, iplus, scope, params);
+                        that.type = 1;
+                        return loop.call(that, iplus, scope, params);
                     }
 
                 }
@@ -169,15 +169,14 @@ syncio.util.promise = function( resolver ) {
 
         // Next .then()
         if ( iplus < thens.length )
-            loop.call(this, iplus, scope, params);
-
+            loop(iplus, scope, params);
 
     }
 
 
     if ( typeof resolver == 'function' )
         resolver(
-            // this.resolve.bind(null) # 3.2 That is, in strict mode this will be undefined inside of them; in sloppy mode, it will be the global object.
+            // that.resolve.bind(null) # 3.2 That is, in strict mode that will be undefined inside of them; in sloppy mode, it will be the global object.
             that.resolve, 
             that.reject
         );
