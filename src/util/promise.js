@@ -49,7 +49,7 @@ syncio.util.promise = function( resolver ) {
         if (state === 3) return that;
         state = that.state = 1;
         type = that.type = 0;
-        loop.call(that, 0, this, arguments);
+        run(this, arguments);
     };
 
     this.reject = function() {
@@ -57,21 +57,24 @@ syncio.util.promise = function( resolver ) {
         if (state === 3) return that;
         state = that.state = 2;
         type = that.type = 1;
-        loop.call(that, 0, this, arguments);
+        run(this, arguments);
     };
 
-    // this.multiresolve = function() {
-    //     type = that.type = 0;
-    //     loop.call(that, 0, this, arguments);
-    // };
 
-    // this.multireject = function() {
-    //     type = that.type = 1;
-    //     loop.call(that, 0, this, arguments);
-    // };
+    function run( scope, params ) {
+        
+        if ( thens.length > 0 )
+            loop.call(that, 0, scope, params);
+
+        // If there is no thens added yet, we have to resolve/reject asynchronously
+        else
+            setTimeout(function() {
+                loop.call(that, 0, scope, params);
+            }, 0);
+    }
 
 
-    var loop = function( i, scope, params ) {
+    function loop( i, scope, params ) {
 
         var iplus = i+1;
 
@@ -168,17 +171,16 @@ syncio.util.promise = function( resolver ) {
         if ( iplus < thens.length )
             loop.call(this, iplus, scope, params);
 
-    };
+
+    }
 
 
     if ( typeof resolver == 'function' )
-        setTimeout(function(){
-            resolver(
-                // this.resolve.bind(null) # 3.2 That is, in strict mode this will be undefined inside of them; in sloppy mode, it will be the global object.
-                that.resolve, 
-                that.reject
-            );
-        }, 0);
+        resolver(
+            // this.resolve.bind(null) # 3.2 That is, in strict mode this will be undefined inside of them; in sloppy mode, it will be the global object.
+            that.resolve, 
+            that.reject
+        );
 
 };
 
