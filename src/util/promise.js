@@ -5,6 +5,7 @@ syncio.util.promise = function( resolver ) {
     var thens = [],
         state = 0, /* 0 = pending, 1 = fulfilled, 2 = rejected, 3 = completed/canceled */
         type,
+        onCompleted,
         that = this;
 
     this.state = state;
@@ -35,11 +36,8 @@ syncio.util.promise = function( resolver ) {
     };
 
 
-    this.completed = function( onCompleted ) {
-        that.onCompleted = function() {
-            state = that.state = 3;
-            onCompleted.apply(this, arguments);
-        };
+    this.completed = function( completedCallback ) {
+        onCompleted = completedCallback;
         return that;
     };
 
@@ -58,6 +56,12 @@ syncio.util.promise = function( resolver ) {
         state = that.state = 2;
         type = that.type = 1;
         run(this, arguments);
+    };
+
+    that.onCompleted = function() {
+        state = that.state = 3;
+        if ( typeof onCompleted == 'function' )
+            onCompleted.apply(this, arguments);
     };
 
 
