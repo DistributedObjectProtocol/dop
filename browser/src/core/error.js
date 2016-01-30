@@ -1,6 +1,6 @@
 
 
-syncio.error = {
+synko.error = {
 
     // REQUEST_UNIQUE: 'The id of the request should be unique (incrementing numericaly) for every request',
 

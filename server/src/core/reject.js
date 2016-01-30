@@ -1,7 +1,7 @@
 
 
-syncio.reject = function() {
+synko.reject = function() {
 
-    return syncio.response( 'reject', arguments );
+    return synko.response( 'reject', arguments );
 
 };

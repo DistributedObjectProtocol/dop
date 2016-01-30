@@ -1,13 +1,13 @@
 
 
-syncio.util.emitter = function() {
+synko.util.emitter = function() {
 
     this._events = {};
 
 };
 
-syncio.util.emitter.prototype.on =
-syncio.util.emitter.prototype.addListener = function( name, callback, once ) {
+synko.util.emitter.prototype.on =
+synko.util.emitter.prototype.addListener = function( name, callback, once ) {
 
     if ( typeof callback == 'function' ) {
 
@@ -27,8 +27,8 @@ syncio.util.emitter.prototype.addListener = function( name, callback, once ) {
 
 };
 
-syncio.util.emitter.prototype.once =
-syncio.util.emitter.prototype.addOnceListener = function( name, callback ) {
+synko.util.emitter.prototype.once =
+synko.util.emitter.prototype.addOnceListener = function( name, callback ) {
 
     return this.on( name, callback, true );
 
@@ -36,7 +36,7 @@ syncio.util.emitter.prototype.addOnceListener = function( name, callback ) {
 
 
 
-syncio.util.emitter.prototype.emit = function( name ) {
+synko.util.emitter.prototype.emit = function( name ) {
 
     if ( typeof this._events[name] == 'object' && this._events[name].length > 0 ) {
 
@@ -63,7 +63,7 @@ syncio.util.emitter.prototype.emit = function( name ) {
 
 
 
-syncio.util.emitter.prototype.removeListener = function( name, callback ) {
+synko.util.emitter.prototype.removeListener = function( name, callback ) {
 
     if ( typeof this._events[name] == 'object' && this._events[name].length > 0 ) {
 
@@ -90,7 +90,7 @@ syncio.util.emitter.prototype.removeListener = function( name, callback ) {
 /*
 name = 'T@!#asty ';
 emitter = new require('events').EventEmitter();
-emitter = new syncio.util.emitter();
+emitter = new synko.util.emitter();
 
 emitter.on(name, function(){
     console.log('AAA', arguments.length); 

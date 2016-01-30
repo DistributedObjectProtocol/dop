@@ -1,6 +1,6 @@
 
 
-syncio.ws = function( url, options, on ) {
+synko.ws = function( url, options, on ) {
 
     var domain_prefix = /(s?):\/\/([^\/]+)\/(.+)/.exec( url );
     var socket = new WebSocket('ws'+domain_prefix[1].toLocaleLowerCase()+'://'+domain_prefix[2].toLocaleLowerCase()+'/', domain_prefix[3]);
@@ -25,7 +25,7 @@ syncio.ws = function( url, options, on ) {
 
 };
 
-syncio.ws.name_connector = 'ws';
+synko.ws.name_connector = 'ws';
 
 if ( typeof WebSocket == 'function' )
-    syncio.ws.api = WebSocket;
+    synko.ws.api = WebSocket;

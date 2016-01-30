@@ -1,6 +1,6 @@
 
 
-syncio.stringify = function(data) {
+synko.stringify = function(data) {
 
     var that = this, tof;
 
@@ -11,7 +11,7 @@ syncio.stringify = function(data) {
         if (tof == 'undefined')
             return that.options.stringify_undefined;
 
-        else if (tof == 'function' && v.name !== syncio.name_remote_function)
+        else if (tof == 'function' && v.name !== synko.name_remote_function)
             return that.options.stringify_function;
 
         else if (tof == 'object' && v instanceof RegExp)
@@ -41,9 +41,9 @@ syncio.stringify = function(data) {
 // delete types[3];
 
 // instance = {stringify_function:'~F', stringify_undefined:'~U', stringify_regexp:'~R'}
-// stringify=syncio.stringify.bind(instance);
+// stringify=synko.stringify.bind(instance);
 // to = stringify(types);
-// parse=syncio.parse.bind(instance);
+// parse=synko.parse.bind(instance);
 // from = parse(to);
 
 

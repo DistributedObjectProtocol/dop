@@ -1,6 +1,6 @@
 
 
-syncio.SockJS = function( url, options, on ) {
+synko.SockJS = function( url, options, on ) {
 
     var socket = new SockJS( url, undefined, options );
 
@@ -24,10 +24,10 @@ syncio.SockJS = function( url, options, on ) {
 
 };
 
-syncio.SockJS.name_connector = 'SockJS';
+synko.SockJS.name_connector = 'SockJS';
 
 if ( typeof SockJS == 'function' )
-    syncio.SockJS.api = SockJS;
+    synko.SockJS.api = SockJS;
 
 
 

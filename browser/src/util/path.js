@@ -1,11 +1,11 @@
 
 // http://jsperf.com/stringify-path-vs-custom-path/2 - http://jsperf.com/stringify-path-vs-custom-path/3
-syncio.util.path = function (obj, callback) {
+synko.util.path = function (obj, callback) {
 
-    syncio.util.path.recursive.call({circular:[]}, obj, callback, []);
+    synko.util.path.recursive.call({circular:[]}, obj, callback, []);
 
 };
-syncio.util.path.recursive = function (obj, callback, path ) {
+synko.util.path.recursive = function (obj, callback, path ) {
 
     for (var key in obj) {
 
@@ -23,7 +23,7 @@ syncio.util.path.recursive = function (obj, callback, path ) {
 
                 this.circular.push(obj[key]);
 
-                syncio.util.path.recursive.call(this, obj[key], callback, path );
+                synko.util.path.recursive.call(this, obj[key], callback, path );
 
             }
 
@@ -38,7 +38,7 @@ syncio.util.path.recursive = function (obj, callback, path ) {
 
 
 // // http://jsperf.com/stringify-clousured-or-not - 
-// syncio.stringify_path = function(obj, callback) {
+// synko.stringify_path = function(obj, callback) {
 
 //     var path = [];
 
@@ -46,7 +46,7 @@ syncio.util.path.recursive = function (obj, callback, path ) {
 
 //         if (v !== obj) {
 
-//             while ( path.length>0 && syncio.util.get(obj, path) !== this )
+//             while ( path.length>0 && synko.util.get(obj, path) !== this )
 //                 path.pop();
 
 //             path.push(k);

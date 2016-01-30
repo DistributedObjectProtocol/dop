@@ -1,25 +1,25 @@
 
 
-syncio.on.close = function( user_socket ){
+synko.on.close = function( user_socket ){
 
-    var user = this.users[ user_socket[syncio.key_user_token] ]
+    var user = this.users[ user_socket[synko.key_user_token] ]
 
-    if ( typeof user_socket[syncio.key_user_token] == 'string' ) {
+    if ( typeof user_socket[synko.key_user_token] == 'string' ) {
 
         var object_name, object_id;
 
         for ( object_name in user.objects ) {
 
-            object_id = user.objects[object_name][syncio.key_object_path][0];
+            object_id = user.objects[object_name][synko.key_object_path][0];
 
             // Remove object
-            if ( syncio.objects[ object_id ].subscribed == 1) // The object only have one user subscribed
-                delete syncio.objects[ object_id ];
+            if ( synko.objects[ object_id ].subscribed == 1) // The object only have one user subscribed
+                delete synko.objects[ object_id ];
 
             // Remove user listener from the object
             else {
-                syncio.objects[ object_id ].subscribed--;
-                delete syncio.objects[ object_id ].users[ user.token ];
+                synko.objects[ object_id ].subscribed--;
+                delete synko.objects[ object_id ].users[ user.token ];
             }
 
         }

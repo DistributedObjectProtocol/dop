@@ -1,6 +1,6 @@
 
 
-syncio.on.error = function( error ) {
+synko.on.error = function( error ) {
 
     this.emit( 'error', error );
 

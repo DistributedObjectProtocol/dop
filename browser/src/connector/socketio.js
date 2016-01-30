@@ -1,6 +1,6 @@
 
 
-syncio.socketio = function( url, options, on ) {
+synko.socketio = function( url, options, on ) {
 
     var socket = io( url );
 
@@ -24,7 +24,7 @@ syncio.socketio = function( url, options, on ) {
 
 };
 
-syncio.socketio.name_connector = 'socketio';
+synko.socketio.name_connector = 'socketio';
 
 if ( typeof io == 'function' )
-    syncio.socketio.api = io;
+    synko.socketio.api = io;

@@ -1,10 +1,10 @@
 
 
-syncio.response = function( action, params ) {
+synko.response = function( action, params ) {
 
     var promise;
 
-    return syncio.util.arguments( params, function( args ) {
+    return synko.util.arguments( params, function( args ) {
 
         promise = args[args.length-1];
 
@@ -20,19 +20,19 @@ syncio.response = function( action, params ) {
 
 };
 
-syncio.response.resolve = function() {
+synko.response.resolve = function() {
 
     this.response.push( Array.prototype.slice.call( arguments, 0 ) );
 
-    this.user.send( syncio.stringify.call(this.user, this.response ) );
+    this.user.send( synko.stringify.call(this.user, this.response ) );
 
 };
 
-syncio.response.reject = function( error ) {
+synko.response.reject = function( error ) {
 
     this.response[1] = error;
 
-    this.user.send( syncio.stringify.call(this.user, this.response ) );
+    this.user.send( synko.stringify.call(this.user, this.response ) );
 
 };
 
@@ -48,7 +48,7 @@ syncio.response.reject = function( error ) {
 
 //     return (function() {
 //         return (function() {
-//              return syncio.resolve( a*b );
+//              return synko.resolve( a*b );
 //         })();
 //     })();
 
@@ -58,14 +58,14 @@ syncio.response.reject = function( error ) {
 // var o={
 //     reject: function(){},
 //     response: {},
-//     resolve: function syncio_resolve( result ){
+//     resolve: function synko_resolve( result ){
 //         console.log('resolved1', result);
 //     }
 // };
 // var o2={
 //     reject: function(){},
 //     response: {},
-//     resolve: function syncio_resolve( result ){
+//     resolve: function synko_resolve( result ){
 //         console.log('resolved2', result);
 //     }
 // };

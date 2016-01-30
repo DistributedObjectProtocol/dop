@@ -1,6 +1,6 @@
 
 
-syncio.protocol = {
+synko.protocol = {
 
 
     // [<request_id>, <action>, <params...>]
@@ -53,8 +53,8 @@ syncio.protocol = {
 };
 
 
-syncio.protocol_keys = {};
-for (var key in syncio.protocol)
-    syncio.protocol_keys[ syncio.protocol[key] ] = key;
+synko.protocol_keys = {};
+for (var key in synko.protocol)
+    synko.protocol_keys[ synko.protocol[key] ] = key;
 
 

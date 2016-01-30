@@ -1,11 +1,11 @@
 
 // Send a new request
-syncio[syncio.side].prototype.request = function() {
+synko[synko.side].prototype.request = function() {
 
-    var data = [ syncio.protocol.request, Array.prototype.slice.call(arguments, 0) ],
-        request = syncio.request.call( this.syncio, data );
+    var data = [ synko.protocol.request, Array.prototype.slice.call(arguments, 0) ],
+        request = synko.request.call( this.synko, data );
 
-    this.send( syncio.stringify.call(this, request.data ) );
+    this.send( synko.stringify.call(this, request.data ) );
 
     return request.promise;
     

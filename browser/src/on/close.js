@@ -1,6 +1,6 @@
 
 
-syncio.on.close = function() {
+synko.on.close = function() {
 
     this.emit( 'close' );
 

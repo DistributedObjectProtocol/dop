@@ -1,42 +1,42 @@
 
 
-syncio.api = function( options ) {
+synko.api = function( options ) {
 
-    this.options = (syncio.util.typeof(options) == 'object') ? options : {};
+    this.options = (synko.util.typeof(options) == 'object') ? options : {};
     this.options.stringify_params = {};
 
     if (typeof this.options.connector != 'function')
-        this.options.connector = syncio.ws;
+        this.options.connector = synko.ws;
 
     if (typeof this.options.namespace != 'string')
-        this.options.namespace = '/' + syncio.name;
+        this.options.namespace = '/' + synko.name;
 
 
     if (typeof this.options.stringify_function != 'string')
-        this.options.stringify_function = syncio.stringify_function;
+        this.options.stringify_function = synko.stringify_function;
     else
-        this.options.stringify_params[syncio.stringify_function] = this.options.stringify_function;
+        this.options.stringify_params[synko.stringify_function] = this.options.stringify_function;
 
     if (typeof this.options.stringify_undefined != 'string')
-        this.options.stringify_undefined = syncio.stringify_undefined;
+        this.options.stringify_undefined = synko.stringify_undefined;
     else
-        this.options.stringify_params[syncio.stringify_undefined] = this.options.stringify_undefined;
+        this.options.stringify_params[synko.stringify_undefined] = this.options.stringify_undefined;
 
     if (typeof this.options.stringify_regexp != 'string')
-        this.options.stringify_regexp = syncio.stringify_regexp;
+        this.options.stringify_regexp = synko.stringify_regexp;
     else
-        this.options.stringify_params[syncio.stringify_regexp] = this.options.stringify_regexp;
+        this.options.stringify_params[synko.stringify_regexp] = this.options.stringify_regexp;
 
 
 
 
     var on = {
 
-        open: syncio.on.open.bind( this ),
+        open: synko.on.open.bind( this ),
 
-        message: syncio.on.message.bind( this ),
+        message: synko.on.message.bind( this ),
 
-        close: syncio.on.close.bind( this )
+        close: synko.on.close.bind( this )
 
     };
 
@@ -52,10 +52,10 @@ syncio.api = function( options ) {
     
     this.connector = this[this.options.connector.name_connector] = this.options.connector( this.options, on );
 
-    this.observe = syncio.observe.bind(this);
+    this.observe = synko.observe.bind(this);
 
 };
 
 
-syncio.api.prototype = Object.create( require('events').EventEmitter.prototype );
+synko.api.prototype = Object.create( require('events').EventEmitter.prototype );
 

@@ -1,6 +1,6 @@
 
 
-syncio.on.reject = function( user, response ) {
+synko.on.reject = function( user, response ) {
 
     var request_id = response[0]*-1;
     

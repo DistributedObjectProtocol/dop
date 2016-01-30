@@ -1,15 +1,15 @@
 'strict';
 
-var syncio = { 
+var synko = { 
     version: '0.6.0',
-    name: 'syncio',
+    name: 'synko',
     side: 'api',
 
     key_object_path: '~PATH',
     stringify_function: '~F',
     stringify_undefined: '~U',
     stringify_regexp: '~R',
-    name_remote_function: '$syncio_remote_function',
+    name_remote_function: '$synko_remote_function',
 
     util: {},
     on: {},
@@ -20,4 +20,4 @@ var syncio = {
 
 
 if ( typeof module == 'object' && module )
-    module.exports = syncio;
+    module.exports = synko;

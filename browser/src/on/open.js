@@ -1,10 +1,10 @@
 
 
-syncio.on.open = function() {
+synko.on.open = function() {
 
-    var request = syncio.request.call( this, [] );
+    var request = synko.request.call( this, [] );
 
-    request.data.push( syncio.protocol.connect );
+    request.data.push( synko.protocol.connect );
 
     this.send( JSON.stringify( request.data ) );
 

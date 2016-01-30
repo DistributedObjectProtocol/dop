@@ -1,15 +1,15 @@
 
 // https://github.com/websockets/ws
-syncio.ws = function ( options, on ) {
+synko.ws = function ( options, on ) {
 
     if (typeof options.httpServer != 'undefined')
         options.server = options.httpServer;
 
     else if (typeof options.port != 'number')
-        options.port = syncio.port;
+        options.port = synko.port;
 
 
-    var socket_server = new syncio.ws.api.Server( options );
+    var socket_server = new synko.ws.api.Server( options );
 
     socket_server.on('connection', function( user ){
 
@@ -30,8 +30,8 @@ syncio.ws = function ( options, on ) {
 
 };
 
-syncio.ws.api = require('ws');
-syncio.ws.name_connector = 'ws';
+synko.ws.api = require('ws');
+synko.ws.name_connector = 'ws';
 
 
 

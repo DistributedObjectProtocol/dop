@@ -1,8 +1,8 @@
 
 
-module.exports = syncio = {
+module.exports = synko = {
     version: '0.6.0',
-    name: 'syncio',
+    name: 'synko',
     side: 'user',
     port: 4444,
 
@@ -11,7 +11,7 @@ module.exports = syncio = {
     stringify_function: '~F',
     stringify_undefined: '~U',
     stringify_regexp: '~R',
-    name_remote_function: '$syncio_remote_function',
+    name_remote_function: '$synko_remote_function',
 
     util: {},
     on: {},

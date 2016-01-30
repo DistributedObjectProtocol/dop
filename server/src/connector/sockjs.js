@@ -1,13 +1,13 @@
 
 // https://github.com/sockjs/sockjs-node
-syncio.SockJS = function ( options, on ) {
+synko.SockJS = function ( options, on ) {
 
     if (typeof options.httpServer == 'undefined')
         throw Error('The connector SockJS needs the parameter httpServer passed in the options');
 
     options.prefix = options.namespace;
 
-    var socket_server = syncio.SockJS.api.createServer( options );
+    var socket_server = synko.SockJS.api.createServer( options );
 
     socket_server.on('connection', function(user) {
 
@@ -19,7 +19,7 @@ syncio.SockJS = function ( options, on ) {
             on.close( user );
         });
 
-        user.send = syncio.SockJS.send;
+        user.send = synko.SockJS.send;
 
         on.open( user );
 
@@ -31,10 +31,10 @@ syncio.SockJS = function ( options, on ) {
 
 };
 
-syncio.SockJS.api = require('sockjs');
-syncio.SockJS.name_connector = 'SockJS';
+synko.SockJS.api = require('sockjs');
+synko.SockJS.name_connector = 'SockJS';
 
-syncio.SockJS.send = function( data ) {
+synko.SockJS.send = function( data ) {
     this.write( data );
 };
 
@@ -42,11 +42,11 @@ syncio.SockJS.send = function( data ) {
 
 /*
 
-Url-Server: /syncio
-Url-Client: /syncio
+Url-Server: /synko
+Url-Client: /synko
 
-Url-Server: /syncio
-Url-Client: http://localhost:9999/syncio
+Url-Server: /synko
+Url-Client: http://localhost:9999/synko
 
 */
 

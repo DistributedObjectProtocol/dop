@@ -1,6 +1,6 @@
 
 
-syncio.parse = function parse(data) {
+synko.parse = function parse(data) {
 
     var that = this;
 
@@ -26,4 +26,4 @@ syncio.parse = function parse(data) {
     });
 
 };
-syncio.parse.parse_type_date = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/; //http://jsperf.com/serializing-date-on-json-parse
+synko.parse.parse_type_date = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/; //http://jsperf.com/serializing-date-on-json-parse

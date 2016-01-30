@@ -1,7 +1,7 @@
 
 
-syncio.create = function( options ) {
+synko.create = function( options ) {
 
-    return new syncio.api( options );
+    return new synko.api( options );
 
 };

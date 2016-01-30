@@ -1,7 +1,7 @@
 
 
-syncio.resolve = function() {
+synko.resolve = function() {
 
-    return syncio.response( 'resolve', arguments );
+    return synko.response( 'resolve', arguments );
 
 };

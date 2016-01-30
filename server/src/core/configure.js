@@ -1,24 +1,24 @@
 
 // Configure a new object with the remote callbacks ~PATH and observe if is observable
-syncio.configure = function( object, path, isobservable ) {
+synko.configure = function( object, path, isobservable ) {
 
     var that = this;
 
-    Object.defineProperty( object, syncio.key_object_path, {value: path} );
+    Object.defineProperty( object, synko.key_object_path, {value: path} );
 
     // if ( isobservable )
         // Object.observe( object, this.observe );
 
-    syncio.util.path( object, function(subpath, value, key, obj ) {
+    synko.util.path( object, function(subpath, value, key, obj ) {
 
         var newpath = path.concat(subpath);
 
         if ( value === that.options.stringify_function )
-            obj[key] = syncio.create_remote_function.call( that, newpath );
+            obj[key] = synko.create_remote_function.call( that, newpath );
 
-        if ( value !== null && typeof value == 'object' && typeof value[syncio.key_object_path] == 'undefined' ) {
+        if ( value !== null && typeof value == 'object' && typeof value[synko.key_object_path] == 'undefined' ) {
         
-            Object.defineProperty( value, syncio.key_object_path, {value: newpath} );
+            Object.defineProperty( value, synko.key_object_path, {value: newpath} );
             
             // if ( isobservable )
                 // Object.observe( value, that.observe );
@@ -34,7 +34,7 @@ syncio.configure = function( object, path, isobservable ) {
 
 /*
 
-syncio.api.prototype.observe = function(changes) {
+synko.api.prototype.observe = function(changes) {
 
     for (var i=0; i<changes.length; i++) {
         
@@ -46,7 +46,7 @@ syncio.api.prototype.observe = function(changes) {
             changes[i].object[changes[i].name] !== null &&
             typeof changes[i].object[changes[i].name] == 'object'
         ) {
-            syncio.observe(changes[i].object[changes[i].name], tcallback_observer, path );
+            synko.observe(changes[i].object[changes[i].name], tcallback_observer, path );
         }
 
         console.log( changes[i].type, path, changes[i].oldValue );
@@ -61,7 +61,7 @@ syncio.api.prototype.observe = function(changes) {
 
 // setTimeout(function(){
 
-MYSERVE = new syncio.instance();
+MYSERVE = new synko.instance();
 MYOBJECT = {
     foo: 0,
     bar: 1,
@@ -72,7 +72,7 @@ MYOBJECT = {
     }
 };
 
-syncio.observe(MYOBJECT, MYSERVE.observe.bind(MYSERVE), [12345] );
+synko.observe(MYOBJECT, MYSERVE.observe.bind(MYSERVE), [12345] );
 
 MYOBJECT.obj.arr[2] = 'ONE';
 MYOBJECT.obj.arr = 'TWO';
