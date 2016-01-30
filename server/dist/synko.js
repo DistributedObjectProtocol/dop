@@ -2,7 +2,7 @@
 
 
 
-//////////  src/syncio.js
+//////////  server/src/synko.js
 
 
 module.exports = syncio = {
@@ -32,28 +32,37 @@ module.exports = syncio = {
 
 
 
-//////////  src/core/api.js
+//////////  server/src/core/api.js
 
 
 syncio.api = function( options ) {
 
-    if (syncio.util.typeof(options) != 'object')
-        options = {};
+    this.options = (syncio.util.typeof(options) == 'object') ? options : {};
+    this.options.stringify_params = {};
 
-    if (typeof options.connector != 'function')
-        options.connector = syncio.ws;
+    if (typeof this.options.connector != 'function')
+        this.options.connector = syncio.ws;
 
-    if (typeof options.namespace != 'string')
-        options.namespace = '/' + syncio.name;
+    if (typeof this.options.namespace != 'string')
+        this.options.namespace = '/' + syncio.name;
 
-    if (typeof options.stringify_function != 'string')
-        options.stringify_function = syncio.stringify_function;
 
-    if (typeof options.stringify_undefined != 'string')
-        options.stringify_undefined = syncio.stringify_undefined;
+    if (typeof this.options.stringify_function != 'string')
+        this.options.stringify_function = syncio.stringify_function;
+    else
+        this.options.stringify_params[syncio.stringify_function] = this.options.stringify_function;
 
-    if (typeof options.stringify_regexp != 'string')
-        options.stringify_regexp = syncio.stringify_regexp;
+    if (typeof this.options.stringify_undefined != 'string')
+        this.options.stringify_undefined = syncio.stringify_undefined;
+    else
+        this.options.stringify_params[syncio.stringify_undefined] = this.options.stringify_undefined;
+
+    if (typeof this.options.stringify_regexp != 'string')
+        this.options.stringify_regexp = syncio.stringify_regexp;
+    else
+        this.options.stringify_params[syncio.stringify_regexp] = this.options.stringify_regexp;
+
+
 
 
     var on = {
@@ -75,12 +84,8 @@ syncio.api = function( options ) {
 
     this.requests = {};
     this.requests_inc = 1;
-
-    this.stringify_function = options.stringify_function;
-    this.stringify_undefined = options.stringify_undefined;
-    this.stringify_regexp = options.stringify_regexp;
     
-    this.connector = this[options.connector.name_connector] = options.connector( options, on );
+    this.connector = this[this.options.connector.name_connector] = this.options.connector( this.options, on );
 
     this.observe = syncio.observe.bind(this);
 
@@ -94,7 +99,7 @@ syncio.api.prototype = Object.create( require('events').EventEmitter.prototype )
 
 
 
-//////////  src/core/configure.js
+//////////  server/src/core/configure.js
 
 // Configure a new object with the remote callbacks ~PATH and observe if is observable
 syncio.configure = function( object, path, isobservable ) {
@@ -110,7 +115,7 @@ syncio.configure = function( object, path, isobservable ) {
 
         var newpath = path.concat(subpath);
 
-        if ( value === that.stringify_function )
+        if ( value === that.options.stringify_function )
             obj[key] = syncio.create_remote_function.call( that, newpath );
 
         if ( value !== null && typeof value == 'object' && typeof value[syncio.key_object_path] == 'undefined' ) {
@@ -189,7 +194,7 @@ setTimeout(function(){
 
 
 
-//////////  src/core/create.js
+//////////  server/src/core/create.js
 
 
 syncio.create = function( options ) {
@@ -201,7 +206,7 @@ syncio.create = function( options ) {
 
 
 
-//////////  src/core/create_remote_function.js
+//////////  server/src/core/create_remote_function.js
 
 // Create a remote function
 syncio.create_remote_function = function ( path ) {
@@ -223,7 +228,7 @@ syncio.create_remote_function = function ( path ) {
 
 
 
-//////////  src/core/error.js
+//////////  server/src/core/error.js
 
 
 syncio.error = {
@@ -235,13 +240,15 @@ syncio.error = {
     SYNC_NO_INNER: 'Syncio can not sync objects that are inside into another objects already synced',
 
     REJECT_CALL_NOT_EXISTS: 'You are trying to call a function does not exists',
+    REJECT_SET_NOT_EXISTS: 'You are trying to set a property does not exists',
+    REJECT_SET_NOT_WRITABLE: 'This object is not writable'
 
 };
 
 
 
 
-//////////  src/core/observe.js
+//////////  server/src/core/observe.js
 
 
 syncio.observe = function(changes) {
@@ -271,7 +278,7 @@ syncio.observe = function(changes) {
 
 
 
-//////////  src/core/osp.js
+//////////  server/src/core/osp.js
 
 
 syncio.osp = function( user, messages ) {
@@ -303,7 +310,9 @@ syncio.osp = function( user, messages ) {
 
                 if ( this.requests[ request_id ] !== null && typeof this.requests[ request_id ] == 'object' ) {
 
-                    if ( typeof syncio._on[syncio.protocol_keys[action]] == 'function' )
+                    action = this.requests[ request_id ].data[1];
+
+                    if ( request[1] === 0 )
                         syncio._on[syncio.protocol_keys[action]].call( this, user, request );
 
                     else
@@ -326,7 +335,7 @@ syncio.osp = function( user, messages ) {
 
 
 
-//////////  src/core/parse.js
+//////////  server/src/core/parse.js
 
 
 syncio.parse = function parse(data) {
@@ -337,14 +346,14 @@ syncio.parse = function parse(data) {
 
         if ( typeof v == 'string' ) {
 
-            if ( v == that.stringify_undefined )
+            if ( v == that.options.stringify_undefined )
                 return undefined;
 
             else if ( parse.parse_type_date.exec(v) )
                 return new Date(v);
 
-            else if ( v.substr(0, that.stringify_regexp.length) == that.stringify_regexp ) {
-                var split = /\/(.+)\/([gimuy]{0,5})/.exec(v.substr(that.stringify_regexp.length)); // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/RegExp
+            else if ( v.substr(0, that.options.stringify_regexp.length) == that.options.stringify_regexp ) {
+                var split = /\/(.+)\/([gimuy]{0,5})/.exec(v.substr(that.options.stringify_regexp.length)); // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/RegExp
                 return new RegExp(split[1], split[2]);
             }
 
@@ -360,7 +369,7 @@ syncio.parse.parse_type_date = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/; //
 
 
 
-//////////  src/core/protocol.js
+//////////  server/src/core/protocol.js
 
 
 syncio.protocol = {
@@ -372,47 +381,45 @@ syncio.protocol = {
     // Is possible send multiple requests in one message, just wrapping it in an Array
     // [[<request_one>, <action>, <params...>], [<request_two>, <action>, <params...>]]
 
-    // If the response have a number greater than -1 as second parameter and is the same value than the request, means the response it's fulfilled
-    // [-1234, 2, <params...>]
+    // If the response has a 0 as second parameter, means the response it's fulfilled. Any other value is an error
+    // [-1234, 0, <params...>]
 
-    // If the response have a second parameter defined as number less than 0 means is an error on any case of 
-    // the requests's bellow, The number of the error is negative so to get the corret code_error we must make it positive
-    // [-1234, -23]   -> -23 * -1 == code_error
-
-    // Also the error response could be custom if is an string
+    // Also the error response could be custom an string
     // [-1234, 'My custom message error']
 
-    // You can always pass more extra parameters on any requests
-    // [ 1234, 2, <user_token>, <extra_params...>]
+    // Sending the same request without parameters means a cancel/abort of the request
+    // [1234]
 
+
+
+    fulfilled: 0,
 
 
                         // Client
     connect: 0,         // [ 1234, 0]
-                        // [-1234, 0, <user_token>, '~F']
+                        // [-1234, 0, <user_token>, {'~F':'$custom_F','~U':'$custom_U','~R':'$custom_R'}]
 
 
     request: 1,         // [ 1234, 1, [<params...>]]
-                        // [-1234, 1, [<params...>]]
+                        // [-1234, 0, [<params...>]]
 
 
     sync: 2,            // Server
                         // [ 1234, 2, <object_id>, <writable 0|1>, <data_object>, <name>]
-                        // [-1234, 2, <data_object_merged>]
+                        // [-1234, 0, <data_object_merged>]
 
 
     unsync: 3,          // [ 1234, 3, <object_id>]
-                        // [-1234, 3]
+                        // [-1234, 0]
 
 
     call: 4,            // [ 1234, 4, [<object_id>, 'path','path'], [<params...>]]
-                        // [-1234, 4, [<params...>]]
+                        // [-1234, 0, [<params...>]]
 
 
     set: 5,             // [ 1234, 5, [<object_id>, 'path','path'], 'value']              -> Server ->  If value is not defined then is a delete
                         // [ 1234, 5, [<object_id>, 'path','path'], 'oldvalue', 'value']  -> Client ->  Oldvalue is required only when the client send
-                        // [-1234, 5]
-
+                        // [-1234, 0]
 
 
 };
@@ -428,7 +435,7 @@ for (var key in syncio.protocol)
 
 
 
-//////////  src/core/reject.js
+//////////  server/src/core/reject.js
 
 
 syncio.reject = function() {
@@ -440,7 +447,7 @@ syncio.reject = function() {
 
 
 
-//////////  src/core/request.js
+//////////  server/src/core/request.js
 
 // Create a new request
 syncio.request = function ( request_data ) {
@@ -459,7 +466,7 @@ syncio.request = function ( request_data ) {
 
 
 
-//////////  src/core/resolve.js
+//////////  server/src/core/resolve.js
 
 
 syncio.resolve = function() {
@@ -471,7 +478,7 @@ syncio.resolve = function() {
 
 
 
-//////////  src/core/response.js
+//////////  server/src/core/response.js
 
 
 syncio.response = function( action, params ) {
@@ -552,7 +559,7 @@ syncio.response.reject = function( error ) {
 
 
 
-//////////  src/core/stringify.js
+//////////  server/src/core/stringify.js
 
 
 syncio.stringify = function(data) {
@@ -564,13 +571,13 @@ syncio.stringify = function(data) {
         tof = typeof v;
 
         if (tof == 'undefined')
-            return that.stringify_undefined;
+            return that.options.stringify_undefined;
 
         else if (tof == 'function' && v.name !== syncio.name_remote_function)
-            return that.stringify_function;
+            return that.options.stringify_function;
 
         else if (tof == 'object' && v instanceof RegExp)
-            return that.stringify_regexp + v.toString();
+            return that.options.stringify_regexp + v.toString();
 
         return v;
 
@@ -615,7 +622,7 @@ syncio.stringify = function(data) {
 
 
 
-//////////  src/core/user.js
+//////////  server/src/core/user.js
 
 
 syncio.user = function( syncio, user_socket ){
@@ -633,7 +640,7 @@ syncio.user = function( syncio, user_socket ){
 
 
 
-//////////  src/api/call.js
+//////////  server/src/api/call.js
 
 // Send a new request
 syncio.api.prototype.call = function( path, params ) {
@@ -659,34 +666,34 @@ syncio.api.prototype.call = function( path, params ) {
 
 
 
-//////////  src/api/remote.js
+//////////  server/src/api/remote.js
 
 // Useful to create remote functions before the sync: myobject = {remotefun: myserver.remote()};
 syncio.api.prototype.remote = function() {
-    return this.stringify_function;
+    return this.options.stringify_function;
 };
 
 
 
 
-//////////  src/on/_call.js
+//////////  server/src/on/_call.js
 
 
 syncio._on.call = function( user, response ) {
 
     var request_id = response[0]*-1;
     
-    if (this.requests[ request_id ].users === 1 )
-        this.requests[ request_id ].promise.resolve.apply( user, response[2] );
-    else
-        this.requests[ request_id ].promise.multiresolve.apply( user, response[2] );
+    this.requests[ request_id ].promise.resolve.apply( user, response[2] );
+
+    if ( this.requests[ request_id ].users === 1 && typeof this.requests[ request_id ].promise.onCompleted == 'function' )
+        this.requests[ request_id ].promise.onCompleted();
 
 };
 
 
 
 
-//////////  src/on/_request.js
+//////////  server/src/on/_request.js
 
 
 syncio._on.request = function( user, response ) {
@@ -698,7 +705,7 @@ syncio._on.request = function( user, response ) {
 
 
 
-//////////  src/on/_sync.js
+//////////  server/src/on/_sync.js
 
 
 syncio._on.sync = function( user, response ) {
@@ -712,7 +719,7 @@ syncio._on.sync = function( user, response ) {
 
 
     // If the object is writable and the response has an object to merge
-    if ( user.writables[object_name] && typeof object_remote == 'object' ) {
+    if ( user.writables[object_id] && typeof object_remote == 'object' ) {
 
         syncio.util.merge( object_remote, object );
 
@@ -729,7 +736,7 @@ syncio._on.sync = function( user, response ) {
 
 
 
-//////////  src/on/call.js
+//////////  server/src/on/call.js
 
 
 syncio.on.call = function( user, request ) {
@@ -746,7 +753,7 @@ syncio.on.call = function( user, request ) {
             var fn = syncio.util.get( syncio.objects[ object_id ].object, path );
             if ( typeof fn == 'function' ) {
 
-                response.push( request[1] );
+                response.push( syncio.protocol.fulfilled );
 
                 var params = request[3],
                 
@@ -772,16 +779,16 @@ syncio.on.call = function( user, request ) {
 
 
 
-//////////  src/on/close.js
+//////////  server/src/on/close.js
 
 
 syncio.on.close = function( user_socket ){
 
+    var user = this.users[ user_socket[syncio.key_user_token] ]
+
     if ( typeof user_socket[syncio.key_user_token] == 'string' ) {
 
-        var object_name, object_id, user = this.users[ user_socket[syncio.key_user_token] ];
-
-        this.emit( 'close', user );
+        var object_name, object_id;
 
         for ( object_name in user.objects ) {
 
@@ -799,17 +806,21 @@ syncio.on.close = function( user_socket ){
 
         }
 
+        this.emit( 'disconnect', user );
+
         // Remove user
         delete this.users[ user.token ];
 
     }
+
+    this.emit( 'close', user_socket );
 
 };
 
 
 
 
-//////////  src/on/connect.js
+//////////  server/src/on/connect.js
 
 
 syncio.on.connect = function( user_socket, request ) {
@@ -828,12 +839,13 @@ syncio.on.connect = function( user_socket, request ) {
     // Setup server for new user
     this.users[ user.token ] = user;
 
-    response.push( syncio.protocol.connect, user.token );
+    response.push( syncio.protocol.fulfilled, user.token );
 
-    if ( this.stringify_function !== syncio.stringify_function )
-        response.push( this.stringify_function );
+    if ( typeof this.options.stringify_params[syncio.stringify_function] == 'string' || 
+         typeof this.options.stringify_params[syncio.stringify_undefined] == 'string' || 
+         typeof this.options.stringify_params[syncio.stringify_regexp] == 'string'  )
+        response.push( this.options.stringify_params );
     
-
     this.emit( 'connect', user, request, response );
 
     user.send( JSON.stringify( response ) );
@@ -843,7 +855,7 @@ syncio.on.connect = function( user_socket, request ) {
 
 
 
-//////////  src/on/message.js
+//////////  server/src/on/message.js
 
 
 syncio.on.message = function( user_socket, message_raw ) {
@@ -875,7 +887,7 @@ syncio.on.message = function( user_socket, message_raw ) {
 
 
 
-//////////  src/on/open.js
+//////////  server/src/on/open.js
 
 
 syncio.on.open = function( user_socket ){
@@ -887,7 +899,7 @@ syncio.on.open = function( user_socket ){
 
 
 
-//////////  src/on/reject.js
+//////////  server/src/on/reject.js
 
 
 syncio.on.reject = function( user, response ) {
@@ -905,12 +917,12 @@ syncio.on.reject = function( user, response ) {
 
 
 
-//////////  src/on/request.js
+//////////  server/src/on/request.js
 
 
 syncio.on.request = function( user, request ) {
 
-    var response = [ request[0] * -1, request[1] ];
+    var response = [ request[0] * -1, syncio.protocol.fulfilled ];
 
     var promise = { request: request, response: response, user: user };
     promise.resolve = syncio.response.resolve.bind( promise );
@@ -927,54 +939,70 @@ syncio.on.request = function( user, request ) {
 
 
 
-//////////  src/on/set.js
+//////////  server/src/on/set.js
 
 
 syncio.on.set = function( user, request ) {
     
-    console.log('SET',request );
-    var obj = syncio.objects[request[2][0]].object;
-    console.log( syncio.util.get(obj, request[2].slice(1) )  )
+    var response = [ request[0] * -1 ],
+        object_id = request[2][0],
+        obj = syncio.objects[object_id].object;
 
-    var response = [ request[0] * -1 ];
+    // If the object is writable by the user
+    if ( user.writables[object_id] ) {
 
-    // if (syncio.util.typeof( request[2] ) == 'array' ) {
-        
-    //     var path = request[2],
-    //         object_id = path.shift();
-    
-    //     if ( typeof syncio.objects[ object_id ] == 'object' && syncio.objects[ object_id ].users[user.token] === user ) {
+        var exists = true,
+            oldValueRemote = request[3],
+            oldValue = syncio.util.get(obj, request[2].slice(1), function() { 
+                exists = false;
+                return false; 
+            });
+
+
+        // console.log('exists:', exists, request, oldValue)
+
+        // If the path exists
+        if ( exists ) {
             
-    //         var fn = syncio.util.get( syncio.objects[ object_id ].object, path );
-    //         if ( typeof fn == 'function' ) {
+            var change = false;
+            var newValue = request[4];
+            var tof = syncio.util.typeof( oldValue );
 
-    //             response.push( request[1] );
+console.log(tof, oldValue, oldValueRemote, newValue)
+            if ( tof == 'object' || tof == 'array' ) { 
+                console.log('object o array', 'YEAH')
+            }
+            else if ( tof == 'regexp' && oldValue.toString() == oldValueRemote.toString() ) {
+                console.log('regexp', 'YEAH')
+                change = true;
+            }
+            else if ( tof == 'date' && oldValue.getTime() == oldValueRemote.getTime() ) {
+                console.log('date', 'YEAH')
+                change = true;
+            }
+            else if ( tof == 'symbol' ) {
+                console.log('symbols', 'cant be synced')
+            }
 
-    //             var params = request[3],
-                
-    //             promise = { request: request, response: response, user: user };
-    //             promise.resolve = syncio.response.resolve.bind( promise );
-    //             promise.reject = syncio.response.reject.bind( promise );
+            // console.log(tof, oldValue, newValue);
 
-    //             params.push( promise );
+        }
+        else
+            response.push( syncio.error.REJECT_SET_NOT_EXISTS );
+    
+    }
+    else
+        response.push( syncio.error.REJECT_SET_NOT_WRITABLE );
 
-    //             return fn.apply( syncio.objects[ object_id ].object, params );
 
-    //         }
-    //     }
-
-    // }
-
-    // response.push( syncio.error.REJECT_CALL_NOT_EXISTS );
-
-    // user.send( JSON.stringify( response ) );
+    user.send( JSON.stringify( response ) );
 
 };
 
 
 
 
-//////////  src/user/call.js
+//////////  server/src/user/call.js
 
 // Send a new request
 syncio.user.prototype.call = function( path, params ) {
@@ -991,7 +1019,7 @@ syncio.user.prototype.call = function( path, params ) {
 
 
 
-//////////  src/user/close.js
+//////////  server/src/user/close.js
 
 
 syncio.user.prototype.close = function() {
@@ -1001,7 +1029,7 @@ syncio.user.prototype.close = function() {
 
 
 
-//////////  src/user/request.js
+//////////  server/src/user/request.js
 
 // Send a new request
 syncio[syncio.side].prototype.request = function() {
@@ -1018,7 +1046,7 @@ syncio[syncio.side].prototype.request = function() {
 
 
 
-//////////  src/user/send.js
+//////////  server/src/user/send.js
 
 
 syncio.user.prototype.send = function( message ) {
@@ -1028,14 +1056,15 @@ syncio.user.prototype.send = function( message ) {
 
 
 
-//////////  src/user/sync.js
+//////////  server/src/user/sync.js
 
 
 syncio.user.prototype.sync = function( object_name, object, options ) {
 
     var user = this,
         instance = this.syncio;
-        object_name = object_name.trim();
+        object_name = object_name.trim(),
+        object_id;
 
     // If the user already is subscribed to this object
     if ( typeof user.objects[object_name] == 'object' )
@@ -1060,13 +1089,12 @@ syncio.user.prototype.sync = function( object_name, object, options ) {
     // If the object doesn't exist yet
     if ( syncio.util.typeof( object[syncio.key_object_path] ) != 'array' ) {
 
-        var object_id = syncio.object_inc++,
-            path = [object_id];
+        object_id = syncio.object_inc++;
 
         syncio.configure.call(
             instance,
             object, 
-            path
+            [object_id]
         );
 
         syncio.objects[ object_id ] = {object:object, users:{}, subscribed:0, observable:options.observable}; // users is an objects of the users than are subscribed to this object
@@ -1095,7 +1123,7 @@ syncio.user.prototype.sync = function( object_name, object, options ) {
     syncio.objects[ object_id ].subscribed += 1;
 
     user.objects[object_name] = object;
-    user.writables[object_name] = options.writable;
+    user.writables[object_id] = options.writable;
 
 
     var request = syncio.request.call( instance, [
@@ -1114,7 +1142,7 @@ syncio.user.prototype.sync = function( object_name, object, options ) {
 
 
 
-//////////  src/util/arguments.js
+//////////  server/src/util/arguments.js
 
 // This method find arguments from inside to outside, and if the callback return true will stop
 syncio.util.arguments = function( args, callback ) {
@@ -1139,21 +1167,26 @@ syncio.util.arguments = function( args, callback ) {
 
 
 
-//////////  src/util/get.js
+//////////  server/src/util/get.js
 
 
 syncio.util.get = function ( obj, path, callback_create ) {
 
-    for (var i=0, l=path.length; i<l-1; i++) {
+    for (var i=0, l=path.length, tof; i<l; i++) {
 
-        if ( obj[ path[i] ] !== null && typeof obj[ path[i] ] == 'object' )
+        tof = syncio.util.typeof( obj[ path[i] ] );
+
+        if ( i+1<l && obj[ path[i] ] !== null && (tof == 'object' || tof == 'array') )
             obj = obj[ path[i] ];
+
+        else if ( obj.hasOwnProperty(path[i]) )
+            return obj[ path[i] ];
 
         else if ( callback_create && callback_create(obj, path[i], i) )
             obj[ path[i] ] = {};
 
         else
-            return obj;
+            return undefined;
 
     }
 
@@ -1195,7 +1228,6 @@ syncio.util.get.delete = function ( obj, path, callback_create ) {
 };
 
 
-
 var obj1 = {
     a: 11,
     b: 12,
@@ -1224,12 +1256,11 @@ exists = true;
 resu = syncio.util.get(obj1, ['d', 'd2', 'd1','a'], function(obj, property, i){ 
     exists = false;
     // console.log(obj.hasOwnProperty(property), i); 
-    return !obj.hasOwnProperty(property); 
+    return !obj.hasOwnProperty(property);  // If the path does not exists and we return true, the path will be create to set the property
     return false;
 });
 
 console.log('RESU:',exists,resu,obj1)
-
 
 */
 
@@ -1237,7 +1268,9 @@ console.log('RESU:',exists,resu,obj1)
 
 
 
-//////////  src/util/merge.js
+
+
+//////////  server/src/util/merge.js
 
 // Based on: https://github.com/unclechu/node-deep-extend (Performace: http://jsperf.com/deepmerge-comparisions/3)
 syncio.util.merge = (function() {
@@ -1418,7 +1451,7 @@ syncio.util.merge = (function() {
 
 
 
-//////////  src/util/path.js
+//////////  server/src/util/path.js
 
 // http://jsperf.com/stringify-path-vs-custom-path/2 - http://jsperf.com/stringify-path-vs-custom-path/3
 syncio.util.path = function (obj, callback) {
@@ -1483,18 +1516,18 @@ syncio.util.path.recursive = function (obj, callback, path ) {
 
 
 
-//////////  src/util/promise.js
+//////////  server/src/util/promise.js
 
 
 syncio.util.promise = function( resolver ) {
 
-    var thens = [];
-    var state = 0; /* 0 = pending, 1 = fulfilled, 2 = rejected */
-    var type, type_variable;
-    var that = this;
+    var thens = [],
+        state = 0, /* 0 = pending, 1 = fulfilled, 2 = rejected, 3 = completed/canceled */
+        type,
+        onCompleted,
+        that = this;
 
     this.state = state;
-    // this._chain = 0;
 
 
     this.then = function(onFulfilled, onRejected) {
@@ -1521,67 +1554,82 @@ syncio.util.promise = function( resolver ) {
         return that.then(0, onRejected);
     };
 
+
+    this.completed = function( completedCallback ) {
+        onCompleted = completedCallback;
+        return that;
+    };
+
+
     this.resolve = function() {
-        if (state != 0) { return that; }
+        // if (state != 0) return that; // https://promisesaplus.com/#point-14
+        if (state === 3) return that;
         state = that.state = 1;
         type = that.type = 0;
-        schedule.call(that, 0, this, arguments);
+        run(this, arguments);
     };
 
     this.reject = function() {
-        if (state != 0) { return that; }
+        // if (state != 0) return that; // https://promisesaplus.com/#point-17
+        if (state === 3) return that;
         state = that.state = 2;
         type = that.type = 1;
-        schedule.call(that, 0, this, arguments);
+        run(this, arguments);
     };
 
-    this.multiresolve = function() {
-        type = that.type = 0;
-        schedule.call(that, 0, this, arguments);
-    };
-
-    this.multireject = function() {
-        type = that.type = 1;
-        schedule.call(that, 0, this, arguments);
+    that.onCompleted = function() {
+        state = that.state = 3;
+        if ( typeof onCompleted == 'function' )
+            onCompleted.apply(this, arguments);
     };
 
 
-    var schedule = function(i, scope, params) {
-        setTimeout(function(){
-            loop.call(that, i, scope, params);
-        },0);
-    };
+    function run( scope, params ) {
+        
+        if ( thens.length > 0 )
+            loop.call(that, 0, scope, params);
 
-    var loop = function( i, scope, params ) {
+        // If there is no thens added yet, we have to resolve/reject asynchronously
+        else
+            setTimeout(function() {
+                loop.call(that, 0, scope, params);
+            }, 0);
+    }
+
+
+    function loop( i, scope, params ) {
 
         var iplus = i+1;
 
-        if ( typeof thens[i] == 'object' && typeof thens[i][this.type] == 'function' ) {
+        if ( typeof thens[i] == 'object' && typeof thens[i][that.type] == 'function' ) {
 
             try {
-                params = [thens[i][this.type].apply(
-                    ( thens[i][this.type].hasToGoUp ) ? this : scope, // 2.2.5 `onFulfilled` and `onRejected` must be called as functions (i.e. with no `this` value).
+
+                params = [thens[i][that.type].apply(
+                    ( thens[i][that.type].hasToGoUp ) ? that : scope, // 2.2.5 `onFulfilled` and `onRejected` must be called as functions (i.e. with no `that` value).
                     params
                 )];
 
-                if (this.type && !type)
-                    this.type = 0;
+                if (that.type && !type)
+                    that.type = 0;
+
             }
             catch (e) {
-                this.type = 1;
+                that.type = 1;
                 params = [e];
             }
 
 
 
             // 2.3.1. If promise and x refer to the same object, reject promise with a TypeError as the reason.
-            if (params[0] === this) {
-                this.type = 1;
+            if (params[0] === that) {
+                that.type = 1;
                 params[0] = new TypeError("Promise resolved by its own instance");
             }
 
+
             // 2.3.2. If x is a promise, adopt its state 
-            else if ( params[0] instanceof this.constructor ) {
+            else if ( params[0] instanceof that.constructor ) {
                 var goingup = function(){
                     that.type = this.type;
                     loop.call(that, iplus, scope, arguments);
@@ -1602,7 +1650,7 @@ syncio.util.promise = function( resolver ) {
                 } catch (e) {
                     // 2.3.3.2. If retrieving the property x.then results in a thrown exception e, reject promise with e as the reason.
                     params[0] = e;
-                    return this.loop.call(this, iplus, scope, params);
+                    return that.loop.call(that, iplus, scope, params);
                 }
 
                 if ( typeof then == 'function' ) {
@@ -1613,26 +1661,26 @@ syncio.util.promise = function( resolver ) {
                         // 2.3.3.3.1. If/when resolvePromise is called with a value y, run [[Resolve]](promise, y).
                         if (called) { return; }
                         called = true;
-                        return loop.call(this, iplus, scope, params);
+                        return loop.call(that, iplus, scope, params);
                     }
                     var rejectPromise = function(r) {
                     // console.log(22222)
                         // 2.3.3.3.2. If/when rejectPromise is called with a reason r, reject promise with r.
                         if (called) { return; }
                         called = true;
-                        this.type = 1;
-                        return loop.call(this, iplus, scope, params);
+                        that.type = 1;
+                        return loop.call(that, iplus, scope, params);
                     }
 
                     try {
-                        then.call(params[0], resolvePromise.bind(this), rejectPromise.bind(this));
+                        then.call(params[0], resolvePromise.bind(that), rejectPromise.bind(that));
                     } catch (e) { // 2.3.3.3.4. If calling then throws an exception e,
                         // console.log(333333)
                         // 2.3.3.3.4.1. If resolvePromise or rejectPromise have been called, ignore it.
                         if (called) { return; }
                         // 2.3.3.3.4.2. Otherwise, reject promise with e as the reason.
-                        this.type = 1;
-                        return loop.call(this, iplus, scope, params);
+                        that.type = 1;
+                        return loop.call(that, iplus, scope, params);
                     }
 
                 }
@@ -1644,39 +1692,37 @@ syncio.util.promise = function( resolver ) {
 
         // Next .then()
         if ( iplus < thens.length )
-            loop.call(this, iplus, scope, params);
+            loop(iplus, scope, params);
 
-    };
+    }
 
 
     if ( typeof resolver == 'function' )
-        resolver( 
-            this.resolve,
-            this.reject
+        resolver(
+            // that.resolve.bind(null) # 3.2 That is, in strict mode that will be undefined inside of them; in sloppy mode, it will be the global object.
+            that.resolve, 
+            that.reject
         );
 
 };
 
-// Need it for Promises/A+ specifications
-syncio.util.promise.resolve = function(value) {
-    return new this(function(resolve) {
-        resolve(value);
-    });
-};
+// syncio.util.promise.resolve = function(value) {
+//     return new this(function(resolve, reject) {
+//         resolve(value);
+//     });
+// };
 
-// Need it for Promises/A+ specifications
-syncio.util.promise.reject = function(reason) {
-    return new this(function(resolve, reject) {
-        reject(reason);
-    });
-};
+// syncio.util.promise.reject = function(reason) {
+//     return new this(function(resolve, reject) {
+//         reject(reason);
+//     });
+// };
 
 
 
 
 
-
-//////////  src/util/typeof.js
+//////////  server/src/util/typeof.js
 
 
 syncio.util.typeof = function(value) {
@@ -1733,7 +1779,7 @@ syncio.util.typeof = (function() {
 
 
 
-//////////  src/connector/socketio.js
+//////////  server/src/connector/socketio.js
 
 // http://socket.io/docs/server-api/
 syncio.socketio = function ( options, on ) {
@@ -1782,7 +1828,7 @@ syncio.socketio.name_connector = 'socketio';
 syncio.socketio.send = function( data ) {
     this.emit('message', data);
 };
-syncio.socketio.close = function( data ) {
+syncio.socketio.close = function( ) {
     this.disconnect();
 };
 
@@ -1802,7 +1848,7 @@ Url-Client: http://localhost:9999/syncio
 
 
 
-//////////  src/connector/sockjs.js
+//////////  server/src/connector/sockjs.js
 
 // https://github.com/sockjs/sockjs-node
 syncio.SockJS = function ( options, on ) {
@@ -1861,7 +1907,7 @@ Url-Client: http://localhost:9999/syncio
 
 
 
-//////////  src/connector/ws.js
+//////////  server/src/connector/ws.js
 
 // https://github.com/websockets/ws
 syncio.ws = function ( options, on ) {

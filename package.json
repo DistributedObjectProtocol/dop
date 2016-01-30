@@ -1,11 +1,11 @@
 {
-    "name": "syncio-nodejs",
+    "name": "synko",
     "version": "0.6.0",
     "main": "index.js",
     "license": "MIT",
-    "repository": "https://github.com/syncio/syncio-nodejs",
+    "repository": "https://github.com/ObjectSyncProtocol/synko",
     "author": "Josema Enzo (http://josema.es/)",
-    "description": "Connect data objects between server and clients",
+    "description": "Sync JavaScript objects between server and clients",
     "dependencies": {
         "sockjs": "^0.3.11",
         "socket.io": "^1.3.5",
@@ -15,7 +15,11 @@
         "grunt": "~0.4.5",
         "grunt-contrib-concat": "~0.5.0",
         "grunt-contrib-uglify": "~0.6.0",
-        "grunt-contrib-jshint": "~0.10.0",
         "grunt-contrib-watch": "~0.6.1"
+    },
+    "scripts": {
+        "grunt": "npm run gruntserver && npm run gruntbrowser && sleep 9999999999999999999999999",
+        "gruntserver": "grunt --gruntfile GruntServer.js &",
+        "gruntbrowser": "grunt --gruntfile GruntBrowser.js &"
     }
 }
