@@ -1,6 +1,6 @@
 
 // Create a remote function
-synko.create_remote_function = function ( path ) {
+synko.createRemoteFunction = function ( path ) {
 
     var that = this;
     return function $synko_remote_function() {

@@ -116,7 +116,7 @@ synko.configure = function( object, path, isobservable ) {
         var newpath = path.concat(subpath);
 
         if ( value === that.options.stringify_function )
-            obj[key] = synko.create_remote_function.call( that, newpath );
+            obj[key] = synko.createRemoteFunction.call( that, newpath );
 
         if ( value !== null && typeof value == 'object' && typeof value[synko.key_object_path] == 'undefined' ) {
         
@@ -206,10 +206,10 @@ synko.create = function( options ) {
 
 
 
-//////////  server/src/core/create_remote_function.js
+//////////  server/src/core/createRemoteFunction.js
 
 // Create a remote function
-synko.create_remote_function = function ( path ) {
+synko.createRemoteFunction = function ( path ) {
 
     var that = this;
     return function $synko_remote_function() {

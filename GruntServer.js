@@ -50,8 +50,8 @@ module.exports = function(grunt) {
                     src: 'server/src/core/observe.js',
                     dest: 'browser/src/core/observe.js',
                 },{
-                    src: 'server/src/core/create_remote_function.js',
-                    dest: 'browser/src/core/create_remote_function.js',
+                    src: 'server/src/core/createRemoteFunction.js',
+                    dest: 'browser/src/core/createRemoteFunction.js',
                 },{
                     src: 'server/src/core/request.js',
                     dest: 'browser/src/core/request.js',
