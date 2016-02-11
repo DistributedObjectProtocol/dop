@@ -1,0 +1,1 @@
+This test runs all the features provided by the api but only with one connector, specified by the parameter `env CONNECTOR=sockjs`
