@@ -16,7 +16,7 @@ module.exports = synko = {
     stringify_function: '~F',
     stringify_undefined: '~U',
     stringify_regexp: '~R',
-    name_remote_function: '$synko_remote_function',
+    name_remote_function: '$SYNKO_REMOTE_FUNCTION',
 
     util: {},
     on: {},
@@ -212,7 +212,7 @@ synko.create = function( options ) {
 synko.createRemoteFunction = function ( path ) {
 
     var that = this;
-    return function $synko_remote_function() {
+    return function $SYNKO_REMOTE_FUNCTION() {
 
         return that.call( path, Array.prototype.slice.call( arguments ) );
 
@@ -666,10 +666,10 @@ synko.api.prototype.call = function( path, params ) {
 
 
 
-//////////  server/src/api/remote.js
+//////////  server/src/api/remoteFunction.js
 
-// Useful to create remote functions before the sync: myobject = {remotefun: myserver.remote()};
-synko.api.prototype.remote = function() {
+// Useful to create remote functions before the sync, when the object synced is not writable: myobject = {remotefun: myserver.remoteFunction()};
+synko.api.prototype.remoteFunction = function() {
     return this.options.stringify_function;
 };
 

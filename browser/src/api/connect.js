@@ -1,15 +1,8 @@
 
 
-synko.api.prototype.connect = function( url, options ) {
+synko.api.prototype.connect = function( ) {
 
-    if (synko.util.typeof(options) != 'object')
-        options = {};
-
-    if (typeof options.connector != 'function')
-        options.connector = synko.ws;
-
-
-    this.connector = this[options.connector.name_connector] = options.connector( url, options, {
+    this.connector = this[this.options.connector.name_connector] = this.options.connector( url, this.options, {
 
         open: synko.on.open.bind(this),
 

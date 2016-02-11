@@ -1,6 +1,21 @@
 
 
-synko.api = function() {    
+synko.api = function( url, options ) {    
+
+
+    if (synko.util.typeof(options) != 'object')
+        options = {};
+
+    if (typeof options.connector != 'function')
+        options.connector = synko.ws;
+
+    this.options.url = url;
+    this.options.stringify_function = synko.stringify_function;
+    this.options.stringify_undefined = synko.stringify_undefined;
+    this.options.stringify_regexp = synko.stringify_regexp;
+
+
+
 
     this.objects = {
         // object: 
@@ -22,12 +37,6 @@ synko.api = function() {
     };
 
     this.synko = this; // Alias needed for shared methods server&client side. As api/request.js - user/request.js
-
-    this.options = {
-        stringify_function: synko.stringify_function,
-        stringify_undefined: synko.stringify_undefined,
-        stringify_regexp: synko.stringify_regexp
-    };
 
     this.observe = synko.observe.bind(this);
 

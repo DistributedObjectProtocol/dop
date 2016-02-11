@@ -9,7 +9,7 @@ var synko = {
     stringify_function: '~F',
     stringify_undefined: '~U',
     stringify_regexp: '~R',
-    name_remote_function: '$synko_remote_function',
+    name_remote_function: '$SYNKO_REMOTE_FUNCTION',
 
     util: {},
     on: {},

@@ -14,7 +14,7 @@ var synko = {
     stringify_function: '~F',
     stringify_undefined: '~U',
     stringify_regexp: '~R',
-    name_remote_function: '$synko_remote_function',
+    name_remote_function: '$SYNKO_REMOTE_FUNCTION',
 
     util: {},
     on: {},
@@ -786,9 +786,9 @@ synko.util.typeof = (function() {
 //////////  browser/src/core/create.js
 
 
-synko.create = function( options ) {
+synko.create = function( url, options ) {
 
-    return new synko.api( options );
+    return new synko.api( url, options );
 
 };
 
@@ -798,7 +798,22 @@ synko.create = function( options ) {
 //////////  browser/src/core/api.js
 
 
-synko.api = function() {    
+synko.api = function( url, options ) {    
+
+
+    if (synko.util.typeof(options) != 'object')
+        options = {};
+
+    if (typeof options.connector != 'function')
+        options.connector = synko.ws;
+
+    this.options.url = url;
+    this.options.stringify_function = synko.stringify_function;
+    this.options.stringify_undefined = synko.stringify_undefined;
+    this.options.stringify_regexp = synko.stringify_regexp;
+
+
+
 
     this.objects = {
         // object: 
@@ -820,12 +835,6 @@ synko.api = function() {
     };
 
     this.synko = this; // Alias needed for shared methods server&client side. As api/request.js - user/request.js
-
-    this.options = {
-        stringify_function: synko.stringify_function,
-        stringify_undefined: synko.stringify_undefined,
-        stringify_regexp: synko.stringify_regexp
-    };
 
     this.observe = synko.observe.bind(this);
 
@@ -955,7 +964,7 @@ setTimeout(function(){
 synko.createRemoteFunction = function ( path ) {
 
     var that = this;
-    return function $synko_remote_function() {
+    return function $SYNKO_REMOTE_FUNCTION() {
 
         return that.call( path, Array.prototype.slice.call( arguments ) );
 
@@ -1383,16 +1392,9 @@ synko.api.prototype.call = function( path, params ) {
 //////////  browser/src/api/connect.js
 
 
-synko.api.prototype.connect = function( url, options ) {
+synko.api.prototype.connect = function( ) {
 
-    if (synko.util.typeof(options) != 'object')
-        options = {};
-
-    if (typeof options.connector != 'function')
-        options.connector = synko.ws;
-
-
-    this.connector = this[options.connector.name_connector] = options.connector( url, options, {
+    this.connector = this[this.options.connector.name_connector] = this.options.connector( url, this.options, {
 
         open: synko.on.open.bind(this),
 

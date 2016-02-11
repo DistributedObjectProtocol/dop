@@ -1,7 +1,7 @@
 
 
-synko.create = function( options ) {
+synko.create = function( url, options ) {
 
-    return new synko.api( options );
+    return new synko.api( url, options );
 
 };

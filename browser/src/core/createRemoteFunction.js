@@ -3,7 +3,7 @@
 synko.createRemoteFunction = function ( path ) {
 
     var that = this;
-    return function $synko_remote_function() {
+    return function $SYNKO_REMOTE_FUNCTION() {
 
         return that.call( path, Array.prototype.slice.call( arguments ) );
 
