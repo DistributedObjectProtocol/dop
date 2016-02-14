@@ -2,9 +2,12 @@
 // require
 var tape = require('tape');
 var tabe = require('tabe');
-var port = 9999;
 var synko = require('../../server/dist/synko');
 var typeConnector = (typeof process.argv[2] == 'undefined' ) ? 'ws' : process.argv[2];
+
+
+var config = {ports:[synko.port, 5555, 6666, 7777], typeConnector:typeConnector};
+
 
 
 
@@ -12,21 +15,22 @@ var typeConnector = (typeof process.argv[2] == 'undefined' ) ? 'ws' : process.ar
 // express
 var express = require('express');
 var app = express();
-// app.use("/static", express.static(__dirname + '/../../'));
 app.use("/static", express.static('./'));
 app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/index.html');
 });
-var httpServer = app.listen(port, function () {
-    console.log('Test is running at http://localhost:'+port, '\n\n\n');
+var expressServer = app.listen(config.ports[3], function () {
+    console.log('Test is running at http://localhost:'+config.ports[3], '\n\n\n');
 });
+
+
+
 
 
 
 
 // tests
 tabe.createStream( tape );
-test = tape;
-require('./server/create');
+require('./server/')( tape, synko, expressServer, config );
 
 

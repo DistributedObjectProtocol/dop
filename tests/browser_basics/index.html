@@ -5,11 +5,13 @@
   <title>synko browser test</title>
 </head>
 <body>
+  <script src="/static/tests/sockjs.js"></script>
   <script src="/static/browser/dist/synko.js"></script>
   <script src="https://rawgit.com/Josenzo/tabe/master/dist/tabe.js"></script>
   <script type="text/javascript">
     window.tabe.createStream( window.tape );
     window.test = window.tape; // Just an alias
+    typeConnector = 'ws';
   </script>
 
   <script src="/static/tests/browser_basics/browser/create.js"></script>

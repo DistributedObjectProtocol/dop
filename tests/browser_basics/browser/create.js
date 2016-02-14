@@ -1,61 +1,35 @@
+var typeCon
 
+test('typeof', function (t) {
 
+    t.equal(typeof synko, 'object', "equal(typeof synko, 'object'");
+    t.equal(typeof synko.create, 'function', "equal(typeof synko.create, 'function'");
 
-
-
-test('First test', function (t) {
-
-    t.plan(4);
-    t.equal(typeof function(){}, 'function');
-    t.equal('string', 'function');
-    t.fail('failed')
-    t.ok(true)
-    t.comment([1,2,3])
-
-});
-
-
-
-test('Second test', function (t) {
-
-    t.plan(7);
-    
-    t.equal(1, 1, 'more explain');
-    t.equal(true, false);
-    t.equal(1, 1);
-    t.equal(true, false, 'more explain on fail');
-    t.deepEqual([ 3, 4, 5 ], [ 3, 4, 2+3 ]);
-    t.deepEqual([ 3, 4, 5 ], [ 3, 4, 2 ]);
-    t.end('dadadada');
-
-});
-
-
-test('Third test', function (t) {
-
-    t.plan(2);
-    t.equal(1, 1, 'more explain');
-    t.equal(true, false);
-    t.equal(1, 1);
-    t.equal(true, false, 'more explain on fail');
-    t.pass('passed')
-
-});
-
-test('All asserts', function(t){
-    t.ok(true);
-    t.equal(3, 1+2);
-    t.deepEqual([1,2,[3,4]], [1,2,[3,4]]);
-    t.notDeepEqual([1,2,[3,4,5]], [1,2,[3,4]]);
     t.end();
-})
-
-
-test('double end', function (t) {
-    t.equal(1 + 1, 2);
-    t.end();
-    setTimeout(function () {
-        t.end();
-    }, 5);
 });
 
+
+
+test('Forming url on create', function(t){
+
+    var mysynko = synko.create({});
+    t.equal(mysynko.options.host+'/'+mysynko.options.prefix, 'localhost:7777/synko'+typeConnector, mysynko.options.url);
+
+    var mysynko = synko.create({url:'http://domain.com'});
+    t.equal(mysynko.options.host+'/'+mysynko.options.prefix, 'domain.com/synko'+typeConnector, mysynko.options.url);
+
+    var mysynko = synko.create({url:'http://domain.com/'});
+    t.equal(mysynko.options.host+'/'+mysynko.options.prefix, 'domain.com/synko'+typeConnector, mysynko.options.url);
+
+    var mysynko = synko.create({url:'http://domain.com/miprefix'});
+    t.equal(mysynko.options.host+'/'+mysynko.options.prefix, 'domain.com/miprefix'+typeConnector, mysynko.options.url);
+
+    var mysynko = synko.create({url:'https://domain.com'});
+    t.equal(mysynko.options.host+'/'+mysynko.options.prefix, 'domain.com/synko'+typeConnector, mysynko.options.url);
+    t.equal(mysynko.options.ssl, true, mysynko.options.url + ' is ssl protocol');
+
+
+
+    t.end();
+
+});
