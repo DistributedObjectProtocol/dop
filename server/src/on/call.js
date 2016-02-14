@@ -17,8 +17,8 @@ synko.on.call = function( user, request ) {
                 response.push( synko.protocol.fulfilled );
 
                 var params = request[3],
-                
-                promise = { request: request, response: response, user: user };
+                    promise = { request: request, response: response, user: user };
+
                 promise.resolve = synko.response.resolve.bind( promise );
                 promise.reject = synko.response.reject.bind( promise );
 

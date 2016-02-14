@@ -46,6 +46,9 @@ synko.api = function( options ) {
     if (typeof this.options.namespace != 'string')
         this.options.namespace = '/' + synko.name;
 
+    // Adding connector name to the end of the prefix/namespace
+    this.options.namespace += this.options.connector.name_connector;
+
 
     if (typeof this.options.stringify_function != 'string')
         this.options.stringify_function = synko.stringify_function;
@@ -116,7 +119,7 @@ synko.configure = function( object, path, isobservable ) {
         var newpath = path.concat(subpath);
 
         if ( value === that.options.stringify_function )
-            obj[key] = synko.createRemoteFunction.call( that, newpath );
+            obj[key] = synko.remoteFunction.call( that, newpath );
 
         if ( value !== null && typeof value == 'object' && typeof value[synko.key_object_path] == 'undefined' ) {
         
@@ -200,28 +203,6 @@ setTimeout(function(){
 synko.create = function( options ) {
 
     return new synko.api( options );
-
-};
-
-
-
-
-//////////  server/src/core/createRemoteFunction.js
-
-// Create a remote function
-synko.createRemoteFunction = function ( path ) {
-
-    var that = this;
-    return function $SYNKO_REMOTE_FUNCTION() {
-
-        return that.call( path, Array.prototype.slice.call( arguments ) );
-
-    };
-
-    // // http://jsperf.com/dynamic-name-of-functions
-    // return new Function(
-    //     "return function " + synko.name_remote_function + "(){  return that.call( path, arguments ); }"
-    // )();
 
 };
 
@@ -441,6 +422,28 @@ for (var key in synko.protocol)
 synko.reject = function() {
 
     return synko.response( 'reject', arguments );
+
+};
+
+
+
+
+//////////  server/src/core/remoteFunction.js
+
+// Create a remote function
+synko.remoteFunction = function ( path ) {
+
+    var that = this;
+    return function $SYNKO_REMOTE_FUNCTION() {
+
+        return that.call( path, Array.prototype.slice.call( arguments ) );
+
+    };
+
+    // // http://jsperf.com/dynamic-name-of-functions
+    // return new Function(
+    //     "return function " + synko.name_remote_function + "(){  return that.call( path, arguments ); }"
+    // )();
 
 };
 
@@ -756,8 +759,8 @@ synko.on.call = function( user, request ) {
                 response.push( synko.protocol.fulfilled );
 
                 var params = request[3],
-                
-                promise = { request: request, response: response, user: user };
+                    promise = { request: request, response: response, user: user };
+
                 promise.resolve = synko.response.resolve.bind( promise );
                 promise.reject = synko.response.reject.bind( promise );
 

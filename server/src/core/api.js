@@ -11,6 +11,9 @@ synko.api = function( options ) {
     if (typeof this.options.namespace != 'string')
         this.options.namespace = '/' + synko.name;
 
+    // Adding connector name to the end of the prefix/namespace
+    this.options.namespace += this.options.connector.name_connector;
+
 
     if (typeof this.options.stringify_function != 'string')
         this.options.stringify_function = synko.stringify_function;

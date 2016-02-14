@@ -10,4 +10,6 @@ synko.error = {
 
     REJECT_CALL_NOT_EXISTS: 'You are trying to call a function does not exists',
 
+    API_PARAMETER_CREATE_URL: 'You must pass url as first parameter',
+
 };

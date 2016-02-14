@@ -2,7 +2,7 @@
 
 synko.api.prototype.connect = function( ) {
 
-    this.connector = this[this.options.connector.name_connector] = this.options.connector( url, this.options, {
+    this.connector = this[this.options.connector.name_connector] = this.options.connector( this.options, {
 
         open: synko.on.open.bind(this),
 

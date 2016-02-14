@@ -1,8 +1,8 @@
 
 
-synko.SockJS = function( url, options, on ) {
+synko.SockJS = function( options, on ) {
 
-    var socket = new SockJS( url, undefined, options );
+    var socket = new SockJS( options.url, undefined, options );
 
     socket.addEventListener('open', function() {
         on.open();

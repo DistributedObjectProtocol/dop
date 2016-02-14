@@ -786,9 +786,9 @@ synko.util.typeof = (function() {
 //////////  browser/src/core/create.js
 
 
-synko.create = function( url, options ) {
+synko.create = function( options ) {
 
-    return new synko.api( url, options );
+    return new synko.api( options );
 
 };
 
@@ -798,7 +798,7 @@ synko.create = function( url, options ) {
 //////////  browser/src/core/api.js
 
 
-synko.api = function( url, options ) {    
+synko.api = function( options ) {    
 
 
     if (synko.util.typeof(options) != 'object')
@@ -807,7 +807,40 @@ synko.api = function( url, options ) {
     if (typeof options.connector != 'function')
         options.connector = synko.ws;
 
-    this.options.url = url;
+    // Creating default url
+    if (typeof options.url != 'string')
+        options.url = window.location.href;
+
+    // Gettin data from url
+    var url_data = /(ps|ss)?:\/\/([^/]+)?(?:\/([^/]+))?/.exec(options.url);
+
+    // Adding default prefix
+    if (typeof url_data[3] == 'string')
+        options.prefix = url_data[3];
+
+    if (typeof options.prefix != 'string')
+        options.prefix = synko.name;
+
+    options.prefix += options.connector.name_connector;
+
+    if (typeof url_data[3] == 'undefined') {
+        if ( options.url[options.url.length-1] !== '/')
+            options.url += '/';
+        options.url += options.prefix;
+    }
+    else
+        options.url += options.connector.name_connector;;
+
+    // Storing host
+    options.host = url_data[2];
+
+    // Is SSL protocol?
+    options.ssl = (typeof url_data[1] == 'string' && (url_data[1].toLowerCase() === 'ps' || url_data[1].toLowerCase() === 'ss'));
+
+
+
+
+    this.options = options;
     this.options.stringify_function = synko.stringify_function;
     this.options.stringify_undefined = synko.stringify_undefined;
     this.options.stringify_regexp = synko.stringify_regexp;
@@ -880,7 +913,7 @@ synko.configure = function( object, path, isobservable ) {
         var newpath = path.concat(subpath);
 
         if ( value === that.options.stringify_function )
-            obj[key] = synko.createRemoteFunction.call( that, newpath );
+            obj[key] = synko.remoteFunction.call( that, newpath );
 
         if ( value !== null && typeof value == 'object' && typeof value[synko.key_object_path] == 'undefined' ) {
         
@@ -958,28 +991,6 @@ setTimeout(function(){
 
 
 
-//////////  browser/src/core/createRemoteFunction.js
-
-// Create a remote function
-synko.createRemoteFunction = function ( path ) {
-
-    var that = this;
-    return function $SYNKO_REMOTE_FUNCTION() {
-
-        return that.call( path, Array.prototype.slice.call( arguments ) );
-
-    };
-
-    // // http://jsperf.com/dynamic-name-of-functions
-    // return new Function(
-    //     "return function " + synko.name_remote_function + "(){  return that.call( path, arguments ); }"
-    // )();
-
-};
-
-
-
-
 //////////  browser/src/core/error.js
 
 
@@ -992,6 +1003,8 @@ synko.error = {
     SYNC_NO_REPEAT: 'You can not sync the same object more than once',
 
     REJECT_CALL_NOT_EXISTS: 'You are trying to call a function does not exists',
+
+    API_PARAMETER_CREATE_URL: 'You must pass url as first parameter',
 
 };
 
@@ -1197,6 +1210,28 @@ synko.reject = function() {
 
 
 
+//////////  browser/src/core/remoteFunction.js
+
+// Create a remote function
+synko.remoteFunction = function ( path ) {
+
+    var that = this;
+    return function $SYNKO_REMOTE_FUNCTION() {
+
+        return that.call( path, Array.prototype.slice.call( arguments ) );
+
+    };
+
+    // // http://jsperf.com/dynamic-name-of-functions
+    // return new Function(
+    //     "return function " + synko.name_remote_function + "(){  return that.call( path, arguments ); }"
+    // )();
+
+};
+
+
+
+
 //////////  browser/src/core/request.js
 
 // Create a new request
@@ -1394,7 +1429,7 @@ synko.api.prototype.call = function( path, params ) {
 
 synko.api.prototype.connect = function( ) {
 
-    this.connector = this[this.options.connector.name_connector] = this.options.connector( url, this.options, {
+    this.connector = this[this.options.connector.name_connector] = this.options.connector( this.options, {
 
         open: synko.on.open.bind(this),
 
@@ -1855,9 +1890,9 @@ sync() NO
 //////////  browser/src/connector/socketio.js
 
 
-synko.socketio = function( url, options, on ) {
+synko.socketio = function( options, on ) {
 
-    var socket = io( url );
+    var socket = io( options.url );
 
     socket.on('connect', function () {
         on.open();
@@ -1890,9 +1925,9 @@ if ( typeof io == 'function' )
 //////////  browser/src/connector/sockjs.js
 
 
-synko.SockJS = function( url, options, on ) {
+synko.SockJS = function( options, on ) {
 
-    var socket = new SockJS( url, undefined, options );
+    var socket = new SockJS( options.url, undefined, options );
 
     socket.addEventListener('open', function() {
         on.open();
@@ -1935,10 +1970,10 @@ if ( typeof SockJS == 'function' )
 //////////  browser/src/connector/ws.js
 
 
-synko.ws = function( url, options, on ) {
+synko.ws = function( options, on ) {
 
-    var domain_prefix = /(s?):\/\/([^\/]+)\/(.+)/.exec( url );
-    var socket = new WebSocket('ws'+domain_prefix[1].toLocaleLowerCase()+'://'+domain_prefix[2].toLocaleLowerCase()+'/', domain_prefix[3]);
+    var protocol = ( options.ssl ) ? 'wss' : 'ws';
+    var socket = new WebSocket(protocol+'://'+options.host+'/' + options.prefix);
 
     socket.addEventListener('open', function() {
         on.open();

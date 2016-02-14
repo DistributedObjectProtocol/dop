@@ -1,9 +1,9 @@
 
 
-synko.ws = function( url, options, on ) {
+synko.ws = function( options, on ) {
 
-    var domain_prefix = /(s?):\/\/([^\/]+)\/(.+)/.exec( url );
-    var socket = new WebSocket('ws'+domain_prefix[1].toLocaleLowerCase()+'://'+domain_prefix[2].toLocaleLowerCase()+'/', domain_prefix[3]);
+    var protocol = ( options.ssl ) ? 'wss' : 'ws';
+    var socket = new WebSocket(protocol+'://'+options.host+'/' + options.prefix);
 
     socket.addEventListener('open', function() {
         on.open();

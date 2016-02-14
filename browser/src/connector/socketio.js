@@ -1,8 +1,8 @@
 
 
-synko.socketio = function( url, options, on ) {
+synko.socketio = function( options, on ) {
 
-    var socket = io( url );
+    var socket = io( options.url );
 
     socket.on('connect', function () {
         on.open();
