@@ -508,7 +508,7 @@ synko.response.resolve = function() {
 
     this.response.push( Array.prototype.slice.call( arguments, 0 ) );
 
-    this.user.send( synko.stringify.call(this.user, this.response ) );
+    this.user.send( synko.stringify.call(this.user.synko, this.response ) );
 
 };
 
@@ -516,7 +516,7 @@ synko.response.reject = function( error ) {
 
     this.response[1] = error;
 
-    this.user.send( synko.stringify.call(this.user, this.response ) );
+    this.user.send( synko.stringify.call(this.user.synko, this.response ) );
 
 };
 

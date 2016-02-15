@@ -1290,7 +1290,7 @@ synko.response.resolve = function() {
 
     this.response.push( Array.prototype.slice.call( arguments, 0 ) );
 
-    this.user.send( synko.stringify.call(this.user, this.response ) );
+    this.user.send( synko.stringify.call(this.user.synko, this.response ) );
 
 };
 
@@ -1298,7 +1298,7 @@ synko.response.reject = function( error ) {
 
     this.response[1] = error;
 
-    this.user.send( synko.stringify.call(this.user, this.response ) );
+    this.user.send( synko.stringify.call(this.user.synko, this.response ) );
 
 };
 
@@ -1892,7 +1892,7 @@ sync() NO
 
 synko.socketio = function( options, on ) {
 
-    var socket = io( options.url );
+    var socket = synko.socketio.api( options.url );
 
     socket.on('connect', function () {
         on.open();
@@ -1915,9 +1915,7 @@ synko.socketio = function( options, on ) {
 };
 
 synko.socketio.name_connector = 'socketio';
-
-if ( typeof io == 'function' )
-    synko.socketio.api = io;
+synko.socketio.api = window.io;
 
 
 
@@ -1927,7 +1925,7 @@ if ( typeof io == 'function' )
 
 synko.SockJS = function( options, on ) {
 
-    var socket = new SockJS( options.url, undefined, options );
+    var socket = new synko.SockJS.api( options.url, undefined, options );
 
     socket.addEventListener('open', function() {
         on.open();
@@ -1950,9 +1948,7 @@ synko.SockJS = function( options, on ) {
 };
 
 synko.SockJS.name_connector = 'SockJS';
-
-if ( typeof SockJS == 'function' )
-    synko.SockJS.api = SockJS;
+synko.SockJS.api = window.SockJS;
 
 
 
@@ -1996,6 +1992,4 @@ synko.ws = function( options, on ) {
 };
 
 synko.ws.name_connector = 'ws';
-
-if ( typeof WebSocket == 'function' )
-    synko.ws.api = WebSocket;
+synko.ws.api = WebSocket;
