@@ -26,6 +26,4 @@ synko.ws = function( options, on ) {
 };
 
 synko.ws.name_connector = 'ws';
-
-if ( typeof WebSocket == 'function' )
-    synko.ws.api = WebSocket;
+synko.ws.api = WebSocket;

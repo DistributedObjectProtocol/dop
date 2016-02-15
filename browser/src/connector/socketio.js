@@ -2,7 +2,7 @@
 
 synko.socketio = function( options, on ) {
 
-    var socket = io( options.url );
+    var socket = synko.socketio.api( options.url );
 
     socket.on('connect', function () {
         on.open();
@@ -25,6 +25,4 @@ synko.socketio = function( options, on ) {
 };
 
 synko.socketio.name_connector = 'socketio';
-
-if ( typeof io == 'function' )
-    synko.socketio.api = io;
+synko.socketio.api = window.io;

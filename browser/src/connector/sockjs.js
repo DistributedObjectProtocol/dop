@@ -2,7 +2,7 @@
 
 synko.SockJS = function( options, on ) {
 
-    var socket = new SockJS( options.url, undefined, options );
+    var socket = new synko.SockJS.api( options.url, undefined, options );
 
     socket.addEventListener('open', function() {
         on.open();
@@ -25,9 +25,7 @@ synko.SockJS = function( options, on ) {
 };
 
 synko.SockJS.name_connector = 'SockJS';
-
-if ( typeof SockJS == 'function' )
-    synko.SockJS.api = SockJS;
+synko.SockJS.api = window.SockJS;
 
 
 
