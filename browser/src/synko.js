@@ -1,7 +1,7 @@
 'strict';
 
 var synko = { 
-    version: '0.6.0',
+    version: '0.7.1',
     name: 'synko',
     side: 'api',
 

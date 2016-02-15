@@ -1,7 +1,7 @@
 
 
 module.exports = synko = {
-    version: '0.6.0',
+    version: '0.7.1',
     name: 'synko',
     side: 'user',
     port: 4444,
