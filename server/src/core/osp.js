@@ -1,6 +1,6 @@
 
 
-synko.osp = function( user, messages ) {
+dop.osp = function( user, messages ) {
 
 
     if (typeof messages[0] != 'object')
@@ -18,8 +18,8 @@ synko.osp = function( user, messages ) {
         if ( typeof request_id == 'number' ) {
 
             // REQUEST ===============================================================
-            if (request_id > 0 && typeof synko.on[synko.protocol_keys[action]] == 'function' )
-                synko.on[synko.protocol_keys[action]].call( this, user, request );
+            if (request_id > 0 && typeof dop.on[dop.protocol_keys[action]] == 'function' )
+                dop.on[dop.protocol_keys[action]].call( this, user, request );
 
 
             // RESPONSE ===============================================================
@@ -32,10 +32,10 @@ synko.osp = function( user, messages ) {
                     action = this.requests[ request_id ].data[1];
 
                     if ( request[1] === 0 )
-                        synko._on[synko.protocol_keys[action]].call( this, user, request );
+                        dop._on[dop.protocol_keys[action]].call( this, user, request );
 
                     else
-                        synko.on.reject.call( this, user, request );
+                        dop.on.reject.call( this, user, request );
 
                     // Removing request
                     if ( --this.requests[request_id].users === 0 )

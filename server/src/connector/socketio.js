@@ -1,15 +1,15 @@
 
 // http://socket.io/docs/server-api/
-synko.socketio = function ( options, on ) {
+dop.socketio = function ( options, on ) {
 
     options.connector = options._connector; // Need it because socketio accept the option connector as parameter natively
 
-    var socket_server = new synko.socketio.api( options.httpServer, options );
+    var socket_server = new dop.socketio.api( options.httpServer, options );
 
     if (typeof options.httpServer == 'undefined') {
 
         if (typeof options.port != 'number')
-            options.port = synko.port;
+            options.port = dop.port;
 
         socket_server.listen( options.port );
 
@@ -27,9 +27,9 @@ synko.socketio = function ( options, on ) {
             on.close( user );
         });
 
-        user.send = synko.socketio.send;
+        user.send = dop.socketio.send;
 
-        user.close = synko.socketio.close;
+        user.close = dop.socketio.close;
 
         on.open( user );
 
@@ -40,13 +40,13 @@ synko.socketio = function ( options, on ) {
 
 };
 
-synko.socketio.api = require('socket.io');
-synko.socketio.name_connector = 'socketio';
+dop.socketio.api = require('socket.io');
+dop.socketio.name_connector = 'socketio';
 
-synko.socketio.send = function( data ) {
+dop.socketio.send = function( data ) {
     this.emit('message', data);
 };
-synko.socketio.close = function( ) {
+dop.socketio.close = function( ) {
     this.disconnect();
 };
 
@@ -54,8 +54,8 @@ synko.socketio.close = function( ) {
 
 /*
 
-Url-Server: /synko
-Url-Client: http://localhost:9999/synko
+Url-Server: /dop
+Url-Client: http://localhost:9999/dop
 
 */
 

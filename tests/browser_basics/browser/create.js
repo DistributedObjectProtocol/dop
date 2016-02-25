@@ -2,8 +2,8 @@ var typeCon
 
 test('typeof', function (t) {
 
-    t.equal(typeof synko, 'object', "equal(typeof synko, 'object'");
-    t.equal(typeof synko.create, 'function', "equal(typeof synko.create, 'function'");
+    t.equal(typeof dop, 'object', "equal(typeof dop, 'object'");
+    t.equal(typeof dop.create, 'function', "equal(typeof dop.create, 'function'");
 
     t.end();
 });
@@ -12,21 +12,21 @@ test('typeof', function (t) {
 
 test('Forming url on create', function(t){
 
-    var mysynko = synko.create({});
-    t.equal(mysynko.options.host+'/'+mysynko.options.prefix, 'localhost:7777/synko'+typeConnector, mysynko.options.url);
+    var mydop = dop.create({});
+    t.equal(mydop.options.host+'/'+mydop.options.prefix, 'localhost:7777/dop'+typeConnector, mydop.options.url);
 
-    var mysynko = synko.create({url:'http://domain.com'});
-    t.equal(mysynko.options.host+'/'+mysynko.options.prefix, 'domain.com/synko'+typeConnector, mysynko.options.url);
+    var mydop = dop.create({url:'http://domain.com'});
+    t.equal(mydop.options.host+'/'+mydop.options.prefix, 'domain.com/dop'+typeConnector, mydop.options.url);
 
-    var mysynko = synko.create({url:'http://domain.com/'});
-    t.equal(mysynko.options.host+'/'+mysynko.options.prefix, 'domain.com/synko'+typeConnector, mysynko.options.url);
+    var mydop = dop.create({url:'http://domain.com/'});
+    t.equal(mydop.options.host+'/'+mydop.options.prefix, 'domain.com/dop'+typeConnector, mydop.options.url);
 
-    var mysynko = synko.create({url:'http://domain.com/miprefix'});
-    t.equal(mysynko.options.host+'/'+mysynko.options.prefix, 'domain.com/miprefix'+typeConnector, mysynko.options.url);
+    var mydop = dop.create({url:'http://domain.com/miprefix'});
+    t.equal(mydop.options.host+'/'+mydop.options.prefix, 'domain.com/miprefix'+typeConnector, mydop.options.url);
 
-    var mysynko = synko.create({url:'https://domain.com'});
-    t.equal(mysynko.options.host+'/'+mysynko.options.prefix, 'domain.com/synko'+typeConnector, mysynko.options.url);
-    t.equal(mysynko.options.ssl, true, mysynko.options.url + ' is ssl protocol');
+    var mydop = dop.create({url:'https://domain.com'});
+    t.equal(mydop.options.host+'/'+mydop.options.prefix, 'domain.com/dop'+typeConnector, mydop.options.url);
+    t.equal(mydop.options.ssl, true, mydop.options.url + ' is ssl protocol');
 
 
 

@@ -1,12 +1,10 @@
+'strict';
 
+var dop = { 
+    version: '0.8.0',
+    name: 'dop',
+    side: 'api',
 
-module.exports = synko = {
-    version: '0.7.1',
-    name: 'synko',
-    side: 'user',
-    port: 4444,
-
-    key_user_token: '~TOKEN',
     key_object_path: '~PATH',
     stringify_function: '~F',
     stringify_undefined: '~U',
@@ -16,9 +14,10 @@ module.exports = synko = {
     util: {},
     on: {},
     _on: {},
-
-    objects: {},
-    user_inc: 0,
-    object_inc: 0
+    objects: {}
 };
 
+
+
+if ( typeof module == 'object' && module )
+    module.exports = dop;

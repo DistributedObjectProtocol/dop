@@ -1,13 +1,13 @@
 
 
-synko.api = function( options ) {    
+dop.api = function( options ) {    
 
 
-    if (synko.util.typeof(options) != 'object')
+    if (dop.util.typeof(options) != 'object')
         options = {};
 
     if (typeof options.connector != 'function')
-        options.connector = synko.ws;
+        options.connector = dop.ws;
 
     // Creating default url
     if (typeof options.url != 'string')
@@ -21,7 +21,7 @@ synko.api = function( options ) {
         options.prefix = url_data[3];
 
     if (typeof options.prefix != 'string')
-        options.prefix = synko.name;
+        options.prefix = dop.name;
 
     options.prefix += options.connector.name_connector;
 
@@ -43,9 +43,9 @@ synko.api = function( options ) {
 
 
     this.options = options;
-    this.options.stringify_function = synko.stringify_function;
-    this.options.stringify_undefined = synko.stringify_undefined;
-    this.options.stringify_regexp = synko.stringify_regexp;
+    this.options.stringify_function = dop.stringify_function;
+    this.options.stringify_undefined = dop.stringify_undefined;
+    this.options.stringify_regexp = dop.stringify_regexp;
 
 
 
@@ -69,9 +69,9 @@ synko.api = function( options ) {
         // promise:
     };
 
-    this.synko = this; // Alias needed for shared methods server&client side. As api/request.js - user/request.js
+    this.dop = this; // Alias needed for shared methods server&client side. As api/request.js - user/request.js
 
-    this.observe = synko.observe.bind(this);
+    this.observe = dop.observe.bind(this);
 
     this.send = function ( data ) {
         this.connector.send( data );
@@ -82,14 +82,14 @@ synko.api = function( options ) {
     };
 
     // Constructor emitter
-    synko.util.emitter.call( this );
+    dop.util.emitter.call( this );
 
 };
 
 // Extending from EventEmitter
-synko.api.prototype = Object.create(
+dop.api.prototype = Object.create(
     (typeof EventEmitter == 'function') ? 
         EventEmitter.prototype
     :
-        synko.util.emitter.prototype
+        dop.util.emitter.prototype
 );

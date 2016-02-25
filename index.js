@@ -1,5 +1,5 @@
 
 module.exports = {
-    server: require('./server/dist/synko.js'),
-    browser: require('./browser/dist/synko.js'),
+    server: require('./server/dist/dop.js'),
+    browser: require('./browser/dist/dop.js'),
 };

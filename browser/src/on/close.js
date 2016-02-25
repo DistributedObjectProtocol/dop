@@ -1,6 +1,6 @@
 
 
-synko.on.close = function() {
+dop.on.close = function() {
 
     this.emit( 'close' );
 

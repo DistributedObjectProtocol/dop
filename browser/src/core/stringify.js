@@ -1,6 +1,6 @@
 
 
-synko.stringify = function(data) {
+dop.stringify = function(data) {
 
     var that = this, tof;
 
@@ -11,7 +11,7 @@ synko.stringify = function(data) {
         if (tof == 'undefined')
             return that.options.stringify_undefined;
 
-        else if (tof == 'function' && v.name !== synko.name_remote_function)
+        else if (tof == 'function' && v.name !== dop.name_remote_function)
             return that.options.stringify_function;
 
         else if (tof == 'object' && v instanceof RegExp)
@@ -41,9 +41,9 @@ synko.stringify = function(data) {
 // delete types[3];
 
 // instance = {stringify_function:'~F', stringify_undefined:'~U', stringify_regexp:'~R'}
-// stringify=synko.stringify.bind(instance);
+// stringify=dop.stringify.bind(instance);
 // to = stringify(types);
-// parse=synko.parse.bind(instance);
+// parse=dop.parse.bind(instance);
 // from = parse(to);
 
 

@@ -1,6 +1,6 @@
 
 // This method find arguments from inside to outside, and if the callback return true will stop
-synko.util.arguments = function( args, callback ) {
+dop.util.arguments = function( args, callback ) {
 
     var finder = args;
 

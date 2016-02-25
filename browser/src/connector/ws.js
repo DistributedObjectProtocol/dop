@@ -1,6 +1,6 @@
 
 
-synko.ws = function( options, on ) {
+dop.ws = function( options, on ) {
 
     var protocol = ( options.ssl ) ? 'wss' : 'ws';
     var socket = new WebSocket(protocol+'://'+options.host+'/' + options.prefix);
@@ -25,5 +25,5 @@ synko.ws = function( options, on ) {
 
 };
 
-synko.ws.name_connector = 'ws';
-synko.ws.api = WebSocket;
+dop.ws.name_connector = 'ws';
+dop.ws.api = WebSocket;

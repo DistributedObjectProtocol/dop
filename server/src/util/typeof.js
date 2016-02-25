@@ -1,6 +1,6 @@
 
 
-synko.util.typeof = function(value) {
+dop.util.typeof = function(value) {
 
     var s = typeof value;
 
@@ -22,7 +22,7 @@ synko.util.typeof = function(value) {
 
 
 /*
-synko.util.typeof = (function() {
+dop.util.typeof = (function() {
     
     var list = {
 

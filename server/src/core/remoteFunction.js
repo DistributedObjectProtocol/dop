@@ -1,6 +1,6 @@
 
 // Create a remote function
-synko.remoteFunction = function ( path ) {
+dop.remoteFunction = function ( path ) {
 
     var that = this;
     return function $SYNKO_REMOTE_FUNCTION() {
@@ -11,7 +11,7 @@ synko.remoteFunction = function ( path ) {
 
     // // http://jsperf.com/dynamic-name-of-functions
     // return new Function(
-    //     "return function " + synko.name_remote_function + "(){  return that.call( path, arguments ); }"
+    //     "return function " + dop.name_remote_function + "(){  return that.call( path, arguments ); }"
     // )();
 
 };

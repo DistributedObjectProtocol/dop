@@ -1,8 +1,8 @@
 
 
-module.exports = function (tape, synko, httpExpress, config) {
+module.exports = function (tape, dop, httpExpress, config) {
     
     test = tape;
-    require('./create')(tape, synko, httpExpress, config);
+    require('./create')(tape, dop, httpExpress, config);
 
 };

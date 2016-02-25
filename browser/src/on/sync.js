@@ -1,6 +1,6 @@
 
 
-synko.on.sync = function( user, request ) {
+dop.on.sync = function( user, request ) {
 
     // Getting info
     var object_name = request[5],
@@ -15,7 +15,7 @@ synko.on.sync = function( user, request ) {
             object = this.objects_name[ object_name ].object;
 
         // Resolve promise
-        synko.on.sync.resolve.call( this, request, this.objects_name[ object_name ].object );
+        dop.on.sync.resolve.call( this, request, this.objects_name[ object_name ].object );
 
     }
 
@@ -34,7 +34,7 @@ synko.on.sync = function( user, request ) {
 
 
 
-synko.on.sync.resolve = function( request, object  ) {
+dop.on.sync.resolve = function( request, object  ) {
 
     var request_id = request[0] * -1,
         object_id = request[2],
@@ -44,21 +44,21 @@ synko.on.sync.resolve = function( request, object  ) {
         response;
         
     if ( object && typeof object == 'object') {
-        response = synko.stringify.call(this, [request_id, synko.protocol.fulfilled, object] );
+        response = dop.stringify.call(this, [request_id, dop.protocol.fulfilled, object] );
         // if (writable) {
             // response.push
         response = response.replace(/,\s*(({\s*}\s*])|(\[\s*\]\s*]))$/, ']'); // In case the object is empty
-        object = synko.util.merge( object, object_remote );
+        object = dop.util.merge( object, object_remote );
     }
     else {
         object = object_remote;
-        response = synko.stringify.call(this, [request_id, synko.protocol.fulfilled] );
+        response = dop.stringify.call(this, [request_id, dop.protocol.fulfilled] );
     }
 
 
 
     // Configure object, adding ~PATH and observe
-    synko.configure.call(
+    dop.configure.call(
         this,
         object, 
         [object_id], 

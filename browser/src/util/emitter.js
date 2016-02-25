@@ -1,13 +1,13 @@
 
 
-synko.util.emitter = function() {
+dop.util.emitter = function() {
 
     this._events = {};
 
 };
 
-synko.util.emitter.prototype.on =
-synko.util.emitter.prototype.addListener = function( name, callback, once ) {
+dop.util.emitter.prototype.on =
+dop.util.emitter.prototype.addListener = function( name, callback, once ) {
 
     if ( typeof callback == 'function' ) {
 
@@ -27,8 +27,8 @@ synko.util.emitter.prototype.addListener = function( name, callback, once ) {
 
 };
 
-synko.util.emitter.prototype.once =
-synko.util.emitter.prototype.addOnceListener = function( name, callback ) {
+dop.util.emitter.prototype.once =
+dop.util.emitter.prototype.addOnceListener = function( name, callback ) {
 
     return this.on( name, callback, true );
 
@@ -36,7 +36,7 @@ synko.util.emitter.prototype.addOnceListener = function( name, callback ) {
 
 
 
-synko.util.emitter.prototype.emit = function( name ) {
+dop.util.emitter.prototype.emit = function( name ) {
 
     if ( typeof this._events[name] == 'object' && this._events[name].length > 0 ) {
 
@@ -63,7 +63,7 @@ synko.util.emitter.prototype.emit = function( name ) {
 
 
 
-synko.util.emitter.prototype.removeListener = function( name, callback ) {
+dop.util.emitter.prototype.removeListener = function( name, callback ) {
 
     if ( typeof this._events[name] == 'object' && this._events[name].length > 0 ) {
 
@@ -90,7 +90,7 @@ synko.util.emitter.prototype.removeListener = function( name, callback ) {
 /*
 name = 'T@!#asty ';
 emitter = new require('events').EventEmitter();
-emitter = new synko.util.emitter();
+emitter = new dop.util.emitter();
 
 emitter.on(name, function(){
     console.log('AAA', arguments.length); 

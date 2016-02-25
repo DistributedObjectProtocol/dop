@@ -1,20 +1,20 @@
 
 
-synko.api.prototype.connect = function( ) {
+dop.api.prototype.connect = function( ) {
 
     this.connector = this[this.options.connector.name_connector] = this.options.connector( this.options, {
 
-        open: synko.on.open.bind(this),
+        open: dop.on.open.bind(this),
 
-        message: synko.on.message.bind(this),
+        message: dop.on.message.bind(this),
 
-        close: synko.on.close.bind(this),
+        close: dop.on.close.bind(this),
 
-        error: synko.on.error.bind(this)
+        error: dop.on.error.bind(this)
 
     });
 
-    this.connected = new synko.util.promise(); // Promise fullfiled when the user is connected with the token
+    this.connected = new dop.util.promise(); // Promise fullfiled when the user is connected with the token
 
     return this.connected;
 

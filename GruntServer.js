@@ -112,7 +112,7 @@ module.exports = function(grunt) {
             },
             dist: {
                 src: [
-                    'server/src/synko.js',
+                    'server/src/dop.js',
                     'server/src/core/*',
                     'server/src/api/*',
                     'server/src/on/*',

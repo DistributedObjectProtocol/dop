@@ -13,7 +13,7 @@ module.exports = function(grunt) {
             },
             dist: {
                 src: [
-                    'browser/src/synko.js'
+                    'browser/src/dop.js'
                     ,'browser/src/util/*'
                     ,'browser/src/core/create.js'
                     ,'browser/src/core/*'

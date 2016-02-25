@@ -1,12 +1,12 @@
 
 
-synko.on.message = function( message_raw ) {
+dop.on.message = function( message_raw ) {
 
     var messages;
 
     // Parsing message
     if (typeof message_raw == 'string') {
-        try { messages = synko.parse.call(this, message_raw ); } 
+        try { messages = dop.parse.call(this, message_raw ); } 
         catch(e) {}
     }
     else 
@@ -17,8 +17,8 @@ synko.on.message = function( message_raw ) {
 
 
     // Managing OSP protocol
-    if ( synko.util.typeof( messages ) == 'array' )
-        synko.osp.call( this, this, messages );
+    if ( dop.util.typeof( messages ) == 'array' )
+        dop.osp.call( this, this, messages );
 
 
 };

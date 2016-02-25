@@ -1,7 +1,7 @@
 
 
-synko.resolve = function() {
+dop.resolve = function() {
 
-    return synko.response( 'resolve', arguments );
+    return dop.response( 'resolve', arguments );
 
 };

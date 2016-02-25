@@ -1,17 +1,17 @@
 
 
-synko.on.set = function( user, request ) {
+dop.on.set = function( user, request ) {
     
     var response = [ request[0] * -1 ],
         object_id = request[2][0],
-        obj = synko.objects[object_id].object;
+        obj = dop.objects[object_id].object;
 
     // If the object is writable by the user
     if ( user.writables[object_id] ) {
 
         var exists = true,
             oldValueRemote = request[3],
-            oldValue = synko.util.get(obj, request[2].slice(1), function() { 
+            oldValue = dop.util.get(obj, request[2].slice(1), function() { 
                 exists = false;
                 return false; 
             });
@@ -24,7 +24,7 @@ synko.on.set = function( user, request ) {
             
             var change = false;
             var newValue = request[4];
-            var tof = synko.util.typeof( oldValue );
+            var tof = dop.util.typeof( oldValue );
 
 console.log(tof, oldValue, oldValueRemote, newValue)
             if ( tof == 'object' || tof == 'array' ) { 
@@ -46,11 +46,11 @@ console.log(tof, oldValue, oldValueRemote, newValue)
 
         }
         else
-            response.push( synko.error.REJECT_SET_NOT_EXISTS );
+            response.push( dop.error.REJECT_SET_NOT_EXISTS );
     
     }
     else
-        response.push( synko.error.REJECT_SET_NOT_WRITABLE );
+        response.push( dop.error.REJECT_SET_NOT_WRITABLE );
 
 
     user.send( JSON.stringify( response ) );

@@ -1,6 +1,6 @@
 
 
-synko.on.reject = function( user, response ) {
+dop.on.reject = function( user, response ) {
 
     var request_id = response[0]*-1;
     

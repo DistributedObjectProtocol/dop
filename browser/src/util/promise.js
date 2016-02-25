@@ -1,6 +1,6 @@
 
 
-synko.util.promise = function( resolver ) {
+dop.util.promise = function( resolver ) {
 
     var thens = [],
         state = 0, /* 0 = pending, 1 = fulfilled, 2 = rejected, 3 = completed/canceled */
@@ -187,13 +187,13 @@ synko.util.promise = function( resolver ) {
 
 };
 
-// synko.util.promise.resolve = function(value) {
+// dop.util.promise.resolve = function(value) {
 //     return new this(function(resolve, reject) {
 //         resolve(value);
 //     });
 // };
 
-// synko.util.promise.reject = function(reason) {
+// dop.util.promise.reject = function(reason) {
 //     return new this(function(resolve, reject) {
 //         reject(reason);
 //     });

@@ -1,8 +1,8 @@
 
 
-synko.socketio = function( options, on ) {
+dop.socketio = function( options, on ) {
 
-    var socket = synko.socketio.api( options.url );
+    var socket = dop.socketio.api( options.url );
 
     socket.on('connect', function () {
         on.open();
@@ -24,5 +24,5 @@ synko.socketio = function( options, on ) {
 
 };
 
-synko.socketio.name_connector = 'socketio';
-synko.socketio.api = window.io;
+dop.socketio.name_connector = 'socketio';
+dop.socketio.api = window.io;

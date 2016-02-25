@@ -1,5 +1,5 @@
 
 
-synko.user.prototype.close = function() {
+dop.user.prototype.close = function() {
     return this.socket.close();
 };

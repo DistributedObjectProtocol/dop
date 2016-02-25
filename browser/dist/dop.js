@@ -2,12 +2,12 @@
 
 
 
-//////////  browser/src/synko.js
+//////////  browser/src/dop.js
 'strict';
 
-var synko = { 
-    version: '0.7.1',
-    name: 'synko',
+var dop = { 
+    version: '0.8.0',
+    name: 'dop',
     side: 'api',
 
     key_object_path: '~PATH',
@@ -25,7 +25,7 @@ var synko = {
 
 
 if ( typeof module == 'object' && module )
-    module.exports = synko;
+    module.exports = dop;
 
 
 
@@ -33,7 +33,7 @@ if ( typeof module == 'object' && module )
 //////////  browser/src/util/arguments.js
 
 // This method find arguments from inside to outside, and if the callback return true will stop
-synko.util.arguments = function( args, callback ) {
+dop.util.arguments = function( args, callback ) {
 
     var finder = args;
 
@@ -58,14 +58,14 @@ synko.util.arguments = function( args, callback ) {
 //////////  browser/src/util/emitter.js
 
 
-synko.util.emitter = function() {
+dop.util.emitter = function() {
 
     this._events = {};
 
 };
 
-synko.util.emitter.prototype.on =
-synko.util.emitter.prototype.addListener = function( name, callback, once ) {
+dop.util.emitter.prototype.on =
+dop.util.emitter.prototype.addListener = function( name, callback, once ) {
 
     if ( typeof callback == 'function' ) {
 
@@ -85,8 +85,8 @@ synko.util.emitter.prototype.addListener = function( name, callback, once ) {
 
 };
 
-synko.util.emitter.prototype.once =
-synko.util.emitter.prototype.addOnceListener = function( name, callback ) {
+dop.util.emitter.prototype.once =
+dop.util.emitter.prototype.addOnceListener = function( name, callback ) {
 
     return this.on( name, callback, true );
 
@@ -94,7 +94,7 @@ synko.util.emitter.prototype.addOnceListener = function( name, callback ) {
 
 
 
-synko.util.emitter.prototype.emit = function( name ) {
+dop.util.emitter.prototype.emit = function( name ) {
 
     if ( typeof this._events[name] == 'object' && this._events[name].length > 0 ) {
 
@@ -121,7 +121,7 @@ synko.util.emitter.prototype.emit = function( name ) {
 
 
 
-synko.util.emitter.prototype.removeListener = function( name, callback ) {
+dop.util.emitter.prototype.removeListener = function( name, callback ) {
 
     if ( typeof this._events[name] == 'object' && this._events[name].length > 0 ) {
 
@@ -148,7 +148,7 @@ synko.util.emitter.prototype.removeListener = function( name, callback ) {
 /*
 name = 'T@!#asty ';
 emitter = new require('events').EventEmitter();
-emitter = new synko.util.emitter();
+emitter = new dop.util.emitter();
 
 emitter.on(name, function(){
     console.log('AAA', arguments.length); 
@@ -174,11 +174,11 @@ emitter.emit(name, 4);
 //////////  browser/src/util/get.js
 
 
-synko.util.get = function ( obj, path, callback_create ) {
+dop.util.get = function ( obj, path, callback_create ) {
 
     for (var i=0, l=path.length, tof; i<l; i++) {
 
-        tof = synko.util.typeof( obj[ path[i] ] );
+        tof = dop.util.typeof( obj[ path[i] ] );
 
         if ( i+1<l && obj[ path[i] ] !== null && (tof == 'object' || tof == 'array') )
             obj = obj[ path[i] ];
@@ -201,12 +201,12 @@ synko.util.get = function ( obj, path, callback_create ) {
 
 /*
 
-synko.util.get.set = function ( obj, path, value, callback_create ) {
+dop.util.get.set = function ( obj, path, value, callback_create ) {
 
     path = path.slice(0);
     var prop = path.pop();
 
-    obj = synko.util.get(obj, path, callback_create);
+    obj = dop.util.get(obj, path, callback_create);
 
     obj[prop] = value;
 
@@ -215,14 +215,14 @@ synko.util.get.set = function ( obj, path, value, callback_create ) {
 };
 
 
-synko.util.get.delete = function ( obj, path, callback_create ) {
+dop.util.get.delete = function ( obj, path, callback_create ) {
 
     path = path.slice(0);
     var prop = path.pop();
 
-    obj = synko.util.get(obj, path);
+    obj = dop.util.get(obj, path);
 
-    ( synko.util.typeof(obj) == 'array' && !isNaN(prop) ) ?
+    ( dop.util.typeof(obj) == 'array' && !isNaN(prop) ) ?
         obj.splice(prop, 1)
     :
         delete obj[prop];
@@ -257,7 +257,7 @@ var obj1 = {
 };
 
 exists = true;
-resu = synko.util.get(obj1, ['d', 'd2', 'd1','a'], function(obj, property, i){ 
+resu = dop.util.get(obj1, ['d', 'd2', 'd1','a'], function(obj, property, i){ 
     exists = false;
     // console.log(obj.hasOwnProperty(property), i); 
     return !obj.hasOwnProperty(property);  // If the path does not exists and we return true, the path will be create to set the property
@@ -277,7 +277,7 @@ console.log('RESU:',exists,resu,obj1)
 //////////  browser/src/util/merge.js
 
 // Based on: https://github.com/unclechu/node-deep-extend (Performace: http://jsperf.com/deepmerge-comparisions/3)
-synko.util.merge = (function() {
+dop.util.merge = (function() {
 
     return function merge(first, second) {
 
@@ -395,9 +395,9 @@ synko.util.merge = (function() {
 //     ]
 // };
 // delete data.types[3];
-// console.log(synko.util.merge({},data));
+// console.log(dop.util.merge({},data));
 
-// resu=synko.util.merge(obj1, obj2, );
+// resu=dop.util.merge(obj1, obj2, );
 // console.log( resu );
 // console.log( resu.obj === obj2.obj );
 // console.log( resu.fun === obj2.fun );
@@ -413,8 +413,8 @@ synko.util.merge = (function() {
 
 
 
-// // Based in synko.util.path && synko.util.get.set
-// synko.util.merge = (function() {
+// // Based in dop.util.path && dop.util.get.set
+// dop.util.merge = (function() {
 
 //     var destiny;
 
@@ -424,7 +424,7 @@ synko.util.merge = (function() {
 
 //             value = (Array.isArray( value )) ? [] : {};
 
-//         synko.util.get.set(destiny, path, value);
+//         dop.util.get.set(destiny, path, value);
 
 //     };
 
@@ -441,7 +441,7 @@ synko.util.merge = (function() {
 
 //         destiny = first;
 
-//         synko.util.path(second, callback);
+//         dop.util.path(second, callback);
 
 //         return first;
 
@@ -458,12 +458,12 @@ synko.util.merge = (function() {
 //////////  browser/src/util/path.js
 
 // http://jsperf.com/stringify-path-vs-custom-path/2 - http://jsperf.com/stringify-path-vs-custom-path/3
-synko.util.path = function (obj, callback) {
+dop.util.path = function (obj, callback) {
 
-    synko.util.path.recursive.call({circular:[]}, obj, callback, []);
+    dop.util.path.recursive.call({circular:[]}, obj, callback, []);
 
 };
-synko.util.path.recursive = function (obj, callback, path ) {
+dop.util.path.recursive = function (obj, callback, path ) {
 
     for (var key in obj) {
 
@@ -481,7 +481,7 @@ synko.util.path.recursive = function (obj, callback, path ) {
 
                 this.circular.push(obj[key]);
 
-                synko.util.path.recursive.call(this, obj[key], callback, path );
+                dop.util.path.recursive.call(this, obj[key], callback, path );
 
             }
 
@@ -496,7 +496,7 @@ synko.util.path.recursive = function (obj, callback, path ) {
 
 
 // // http://jsperf.com/stringify-clousured-or-not - 
-// synko.stringify_path = function(obj, callback) {
+// dop.stringify_path = function(obj, callback) {
 
 //     var path = [];
 
@@ -504,7 +504,7 @@ synko.util.path.recursive = function (obj, callback, path ) {
 
 //         if (v !== obj) {
 
-//             while ( path.length>0 && synko.util.get(obj, path) !== this )
+//             while ( path.length>0 && dop.util.get(obj, path) !== this )
 //                 path.pop();
 
 //             path.push(k);
@@ -523,7 +523,7 @@ synko.util.path.recursive = function (obj, callback, path ) {
 //////////  browser/src/util/promise.js
 
 
-synko.util.promise = function( resolver ) {
+dop.util.promise = function( resolver ) {
 
     var thens = [],
         state = 0, /* 0 = pending, 1 = fulfilled, 2 = rejected, 3 = completed/canceled */
@@ -710,13 +710,13 @@ synko.util.promise = function( resolver ) {
 
 };
 
-// synko.util.promise.resolve = function(value) {
+// dop.util.promise.resolve = function(value) {
 //     return new this(function(resolve, reject) {
 //         resolve(value);
 //     });
 // };
 
-// synko.util.promise.reject = function(reason) {
+// dop.util.promise.reject = function(reason) {
 //     return new this(function(resolve, reject) {
 //         reject(reason);
 //     });
@@ -729,7 +729,7 @@ synko.util.promise = function( resolver ) {
 //////////  browser/src/util/typeof.js
 
 
-synko.util.typeof = function(value) {
+dop.util.typeof = function(value) {
 
     var s = typeof value;
 
@@ -751,7 +751,7 @@ synko.util.typeof = function(value) {
 
 
 /*
-synko.util.typeof = (function() {
+dop.util.typeof = (function() {
     
     var list = {
 
@@ -786,9 +786,9 @@ synko.util.typeof = (function() {
 //////////  browser/src/core/create.js
 
 
-synko.create = function( options ) {
+dop.create = function( options ) {
 
-    return new synko.api( options );
+    return new dop.api( options );
 
 };
 
@@ -798,14 +798,14 @@ synko.create = function( options ) {
 //////////  browser/src/core/api.js
 
 
-synko.api = function( options ) {    
+dop.api = function( options ) {    
 
 
-    if (synko.util.typeof(options) != 'object')
+    if (dop.util.typeof(options) != 'object')
         options = {};
 
     if (typeof options.connector != 'function')
-        options.connector = synko.ws;
+        options.connector = dop.ws;
 
     // Creating default url
     if (typeof options.url != 'string')
@@ -819,7 +819,7 @@ synko.api = function( options ) {
         options.prefix = url_data[3];
 
     if (typeof options.prefix != 'string')
-        options.prefix = synko.name;
+        options.prefix = dop.name;
 
     options.prefix += options.connector.name_connector;
 
@@ -841,9 +841,9 @@ synko.api = function( options ) {
 
 
     this.options = options;
-    this.options.stringify_function = synko.stringify_function;
-    this.options.stringify_undefined = synko.stringify_undefined;
-    this.options.stringify_regexp = synko.stringify_regexp;
+    this.options.stringify_function = dop.stringify_function;
+    this.options.stringify_undefined = dop.stringify_undefined;
+    this.options.stringify_regexp = dop.stringify_regexp;
 
 
 
@@ -867,9 +867,9 @@ synko.api = function( options ) {
         // promise:
     };
 
-    this.synko = this; // Alias needed for shared methods server&client side. As api/request.js - user/request.js
+    this.dop = this; // Alias needed for shared methods server&client side. As api/request.js - user/request.js
 
-    this.observe = synko.observe.bind(this);
+    this.observe = dop.observe.bind(this);
 
     this.send = function ( data ) {
         this.connector.send( data );
@@ -880,16 +880,16 @@ synko.api = function( options ) {
     };
 
     // Constructor emitter
-    synko.util.emitter.call( this );
+    dop.util.emitter.call( this );
 
 };
 
 // Extending from EventEmitter
-synko.api.prototype = Object.create(
+dop.api.prototype = Object.create(
     (typeof EventEmitter == 'function') ? 
         EventEmitter.prototype
     :
-        synko.util.emitter.prototype
+        dop.util.emitter.prototype
 );
 
 
@@ -899,25 +899,25 @@ synko.api.prototype = Object.create(
 //////////  browser/src/core/configure.js
 
 // Configure a new object with the remote callbacks ~PATH and observe if is observable
-synko.configure = function( object, path, isobservable ) {
+dop.configure = function( object, path, isobservable ) {
 
     var that = this;
 
-    Object.defineProperty( object, synko.key_object_path, {value: path} );
+    Object.defineProperty( object, dop.key_object_path, {value: path} );
 
     // if ( isobservable )
         // Object.observe( object, this.observe );
 
-    synko.util.path( object, function(subpath, value, key, obj ) {
+    dop.util.path( object, function(subpath, value, key, obj ) {
 
         var newpath = path.concat(subpath);
 
         if ( value === that.options.stringify_function )
-            obj[key] = synko.remoteFunction.call( that, newpath );
+            obj[key] = dop.remoteFunction.call( that, newpath );
 
-        if ( value !== null && typeof value == 'object' && typeof value[synko.key_object_path] == 'undefined' ) {
+        if ( value !== null && typeof value == 'object' && typeof value[dop.key_object_path] == 'undefined' ) {
         
-            Object.defineProperty( value, synko.key_object_path, {value: newpath} );
+            Object.defineProperty( value, dop.key_object_path, {value: newpath} );
             
             // if ( isobservable )
                 // Object.observe( value, that.observe );
@@ -933,7 +933,7 @@ synko.configure = function( object, path, isobservable ) {
 
 /*
 
-synko.api.prototype.observe = function(changes) {
+dop.api.prototype.observe = function(changes) {
 
     for (var i=0; i<changes.length; i++) {
         
@@ -945,7 +945,7 @@ synko.api.prototype.observe = function(changes) {
             changes[i].object[changes[i].name] !== null &&
             typeof changes[i].object[changes[i].name] == 'object'
         ) {
-            synko.observe(changes[i].object[changes[i].name], tcallback_observer, path );
+            dop.observe(changes[i].object[changes[i].name], tcallback_observer, path );
         }
 
         console.log( changes[i].type, path, changes[i].oldValue );
@@ -960,7 +960,7 @@ synko.api.prototype.observe = function(changes) {
 
 // setTimeout(function(){
 
-MYSERVE = new synko.instance();
+MYSERVE = new dop.instance();
 MYOBJECT = {
     foo: 0,
     bar: 1,
@@ -971,7 +971,7 @@ MYOBJECT = {
     }
 };
 
-synko.observe(MYOBJECT, MYSERVE.observe.bind(MYSERVE), [12345] );
+dop.observe(MYOBJECT, MYSERVE.observe.bind(MYSERVE), [12345] );
 
 MYOBJECT.obj.arr[2] = 'ONE';
 MYOBJECT.obj.arr = 'TWO';
@@ -994,7 +994,7 @@ setTimeout(function(){
 //////////  browser/src/core/error.js
 
 
-synko.error = {
+dop.error = {
 
     // REQUEST_UNIQUE: 'The id of the request should be unique (incrementing numericaly) for every request',
 
@@ -1014,11 +1014,11 @@ synko.error = {
 //////////  browser/src/core/observe.js
 
 
-synko.observe = function(changes) {
+dop.observe = function(changes) {
 
     for (var i=0; i<changes.length; i++) {
         
-        var path = changes[i].object[synko.key_object_path].slice(0);
+        var path = changes[i].object[dop.key_object_path].slice(0);
         
         path.push( changes[i].name );
 
@@ -1027,7 +1027,7 @@ synko.observe = function(changes) {
             changes[i].object[changes[i].name] !== null &&
             typeof changes[i].object[changes[i].name] == 'object'
         ) {
-            synko.configure.call(this, changes[i].object[changes[i].name], path, true );
+            dop.configure.call(this, changes[i].object[changes[i].name], path, true );
         }
 
         // console.log( changes[i].type, path, changes[i].oldValue );
@@ -1044,7 +1044,7 @@ synko.observe = function(changes) {
 //////////  browser/src/core/osp.js
 
 
-synko.osp = function( user, messages ) {
+dop.osp = function( user, messages ) {
 
 
     if (typeof messages[0] != 'object')
@@ -1062,8 +1062,8 @@ synko.osp = function( user, messages ) {
         if ( typeof request_id == 'number' ) {
 
             // REQUEST ===============================================================
-            if (request_id > 0 && typeof synko.on[synko.protocol_keys[action]] == 'function' )
-                synko.on[synko.protocol_keys[action]].call( this, user, request );
+            if (request_id > 0 && typeof dop.on[dop.protocol_keys[action]] == 'function' )
+                dop.on[dop.protocol_keys[action]].call( this, user, request );
 
 
             // RESPONSE ===============================================================
@@ -1076,10 +1076,10 @@ synko.osp = function( user, messages ) {
                     action = this.requests[ request_id ].data[1];
 
                     if ( request[1] === 0 )
-                        synko._on[synko.protocol_keys[action]].call( this, user, request );
+                        dop._on[dop.protocol_keys[action]].call( this, user, request );
 
                     else
-                        synko.on.reject.call( this, user, request );
+                        dop.on.reject.call( this, user, request );
 
                     // Removing request
                     if ( --this.requests[request_id].users === 0 )
@@ -1101,7 +1101,7 @@ synko.osp = function( user, messages ) {
 //////////  browser/src/core/parse.js
 
 
-synko.parse = function parse(data) {
+dop.parse = function parse(data) {
 
     var that = this;
 
@@ -1127,7 +1127,7 @@ synko.parse = function parse(data) {
     });
 
 };
-synko.parse.parse_type_date = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/; //http://jsperf.com/serializing-date-on-json-parse
+dop.parse.parse_type_date = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/; //http://jsperf.com/serializing-date-on-json-parse
 
 
 
@@ -1135,14 +1135,17 @@ synko.parse.parse_type_date = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/; //h
 //////////  browser/src/core/protocol.js
 
 
-synko.protocol = {
+dop.protocol = {
 
 
     // [<request_id>, <action>, <params...>]
     // If <request_id> it's greater than 0 is a request, if is less than 0 then is the response of the request.
 
-    // Is possible send multiple requests in one message, just wrapping it in an Array
-    // [[<request_one>, <action>, <params...>], [<request_two>, <action>, <params...>]]
+    // Is possible send one request with multiple actions. And the response must respect the order sent
+    // [<request_id>, [<action>, <params...>], [<action>, <params...>]]
+
+    // Is possible send multiple requests in one message, just wrapping it in an Array. But the order of the responses is not fixed. Which means the response of request_idTwo could be resolved before request_idOne
+    // [[<request_id1>, <action>, <params...>], [<request_id2>, <action>, <params...>]]
 
     // If the response has a 0 as second parameter, means the response it's fulfilled. Any other value is an error
     // [-1234, 0, <params...>]
@@ -1158,39 +1161,42 @@ synko.protocol = {
     fulfilled: 0,
 
 
-                        // Client
-    connect: 0,         // [ 1234, 0]
-                        // [-1234, 0, <user_token>, {'~F':'$custom_F','~U':'$custom_U','~R':'$custom_R'}]
-
-
-    request: 1,         // [ 1234, 1, [<params...>]]
-                        // [-1234, 0, [<params...>]]
-
-
-    sync: 2,            // Server
-                        // [ 1234, 2, <object_id>, <writable 0|1>, <data_object>, <name>]
-                        // [-1234, 0, <data_object_merged>]
-
-
-    unsync: 3,          // [ 1234, 3, <object_id>]
+                        // Server
+    connect: 0,         // [ 1234, 0, <user_token>, {'~F':'$custom_F','~U':'$custom_U','~R':'$custom_R'}]
                         // [-1234, 0]
 
 
-    call: 4,            // [ 1234, 4, [<object_id>, 'path','path'], [<params...>]]
+    sync: 1,            // Client
+                        // [ 1234, 1, <name>, <data_object_merged>]
+                        // [-1234, 0, <object_id>, <changes_int>, <writable 0|1>, <data_object>]
+
+    unsync: 2,          // [ 1234, 2, <object_id>]
+                        // [-1234, 0]
+
+
+    call: 3,            // [ 1234, 3, [<object_id>, 'path','path'], [<params...>]]
                         // [-1234, 0, [<params...>]]
 
 
-    set: 5,             // [ 1234, 5, [<object_id>, 'path','path'], 'value']              -> Server ->  If value is not defined then is a delete
-                        // [ 1234, 5, [<object_id>, 'path','path'], 'oldvalue', 'value']  -> Client ->  Oldvalue is required only when the client send
+    set: 4,             // [ 1234, 4, [<object_id>, 'path','path'], 'value']
+                        // [ 1234, 4, [<object_id>, 'path','path'], 'oldvalue', 'value']  -> Client ->  Oldvalue is required only when the client send
                         // [-1234, 0]
+
+
+    delete: 5,          // [ 1234, 5, [<object_id>, 'path','path']]
+                        // [ 1234, 5, [<object_id>, 'path','path'], 'oldvalue']  -> Client ->  Oldvalue is required only when the client send
+                        // [-1234, 0]
+
+    request: 6,         // [ 1234, 6, [<params...>]]
+                        // [-1234, 0, [<params...>]]
 
 
 };
 
 
-synko.protocol_keys = {};
-for (var key in synko.protocol)
-    synko.protocol_keys[ synko.protocol[key] ] = key;
+dop.protocol_keys = {};
+for (var key in dop.protocol)
+    dop.protocol_keys[ dop.protocol[key] ] = key;
 
 
 
@@ -1201,9 +1207,9 @@ for (var key in synko.protocol)
 //////////  browser/src/core/reject.js
 
 
-synko.reject = function() {
+dop.reject = function() {
 
-    return synko.response( 'reject', arguments );
+    return dop.response( 'reject', arguments );
 
 };
 
@@ -1213,7 +1219,7 @@ synko.reject = function() {
 //////////  browser/src/core/remoteFunction.js
 
 // Create a remote function
-synko.remoteFunction = function ( path ) {
+dop.remoteFunction = function ( path ) {
 
     var that = this;
     return function $SYNKO_REMOTE_FUNCTION() {
@@ -1224,7 +1230,7 @@ synko.remoteFunction = function ( path ) {
 
     // // http://jsperf.com/dynamic-name-of-functions
     // return new Function(
-    //     "return function " + synko.name_remote_function + "(){  return that.call( path, arguments ); }"
+    //     "return function " + dop.name_remote_function + "(){  return that.call( path, arguments ); }"
     // )();
 
 };
@@ -1235,14 +1241,14 @@ synko.remoteFunction = function ( path ) {
 //////////  browser/src/core/request.js
 
 // Create a new request
-synko.request = function ( request_data ) {
+dop.request = function ( request_data ) {
 
     var request_id = this.requests_inc++;
     request_data.unshift( request_id );
     return this.requests[ request_id ] = {
         id: request_id, 
         data: request_data, 
-        promise: new synko.util.promise(),
+        promise: new dop.util.promise(),
         users: 1
     };
 
@@ -1254,9 +1260,9 @@ synko.request = function ( request_data ) {
 //////////  browser/src/core/resolve.js
 
 
-synko.resolve = function() {
+dop.resolve = function() {
 
-    return synko.response( 'resolve', arguments );
+    return dop.response( 'resolve', arguments );
 
 };
 
@@ -1266,11 +1272,11 @@ synko.resolve = function() {
 //////////  browser/src/core/response.js
 
 
-synko.response = function( action, params ) {
+dop.response = function( action, params ) {
 
     var promise;
 
-    return synko.util.arguments( params, function( args ) {
+    return dop.util.arguments( params, function( args ) {
 
         promise = args[args.length-1];
 
@@ -1286,19 +1292,19 @@ synko.response = function( action, params ) {
 
 };
 
-synko.response.resolve = function() {
+dop.response.resolve = function() {
 
     this.response.push( Array.prototype.slice.call( arguments, 0 ) );
 
-    this.user.send( synko.stringify.call(this.user.synko, this.response ) );
+    this.user.send( dop.stringify.call(this.user.dop, this.response ) );
 
 };
 
-synko.response.reject = function( error ) {
+dop.response.reject = function( error ) {
 
     this.response[1] = error;
 
-    this.user.send( synko.stringify.call(this.user.synko, this.response ) );
+    this.user.send( dop.stringify.call(this.user.dop, this.response ) );
 
 };
 
@@ -1314,7 +1320,7 @@ synko.response.reject = function( error ) {
 
 //     return (function() {
 //         return (function() {
-//              return synko.resolve( a*b );
+//              return dop.resolve( a*b );
 //         })();
 //     })();
 
@@ -1324,14 +1330,14 @@ synko.response.reject = function( error ) {
 // var o={
 //     reject: function(){},
 //     response: {},
-//     resolve: function synko_resolve( result ){
+//     resolve: function dop_resolve( result ){
 //         console.log('resolved1', result);
 //     }
 // };
 // var o2={
 //     reject: function(){},
 //     response: {},
-//     resolve: function synko_resolve( result ){
+//     resolve: function dop_resolve( result ){
 //         console.log('resolved2', result);
 //     }
 // };
@@ -1347,7 +1353,7 @@ synko.response.reject = function( error ) {
 //////////  browser/src/core/stringify.js
 
 
-synko.stringify = function(data) {
+dop.stringify = function(data) {
 
     var that = this, tof;
 
@@ -1358,7 +1364,7 @@ synko.stringify = function(data) {
         if (tof == 'undefined')
             return that.options.stringify_undefined;
 
-        else if (tof == 'function' && v.name !== synko.name_remote_function)
+        else if (tof == 'function' && v.name !== dop.name_remote_function)
             return that.options.stringify_function;
 
         else if (tof == 'object' && v instanceof RegExp)
@@ -1388,9 +1394,9 @@ synko.stringify = function(data) {
 // delete types[3];
 
 // instance = {stringify_function:'~F', stringify_undefined:'~U', stringify_regexp:'~R'}
-// stringify=synko.stringify.bind(instance);
+// stringify=dop.stringify.bind(instance);
 // to = stringify(types);
-// parse=synko.parse.bind(instance);
+// parse=dop.parse.bind(instance);
 // from = parse(to);
 
 
@@ -1410,12 +1416,12 @@ synko.stringify = function(data) {
 //////////  browser/src/api/call.js
 
 // call method
-synko.api.prototype.call = function( path, params ) {
+dop.api.prototype.call = function( path, params ) {
 
-    var data = [ synko.protocol.call, path, params ],
-        request = synko.request.call( this, data );
+    var data = [ dop.protocol.call, path, params ],
+        request = dop.request.call( this, data );
 
-    this.send( synko.stringify.call(this, request.data ) );
+    this.send( dop.stringify.call(this, request.data ) );
 
     return request.promise;
     
@@ -1427,21 +1433,21 @@ synko.api.prototype.call = function( path, params ) {
 //////////  browser/src/api/connect.js
 
 
-synko.api.prototype.connect = function( ) {
+dop.api.prototype.connect = function( ) {
 
     this.connector = this[this.options.connector.name_connector] = this.options.connector( this.options, {
 
-        open: synko.on.open.bind(this),
+        open: dop.on.open.bind(this),
 
-        message: synko.on.message.bind(this),
+        message: dop.on.message.bind(this),
 
-        close: synko.on.close.bind(this),
+        close: dop.on.close.bind(this),
 
-        error: synko.on.error.bind(this)
+        error: dop.on.error.bind(this)
 
     });
 
-    this.connected = new synko.util.promise(); // Promise fullfiled when the user is connected with the token
+    this.connected = new dop.util.promise(); // Promise fullfiled when the user is connected with the token
 
     return this.connected;
 
@@ -1453,7 +1459,7 @@ synko.api.prototype.connect = function( ) {
 //////////  browser/src/api/delete.js
 
 
-synko.api.prototype.delete = function( object, key ) {
+dop.api.prototype.delete = function( object, key ) {
 
     return this.set( object, key );
 
@@ -1465,12 +1471,12 @@ synko.api.prototype.delete = function( object, key ) {
 //////////  browser/src/api/request.js
 
 // Send a new request
-synko[synko.side].prototype.request = function() {
+dop[dop.side].prototype.request = function() {
 
-    var data = [ synko.protocol.request, Array.prototype.slice.call(arguments, 0) ],
-        request = synko.request.call( this.synko, data );
+    var data = [ dop.protocol.request, Array.prototype.slice.call(arguments, 0) ],
+        request = dop.request.call( this.dop, data );
 
-    this.send( synko.stringify.call(this, request.data ) );
+    this.send( dop.stringify.call(this, request.data ) );
 
     return request.promise;
     
@@ -1482,26 +1488,26 @@ synko[synko.side].prototype.request = function() {
 //////////  browser/src/api/set.js
 
 
-synko.api.prototype.set = function( object, key, value ) {
+dop.api.prototype.set = function( object, key, value ) {
 
     // If writable
 
     
-    if ( synko.util.typeof( object[synko.key_object_path] ) != 'array' ) {
+    if ( dop.util.typeof( object[dop.key_object_path] ) != 'array' ) {
         // error
     }
 
     var old_value = object[key],
-        path = object[synko.key_object_path].slice(0),
-        data = [ synko.protocol.set, path, old_value ];
+        path = object[dop.key_object_path].slice(0),
+        data = [ dop.protocol.set, path, old_value ];
         path.push( key );
     
 
     if ( arguments.length == 3)
         data.push( value );
 
-    var request = synko.request.call( this, data );
-    this.send( synko.stringify.call(this, request.data ) );
+    var request = dop.request.call( this, data );
+    this.send( dop.stringify.call(this, request.data ) );
 
     return request.promise;
 
@@ -1526,17 +1532,17 @@ synko.api.prototype.set = function( object, key, value ) {
 //////////  browser/src/api/sync.js
 
 
-synko.api.prototype.sync = function(object_name, object) {
+dop.api.prototype.sync = function(object_name, object) {
 
-    var promise = new synko.util.promise();
+    var promise = new dop.util.promise();
         object_name = object_name.trim();
 
     // Must be an object
     if ( !object || typeof object != 'object' )
-        throw new TypeError( synko.error.SYNC_MUST_BE_OBJECT );
+        throw new TypeError( dop.error.SYNC_MUST_BE_OBJECT );
 
-    if ( object && typeof object == 'object' && synko.util.typeof( object[synko.key_object_path] ) == 'array' )
-        throw new TypeError( synko.error.SYNC_NO_REPEAT );
+    if ( object && typeof object == 'object' && dop.util.typeof( object[dop.key_object_path] ) == 'array' )
+        throw new TypeError( dop.error.SYNC_NO_REPEAT );
 
     // If the object object_name does not exists yet we have to wait until the server send the object
     if ( typeof this.objects_name[ object_name ] == 'undefined' )
@@ -1545,11 +1551,11 @@ synko.api.prototype.sync = function(object_name, object) {
     // If we already have the object remote
     else if ( typeof this.objects_name[ object_name ].request == 'object' && typeof this.objects_name[ object_name ].object == 'undefined' ) {
         this.objects_name[ object_name ].promise = promise;
-        synko.on.sync.resolve.call( this, this.objects_name[ object_name ].request, object);
+        dop.on.sync.resolve.call( this, this.objects_name[ object_name ].request, object);
     }
 
     else
-        throw new TypeError( synko.error.SYNC_NO_REPEAT_NAME );
+        throw new TypeError( dop.error.SYNC_NO_REPEAT_NAME );
 
     return this.objects_name[ object_name ].promise;
 
@@ -1574,7 +1580,7 @@ synko.api.prototype.sync = function(object_name, object) {
 //////////  browser/src/on/_call.js
 
 
-synko._on.call = function( user, response ) {
+dop._on.call = function( user, response ) {
 
     this.requests[ response[0]*-1 ].promise.resolve.apply( this, response[2] );
 
@@ -1586,20 +1592,20 @@ synko._on.call = function( user, response ) {
 //////////  browser/src/on/_connect.js
 
 
-synko._on.connect = function( user, request ) {
+dop._on.connect = function( user, request ) {
 
     this.token = request[2];
 
     if ( typeof request[3] == 'object' ) {
 
-        if ( typeof request[3][synko.stringify_function] == 'string' )
-            this.options.stringify_function = request[3][synko.stringify_function];
+        if ( typeof request[3][dop.stringify_function] == 'string' )
+            this.options.stringify_function = request[3][dop.stringify_function];
 
-        if ( typeof request[3][synko.stringify_undefined] == 'string' )
-            this.options.stringify_undefined = request[3][synko.stringify_undefined];
+        if ( typeof request[3][dop.stringify_undefined] == 'string' )
+            this.options.stringify_undefined = request[3][dop.stringify_undefined];
 
-        if ( typeof request[3][synko.stringify_regexp] == 'string' )
-            this.options.stringify_regexp = request[3][synko.stringify_regexp];
+        if ( typeof request[3][dop.stringify_regexp] == 'string' )
+            this.options.stringify_regexp = request[3][dop.stringify_regexp];
 
     }
 
@@ -1613,7 +1619,7 @@ synko._on.connect = function( user, request ) {
 //////////  browser/src/on/_request.js
 
 
-synko._on.request = function( user, response ) {
+dop._on.request = function( user, response ) {
 
     this.requests[ response[0]*-1 ].promise.resolve.apply( this, response[2] );
 
@@ -1625,27 +1631,27 @@ synko._on.request = function( user, response ) {
 //////////  browser/src/on/call.js
 
 
-synko.on.call = function( user, request ) {
+dop.on.call = function( user, request ) {
     
     var response = [ request[0] * -1 ];
 
-    if (synko.util.typeof( request[2] ) == 'array' ) {
+    if (dop.util.typeof( request[2] ) == 'array' ) {
         
         var path = request[2],
             object_id = path.shift();
 
         if ( typeof this.objects[ object_id ] == 'object' ) {
             
-            var fn = synko.util.get( this.objects[ object_id ].object, path );
+            var fn = dop.util.get( this.objects[ object_id ].object, path );
             if ( typeof fn == 'function' ) {
 
-                response.push( synko.protocol.fulfilled );
+                response.push( dop.protocol.fulfilled );
 
                 var params = request[3],
                 
                 promise = { request: request, response: response, user: user };
-                promise.resolve = synko.response.resolve.bind( promise );
-                promise.reject = synko.response.reject.bind( promise );
+                promise.resolve = dop.response.resolve.bind( promise );
+                promise.reject = dop.response.reject.bind( promise );
 
                 params.push( promise );
 
@@ -1657,7 +1663,7 @@ synko.on.call = function( user, request ) {
     
     }
 
-    response.push( synko.error.REJECT_CALL_NOT_EXISTS );
+    response.push( dop.error.REJECT_CALL_NOT_EXISTS );
 
     user.send( JSON.stringify( response ) );
 
@@ -1669,7 +1675,7 @@ synko.on.call = function( user, request ) {
 //////////  browser/src/on/close.js
 
 
-synko.on.close = function() {
+dop.on.close = function() {
 
     this.emit( 'close' );
 
@@ -1681,7 +1687,7 @@ synko.on.close = function() {
 //////////  browser/src/on/error.js
 
 
-synko.on.error = function( error ) {
+dop.on.error = function( error ) {
 
     this.emit( 'error', error );
 
@@ -1693,13 +1699,13 @@ synko.on.error = function( error ) {
 //////////  browser/src/on/message.js
 
 
-synko.on.message = function( message_raw ) {
+dop.on.message = function( message_raw ) {
 
     var messages;
 
     // Parsing message
     if (typeof message_raw == 'string') {
-        try { messages = synko.parse.call(this, message_raw ); } 
+        try { messages = dop.parse.call(this, message_raw ); } 
         catch(e) {}
     }
     else 
@@ -1710,8 +1716,8 @@ synko.on.message = function( message_raw ) {
 
 
     // Managing OSP protocol
-    if ( synko.util.typeof( messages ) == 'array' )
-        synko.osp.call( this, this, messages );
+    if ( dop.util.typeof( messages ) == 'array' )
+        dop.osp.call( this, this, messages );
 
 
 };
@@ -1722,11 +1728,11 @@ synko.on.message = function( message_raw ) {
 //////////  browser/src/on/open.js
 
 
-synko.on.open = function() {
+dop.on.open = function() {
 
-    var request = synko.request.call( this, [] );
+    var request = dop.request.call( this, [] );
 
-    request.data.push( synko.protocol.connect );
+    request.data.push( dop.protocol.connect );
 
     this.send( JSON.stringify( request.data ) );
 
@@ -1738,7 +1744,7 @@ synko.on.open = function() {
 //////////  browser/src/on/reject.js
 
 
-synko.on.reject = function( user, response ) {
+dop.on.reject = function( user, response ) {
 
     this.requests[ response[0]*-1 ].promise.reject.call( this, response[1] );
 
@@ -1750,13 +1756,13 @@ synko.on.reject = function( user, response ) {
 //////////  browser/src/on/request.js
 
 
-synko.on.request = function( user, request ) {
+dop.on.request = function( user, request ) {
 
-    var response = [ request[0] * -1, synko.protocol.fulfilled ];
+    var response = [ request[0] * -1, dop.protocol.fulfilled ];
 
     var promise = { request: request, response: response, user: user };
-    promise.resolve = synko.response.resolve.bind( promise );
-    promise.reject = synko.response.reject.bind( promise );
+    promise.resolve = dop.response.resolve.bind( promise );
+    promise.reject = dop.response.reject.bind( promise );
 
     var params = [ 'request' ];
     params = params.concat( request[2] );
@@ -1772,7 +1778,7 @@ synko.on.request = function( user, request ) {
 //////////  browser/src/on/sync.js
 
 
-synko.on.sync = function( user, request ) {
+dop.on.sync = function( user, request ) {
 
     // Getting info
     var object_name = request[5],
@@ -1787,7 +1793,7 @@ synko.on.sync = function( user, request ) {
             object = this.objects_name[ object_name ].object;
 
         // Resolve promise
-        synko.on.sync.resolve.call( this, request, this.objects_name[ object_name ].object );
+        dop.on.sync.resolve.call( this, request, this.objects_name[ object_name ].object );
 
     }
 
@@ -1806,7 +1812,7 @@ synko.on.sync = function( user, request ) {
 
 
 
-synko.on.sync.resolve = function( request, object  ) {
+dop.on.sync.resolve = function( request, object  ) {
 
     var request_id = request[0] * -1,
         object_id = request[2],
@@ -1816,21 +1822,21 @@ synko.on.sync.resolve = function( request, object  ) {
         response;
         
     if ( object && typeof object == 'object') {
-        response = synko.stringify.call(this, [request_id, synko.protocol.fulfilled, object] );
+        response = dop.stringify.call(this, [request_id, dop.protocol.fulfilled, object] );
         // if (writable) {
             // response.push
         response = response.replace(/,\s*(({\s*}\s*])|(\[\s*\]\s*]))$/, ']'); // In case the object is empty
-        object = synko.util.merge( object, object_remote );
+        object = dop.util.merge( object, object_remote );
     }
     else {
         object = object_remote;
-        response = synko.stringify.call(this, [request_id, synko.protocol.fulfilled] );
+        response = dop.stringify.call(this, [request_id, dop.protocol.fulfilled] );
     }
 
 
 
     // Configure object, adding ~PATH and observe
-    synko.configure.call(
+    dop.configure.call(
         this,
         object, 
         [object_id], 
@@ -1890,9 +1896,9 @@ sync() NO
 //////////  browser/src/connector/socketio.js
 
 
-synko.socketio = function( options, on ) {
+dop.socketio = function( options, on ) {
 
-    var socket = synko.socketio.api( options.url );
+    var socket = dop.socketio.api( options.url );
 
     socket.on('connect', function () {
         on.open();
@@ -1914,8 +1920,8 @@ synko.socketio = function( options, on ) {
 
 };
 
-synko.socketio.name_connector = 'socketio';
-synko.socketio.api = window.io;
+dop.socketio.name_connector = 'socketio';
+dop.socketio.api = window.io;
 
 
 
@@ -1923,9 +1929,9 @@ synko.socketio.api = window.io;
 //////////  browser/src/connector/sockjs.js
 
 
-synko.SockJS = function( options, on ) {
+dop.SockJS = function( options, on ) {
 
-    var socket = new synko.SockJS.api( options.url, undefined, options );
+    var socket = new dop.SockJS.api( options.url, undefined, options );
 
     socket.addEventListener('open', function() {
         on.open();
@@ -1947,8 +1953,8 @@ synko.SockJS = function( options, on ) {
 
 };
 
-synko.SockJS.name_connector = 'SockJS';
-synko.SockJS.api = window.SockJS;
+dop.SockJS.name_connector = 'SockJS';
+dop.SockJS.api = window.SockJS;
 
 
 
@@ -1966,7 +1972,7 @@ synko.SockJS.api = window.SockJS;
 //////////  browser/src/connector/ws.js
 
 
-synko.ws = function( options, on ) {
+dop.ws = function( options, on ) {
 
     var protocol = ( options.ssl ) ? 'wss' : 'ws';
     var socket = new WebSocket(protocol+'://'+options.host+'/' + options.prefix);
@@ -1991,5 +1997,5 @@ synko.ws = function( options, on ) {
 
 };
 
-synko.ws.name_connector = 'ws';
-synko.ws.api = WebSocket;
+dop.ws.name_connector = 'ws';
+dop.ws.api = WebSocket;

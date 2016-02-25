@@ -1,7 +1,7 @@
 
 
-synko.reject = function() {
+dop.reject = function() {
 
-    return synko.response( 'reject', arguments );
+    return dop.response( 'reject', arguments );
 
 };
