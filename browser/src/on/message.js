@@ -16,9 +16,9 @@ dop.on.message = function( message_raw ) {
     this.emit( 'message', messages, message_raw );
 
 
-    // Managing OSP protocol
+    // Managing protocol
     if ( dop.util.typeof( messages ) == 'array' )
-        dop.osp.call( this, this, messages );
+        dop.manage.call( this, this, messages );
 
 
 };

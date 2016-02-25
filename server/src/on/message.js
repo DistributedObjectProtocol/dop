@@ -22,6 +22,6 @@ dop.on.message = function( user_socket, message_raw ) {
 
     // Managing OSP protocol
     if ( dop.util.typeof( messages ) == 'array' )
-        dop.osp.call( this, user, messages );
+        dop.manage.call( this, user, messages );
 
 };

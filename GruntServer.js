@@ -41,8 +41,8 @@ module.exports = function(grunt) {
                     src: 'server/src/core/protocol.js',
                     dest: 'browser/src/core/protocol.js',
                 },{
-                    src: 'server/src/core/osp.js',
-                    dest: 'browser/src/core/osp.js',
+                    src: 'server/src/core/manage.js',
+                    dest: 'browser/src/core/manage.js',
                 },{
                     src: 'server/src/core/configure.js',
                     dest: 'browser/src/core/configure.js',

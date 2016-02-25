@@ -14,7 +14,7 @@ var dop = {
     stringify_function: '~F',
     stringify_undefined: '~U',
     stringify_regexp: '~R',
-    name_remote_function: '$SYNKO_REMOTE_FUNCTION',
+    name_remote_function: '$DOP_REMOTE_FUNCTION',
 
     util: {},
     on: {},
@@ -1011,40 +1011,10 @@ dop.error = {
 
 
 
-//////////  browser/src/core/observe.js
+//////////  browser/src/core/manage.js
 
 
-dop.observe = function(changes) {
-
-    for (var i=0; i<changes.length; i++) {
-        
-        var path = changes[i].object[dop.key_object_path].slice(0);
-        
-        path.push( changes[i].name );
-
-        if (
-            (changes[i].type == 'update' || changes[i].type == 'add') &&
-            changes[i].object[changes[i].name] !== null &&
-            typeof changes[i].object[changes[i].name] == 'object'
-        ) {
-            dop.configure.call(this, changes[i].object[changes[i].name], path, true );
-        }
-
-        // console.log( changes[i].type, path, changes[i].oldValue );
-        // console.log()
-
-    }
-
-};
-
-
-
-
-
-//////////  browser/src/core/osp.js
-
-
-dop.osp = function( user, messages ) {
+dop.manage = function( user, messages ) {
 
 
     if (typeof messages[0] != 'object')
@@ -1094,6 +1064,36 @@ dop.osp = function( user, messages ) {
     }
 
 };
+
+
+
+
+//////////  browser/src/core/observe.js
+
+
+dop.observe = function(changes) {
+
+    for (var i=0; i<changes.length; i++) {
+        
+        var path = changes[i].object[dop.key_object_path].slice(0);
+        
+        path.push( changes[i].name );
+
+        if (
+            (changes[i].type == 'update' || changes[i].type == 'add') &&
+            changes[i].object[changes[i].name] !== null &&
+            typeof changes[i].object[changes[i].name] == 'object'
+        ) {
+            dop.configure.call(this, changes[i].object[changes[i].name], path, true );
+        }
+
+        // console.log( changes[i].type, path, changes[i].oldValue );
+        // console.log()
+
+    }
+
+};
+
 
 
 
@@ -1222,7 +1222,7 @@ dop.reject = function() {
 dop.remoteFunction = function ( path ) {
 
     var that = this;
-    return function $SYNKO_REMOTE_FUNCTION() {
+    return function $DOP_REMOTE_FUNCTION() {
 
         return that.call( path, Array.prototype.slice.call( arguments ) );
 
@@ -1715,9 +1715,9 @@ dop.on.message = function( message_raw ) {
     this.emit( 'message', messages, message_raw );
 
 
-    // Managing OSP protocol
+    // Managing protocol
     if ( dop.util.typeof( messages ) == 'array' )
-        dop.osp.call( this, this, messages );
+        dop.manage.call( this, this, messages );
 
 
 };

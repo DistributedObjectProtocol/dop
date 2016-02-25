@@ -11,7 +11,7 @@ module.exports = dop = {
     stringify_function: '~F',
     stringify_undefined: '~U',
     stringify_regexp: '~R',
-    name_remote_function: '$SYNKO_REMOTE_FUNCTION',
+    name_remote_function: '$DOP_REMOTE_FUNCTION',
 
     util: {},
     on: {},
