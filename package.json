@@ -1,6 +1,6 @@
 {
   "name": "synko",
-  "version": "0.7.1",
+  "version": "0.7.3",
   "main": "index.js",
   "browser": "./browser/dist/synko.js",
   "license": "MIT",
