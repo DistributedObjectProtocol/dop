@@ -1166,9 +1166,9 @@ dop.protocol = {
                         // [-1234, 0]
 
 
-    sync: 1,            // Client
-                        // [ 1234, 1, <name>, <data_object_merged>]
-                        // [-1234, 0, <object_id>, <changes_int>, <writable 0|1>, <data_object>]
+    sync: 1,            // [ 1234, 1, <ref_id>, <name_or_id>, <data_object_merged>]
+                        // [-1234, 0, <ref_id>, <writable 0|1>, <data_object>, <changes_int>]
+
 
     unsync: 2,          // [ 1234, 2, <object_id>]
                         // [-1234, 0]
