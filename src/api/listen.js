@@ -44,5 +44,6 @@ dop.listen = function ( options ) {
     };
 
 
-
 };
+
+dop.listen.prototype = dop.util.emitter.prototype;
