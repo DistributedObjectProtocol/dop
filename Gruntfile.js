@@ -24,24 +24,24 @@ module.exports = function(grunt) {
             server: {
                 src: [
                     'src/dop.js',
+                    'src/util/*',
                     'src/core/*',
                     'src/api/*',
                     'src/on/*',
                     'src/node/*',
-                    'src/util/*',
-                    'src/side/server/*/*'
+                    'src/platform/server/*/*'
                 ],
                 dest: 'dist/server.js'
             },
             browser: {
                 src: [
                     'src/dop.js',
+                    'src/util/*',
                     'src/core/*',
                     'src/api/*',
                     'src/on/*',
                     'src/node/*',
-                    'src/util/*',
-                    'src/side/browser/*/*'
+                    'src/platform/browser/*/*'
                 ],
                 dest: 'dist/browser.js'
             }
