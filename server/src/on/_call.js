@@ -1,6 +1,6 @@
 
 
-dop._on.call = function( user, response ) {
+synko._on.call = function( user, response ) {
 
     var request_id = response[0]*-1;
     

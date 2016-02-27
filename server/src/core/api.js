@@ -1,45 +1,45 @@
 
 
-dop.api = function( options ) {
+synko.api = function( options ) {
 
-    this.options = (dop.util.typeof(options) == 'object') ? options : {};
+    this.options = (synko.util.typeof(options) == 'object') ? options : {};
     this.options.stringify_params = {};
 
     if (typeof this.options.connector != 'function')
-        this.options.connector = dop.ws;
+        this.options.connector = synko.ws;
 
     if (typeof this.options.namespace != 'string')
-        this.options.namespace = '/' + dop.name;
+        this.options.namespace = '/' + synko.name;
 
     // Adding connector name to the end of the prefix/namespace
     this.options.namespace += this.options.connector.name_connector;
 
 
     if (typeof this.options.stringify_function != 'string')
-        this.options.stringify_function = dop.stringify_function;
+        this.options.stringify_function = synko.stringify_function;
     else
-        this.options.stringify_params[dop.stringify_function] = this.options.stringify_function;
+        this.options.stringify_params[synko.stringify_function] = this.options.stringify_function;
 
     if (typeof this.options.stringify_undefined != 'string')
-        this.options.stringify_undefined = dop.stringify_undefined;
+        this.options.stringify_undefined = synko.stringify_undefined;
     else
-        this.options.stringify_params[dop.stringify_undefined] = this.options.stringify_undefined;
+        this.options.stringify_params[synko.stringify_undefined] = this.options.stringify_undefined;
 
     if (typeof this.options.stringify_regexp != 'string')
-        this.options.stringify_regexp = dop.stringify_regexp;
+        this.options.stringify_regexp = synko.stringify_regexp;
     else
-        this.options.stringify_params[dop.stringify_regexp] = this.options.stringify_regexp;
+        this.options.stringify_params[synko.stringify_regexp] = this.options.stringify_regexp;
 
 
 
 
     var on = {
 
-        open: dop.on.open.bind( this ),
+        open: synko.on.open.bind( this ),
 
-        message: dop.on.message.bind( this ),
+        message: synko.on.message.bind( this ),
 
-        close: dop.on.close.bind( this )
+        close: synko.on.close.bind( this )
 
     };
 
@@ -55,10 +55,10 @@ dop.api = function( options ) {
     
     this.connector = this[this.options.connector.name_connector] = this.options.connector( this.options, on );
 
-    this.observe = dop.observe.bind(this);
+    this.observe = synko.observe.bind(this);
 
 };
 
 
-dop.api.prototype = Object.create( require('events').EventEmitter.prototype );
+synko.api.prototype = Object.create( require('events').EventEmitter.prototype );
 

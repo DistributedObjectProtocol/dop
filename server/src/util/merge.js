@@ -1,6 +1,6 @@
 
 // Based on: https://github.com/unclechu/node-deep-extend (Performace: http://jsperf.com/deepmerge-comparisions/3)
-dop.util.merge = (function() {
+synko.util.merge = (function() {
 
     return function merge(first, second) {
 
@@ -118,9 +118,9 @@ dop.util.merge = (function() {
 //     ]
 // };
 // delete data.types[3];
-// console.log(dop.util.merge({},data));
+// console.log(synko.util.merge({},data));
 
-// resu=dop.util.merge(obj1, obj2, );
+// resu=synko.util.merge(obj1, obj2, );
 // console.log( resu );
 // console.log( resu.obj === obj2.obj );
 // console.log( resu.fun === obj2.fun );
@@ -136,8 +136,8 @@ dop.util.merge = (function() {
 
 
 
-// // Based in dop.util.path && dop.util.get.set
-// dop.util.merge = (function() {
+// // Based in synko.util.path && synko.util.get.set
+// synko.util.merge = (function() {
 
 //     var destiny;
 
@@ -147,7 +147,7 @@ dop.util.merge = (function() {
 
 //             value = (Array.isArray( value )) ? [] : {};
 
-//         dop.util.get.set(destiny, path, value);
+//         synko.util.get.set(destiny, path, value);
 
 //     };
 
@@ -164,7 +164,7 @@ dop.util.merge = (function() {
 
 //         destiny = first;
 
-//         dop.util.path(second, callback);
+//         synko.util.path(second, callback);
 
 //         return first;
 

@@ -2,7 +2,7 @@
   "name": "dop",
   "version": "0.8.0",
   "main": "index.js",
-  "browser": "./browser/dist/dop.js",
+  "browser": "./dist/browser.js",
   "license": "MIT",
   "repository": "https://github.com/DistributedObjectProtocol/dop",
   "author": "Josema Enzo (http://josema.es/)",
@@ -39,9 +39,6 @@
     "tabe": "^1.0.4"
   },
   "scripts": {
-    "test": "node tests/browser_basics/",
-    "grunt": "npm run gruntserver && npm run gruntbrowser && sleep 9999999999999999999999999",
-    "gruntserver": "grunt --gruntfile GruntServer.js &",
-    "gruntbrowser": "grunt --gruntfile GruntBrowser.js &"
+    "test": "node tests/browser_basics/"
   }
 }

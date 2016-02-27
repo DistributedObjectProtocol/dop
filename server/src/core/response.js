@@ -1,10 +1,10 @@
 
 
-dop.response = function( action, params ) {
+synko.response = function( action, params ) {
 
     var promise;
 
-    return dop.util.arguments( params, function( args ) {
+    return synko.util.arguments( params, function( args ) {
 
         promise = args[args.length-1];
 
@@ -20,19 +20,19 @@ dop.response = function( action, params ) {
 
 };
 
-dop.response.resolve = function() {
+synko.response.resolve = function() {
 
     this.response.push( Array.prototype.slice.call( arguments, 0 ) );
 
-    this.user.send( dop.stringify.call(this.user.dop, this.response ) );
+    this.user.send( synko.stringify.call(this.user.synko, this.response ) );
 
 };
 
-dop.response.reject = function( error ) {
+synko.response.reject = function( error ) {
 
     this.response[1] = error;
 
-    this.user.send( dop.stringify.call(this.user.dop, this.response ) );
+    this.user.send( synko.stringify.call(this.user.synko, this.response ) );
 
 };
 
@@ -48,7 +48,7 @@ dop.response.reject = function( error ) {
 
 //     return (function() {
 //         return (function() {
-//              return dop.resolve( a*b );
+//              return synko.resolve( a*b );
 //         })();
 //     })();
 
@@ -58,14 +58,14 @@ dop.response.reject = function( error ) {
 // var o={
 //     reject: function(){},
 //     response: {},
-//     resolve: function dop_resolve( result ){
+//     resolve: function synko_resolve( result ){
 //         console.log('resolved1', result);
 //     }
 // };
 // var o2={
 //     reject: function(){},
 //     response: {},
-//     resolve: function dop_resolve( result ){
+//     resolve: function synko_resolve( result ){
 //         console.log('resolved2', result);
 //     }
 // };

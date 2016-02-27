@@ -1,24 +1,24 @@
 
 // Configure a new object with the remote callbacks ~PATH and observe if is observable
-dop.configure = function( object, path, isobservable ) {
+synko.configure = function( object, path, isobservable ) {
 
     var that = this;
 
-    Object.defineProperty( object, dop.key_object_path, {value: path} );
+    Object.defineProperty( object, synko.key_object_path, {value: path} );
 
     // if ( isobservable )
         // Object.observe( object, this.observe );
 
-    dop.util.path( object, function(subpath, value, key, obj ) {
+    synko.util.path( object, function(subpath, value, key, obj ) {
 
         var newpath = path.concat(subpath);
 
         if ( value === that.options.stringify_function )
-            obj[key] = dop.remoteFunction.call( that, newpath );
+            obj[key] = synko.remoteFunction.call( that, newpath );
 
-        if ( value !== null && typeof value == 'object' && typeof value[dop.key_object_path] == 'undefined' ) {
+        if ( value !== null && typeof value == 'object' && typeof value[synko.key_object_path] == 'undefined' ) {
         
-            Object.defineProperty( value, dop.key_object_path, {value: newpath} );
+            Object.defineProperty( value, synko.key_object_path, {value: newpath} );
             
             // if ( isobservable )
                 // Object.observe( value, that.observe );
@@ -34,7 +34,7 @@ dop.configure = function( object, path, isobservable ) {
 
 /*
 
-dop.api.prototype.observe = function(changes) {
+synko.api.prototype.observe = function(changes) {
 
     for (var i=0; i<changes.length; i++) {
         
@@ -46,7 +46,7 @@ dop.api.prototype.observe = function(changes) {
             changes[i].object[changes[i].name] !== null &&
             typeof changes[i].object[changes[i].name] == 'object'
         ) {
-            dop.observe(changes[i].object[changes[i].name], tcallback_observer, path );
+            synko.observe(changes[i].object[changes[i].name], tcallback_observer, path );
         }
 
         console.log( changes[i].type, path, changes[i].oldValue );
@@ -61,7 +61,7 @@ dop.api.prototype.observe = function(changes) {
 
 // setTimeout(function(){
 
-MYSERVE = new dop.instance();
+MYSERVE = new synko.instance();
 MYOBJECT = {
     foo: 0,
     bar: 1,
@@ -72,7 +72,7 @@ MYOBJECT = {
     }
 };
 
-dop.observe(MYOBJECT, MYSERVE.observe.bind(MYSERVE), [12345] );
+synko.observe(MYOBJECT, MYSERVE.observe.bind(MYSERVE), [12345] );
 
 MYOBJECT.obj.arr[2] = 'ONE';
 MYOBJECT.obj.arr = 'TWO';

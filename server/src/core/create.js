@@ -1,7 +1,7 @@
 
 
-dop.create = function( options ) {
+synko.create = function( options ) {
 
-    return new dop.api( options );
+    return new synko.api( options );
 
 };

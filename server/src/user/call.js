@@ -1,11 +1,11 @@
 
 // Send a new request
-dop.user.prototype.call = function( path, params ) {
+synko.user.prototype.call = function( path, params ) {
 
-    var data = [ dop.protocol.call, path, params ],
-        request = dop.request.call( this.dop, data );
+    var data = [ synko.protocol.call, path, params ],
+        request = synko.request.call( this.synko, data );
 
-    this.send( dop.stringify.call(this, request.data ) );
+    this.send( synko.stringify.call(this, request.data ) );
 
     return request.promise;
     

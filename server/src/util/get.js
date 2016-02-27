@@ -1,10 +1,10 @@
 
 
-dop.util.get = function ( obj, path, callback_create ) {
+synko.util.get = function ( obj, path, callback_create ) {
 
     for (var i=0, l=path.length, tof; i<l; i++) {
 
-        tof = dop.util.typeof( obj[ path[i] ] );
+        tof = synko.util.typeof( obj[ path[i] ] );
 
         if ( i+1<l && obj[ path[i] ] !== null && (tof == 'object' || tof == 'array') )
             obj = obj[ path[i] ];
@@ -27,12 +27,12 @@ dop.util.get = function ( obj, path, callback_create ) {
 
 /*
 
-dop.util.get.set = function ( obj, path, value, callback_create ) {
+synko.util.get.set = function ( obj, path, value, callback_create ) {
 
     path = path.slice(0);
     var prop = path.pop();
 
-    obj = dop.util.get(obj, path, callback_create);
+    obj = synko.util.get(obj, path, callback_create);
 
     obj[prop] = value;
 
@@ -41,14 +41,14 @@ dop.util.get.set = function ( obj, path, value, callback_create ) {
 };
 
 
-dop.util.get.delete = function ( obj, path, callback_create ) {
+synko.util.get.delete = function ( obj, path, callback_create ) {
 
     path = path.slice(0);
     var prop = path.pop();
 
-    obj = dop.util.get(obj, path);
+    obj = synko.util.get(obj, path);
 
-    ( dop.util.typeof(obj) == 'array' && !isNaN(prop) ) ?
+    ( synko.util.typeof(obj) == 'array' && !isNaN(prop) ) ?
         obj.splice(prop, 1)
     :
         delete obj[prop];
@@ -83,7 +83,7 @@ var obj1 = {
 };
 
 exists = true;
-resu = dop.util.get(obj1, ['d', 'd2', 'd1','a'], function(obj, property, i){ 
+resu = synko.util.get(obj1, ['d', 'd2', 'd1','a'], function(obj, property, i){ 
     exists = false;
     // console.log(obj.hasOwnProperty(property), i); 
     return !obj.hasOwnProperty(property);  // If the path does not exists and we return true, the path will be create to set the property
