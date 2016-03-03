@@ -6,7 +6,7 @@ var dop = require('../../dist/server');
 var typeConnector = (typeof process.argv[2] == 'undefined' ) ? 'ws' : process.argv[2];
 
 
-var config = {ports:[dop.port, 5555, 6666, 7777], typeConnector:typeConnector};
+var config = {ports:[4444, 5555, 6666, 7777], typeConnector:typeConnector};
 
 
 
@@ -32,5 +32,10 @@ var expressServer = app.listen(config.ports[3], function () {
 // tests
 tabe.createStream( tape );
 require('./server/')( tape, dop, expressServer, config );
+
+
+
+
+    
 
 

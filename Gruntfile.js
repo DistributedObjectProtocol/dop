@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 
         watch: {
             scripts: {
-                files: ['src/*','src/*/*'],
+                files: ['src/*','src/*/*','src/*/*/*','src/*/*/*/*'],
                 tasks: ['default'],
                 options: {
                     spawn: false,
@@ -29,7 +29,7 @@ module.exports = function(grunt) {
                     'src/api/*',
                     'src/on/*',
                     'src/node/*',
-                    'src/platform/server/*/*'
+                    'src/side/server/*/*'
                 ],
                 dest: 'dist/server.js'
             },
@@ -41,7 +41,7 @@ module.exports = function(grunt) {
                     'src/api/*',
                     'src/on/*',
                     'src/node/*',
-                    'src/platform/browser/*/*'
+                    'src/side/browser/*/*'
                 ],
                 dest: 'dist/browser.js'
             }

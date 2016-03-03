@@ -3,7 +3,8 @@ var dop = {
 
     version: '0.9.0',
     name: 'dop',
-
+    port: 4444,
+    
     // keys
     key_user_token: '~TOKEN',
     key_object_path: '~PATH',
