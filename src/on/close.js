@@ -1,10 +1,17 @@
 
 
-dop.on.close = function( user_socket ){
+dop.on.close = function( listener, socket ){
 
-    // var user = this.users[ user_socket[dop.key_user_token] ]
+    var token_id = socket[dop.key_user_token];
+    var node = dop.node[ token_id ];
 
-    // if ( typeof user_socket[dop.key_user_token] == 'string' ) {
+    listener.emit( 'close', node );
+
+    delete dop.node[ token_id ];
+
+
+
+    // if ( typeof node[dop.key_user_token] == 'string' ) {
 
     //     var object_name, object_id;
 
@@ -31,6 +38,5 @@ dop.on.close = function( user_socket ){
 
     // }
 
-    // this.emit( 'close', user_socket );
 
 };

@@ -29,7 +29,7 @@ module.exports = function(grunt) {
                     'src/api/*',
                     'src/on/*',
                     'src/node/*',
-                    'src/side/server/*/*'
+                    'src/env/server/*/*'
                 ],
                 dest: 'dist/server.js'
             },
@@ -41,7 +41,7 @@ module.exports = function(grunt) {
                     'src/api/*',
                     'src/on/*',
                     'src/node/*',
-                    'src/side/browser/*/*'
+                    'src/env/browser/*/*'
                 ],
                 dest: 'dist/browser.js'
             }

@@ -1,7 +1,24 @@
 
 
-dop.on.open = function( user_socket ){
+dop.on.open = function( listener, socket ){
 
-    this.emit( 'open', user_socket );
+    var node = new dop.core.node();
+    node.socket = socket;
+    node.listener = listener;
+
+    // Generating token
+    var token;
+    do {
+        token = dop.core.generateToken();
+    } while ( dop.node[ token ] !== undefined );
+
+    // Saving token
+    dop.node[token] = node;
+    node.token = token;
+    socket[dop.key_user_token] = token;
+
+    // Events
+    listener.emit( 'open', node );
+    node.emit( 'open' );
 
 };

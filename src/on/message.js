@@ -1,12 +1,14 @@
 
 
-dop.on.message = function( user_socket, message_raw ) {
+dop.on.message = function( socket, message ) {
+
+
 
     // var messages, 
-    //     user = (typeof user_socket[dop.key_user_token] == 'undefined' ) ?
-    //         user_socket
+    //     user = (typeof socket[dop.key_user_token] == 'undefined' ) ?
+    //         socket
     //     :
-    //         this.users[ user_socket[dop.key_user_token] ];
+    //         this.users[ socket[dop.key_user_token] ];
 
     // // Parsing message
     // if (typeof message_raw == 'string') {
@@ -17,7 +19,6 @@ dop.on.message = function( user_socket, message_raw ) {
     //     messages = message_raw;
 
 
-    // this.emit( 'message', user, messages, message_raw );
 
 
     // // Managing OSP protocol

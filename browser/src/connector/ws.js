@@ -6,7 +6,7 @@ dop.ws = function( options, on ) {
     var socket = new WebSocket(protocol+'://'+options.host+'/' + options.prefix);
 
     socket.addEventListener('open', function() {
-        on.open();
+        on.open( socket );
     });
 
     socket.addEventListener('message', function( message ) {

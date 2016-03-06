@@ -23,9 +23,6 @@ dop.protocol = {
 
 
 
-    fulfilled: 0,
-
-
                         // Server -> Client
     connect: 0,         // [ 1234, 0, <user_token>, {'~F':'$custom_F','~U':'$custom_U','~R':'$custom_R'}]
                         // [-1234, 0]
@@ -39,21 +36,21 @@ dop.protocol = {
                         // [-1234, 0, <writable 0|1|2>, <data_object>, <changes_int>]
 
 
-    unsync: 3,          // [ 1234, 3, <object_id>]
+    unsync: 3,          // [ 1234, 3, <ref_id>]
                         // [-1234, 0]
 
 
-    call: 4,            // [ 1234, 4, [<object_id>, 'path','path'], [<params...>]]
+    call: 4,            // [ 1234, 4, [<ref_id>, 'path','path'], [<params...>]]
                         // [-1234, 0, [<params...>]]
 
 
-    set: 5,             // [ 1234, 5, [<object_id>, 'path','path'], 'value']
-                        // [ 1234, 5, [<object_id>, 'path','path'], 'oldvalue', 'value']  -> Client ->  Oldvalue is required only when the client send
+    set: 5,             // [ 1234, 5, [<ref_id>, 'path','path'], 'value']
+                        // [ 1234, 5, [<ref_id>, 'path','path'], 'oldvalue', 'value']  -> Client ->  Oldvalue is required only when the client send
                         // [-1234, 0]
 
 
-    delete: 6,          // [ 1234, 6, [<object_id>, 'path','path']]
-                        // [ 1234, 6, [<object_id>, 'path','path'], 'oldvalue']  -> Client ->  Oldvalue is required only when the client send
+    delete: 6,          // [ 1234, 6, [<ref_id>, 'path','path']]
+                        // [ 1234, 6, [<ref_id>, 'path','path'], 'oldvalue']  -> Client ->  Oldvalue is required only when the client send
                         // [-1234, 0]
 
 
