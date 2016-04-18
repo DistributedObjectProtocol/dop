@@ -13,7 +13,7 @@ dop.connect = function( options ) {
 
     node.options = options;
 
-    node.socket = options.adapter.call(node, node.options);
+    node.socket = options.adapter(node, node.options);
 
     return node;
 

@@ -2,7 +2,7 @@
 
 dop.core.node = function( ) {
 
-    // Constructor emitter
+    // inherit emitter
     dop.util.emitter.call( this );
 
     this.is_connected = false;
