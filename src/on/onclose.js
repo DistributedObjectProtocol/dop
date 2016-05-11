@@ -1,14 +1,15 @@
 
 
-dop.on.close = function( listener, socket ){
+dop.on.close = function( listener_or_node, socket ) {
 
-    var token_id = socket[dop.key_user_token];
-    var node = dop.node[ token_id ];
+    var isListener = ( listener_or_node.socket !== socket );
 
-    listener.emit( 'close', node );
+    listener_or_node.emit( 'close', socket );
 
-    delete dop.node[ token_id ];
+    // var token_id = socket[dop.key_user_token];
+    // var node = dop.node[ token_id ];
 
+    // delete dop.node[ token_id ];
 
 
     // if ( typeof node[dop.key_user_token] == 'string' ) {

@@ -22,10 +22,6 @@ dop.protocol = {
     // [1234]
 
 
-
-    fulfilled: 0,
-
-
                         // Server
     connect: 0,         // [ 1234, 0, <user_token>, {'~F':'$custom_F','~U':'$custom_U','~R':'$custom_R'}]
                         // [-1234, 0]
@@ -57,10 +53,3 @@ dop.protocol = {
 
 
 };
-
-
-dop.protocol_keys = {};
-for (var key in dop.protocol)
-    dop.protocol_keys[ dop.protocol[key] ] = key;
-
-
