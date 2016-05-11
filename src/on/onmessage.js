@@ -1,13 +1,10 @@
 
 
-dop.on.message = function( listener_or_node, socket, message ) {
+dop.on.message = function( listener_or_node, socket, message, message_adapter ) {
 
     var isListener = ( listener_or_node.socket !== socket );
     
-    if ( isListener )
-        listener_or_node.emit( 'message', socket, message );
-    else
-        listener_or_node.emit( 'message', message );
+    listener_or_node.emit( 'message', socket, message, message_adapter );
 
 
     // var token_id = socket[dop.key_user_token];
