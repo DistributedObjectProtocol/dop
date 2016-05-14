@@ -8,14 +8,13 @@ dop.core.node = function( ) {
     this.is_connected = false;
 
     this.request_id = 1;
-    this.request = {};
+    this.requests = {};
 
     this.object_id = {};
     this.object_ref = {};
     this.object = {};
 
-    // this.token = dop.core.generateToken();
-
+    // this.encode_options = {};
 };
 
 // Extending from EventEmitter

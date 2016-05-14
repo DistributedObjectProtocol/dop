@@ -27,7 +27,7 @@ module.exports = function(grunt) {
                     'src/util/*',
                     'src/core/*',
                     'src/api/*',
-                    'src/on/*',
+                    'src/protocol/*',
                     'src/node/*',
                     'src/env/server/*/*'
                 ],
@@ -39,7 +39,7 @@ module.exports = function(grunt) {
                     'src/util/*',
                     'src/core/*',
                     'src/api/*',
-                    'src/on/*',
+                    'src/protocol/*',
                     'src/node/*',
                     'src/env/browser/*/*'
                 ],

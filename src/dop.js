@@ -8,10 +8,12 @@ var dop = {
     // keys
     key_user_token: '~TOKEN_DOP',
     key_object_path: '~PATH',
-    encode_function: '~F',
-    encode_undefined: '~U',
-    encode_regexp: '~R',
     name_remote_function: '$DOP_REMOTE_FUNCTION',
+    encode_options: {
+        encode_function: '~F',
+        encode_undefined: '~U',
+        encode_regexp: '~R',
+    },
 
     // Data
     node_inc:0,
@@ -22,7 +24,7 @@ var dop = {
     // src
     util:{},
     core:{},
-    on:{},
+    protocol:{},
     listener:{},
     connector:{},
 
