@@ -1,2 +1,2 @@
 
-module.exports = require('./dist/server.js');
+module.exports = require('./dist/nodejs.js');

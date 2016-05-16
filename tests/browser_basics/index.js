@@ -2,7 +2,7 @@
 // require
 var tape = require('tape');
 var tabe = require('tabe');
-var dop = require('../../dist/server');
+var dop = require('../../dist/nodejs');
 var typeConnector = (typeof process.argv[2] == 'undefined' ) ? 'ws' : process.argv[2];
 
 

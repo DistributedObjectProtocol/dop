@@ -21,7 +21,7 @@ module.exports = function(grunt) {
                     return '\n\n\n\n//////////  ' + filepath + '\n' + src;
                 }
             },
-            server: {
+            nodejs: {
                 src: [
                     'src/dop.js',
                     'src/util/*',
@@ -29,9 +29,9 @@ module.exports = function(grunt) {
                     'src/api/*',
                     'src/protocol/*',
                     'src/node/*',
-                    'src/env/server/*/*'
+                    'src/adapter/nodejs/*/*'
                 ],
-                dest: 'dist/server.js'
+                dest: 'dist/nodejs.js'
             },
             browser: {
                 src: [
@@ -41,7 +41,7 @@ module.exports = function(grunt) {
                     'src/api/*',
                     'src/protocol/*',
                     'src/node/*',
-                    'src/env/browser/*/*'
+                    'src/adapter/browser/*/*'
                 ],
                 dest: 'dist/browser.js'
             }
@@ -63,7 +63,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
 
-    grunt.registerTask('default', ['concat:server', 'concat:browser', 'uglify', 'watch']);
+    grunt.registerTask('default', ['concat:nodejs', 'concat:browser', 'uglify', 'watch']);
 
 
 

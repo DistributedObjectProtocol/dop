@@ -6,8 +6,9 @@ var dop = {
     port: 4444,
     
     // keys
-    key_user_token: '~TOKEN_DOP',
+    key_socket_token: '~TOKEN_DOP',
     key_object_path: '~PATH',
+
     name_remote_function: '$DOP_REMOTE_FUNCTION',
     encode_options: {
         encode_function: '~F',
@@ -27,6 +28,13 @@ var dop = {
     protocol:{},
     listener:{},
     connector:{},
+
+    // Adapters
+    adapter: {
+        nodejs: {listen:{},connect:{}},
+        browser: {listen:{}, connect:{}}
+    }
+
 
 };
 

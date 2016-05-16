@@ -1,12 +1,12 @@
 
 
-dop.connect = function( options ) {    
+dop.connect = function( options ) {
 
     if ( dop.util.typeof(options) != 'object' )
         options = {};
 
     if ( typeof options.adapter != 'function' )
-        options.adapter = dop.connector.ws;
+        options.adapter = dop.adapter.browser.connect.WebSocket;
 
 
     var node = new dop.core.node();

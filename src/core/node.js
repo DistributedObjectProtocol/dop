@@ -7,7 +7,7 @@ dop.core.node = function( ) {
 
     this.is_connected = false;
 
-    this.request_id = 1;
+    this.request_inc = 1;
     this.requests = {};
 
     this.object_id = {};

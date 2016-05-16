@@ -1,16 +1,16 @@
 
 
-dop.protocol.keys = {
+dop.protocol.actions = {
 
 
     // [<request_id>, <action>, <params...>]
     // If <request_id> it's greater than 0 is a request, if is less than 0 then is the response of the request.
 
-    // Is possible send one request with multiple actions. And the response must respect the order sent. The response will be recieved when all the requests are resolved
-    // [<request_id>, [<action>, <params...>], [<action>, <params...>]]
-
-    // Is possible send multiple requests in one message, just wrapping it in an Array. But the order of the responses is not fixed. Which means the response of request_idTwo could be resolved before request_idOne
+    // Is possible send multiple requests in one message, just wrapping it in an Array. But the order of the responses is not in order. Which means the response of request_idTwo could be resolved before request_idOne
     // [[<request_id1>, <action>, <params...>], [<request_id2>, <action>, <params...>]]
+
+    // Is possible send one request with multiple actions. The response will be recieved when all the requests are resolved. The response could be only one. But if the response is multiple has to respect the order
+    // [<request_id>, [<action>, <params...>], [<action>, <params...>]]
 
     // If the response has a 0 as second parameter, means the response it's fulfilled. Any other value is an error
     // [-1234, 0, <params...>]
@@ -57,5 +57,5 @@ dop.protocol.keys = {
 
 };
 
-for (var key in dop.protocol.keys)
-    dop.protocol.keys[ dop.protocol.keys[key] ] = key;
+for (var action in dop.protocol.actions)
+    dop.protocol.actions[ dop.protocol.actions[action] ] = action;

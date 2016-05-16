@@ -4,10 +4,9 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
 
     listener_or_node.emit( 'message', socket, message_string, message_adapter );
 
-
     var messages, 
         isListener = ( listener_or_node.socket !== socket ),
-        node = ( isListener ) ? dop.node[ socket[dop.key_user_token] ] || {} : listener_or_node;
+        node = ( isListener ) ? dop.node[ socket[dop.key_socket_token] ] || {} : listener_or_node;
 
 
     // Parsing messages
@@ -18,7 +17,6 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
     else 
         messages = message_string;
 
-    
 
     // Managing dop
     if ( dop.util.typeof(messages) == 'array' ) {
@@ -28,7 +26,7 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
             messages = [messages];
 
         // Managing all messages one by one
-        for (var i=0, t=messages.length, message, requests, request, request_id, action; i<t; i++) {
+        for ( var i=0, t=messages.length, message, requests, request, request_id, response, action_type, message_typeof; i<t; i++ ) {
 
             message = messages[i];
             request_id = message[0];
@@ -37,47 +35,51 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
             if ( typeof request_id == 'number' && request_id !== 0 ) {
 
                 // If is only one request
-                requests = ( typeof message[1] == 'number' ) ? 
+                message_typeof = dop.util.typeof(message[1]);
+                requests = (( message_typeof=='number' && message_typeof!='array') || (message_typeof=='string' && request_id<0) ) ? 
                     [request_id, message.slice(1)]
                 :
                     requests = message;
 
 
-                for (var j=1, t2=requests.length; j<t2; ++j) {
+                for ( var j=1, t2=requests.length, action_function; j<t2; ++j ) {
+                    
                     request = requests[j];
-                    action = request[0];
-                    if ( typeof action == 'number' )
-                        console.log(request_id, request);
+
+                    if ( dop.util.typeof(request)=='array' && ((typeof request[0]=='number' && request_id>0) || request_id<0) ) {
+                        
+                        action_type = request[0];
+                        action_function = 'on'+dop.protocol.actions[action_type];
+
+                        // REQUEST ===============================================================
+                        if (request_id>0 && typeof dop.protocol[action_function]=='function' )
+                            dop.protocol[action_function]( node, request_id, request );
+
+
+                        // RESPONSE ===============================================================
+                        else {
+
+                            request_id *= -1;
+
+                            if ( node.requests[request_id] && typeof node.requests[request_id]=='object' ) {
+
+                                response = request;
+                                request = node.requests[request_id];
+
+                                action_type = request[1];
+                                action_function = '_on'+dop.protocol.actions[action_type];
+
+                                if ( typeof dop.protocol[action_function]=='function' )
+                                    dop.protocol[action_function]( node, request_id, request, response );
+                                
+                                delete node.requests[request_id];
+
+                            }
+
+                        }
+
+                    }
                 }
-
-
-                // REQUEST ===============================================================
-                // if (request_id > 0 && typeof dop.protocol['on'+dop.protocol.keys[action]] == 'function' )
-                    // dop.protocol['on'+dop.protocol.keys[action]]( node, request );
-
-
-                // // RESPONSE ===============================================================
-                // else {
-
-                //     request_id *= -1;
-
-                //     if ( this.requests[ request_id ] !== null && typeof this.requests[ request_id ] == 'object' ) {
-
-                //         action = this.requests[ request_id ].data[1];
-
-                //         if ( request[1] === 0 )
-                //             synko._on[synko.protocol_keys[action]].call( this, user, request );
-
-                //         else
-                //             synko.on.reject.call( this, user, request );
-
-                //         // Removing request
-                //         if ( --this.requests[request_id].users === 0 )
-                //             delete this.requests[request_id];
-
-                //     }
-
-                // }
 
             }
 
@@ -91,10 +93,10 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
 
 
     // var messages, 
-    //     user = (typeof socket[dop.key_user_token] == 'undefined' ) ?
+    //     user = (typeof socket[dop.key_socket_token] == 'undefined' ) ?
     //         socket
     //     :
-    //         this.users[ socket[dop.key_user_token] ];
+    //         node.users[ socket[dop.key_socket_token] ];
 
 
 

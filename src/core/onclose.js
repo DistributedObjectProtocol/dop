@@ -6,13 +6,13 @@ dop.core.onclose = function( listener_or_node, socket ) {
 
     listener_or_node.emit( 'close', socket );
 
-    // var token_id = socket[dop.key_user_token];
+    // var token_id = socket[dop.key_socket_token];
     // var node = dop.node[ token_id ];
 
     // delete dop.node[ token_id ];
 
 
-    // if ( typeof node[dop.key_user_token] == 'string' ) {
+    // if ( typeof node[dop.key_socket_token] == 'string' ) {
 
     //     var object_name, object_id;
 

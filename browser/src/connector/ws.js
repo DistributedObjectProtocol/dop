@@ -25,5 +25,5 @@ dop.ws = function( options, on ) {
 
 };
 
-dop.ws.name_connector = 'ws';
+dop.ws.adapter_name = 'ws';
 dop.ws.api = WebSocket;
