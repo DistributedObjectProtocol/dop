@@ -3,6 +3,7 @@
 dop.core.onopen = function( listener_or_node, socket, adapter_name ){
 
     listener_or_node.emit( 'open', socket );
+
     // if side is listener we send token
     if ( listener_or_node.socket !== socket ) {
         var node = new dop.core.node();
@@ -13,8 +14,6 @@ dop.core.onopen = function( listener_or_node, socket, adapter_name ){
         node.listener = listener_or_node;
         dop.protocol.connect( node );
     }
-    else
-        listener_or_node.adapter_name = adapter_name;
 
 };
 

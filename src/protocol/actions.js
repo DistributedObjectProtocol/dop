@@ -15,7 +15,7 @@ dop.protocol.actions = {
     // If the response has a 0 as second parameter, means the response it's fulfilled. Any other value is an error
     // [-1234, 0, <params...>]
 
-    // Also the error response could be custom an string
+    // Also the error response could be custom as string
     // [-1234, 'My custom message error']
 
     // Sending the same request without parameters means a cancel/abort of the request
@@ -28,12 +28,12 @@ dop.protocol.actions = {
                         // [-1234, 0]
 
 
-    request: 1,         // [ 1234, 1, [<params...>]]
-                        // [-1234, 0, [<params...>]]
+    request: 1,         // [ 1234, 1, <params...>]
+                        // [-1234, 0, <params...>]
 
 
-    sync: 2,            // [ 1234, 2, <ref_id>, <name_or_id>, <data_object_merged>]
-                        // [-1234, 0, <writable 0|1|2>, <data_object>, <changes_int>]
+    sync: 2,            // [ 1234, 2, <params...>]
+                        // [-1234, 0, <ref_id>, <data_object>, <nonwritable:0|writable:1|extendible:2>, <changes_int>]
 
 
     unsync: 3,          // [ 1234, 3, <ref_id>]
@@ -41,7 +41,7 @@ dop.protocol.actions = {
 
 
     call: 4,            // [ 1234, 4, [<ref_id>, 'path','path'], [<params...>]]
-                        // [-1234, 0, [<params...>]]
+                        // [-1234, 0, <params...>]
 
 
     set: 5,             // [ 1234, 5, [<ref_id>, 'path','path'], 'value']

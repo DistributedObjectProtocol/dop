@@ -2,17 +2,15 @@
 
 dop.core.onclose = function( listener_or_node, socket ) {
 
-    var isListener = ( listener_or_node.socket !== socket );
+    var isListener = ( listener_or_node.socket !== socket ),
+        node = (isListener) ? dop.getNodeBySocket( socket ) : listener_or_node;
 
     listener_or_node.emit( 'close', socket );
 
-    // var token_id = socket[dop.key_socket_token];
-    // var node = dop.node[ token_id ];
+    if ( typeof node == 'object' ) {
 
-    // delete dop.node[ token_id ];
-
-
-    // if ( typeof node[dop.key_socket_token] == 'string' ) {
+        listener_or_node.emit( 'disconnect', node );
+        delete dop.node[ node.token ];
 
     //     var object_name, object_id;
 
@@ -37,7 +35,5 @@ dop.core.onclose = function( listener_or_node, socket ) {
     //     // Remove user
     //     delete this.users[ user.token ];
 
-    // }
-
-
+    }
 };

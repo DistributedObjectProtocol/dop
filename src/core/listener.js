@@ -14,13 +14,18 @@ dop.core.listener = function( options ) {
     if (typeof options.try_connects != 'number' || options.try_connects<0)
         options.try_connects = 99;
 
+    if ( dop.util.typeof(options.adapter) != 'array' )
+        options.adapter = [options.adapter];
+
 
     this.options = options;
     
-    // Start listening...
-    this.adapter = options.adapter(this, options);
+    // Adding adapters to start listening...
+    this.adapter = {};
+    for (var i=0,t=options.adapter.length; i<t; i++)
+        this.adapter[options.adapter[i]._name] = options.adapter[i](this, options);
 
-    // Constructor emitter
+    // Inherit emitter
     dop.util.emitter.call( this );
 
 };

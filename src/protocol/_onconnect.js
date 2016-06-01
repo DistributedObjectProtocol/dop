@@ -1,4 +1,5 @@
 
+
 dop.protocol._onconnect = function ( node, request_id, request, response ) {
 
     var token = request[2];
@@ -17,8 +18,9 @@ dop.protocol._onconnect = function ( node, request_id, request, response ) {
     }
 
     // We disconnect the node because is rejecting too many times the token assigned
-    else{
-        console.log('DESCONECTAMOS POR SEGURIDAD')
+    else {
+        delete dop.node[token];
+        node.listener.emit('warning', dop.core.error.warning.TOKEN_REJECTED);
         node.socket.close();
     }
 

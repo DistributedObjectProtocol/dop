@@ -13,7 +13,9 @@ dop.connect = function( options ) {
 
     node.options = options;
 
-    node.socket = options.adapter(node, node.options);
+    node.adapter_name = options.adapter._name;
+
+    node.socket = options.adapter(node, options);
 
     return node;
 

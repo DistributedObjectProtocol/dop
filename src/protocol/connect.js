@@ -12,4 +12,5 @@ dop.protocol.connect = function ( node ) {
     node.socket.send(JSON.stringify(
         dop.protocol.createRequest(node, dop.protocol.actions.connect, token)
     ));
+
 };
