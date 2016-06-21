@@ -45,12 +45,10 @@ dop.protocol.actions = {
 
 
     set: 5,             // [ 1234, 5, [<ref_id>, 'path','path'], 'value']
-                        // [ 1234, 5, [<ref_id>, 'path','path'], 'oldvalue', 'value']  -> Client ->  Oldvalue is required only when the client send
                         // [-1234, 0]
 
 
     delete: 6,          // [ 1234, 6, [<ref_id>, 'path','path']]
-                        // [ 1234, 6, [<ref_id>, 'path','path'], 'oldvalue']  -> Client ->  Oldvalue is required only when the client send
                         // [-1234, 0]
 
 
