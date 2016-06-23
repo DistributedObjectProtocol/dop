@@ -43,6 +43,17 @@ test('onopen onmessage onconnect', function(t){
 });
 
 
+
+
+
+test('sync', function(t){
+
+    node.sync('PUBLIC','user','pass');
+
+});
+
+
+
 test('onclose ondisconnect', function(t){
 
     node.on('close', function(socket) {

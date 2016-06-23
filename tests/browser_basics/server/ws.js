@@ -67,6 +67,16 @@ test('onconnect', function(t){
 });
 
 
+var PUBLIC = {hola:'mundo'};
+var PUBLIC_PROXY;
+test('onsync', function(t){
+
+    PUBLIC_PROXY = dop.onsync('PUBLIC',PUBLIC);
+    // dop.onsync('mola');
+
+});
+
+
 
 
 test('onclose ondisconnect', function(t){
@@ -81,6 +91,9 @@ test('onclose ondisconnect', function(t){
     });
 
 });
+
+
+
 
 
 

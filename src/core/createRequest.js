@@ -1,6 +1,6 @@
 
 
-dop.protocol.createRequest = function(node, type, params) {
+dop.core.createRequest = function( node, action ) {
 
     var request_id = node.request_inc++,
         request = Array.prototype.slice.call(arguments, 1);

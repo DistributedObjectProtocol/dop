@@ -2,6 +2,9 @@
 
 dop.util.get = function ( obj, path, callback_create ) {
 
+    if ( path.length == 0 )
+        return obj;
+
     for (var i=0, l=path.length, tof; i<l; i++) {
 
         tof = dop.util.typeof( obj[ path[i] ] );

@@ -9,8 +9,8 @@ dop.protocol.connect = function ( node ) {
     dop.node[token] = node;
     node.token = token;
     node.socket[dop.key_socket_token] = token;
-    node.socket.send(JSON.stringify(
-        dop.protocol.createRequest(node, dop.protocol.actions.connect, token)
+    node.send(JSON.stringify(
+        dop.core.createRequest(node, dop.protocol.actions.connect, token)
     ));
 
 };
