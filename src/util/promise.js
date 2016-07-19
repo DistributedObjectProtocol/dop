@@ -65,20 +65,20 @@ dop.util.promise = function( resolver ) {
     };
 
 
-    function run( scope, params ) {
+    function run( scope, args ) {
         
         if ( thens.length > 0 )
-            loop.call(that, 0, scope, params);
+            loop.call(that, 0, scope, args);
 
         // If there is no thens added yet, we have to resolve/reject asynchronously
         else
             setTimeout(function() {
-                loop.call(that, 0, scope, params);
+                loop.call(that, 0, scope, args);
             }, 0);
     }
 
 
-    function loop( i, scope, params ) {
+    function loop( i, scope, args ) {
 
         var iplus = i+1;
 
@@ -86,9 +86,9 @@ dop.util.promise = function( resolver ) {
 
             try {
 
-                params = [thens[i][that.type].apply(
+                args = [thens[i][that.type].apply(
                     ( thens[i][that.type].hasToGoUp ) ? that : scope, // 2.2.5 `onFulfilled` and `onRejected` must be called as functions (i.e. with no `that` value).
-                    params
+                    args
                 )];
 
                 if (that.type && !type)
@@ -97,52 +97,52 @@ dop.util.promise = function( resolver ) {
             }
             catch (e) {
                 that.type = 1;
-                params = [e];
+                args = [e];
             }
 
 
 
             // 2.3.1. If promise and x refer to the same object, reject promise with a TypeError as the reason.
-            if (params[0] === that) {
+            if (args[0] === that) {
                 that.type = 1;
-                params[0] = new TypeError("Promise resolved by its own instance");
+                args[0] = new TypeError("Promise resolved by its own instance");
             }
 
 
             // 2.3.2. If x is a promise, adopt its state 
-            else if ( params[0] instanceof that.constructor ) {
+            else if ( args[0] instanceof that.constructor ) {
                 var goingup = function(){
                     that.type = this.type;
                     loop.call(that, iplus, scope, arguments);
                 };
                 goingup.hasToGoUp = true;
-                params[0].then(goingup, goingup);
+                args[0].then(goingup, goingup);
                 return;
             }
 
             /*
             // 2.3.3: Otherwise, if `x` is an object or function
-            else if ( params[0] !== null && (typeof params[0] == 'object' || typeof params[0] == 'function') ) {
+            else if ( args[0] !== null && (typeof args[0] == 'object' || typeof args[0] == 'function') ) {
 
                 try {
                     // 
-                    var then = params[0].then;
+                    var then = args[0].then;
                     console.log(typeof then)
                 } catch (e) {
                     // 2.3.3.2. If retrieving the property x.then results in a thrown exception e, reject promise with e as the reason.
-                    params[0] = e;
-                    return that.loop.call(that, iplus, scope, params);
+                    args[0] = e;
+                    return that.loop.call(that, iplus, scope, args);
                 }
 
                 if ( typeof then == 'function' ) {
                     // 2.3.3.3. If then is a function, call it
                     var called = false;
                     var resolvePromise = function(y) {
-                    // console.log(iplus, params)
+                    // console.log(iplus, args)
                         // 2.3.3.3.1. If/when resolvePromise is called with a value y, run [[Resolve]](promise, y).
                         if (called) { return; }
                         called = true;
-                        return loop.call(that, iplus, scope, params);
+                        return loop.call(that, iplus, scope, args);
                     }
                     var rejectPromise = function(r) {
                     // console.log(22222)
@@ -150,18 +150,18 @@ dop.util.promise = function( resolver ) {
                         if (called) { return; }
                         called = true;
                         that.type = 1;
-                        return loop.call(that, iplus, scope, params);
+                        return loop.call(that, iplus, scope, args);
                     }
 
                     try {
-                        then.call(params[0], resolvePromise.bind(that), rejectPromise.bind(that));
+                        then.call(args[0], resolvePromise.bind(that), rejectPromise.bind(that));
                     } catch (e) { // 2.3.3.3.4. If calling then throws an exception e,
                         // console.log(333333)
                         // 2.3.3.3.4.1. If resolvePromise or rejectPromise have been called, ignore it.
                         if (called) { return; }
                         // 2.3.3.3.4.2. Otherwise, reject promise with e as the reason.
                         that.type = 1;
-                        return loop.call(that, iplus, scope, params);
+                        return loop.call(that, iplus, scope, args);
                     }
 
                 }
@@ -173,7 +173,7 @@ dop.util.promise = function( resolver ) {
 
         // Next .then()
         if ( iplus < thens.length )
-            loop(iplus, scope, params);
+            loop(iplus, scope, args);
 
     }
 
@@ -198,3 +198,25 @@ dop.util.promise = function( resolver ) {
 //         reject(reason);
 //     });
 // };
+
+
+/*
+dop.util.promise = function () {
+    var resolve, reject,
+    promise = new Promise(function(res, rej){
+        resolve = res;
+        reject = rej;
+    });
+    promise.resolve = resolve;
+    promise.reject = reject;
+    return promise;
+};
+
+pro = dop.util.promise();
+pro.then(function(v){
+    console.log('yeah',v)
+});
+pro.resolve(1235667)
+*/
+
+

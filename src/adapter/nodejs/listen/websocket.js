@@ -6,7 +6,7 @@ dop.adapter.nodejs.listen.WebSocket = function ( listener, options ) {
         options.server = options.httpServer;
 
     else if (typeof options.port != 'number')
-        options.port = dop.port;
+        options.port = 4444;
 
     var adapter = new dop.adapter.nodejs.listen.WebSocket.api.Server( options );
 

@@ -6,7 +6,7 @@ dop.core.createRequest = function( node, action ) {
         request = Array.prototype.slice.call(arguments, 1);
 
     request.unshift( request_id );
-    request.promise = new dop.util.promise();
+    request.promise = dop.core.createPromise();
     node.requests[request_id] = request;
 
     return request;

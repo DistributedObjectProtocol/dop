@@ -6,7 +6,7 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
 
     var messages, 
         isListener = ( listener_or_node.socket !== socket ),
-        node = ( isListener ) ? dop.node[ socket[dop.key_socket_token] ] || {} : listener_or_node;
+        node = ( isListener ) ? dop.data.node[ socket[dop.key_socket_token] ] || {} : listener_or_node;
 
 
     // Parsing messages

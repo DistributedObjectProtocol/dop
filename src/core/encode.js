@@ -1,5 +1,5 @@
 
-
+// TODO: NaN, Infinity, -Infinity
 dop.core.encode = function(node, data) {
 
     var encode_options = node.encode_options || dop.encode_options, tof;
@@ -11,7 +11,7 @@ dop.core.encode = function(node, data) {
         if (tof == 'undefined')
             return encode_options.encode_undefined;
 
-        else if (tof == 'function' && v.name !== dop.name_remote_function)
+        else if (tof == 'function')
             return encode_options.encode_function;
 
         else if (tof == 'object' && v instanceof RegExp)

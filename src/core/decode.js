@@ -1,5 +1,5 @@
 
-
+// TODO: NaN, Infinity, -Infinity
 dop.core.decode = function (node, data) {
 
     var encode_options = node.encode_options || dop.encode_options;

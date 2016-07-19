@@ -1,6 +1,6 @@
 {
   "name": "dop",
-  "version": "0.8.0",
+  "version": "0.1.0",
   "main": "index.js",
   "browser": "./dist/browser.js",
   "license": "MIT",
@@ -22,7 +22,9 @@
     "io",
     "xhr",
     "server",
-    "client"
+    "client",
+    "ria",
+    "meteor"
   ],
   "dependencies": {
     "socket.io": "^1.3.5",

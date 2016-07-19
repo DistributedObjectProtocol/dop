@@ -46,15 +46,20 @@ test('onopen onmessage', function(t){
             t.equal(message, 'Adios Mundo', 'onmessage: ' + message);
             t.end();
         }
+        if (message.substr(8,6) == 'PUBLIC') {
+            node.sync('PRIVATE','user','pass');
+        }
     });
 
 });
 
 
 var token;
+var node;
 test('onconnect', function(t){
 
-    myListener.on('connect', function( node, tok ) {
+    myListener.on('connect', function( nod, tok ) {
+        node = nod;
         token = tok;
         t.equal(typeof token, 'string', 'listener.on');
         node.on('connect', function( token2 ) {
@@ -71,9 +76,9 @@ var PUBLIC = {hola:'mundo'};
 var PUBLIC_PROXY;
 test('onsync', function(t){
 
-    PUBLIC_PROXY = dop.onsync('PUBLIC',PUBLIC);
-    // dop.onsync('mola');
-
+    dop.onsync('PRIVATE',function(user, pass, req){
+        PUBLIC_PROXY = req.resolve(PUBLIC);
+    });
 });
 
 

@@ -22,7 +22,6 @@ dop.protocol.actions = {
     // [1234]
 
 
-
                         // Server -> Client
     connect: 0,         // [ 1234, 0, <user_token>, {'~F':'$custom_F','~U':'$custom_U','~R':'$custom_R'}]
                         // [-1234, 0]
@@ -33,25 +32,27 @@ dop.protocol.actions = {
 
 
     sync: 2,            // [ 1234, 2, <params...>]
-                        // [-1234, 0, <ref_id>, <data_object>, <nonwritable:0|writable:1|extendible:2>, <changes_int>]
+                        // [-1234, 0, <object_id>, <data_object>]
 
 
-    unsync: 3,          // [ 1234, 3, <ref_id>]
+    unsync: 3,          // [ 1234, 3, <object_id>]
                         // [-1234, 0]
 
 
-    call: 4,            // [ 1234, 4, [<ref_id>, 'path','path'], [<params...>]]
+    call: 4,            // [ 1234, 4, [<object_id>, 'path','path'], [<params...>]]
                         // [-1234, 0, <params...>]
 
 
-    set: 5,             // [ 1234, 5, [<ref_id>, 'path','path'], 'value']
+    set: 5,             // [ 1234, 5, [<object_id>, 'path','path'], 'value']
                         // [-1234, 0]
 
 
-    delete: 6,          // [ 1234, 6, [<ref_id>, 'path','path']]
+    delete: 6,          // [ 1234, 6, [<object_id>, 'path','path']]
                         // [-1234, 0]
 
 
+    merge: 7,           // [ 1234, 7, <object_id>, <object_data_to_merge>]
+                        // [-1234, 0]
 
 };
 

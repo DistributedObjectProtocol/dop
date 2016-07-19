@@ -10,11 +10,9 @@ dop.core.node = function( ) {
     this.request_inc = 1;
     this.requests = {};
 
-    this.object_id = {};
-    this.object_ref = {};
+    this.object_ref = [];
     this.object = {};
 
-    // this.encode_options = {};
 };
 
 // Extending from EventEmitter

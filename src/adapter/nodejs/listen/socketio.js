@@ -9,7 +9,7 @@ dop.adapter.nodejs.listen.socketio = function ( options, on ) {
     if (typeof options.httpServer == 'undefined') {
 
         if (typeof options.port != 'number')
-            options.port = dop.port;
+            options.port = 4444;
 
         socket.listen( options.port );
 

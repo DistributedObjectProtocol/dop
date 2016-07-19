@@ -1,5 +1,6 @@
 
 
+
 dop.core.error = {
 
     api: {
@@ -11,7 +12,8 @@ dop.core.error = {
     },
 
     reject: {
-        
+        OBJECT_NAME_NOT_FOUND: 1,
+        1: 'Object not found to be synced',
     }
 
 };

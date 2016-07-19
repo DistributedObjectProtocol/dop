@@ -1,9 +1,8 @@
 
 var dop = {
 
-    version: '0.9.0',
+    version: '0.1.0',
     name: 'dop',
-    port: 4444,
     
     // keys
     key_socket_token: '~TOKEN_DOP',
@@ -16,12 +15,13 @@ var dop = {
         encode_regexp: '~R',
     },
 
-    // Data
-    node_inc:0,
-    node:{},
-    object_inc:0,
-    object:{},
-    object_name:{},
+    data: {
+        node_inc:0,
+        node:{},
+        object_inc:0,
+        object:{},
+        object_name:{}
+    },
 
     // src
     util:{},

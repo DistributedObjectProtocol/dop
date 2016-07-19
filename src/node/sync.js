@@ -2,10 +2,10 @@
 
 dop.core.node.prototype.sync = function( name ) {
 
-    var args = Array.prototype.slice.call(arguments, 0);
+    var args = Array.prototype.slice.call(arguments, 0), request;
     args.unshift( this, dop.protocol.actions.sync );
 
-    var request = dop.core.createRequest.apply(this, args);
+    request = dop.core.createRequest.apply(this, args);
 
     this.send( this.encode(request) );
 
