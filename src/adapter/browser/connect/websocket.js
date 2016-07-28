@@ -1,5 +1,4 @@
 
-
 dop.adapter.browser.connect.WebSocket = function( node, options ) {
 
     var domain_prefix = /(ss|ps)?:\/\/([^\/]+)\/?(.+)?/.exec( options.url || window.location.href );
@@ -25,7 +24,6 @@ dop.adapter.browser.connect.WebSocket = function( node, options ) {
     return socket;
 
 };
-
 
 dop.adapter.browser.connect.WebSocket._name = 'WebSocket';
 dop.adapter.browser.connect.WebSocket.api = WebSocket;

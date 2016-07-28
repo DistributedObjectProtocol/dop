@@ -1,5 +1,4 @@
 
-
 dop.protocol.encodePermissions = function ( writable, extendible ) {
     
     if ( extendible === true )

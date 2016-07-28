@@ -1,5 +1,4 @@
 
-
 dop.connect = function( options ) {
 
     if ( dop.util.typeof(options) != 'object' )

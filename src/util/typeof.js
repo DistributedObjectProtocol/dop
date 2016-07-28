@@ -1,5 +1,4 @@
 
-
 dop.util.typeof = function(value) {
 
     var s = typeof value;

@@ -1,5 +1,4 @@
 
-
 dop.core.onclose = function( listener_or_node, socket ) {
 
     var isListener = ( listener_or_node.socket !== socket ),

@@ -1,5 +1,4 @@
 
-
 dop.core.onopen = function( listener_or_node, socket, adapter_name ){
 
     listener_or_node.emit( 'open', socket );

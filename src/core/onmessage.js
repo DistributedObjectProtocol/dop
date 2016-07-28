@@ -1,5 +1,4 @@
 
-
 dop.core.onmessage = function( listener_or_node, socket, message_string, message_adapter ) {
 
     listener_or_node.emit( 'message', socket, message_string, message_adapter );

@@ -1,5 +1,4 @@
 
-
 dop.util.get = function ( obj, path, callback_create ) {
 
     if ( path.length == 0 )
@@ -29,7 +28,6 @@ dop.util.get = function ( obj, path, callback_create ) {
 
 
 /*
-
 dop.util.get.set = function ( obj, path, value, callback_create ) {
 
     path = path.slice(0);
@@ -42,7 +40,6 @@ dop.util.get.set = function ( obj, path, value, callback_create ) {
     return obj
 
 };
-
 
 dop.util.get.delete = function ( obj, path, callback_create ) {
 

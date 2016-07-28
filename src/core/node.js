@@ -1,5 +1,4 @@
 
-
 dop.core.node = function( ) {
 
     // inherit emitter

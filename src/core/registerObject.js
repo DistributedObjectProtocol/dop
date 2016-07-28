@@ -1,5 +1,4 @@
 
-
 dop.core.registerObject = function( object, owner, options ) {
 
     if ( !object.hasOwnProperty(dop.key_object_path) ) {

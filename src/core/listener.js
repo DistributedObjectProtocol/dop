@@ -1,5 +1,4 @@
 
-
 dop.core.listener = function( options ) {
 
     if ( dop.util.typeof(options) != 'object' )

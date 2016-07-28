@@ -1,4 +1,3 @@
-
 // https://github.com/websockets/ws
 dop.adapter.nodejs.listen.WebSocket = function ( listener, options ) {
 
@@ -31,7 +30,6 @@ dop.adapter.nodejs.listen.WebSocket = function ( listener, options ) {
     return adapter;
 
 };
-
 dop.adapter.nodejs.listen.WebSocket.api = require('ws');
 dop.adapter.nodejs.listen.WebSocket._name = 'WebSocket';
 

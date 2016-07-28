@@ -1,4 +1,3 @@
-
 // http://socket.io/docs/server-api/
 dop.adapter.nodejs.listen.socketio = function ( options, on ) {
 
@@ -39,10 +38,8 @@ dop.adapter.nodejs.listen.socketio = function ( options, on ) {
     return socket;
 
 };
-
 dop.adapter.nodejs.listen.socketio.api = require('socket.io');
 dop.adapter.nodejs.listen.socketio._name = 'socketio';
-
 dop.adapter.nodejs.listen.socketio.send = function( data ) {
     this.emit('message', data);
 };

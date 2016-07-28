@@ -1,5 +1,4 @@
 
-
 dop.core.createRequest = function( node, action ) {
 
     var request_id = node.request_inc++,

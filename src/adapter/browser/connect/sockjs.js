@@ -1,5 +1,4 @@
 
-
 dop.adapter.browser.connect.SockJS = function( options, on ) {
 
     var socket = new dop.adapter.browser.connect.SockJS.api( options.url, undefined, options );
@@ -23,7 +22,6 @@ dop.adapter.browser.connect.SockJS = function( options, on ) {
     return socket;
 
 };
-
 dop.adapter.browser.connect.SockJS._name = 'SockJS';
 dop.adapter.browser.connect.SockJS.api = window.SockJS;
 

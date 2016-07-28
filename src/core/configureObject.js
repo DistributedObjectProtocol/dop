@@ -1,5 +1,4 @@
 
-
 dop.core.configureObject = function( object, path ) {
 
     // Making proxy object

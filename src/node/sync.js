@@ -1,5 +1,4 @@
 
-
 dop.core.node.prototype.sync = function( name ) {
 
     var args = Array.prototype.slice.call(arguments, 0), request;

@@ -1,5 +1,4 @@
 
-
 dop.onsync = function( name, object, options ) {
 
     if ( dop.util.typeof(dop.data.object_name[name]) == 'object' )

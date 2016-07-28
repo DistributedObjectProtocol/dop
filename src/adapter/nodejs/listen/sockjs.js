@@ -1,4 +1,3 @@
-
 // https://github.com/sockjs/sockjs-node
 dop.adapter.nodejs.listen.SockJS = function ( options, on ) {
 
@@ -30,10 +29,8 @@ dop.adapter.nodejs.listen.SockJS = function ( options, on ) {
     return socket;
 
 };
-
 dop.adapter.nodejs.listen.SockJS.api = require('sockjs');
 dop.adapter.nodejs.listen.SockJS._name = 'SockJS';
-
 dop.adapter.nodejs.listen.SockJS.send = function( data ) {
     this.write( data );
 };

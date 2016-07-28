@@ -1,5 +1,4 @@
 
-
 dop.adapter.browser.connect.socketio = function( options, on ) {
 
     var socket = dop.adapter.browser.connect.socketio.api( options.url || window.location.href );
@@ -23,6 +22,5 @@ dop.adapter.browser.connect.socketio = function( options, on ) {
     return socket;
 
 };
-
 dop.adapter.browser.connect.socketio._name = 'socketio';
 dop.adapter.browser.connect.socketio.api = window.io;

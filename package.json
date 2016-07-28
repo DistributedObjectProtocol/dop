@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": "https://github.com/DistributedObjectProtocol/dop",
   "author": "Josema Enzo (http://josema.es/)",
-  "description": "Sync JavaScript objects between server and clients",
+  "description": "Sync JavaScript objects between nodes",
   "keywords": [
     "sync",
     "synchronization",

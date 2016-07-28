@@ -1,6 +1,4 @@
 
-
-
 dop.core.error = {
 
     api: {
