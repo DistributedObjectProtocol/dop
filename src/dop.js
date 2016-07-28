@@ -20,7 +20,7 @@ var dop = {
         node:{},
         object_inc:0,
         object:{},
-        object_name:{}
+        object_onsync:{}
     },
 
     // src

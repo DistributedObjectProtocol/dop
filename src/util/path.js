@@ -2,10 +2,10 @@
 // http://jsperf.com/stringify-path-vs-custom-path/2 - http://jsperf.com/stringify-path-vs-custom-path/3
 dop.util.path = function (obj, callback) {
 
-    dop.util.path.recursive.call({circular:[]}, obj, callback, []);
+    dop.util.pathRecursive.call({circular:[]}, obj, callback, []);
 
 };
-dop.util.path.recursive = function (obj, callback, path ) {
+dop.util.pathRecursive = function (obj, callback, path ) {
 
     for (var key in obj) {
 
@@ -23,7 +23,7 @@ dop.util.path.recursive = function (obj, callback, path ) {
 
                 this.circular.push(obj[key]);
 
-                dop.util.path.recursive.call(this, obj[key], callback, path );
+                dop.util.pathRecursive.call(this, obj[key], callback, path );
 
             }
 

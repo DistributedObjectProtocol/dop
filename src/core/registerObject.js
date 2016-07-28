@@ -1,5 +1,5 @@
 
-dop.core.registerObject = function( object, owner, options ) {
+dop.core.registerObject = function( node, object, owner, options ) {
 
     if ( !object.hasOwnProperty(dop.key_object_path) ) {
         // Getting id to store
@@ -13,7 +13,7 @@ dop.core.registerObject = function( object, owner, options ) {
             node: {}
         };
 
-        var proxy = dop.core.configureObject( object, [object_id] );
+        var proxy = dop.core.configureObject( object, [object_id], owner );
         config.proxy = proxy;
         dop.data.object[object_id] = config;
         return proxy;
