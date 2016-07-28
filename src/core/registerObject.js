@@ -1,7 +1,7 @@
 
 dop.core.registerObject = function( node, object, owner, options ) {
 
-    if ( !object.hasOwnProperty(dop.key_object_path) ) {
+    if ( !object.hasOwnProperty(dop.specialkey.object_path) ) {
         // Getting id to store
         var object_id = dop.data.object_inc++,
         // Setting up the object to listen the sync event
@@ -19,6 +19,6 @@ dop.core.registerObject = function( node, object, owner, options ) {
         return proxy;
     }
     else
-        return dop.data.object[object[dop.key_object_path][0]].proxy;
+        return dop.data.object[object[dop.specialkey.object_path][0]].proxy;
 
 };

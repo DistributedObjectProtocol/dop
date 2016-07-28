@@ -6,7 +6,7 @@ dop.core.node.prototype.sync = function( name ) {
 
     request = dop.core.createRequest.apply(this, args);
 
-    this.send( this.encode(request) );
+    this.send( dop.encode(request) );
 
     return request.promise;
 };

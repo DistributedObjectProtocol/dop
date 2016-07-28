@@ -5,12 +5,12 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
 
     var messages, 
         isListener = ( listener_or_node.socket !== socket ),
-        node = ( isListener ) ? dop.data.node[ socket[dop.key_socket_token] ] || {} : listener_or_node;
+        node = ( isListener ) ? dop.data.node[ socket[dop.specialkey.socket_token] ] || {} : listener_or_node;
 
 
     // Parsing messages
     if ( typeof message_string == 'string' && message_string.substr(0,1) == '[' ) {
-        try { messages = dop.core.decode( node, message_string ); } 
+        try { messages = dop.decode( message_string ); } 
         catch(e) { /*console.log(e);*/ }
     }
     else 
@@ -92,10 +92,10 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
 
 
     // var messages, 
-    //     user = (typeof socket[dop.key_socket_token] == 'undefined' ) ?
+    //     user = (typeof socket[dop.specialkey.socket_token] == 'undefined' ) ?
     //         socket
     //     :
-    //         node.users[ socket[dop.key_socket_token] ];
+    //         node.users[ socket[dop.specialkey.socket_token] ];
 
 
 

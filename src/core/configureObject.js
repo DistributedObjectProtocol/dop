@@ -18,7 +18,7 @@ dop.core.configureObject = (function(){
             // if ( value === that.options.stringify_function )
             //     obj[prop] = synko.remoteFunction.call( that, newpath );
 
-            if ( dop.util.typeof(value) == 'object' && typeof value[dop.key_object_path] == 'undefined' ) {
+            if ( dop.util.typeof(value) == 'object' && typeof value[dop.specialkey.object_path] == 'undefined' ) {
             
                 if ( canWeProxy && shallWeProxy )
                     Object.defineProperty(
@@ -28,14 +28,14 @@ dop.core.configureObject = (function(){
                     );
 
                 // Setting path
-                Object.defineProperty( value, dop.key_object_path, {value: newpath} );
+                Object.defineProperty( value, dop.specialkey.object_path, {value: newpath} );
 
             }
 
         });
 
         // Setting path
-        Object.defineProperty( object, dop.key_object_path, {value: path} );
+        Object.defineProperty( object, dop.specialkey.object_path, {value: path} );
 
         return proxy || object;
 

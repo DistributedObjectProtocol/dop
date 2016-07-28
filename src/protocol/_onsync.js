@@ -10,7 +10,7 @@ dop.protocol._onsync = function ( node, request_id, request, response ) {
             object_remote = response[2];
 
         var proxy = dop.core.registerObject(node, object_remote, false ),
-        object_id = proxy[dop.key_object_path][0];
+        object_id = proxy[dop.specialkey.object_path][0];
         dop.core.registerNodeObject(node, object_id, object_name);
         node.object_ref[object_remote_id] = object_id;
         request.promise.resolve( proxy );

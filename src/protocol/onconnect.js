@@ -7,7 +7,7 @@ dop.protocol.onconnect = function ( node, request_id, request ) {
         dop.data.node[token] = node;
         node.is_connected = true;
         node.token = token;
-        node.socket[dop.key_socket_token] = token;
+        node.socket[dop.specialkey.socket_token] = token;
         response = dop.core.createResponse( request_id, 0 );
         node.emit('connect', token);
     }

@@ -22,7 +22,7 @@ dop.protocol.actions = {
 
 
                         // Server -> Client
-    connect: 0,         // [ 1234, 0, <user_token>, {'~F':'$custom_F','~U':'$custom_U','~R':'$custom_R'}]
+    connect: 0,         // [ 1234, 0, <user_token>]
                         // [-1234, 0]
 
 

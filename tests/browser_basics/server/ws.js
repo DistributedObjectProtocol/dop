@@ -72,12 +72,32 @@ test('onconnect', function(t){
 });
 
 
-var PUBLIC = {hola:'mundo'};
 var PUBLIC_PROXY;
+var PUBLIC = {
+    string:'string',
+    boolean:true,
+    number:-123,
+    NaN:NaN,
+    Infinity:-Infinity,
+    float:1.234153454354341,
+    long:12313214234312324353454534534,
+    undefined:undefined,
+    null:null,
+    symbol:Symbol('sym'),
+    date: new Date(),
+    regexp: /molamazo/g,
+    function: function(){console.log(arguments)},
+    deep:{
+        moreFun:function(){}
+    }
+};
 test('onsync', function(t){
 
     dop.onsync('PRIVATE',function(user, pass, req){
         PUBLIC_PROXY = req.resolve(PUBLIC);
+        // console.log(PUBLIC_PROXY, PUBLIC)
+        t.equal(true, true, 'onsync');
+        // t.end();
     });
 });
 

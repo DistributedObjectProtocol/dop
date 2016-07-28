@@ -18,10 +18,10 @@ dop.protocol.onsync = function ( node, request_id, request ) {
             node: node,
             resolve: function(object, options){
                 var proxy = dop.core.registerObject(node, object, true, options ),
-                object_id = proxy[dop.key_object_path][0];
+                object_id = proxy[dop.specialkey.object_path][0];
                 dop.core.registerNodeObject(node, object_id, object_name);
                 response = dop.core.createResponse(request_id, 0, object_id, object);
-                node.send(node.encode(response));
+                node.send(dop.encode(response));
                 return proxy;
             },
             reject: function(reason) {
@@ -53,7 +53,7 @@ dop.protocol.onsync = function ( node, request_id, request ) {
     //         dop.data.object[object_data_name.object_id].object
     //     );
 
-    //     node.send(node.encode(response));
+    //     node.send(dop.encode(response));
         
     // }
 

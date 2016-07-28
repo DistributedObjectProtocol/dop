@@ -4,15 +4,10 @@ var dop = {
     version: '0.1.0',
     name: 'dop',
     
-    // keys
-    key_socket_token: '~TOKEN_DOP',
-    key_object_path: '~PATH',
-
-    name_remote_function: '$DOP_REMOTE_FUNCTION',
-    encode_options: {
-        encode_function: '~F',
-        encode_undefined: '~U',
-        encode_regexp: '~R',
+    // special keys
+    specialkey: {
+        socket_token: '~TOKEN_DOP',
+        object_path: '~PATH'
     },
 
     data: {

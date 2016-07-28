@@ -15,7 +15,7 @@ dop.core.onclose = function( listener_or_node, socket ) {
 
     //     for ( object_name in user.objects ) {
 
-    //         object_id = user.objects[object_name][dop.key_object_path][0];
+    //         object_id = user.objects[object_name][dop.specialkey.object_path][0];
 
     //         // Remove object
     //         if ( dop.data.objects[ object_id ].subscribed == 1) // The object only have one user subscribed
