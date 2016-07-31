@@ -17,7 +17,7 @@ dop.protocol.onsync = function( node, request_id, request ) {
         req = {
             node: node,
             resolve: function(object, options){
-                var proxy = dop.core.registerObject(node, object, true, options ),
+                var proxy = dop.core.registerObject(node, object, false, options ),
                 object_id = proxy[dop.specialkey.object_path][0];
                 dop.core.registerNodeObject(node, object_id, object_name);
                 response = dop.core.createResponse(request_id, 0, object_id, object);

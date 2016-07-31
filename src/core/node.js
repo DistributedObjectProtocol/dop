@@ -9,7 +9,8 @@ dop.core.node = function( ) {
     this.request_inc = 1;
     this.requests = {};
 
-    this.object_ref = [];
+    this.object_ref = {};
+    this.object_name = {};
     this.object = {};
 
 };
