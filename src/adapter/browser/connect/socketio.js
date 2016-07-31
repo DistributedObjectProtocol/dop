@@ -3,19 +3,19 @@ dop.adapter.browser.connect.socketio = function( options, on ) {
 
     var socket = dop.adapter.browser.connect.socketio.api( options.url || window.location.href );
 
-    socket.on('connect', function () {
+    socket.on('connect', function() {
         on.open();
     });
 
-    socket.on('message', function ( message ) {
+    socket.on('message', function( message ) {
         on.message( message );
     });
 
-    socket.on('disconnect', function () {
+    socket.on('disconnect', function() {
         on.close();
     });
 
-    socket.on('error', function ( error ) {
+    socket.on('error', function( error ) {
         on.error( error );
     });
 

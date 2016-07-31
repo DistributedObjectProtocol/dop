@@ -1,5 +1,5 @@
 // https://github.com/sockjs/sockjs-node
-dop.adapter.nodejs.listen.SockJS = function ( options, on ) {
+dop.adapter.nodejs.listen.SockJS = function( options, on ) {
 
     if (typeof options.httpServer == 'undefined')
         throw Error('The connector SockJS needs the parameter httpServer passed in the options');

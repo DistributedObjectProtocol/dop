@@ -1,5 +1,5 @@
 
-dop.util.get = function ( obj, path, callback_create ) {
+dop.util.get = function( obj, path, callback_create ) {
 
     if ( path.length == 0 )
         return obj;
@@ -28,7 +28,7 @@ dop.util.get = function ( obj, path, callback_create ) {
 
 
 /*
-dop.util.get.set = function ( obj, path, value, callback_create ) {
+dop.util.get.set = function( obj, path, value, callback_create ) {
 
     path = path.slice(0);
     var prop = path.pop();
@@ -41,7 +41,7 @@ dop.util.get.set = function ( obj, path, value, callback_create ) {
 
 };
 
-dop.util.get.delete = function ( obj, path, callback_create ) {
+dop.util.get.delete = function( obj, path, callback_create ) {
 
     path = path.slice(0);
     var prop = path.pop();

@@ -1,5 +1,5 @@
 // https://github.com/websockets/ws
-dop.adapter.nodejs.listen.WebSocket = function ( listener, options ) {
+dop.adapter.nodejs.listen.WebSocket = function( listener, options ) {
 
     if (typeof options.httpServer != 'undefined')
         options.server = options.httpServer;

@@ -1,5 +1,5 @@
 
-dop.createAsync = function () {
+dop.createAsync = function() {
     var resolve, reject,
     promise = new Promise(function(res, rej){
         resolve = res;
@@ -22,7 +22,7 @@ dop.createAsync = function () {
 
 
 
-// dop.createObserver = function () {
+// dop.createObserver = function() {
 //     var observable = Rx.Observable.create(function(observer) {
 //         observable.resolve = function(value){
 //             observer.onNext(value);

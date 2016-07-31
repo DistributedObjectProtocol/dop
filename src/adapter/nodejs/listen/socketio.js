@@ -1,5 +1,5 @@
 // http://socket.io/docs/server-api/
-dop.adapter.nodejs.listen.socketio = function ( options, on ) {
+dop.adapter.nodejs.listen.socketio = function( options, on ) {
 
     options.connector = options._connector; // Need it because socketio accept the option connector as parameter natively
 

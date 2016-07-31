@@ -23,7 +23,7 @@ dop.core.decode = (function(){
             else if ( regexpdate.exec(v) )
                 return new Date(v);
 
-            else if ( v.substr(2) == '~R' ) {
+            else if ( v.substr(0,2) == '~R' ) {
                 var split = regexpsplit.exec(v.substr(2)); // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/RegExp
                 return new RegExp(split[1], split[2]);
             }

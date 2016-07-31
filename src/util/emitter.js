@@ -107,7 +107,7 @@ emitter.on(name, function(){
     console.log('AAA', arguments.length); 
 })
 
-cached = function () { console.log('BBB',this._events[name].length); emitter.removeListener(name, cached) };
+cached = function() { console.log('BBB',this._events[name].length); emitter.removeListener(name, cached) };
 emitter.on(name, cached);
 emitter.on(name, cached);
 

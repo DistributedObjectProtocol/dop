@@ -1,4 +1,4 @@
 
-dop.encode = function(data) {
+dop.encode = function( data ) {
     return JSON.stringify(data, dop.core.encode);
 };

@@ -1,5 +1,5 @@
 
-dop.protocol.onsync = function ( node, request_id, request ) {
+dop.protocol.onsync = function( node, request_id, request ) {
 
     var object_name = request[1], response;
 
