@@ -17,6 +17,9 @@ dop.protocol.actions = {
     // Also the error response could be custom as string
     // [-1234, 'My custom message error']
 
+    // Response with actions, if the second parameter of the response is an array it means is an action that could be (set, delete or merge)
+    // [-<request_id>, [<action>, <params...>], [<action>, <params...>]]
+
     // Sending the same request without parameters means a cancel/abort of the request
     // [1234]
 
@@ -25,32 +28,36 @@ dop.protocol.actions = {
     connect: 0,         // [ 1234, 0, <user_token>]
                         // [-1234, 0]
 
+                        // Client -> Server
+    reconnect: 1,       // [ 1234, 1, <user_token>, [[<object_id, <data_to_merge>], ...] ]
+                        // [-1234, 0, [[<object_id>, <data_to_merge>], ...] ]
 
-    request: 1,         // [ 1234, 1, <params...>]
+
+    request: 2,         // [ 1234, 2, <params...>]
                         // [-1234, 0, <params...>]
 
 
-    sync: 2,            // [ 1234, 2, <params...>]
+    sync: 3,            // [ 1234, 3, <params...>]
                         // [-1234, 0, <object_id>, <data_object>]
 
 
-    unsync: 3,          // [ 1234, 3, <object_id>]
+    unsync: 4,          // [ 1234, 4, <object_id>]
                         // [-1234, 0]
 
 
-    call: 4,            // [ 1234, 4, [<object_id>, 'path','path'], [<params...>]]
-                        // [-1234, 0, <params...>]
+    call: 5,            // [ 1234, 5, <object_id>, ['path','path'], [<params...>]]
+                        // [-1234, 0, <value>]
 
 
-    set: 5,             // [ 1234, 5, [<object_id>, 'path','path'], 'value']
+    set: 6,             // [ 1234, 6, <object_id>, ['path','path'], 'value']
                         // [-1234, 0]
 
 
-    delete: 6,          // [ 1234, 6, [<object_id>, 'path','path']]
+    delete: 7,          // [ 1234, 7, <object_id>, ['path','path']]
                         // [-1234, 0]
 
 
-    merge: 7,           // [ 1234, 7, <object_id>, <object_data_to_merge>]
+    merge: 8,           // [ 1234, 8, <object_id>, <object_data_to_merge>]
                         // [-1234, 0]
 
 };

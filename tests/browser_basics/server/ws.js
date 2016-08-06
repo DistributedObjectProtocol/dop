@@ -94,7 +94,7 @@ var PUBLIC = {
 test('onsync', function(t){
 
     dop.onsync('PRIVATE',function(user, pass, req){
-        PUBLIC_PROXY = req.resolve(PUBLIC,{persistent:false});
+        PUBLIC_PROXY = req.resolve(PUBLIC,{proxy:false});
         // console.log(PUBLIC_PROXY, PUBLIC)
         t.equal(true, true, 'onsync');
         // t.end();
