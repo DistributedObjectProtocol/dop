@@ -16,7 +16,7 @@ dop.core.onclose = function( listener_or_node, socket ) {
             dop.data.object[object_id].nodes -= 1;
             delete dop.data.object[object_id].node[node.token];
 
-            // Deleting completly object no more nodes are using it
+            // Deleting completly object if no more nodes are using it
             if ( dop.data.object[object_id].nodes === 0 )
                 delete dop.data.object[object_id];
         }

@@ -4,36 +4,36 @@ dop.core.decode = (function(){
     var regexpdate = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/,
         regexpsplit = /\/(.+)\/([gimuy]{0,5})/;
 
-    return function(k, v) {
+    return function(property, value) {
 
-        if ( typeof v == 'string' ) {
+        if ( typeof value == 'string' ) {
 
-            if ( v === '~F' )
-                return dop.core.remoteFunction.bind(this, k);
+            if ( value === '~F' )
+                return dop.core.remoteFunction(this, property);
 
-            else if ( v === '~I' )
+            else if ( value === '~I' )
                 return Infinity;
 
-            else if ( v === '~i' )
+            else if ( value === '~i' )
                 return -Infinity;
 
-            else if ( v === '~N' )
+            else if ( value === '~N' )
                 return NaN;
 
-            else if ( regexpdate.exec(v) )
-                return new Date(v);
+            else if ( regexpdate.exec(value) )
+                return new Date(value);
 
-            else if ( v.substr(0,2) == '~R' ) {
-                var split = regexpsplit.exec(v.substr(2)); // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/RegExp
+            else if ( value.substr(0,2) == '~R' ) {
+                var split = regexpsplit.exec(value.substr(2)); // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/RegExp
                 return new RegExp(split[1], split[2]);
             }
 
-            // else if ( v == '~U' )
+            // else if ( value == '~U' )
                 // return null; // http://stackoverflow.com/questions/17648150/how-does-json-parse-manage-undefined
 
         }
 
-        return v;
+        return value;
 
     };
 

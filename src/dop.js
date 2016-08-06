@@ -1,4 +1,6 @@
 
+(function() {
+
 var dop = {
 
     version: '0.1.0',
@@ -33,7 +35,3 @@ var dop = {
 
 
 };
-
-
-if ( typeof module == 'object' && module )
-    module.exports = dop;

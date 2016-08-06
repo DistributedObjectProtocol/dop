@@ -1,26 +1,16 @@
 
-dop.core.remoteFunction = function $DOP_REMOTE_function( property ) {
+dop.core.remoteFunction = function $DOP_REMOTE_function( object, property ) {
 
-    console.log(this[dop.specialkey.object_path], property, Array.prototype.slice.call(arguments,1));
+    return function $DOP_REMOTE_FUNCTION() {
 
-};
-
-
-/*
-// Create a remote function
-dop.remoteFunction = function( path ) {
-
-    var that = this;
-    return function $DOP_REMOTE_function() {
-
-        return that.call( path, Array.prototype.slice.call( arguments ) );
+        // return that.call( path, Array.prototype.slice.call( arguments ) );
+        console.log(object[dop.specialkey.object_path], property, Array.prototype.slice.call(arguments,0));
 
     };
 
     // // http://jsperf.com/dynamic-name-of-functions
     // return new function(
-    //     "return function " + dop.name_remote_function + "(){  return that.call( path, arguments ); }"
+    //     "return function " + dop.core.remoteFunction.name + "(){  return that.call( path, arguments ); }"
     // )();
 
 };
-*/

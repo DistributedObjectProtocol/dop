@@ -12,13 +12,13 @@ dop.core.registerObject = function( node, object, node_owner, options ) {
         // Making config and storing it on dop.data.object[]
         var config = {
             object: object,
-            options: dop.util.merge({}, options),
+            options: dop.util.merge({proxy:true}, options),
             nodes: 0,
             node: {},
             node_owner: node_owner
         },
 
-        proxy = dop.core.configureObject( object, [object_id], node_owner===false );
+        proxy = dop.core.configureObject( object, [object_id], node_owner===false && config.options.proxy );
         config.proxy = proxy;
         dop.data.object[object_id] = config;
         return proxy;

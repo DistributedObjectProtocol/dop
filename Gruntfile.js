@@ -18,7 +18,7 @@ module.exports = function(grunt) {
         concat: {
             options: {
                 process: function(src, filepath) {
-                    return '\n\n\n\n//////////  ' + filepath + '\n' + src;
+                    return '\n//////////  ' + filepath + '\n' + src + '\n\n\n';
                 }
             },
             nodejs: {
@@ -29,7 +29,8 @@ module.exports = function(grunt) {
                     'src/api/*',
                     'src/protocol/*',
                     'src/node/*',
-                    'src/adapter/nodejs/*/*'
+                    'src/adapter/nodejs/*/*',
+                    'src/umd.js'
                 ],
                 dest: 'dist/nodejs.js'
             },
@@ -41,7 +42,8 @@ module.exports = function(grunt) {
                     'src/api/*',
                     'src/protocol/*',
                     'src/node/*',
-                    'src/adapter/browser/*/*'
+                    'src/adapter/browser/*/*',
+                    'src/umd.js'
                 ],
                 dest: 'dist/browser.js'
             }

@@ -11,6 +11,8 @@
     "sync",
     "synchronization",
     "distributed",
+    "rpc",
+    "remote",
     "protocol",
     "connect",
     "objects",

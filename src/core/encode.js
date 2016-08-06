@@ -1,39 +1,39 @@
 
-dop.core.encode = function(k, v) {
+dop.core.encode = function(property, value) {
 
-    var tof = typeof v;
+    var tof = typeof value;
 
     if (tof == 'function')
         return '~F';
 
-    else if ( v === Infinity )
+    else if ( value === Infinity )
         return '~I';
 
-    else if ( v === -Infinity )
+    else if ( value === -Infinity )
         return '~i';
     
-    else if ( tof == 'number' && isNaN(v) )
+    else if ( tof == 'number' && isNaN(value) )
         return '~N';
 
-    else if (tof == 'object' && v instanceof RegExp)
-        return '~R' + v.toString();
+    else if (tof == 'object' && value instanceof RegExp)
+        return '~R' + value.toString();
 
     // else if (tof == 'undefined') // http://stackoverflow.com/questions/17648150/how-does-json-parse-manage-undefined
         // return '~U';
 
-    return v;
+    return value;
 
 };
 
 
 
-// dop.core._encode = dop.core.encode;
-// dop.core.encode = function(k, v) {
+// // Extending example
+// (function(){
+//     var encode = dop.core.encode;
+//     dop.core.encode = function(property, value) {
+//         if (typeof value == 'boolean')
+//             return '~BOOL';
+//         return encode(property, value);
+//     };
+// })();
 
-//     // console.log(k, v)
-//     if (typeof v == 'function')
-//         return '~FUUUUUUUNCTION';
-
-//     return dop.core._encode(k,v);
-
-// };

@@ -17,7 +17,7 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
         messages = message_string;
 
 
-    // Managing dop
+    // Managing protocol
     if ( dop.util.typeof(messages) == 'array' ) {
 
         // Detecting if is multimessage

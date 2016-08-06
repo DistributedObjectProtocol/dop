@@ -16,9 +16,6 @@ dop.core.configureObject = (function(){
 
                 var newpath = path.concat(subpath);
 
-                // if ( value === that.options.stringify_function )
-                //     obj[prop] = synko.remoteFunction.call( that, newpath );
-
                 if ( dop.util.typeof(value) == 'object' && typeof value[dop.specialkey.object_path] == 'undefined' ) {
 
                     // if ( canWeProxy && shallWeProxy ){
