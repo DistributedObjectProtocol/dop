@@ -45,10 +45,11 @@ test('onopen onmessage onconnect', function(t){
 
 
 
-
+var PRIVATE;
 test('sync', function(t){
     
     node.sync('PRIVATE', 'user', 'pass').then(object => {
+        PRIVATE = object;
         console.log(object)
         t.equal(typeof object, 'object', 'PRIVATE object synced');
         t.end();
