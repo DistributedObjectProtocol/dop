@@ -12,29 +12,29 @@ dop.util.path = function ( source, callback, destiny ) {
 
     // dop.util.pathRecursive.call(config, [], source, destiny, callback, [], hasCallback, (destiny && typeof destiny=='object')); // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
     dop.util.pathRecursive(
-        [], 
         source, 
         destiny, 
         callback, 
         [], 
+        [],
         hasCallback,
         (destiny && typeof destiny=='object')
     );
     return destiny;
 };
 
-dop.util.pathRecursive = function pathRecursive( circular, source, destiny, callback, path, hasCallback, hasDestiny ) {
+dop.util.pathRecursive = function pathRecursive( source, destiny, callback, circular, path, hasCallback, hasDestiny ) {
 
-    var key, value, value2, isArray;
+    var prop, value, value2, isArray;
 
-    for (key in source) {
+    for (prop in source) {
 
         if ( this.stoped === true ) return;
 
-        value = source[key];
+        value = source[prop];
 
         if (hasCallback) {
-            path.push( key );
+            path.push( prop );
             callback(path.slice(0), source, destiny, this );
             // if ( this.stoped === true ) return; // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
         }
@@ -45,19 +45,19 @@ dop.util.pathRecursive = function pathRecursive( circular, source, destiny, call
             circular.push(value);
 
             if ( hasDestiny ) {
-                value2 = ( !destiny.hasOwnProperty(key) ) ?
-                    (destiny[key] = (isArray) ? [] : {})
+                value2 = ( !destiny.hasOwnProperty(prop) ) ?
+                    (destiny[prop] = (isArray) ? [] : {})
                 :
-                    destiny[key];
+                    destiny[prop];
             }
 
-            pathRecursive(circular, value, value2, callback, path, hasCallback, hasDestiny );
+            pathRecursive(value, value2, callback, circular, path, hasCallback, hasDestiny );
 
         }
         else if ( hasDestiny && value !== undefined ) {
-            // destiny[key] = (hasCallback && this.hasOwnProperty('returned')) ? this.returned : value; // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
+            // destiny[prop] = (hasCallback && this.hasOwnProperty('returned')) ? this.returned : value; // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
             // delete this.returned; // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
-            destiny[key] = value; // COMMENT THIS FOR STOP & REASIGN FEATURE
+            destiny[prop] = value; // COMMENT THIS FOR STOP & REASIGN FEATURE
         }
 
 
