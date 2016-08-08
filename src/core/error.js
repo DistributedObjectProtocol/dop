@@ -2,7 +2,8 @@
 dop.core.error = {
 
     api: {
-        OBJECT_NAME_REGISTERED: 'You can not repeat the name of the object to sync in the method onsync'
+        OBJECT_NAME_REGISTERED: 'You can not repeat the name of the object to sync in the method onsync',
+        OBJECT_IS_SUBOBJECT: 'The object you are trying to sync is a subobject(neested object) of another object'
     },
 
     warning: {

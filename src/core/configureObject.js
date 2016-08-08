@@ -5,19 +5,22 @@ dop.core.configureObject = (function(){
 
     return function( object, path, shallWeProxy ) {
 
-        // Making proxy object
         var proxy, shallWeDefinePath = !object.hasOwnProperty(dop.specialkey.object_path);
-        if ( canWeProxy && shallWeProxy )
-            proxy = new Proxy(object, dop.core.proxyHandler);
 
-        if ( shallWeDefinePath && canWeProxy && shallWeProxy ) {
+        // // Making proxy object
+        // if ( canWeProxy && shallWeProxy )
+            // proxy = new Proxy(object, dop.core.proxyHandler);
+
+        if ( shallWeDefinePath ) {
             // Same than above for nested objects
-            dop.util.path( object, function(subpath, value, prop, obj ) {
+            dop.util.path( object, function( subpath, obj ) {
 
-                var newpath = path.concat(subpath);
+                var newpath = path.concat(subpath),
+                    value = obj[subpath[subpath.length-1]];
 
-                if ( dop.util.typeof(value) == 'object' && typeof value[dop.specialkey.object_path] == 'undefined' ) {
+                if ( dop.util.typeof(value) == 'object' && shallWeDefinePath ) {
 
+                    // // Making proxy object
                     // if ( canWeProxy && shallWeProxy ){
                     //     var object_deep = dop.util.get(proxy, subpath.slice(0,subpath.length-1));
                     //     console.log(canWeProxy, shallWeProxy, object_deep instanceof Proxy )
@@ -25,8 +28,7 @@ dop.core.configureObject = (function(){
                     // }
 
                     // Setting path
-                    if ( shallWeDefinePath )
-                        Object.defineProperty( value, dop.specialkey.object_path, {value:newpath} );
+                    Object.defineProperty( value, dop.specialkey.object_path, {value:newpath} );
                 }
 
             });
