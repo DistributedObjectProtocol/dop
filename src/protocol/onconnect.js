@@ -5,7 +5,7 @@ dop.protocol.onconnect = function( node, request_id, request ) {
 
     if ( typeof dop.data.node[token] == 'undefined' ) {
         dop.data.node[token] = node;
-        node.is_connected = true;
+        node.status = 1;
         node.token = token;
         node.socket[dop.specialkey.socket_token] = token;
         response = dop.core.createResponse( request_id, 0 );

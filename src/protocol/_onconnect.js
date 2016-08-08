@@ -5,7 +5,7 @@ dop.protocol._onconnect = function( node, request_id, request, response ) {
 
     // Node is connected correctly
     if ( response[0]===0 ) {
-        node.is_connected = true;
+        node.status = 1;
         node.listener.emit('connect', node, token);
         node.emit('connect', token);
     }
