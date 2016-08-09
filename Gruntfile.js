@@ -29,7 +29,7 @@ module.exports = function(grunt) {
                     'src/api/*',
                     'src/protocol/*',
                     'src/node/*',
-                    'src/adapter/nodejs/*/*',
+                    'src/transport/nodejs/*/*',
                     'src/umd.js'
                 ],
                 dest: 'dist/nodejs.js'
@@ -42,7 +42,7 @@ module.exports = function(grunt) {
                     'src/api/*',
                     'src/protocol/*',
                     'src/node/*',
-                    'src/adapter/browser/*/*',
+                    'src/transport/browser/*/*',
                     'src/umd.js'
                 ],
                 dest: 'dist/browser.js'

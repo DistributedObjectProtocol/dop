@@ -4,17 +4,17 @@ dop.connect = function( options ) {
     if ( dop.util.typeof(options) != 'object' )
         options = {};
 
-    if ( typeof options.adapter != 'function' )
-        options.adapter = dop.adapter.browser.connect.WebSocket;
+    if ( typeof options.transport != 'function' )
+        options.transport = dop.transport.browser.connect.WebSocket;
 
 
     var node = new dop.core.node();
 
     node.options = options;
 
-    node.adapter_name = options.adapter._name;
+    node.transport_name = options.transport._name;
 
-    node.socket = options.adapter(node, options);
+    node.socket = options.transport(node, options);
 
     return node;
 

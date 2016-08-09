@@ -27,7 +27,7 @@ test('onopen onmessage onconnect', function(t){
         t.equal(node.socket.readyState, 1, 'onopen');
     });
 
-    node.on('message', function( socket, message, message_adapter ) {
+    node.on('message', function( socket, message, message_transporter ) {
         if (message == 'Hola Mundo') {
             t.equal(message, 'Hola Mundo', 'onmessage: ' + message);
             node.send('Adios Mundo');

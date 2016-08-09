@@ -24,7 +24,7 @@ httpServer.listen(config.ports[2]);
 test('.listen()', function(t){
 
     myListener = dop.listen();
-    t.equal( myListener.adapter.WebSocket.options.port, config.ports[0], "If we dont pass any option will take the dafault port dop.port:"+dop.port);
+    t.equal( myListener.transport.WebSocket.options.port, config.ports[0], "If we dont pass any option will take the dafault port dop.port:"+dop.port);
     t.end();
 
 });
@@ -36,7 +36,7 @@ test('onopen onmessage', function(t){
         first_socket = socket;
         socket.send('Hola Mundo');
     });
-    myListener.adapter.WebSocket.on('connection', function( socket ) {
+    myListener.transport.WebSocket.on('connection', function( socket ) {
         t.equal(first_socket, socket, 'onopen');
     });
 

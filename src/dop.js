@@ -27,8 +27,8 @@ var dop = {
     listener:{},
     connector:{},
 
-    // Adapters
-    adapter: {
+    // Transports
+    transport: {
         nodejs: {listen:{},connect:{}},
         browser: {listen:{}, connect:{}}
     }

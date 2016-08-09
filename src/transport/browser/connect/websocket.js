@@ -1,5 +1,5 @@
 
-dop.adapter.browser.connect.WebSocket = function( node, options ) {
+dop.transport.browser.connect.WebSocket = function( node, options ) {
 
     var domain_prefix = /(ss|ps)?:\/\/([^\/]+)\/?(.+)?/.exec( options.url || window.location.href );
     var protocol = domain_prefix[1] ? 'wss' : 'ws';
@@ -25,5 +25,5 @@ dop.adapter.browser.connect.WebSocket = function( node, options ) {
 
 };
 
-dop.adapter.browser.connect.WebSocket._name = 'WebSocket';
-dop.adapter.browser.connect.WebSocket.api = WebSocket;
+dop.transport.browser.connect.WebSocket._name = 'WebSocket';
+dop.transport.browser.connect.WebSocket.api = WebSocket;
