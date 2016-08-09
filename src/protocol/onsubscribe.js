@@ -1,18 +1,18 @@
 
-dop.protocol.onsync = function( node, request_id, request ) {
+dop.protocol.onsubscribe = function( node, request_id, request ) {
 
     var object_name = request[1], response;
 
 
     // If object is not defined by object_name
-    if ( dop.util.typeof(dop.data.object_onsync[object_name]) != 'object' ) {
+    if ( dop.util.typeof(dop.data.object_onsubscribe[object_name]) != 'object' ) {
         response = dop.core.createResponse( request_id, dop.core.error.reject.OBJECT_NAME_NOT_FOUND );
         node.send(JSON.stringify(response));
     }
 
 
     // If object_name has callback to process
-    else if ( typeof dop.data.object_onsync[object_name].callback == 'function' ) {
+    else if ( typeof dop.data.object_onsubscribe[object_name].callback == 'function' ) {
         var args = Array.prototype.slice.call(request, 2),
         req = {
             node: node,
@@ -30,15 +30,15 @@ dop.protocol.onsync = function( node, request_id, request ) {
             }
         };
         args.push(req);
-        dop.data.object_onsync[object_name].callback.apply(node, args);
+        dop.data.object_onsubscribe[object_name].callback.apply(node, args);
     }
 
 
 
     // //
-    // else if ( dop.data.object_onsync[object_name].callback === false ) {
+    // else if ( dop.data.object_onsubscribe[object_name].callback === false ) {
 
-    //     var object_data_name = dop.data.object_onsync[object_name];
+    //     var object_data_name = dop.data.object_onsubscribe[object_name];
     //     dop.core.registerNodeObject( 
     //         node,
     //         object_data_name.object_id,

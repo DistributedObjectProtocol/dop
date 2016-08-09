@@ -37,11 +37,11 @@ dop.protocol.actions = {
                         // [-1234, 0, <params...>]
 
 
-    sync: 3,            // [ 1234, 3, <params...>]
+    subscribe: 3,       // [ 1234, 3, <params...>]
                         // [-1234, 0, <object_id>, <data_object>]
 
 
-    unsync: 4,          // [ 1234, 4, <object_id>]
+    unsubscribe: 4,     // [ 1234, 4, <object_id>]
                         // [-1234, 0]
 
 

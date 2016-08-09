@@ -17,7 +17,7 @@ var dop = {
         node:{},
         object_inc:0,
         object:{},
-        object_onsync:{}
+        object_onsubscribe:{}
     },
 
     // src

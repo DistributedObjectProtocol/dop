@@ -47,7 +47,7 @@ test('onopen onmessage', function(t){
             t.end();
         }
         if (message.substr(8,6) == 'PUBLIC') {
-            node.sync('PRIVATE','user','pass');
+            node.subscribe('PRIVATE','user','pass');
         }
     });
 
@@ -91,12 +91,12 @@ var PUBLIC = {
         moreFun:function(){}
     }
 };
-test('onsync', function(t){
+test('onsubscribe', function(t){
 
-    dop.onsync('PRIVATE',function(user, pass, req){
+    dop.onsubscribe('PRIVATE',function(user, pass, req){
         PUBLIC_PROXY = req.resolve(PUBLIC,{makeProxy:false});
         // console.log(PUBLIC_PROXY, PUBLIC)
-        t.equal(true, true, 'onsync');
+        t.equal(true, true, 'onsubscribe');
         // t.end();
     });
 });

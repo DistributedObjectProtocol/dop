@@ -1,8 +1,8 @@
 
-dop.core.node.prototype.sync = function( name ) {
+dop.core.node.prototype.subscribe = function( name ) {
 
     var args = Array.prototype.slice.call(arguments, 0), request;
-    args.unshift( this, dop.protocol.actions.sync );
+    args.unshift( this, dop.protocol.actions.subscribe );
 
     request = dop.core.createRequest.apply(this, args);
 

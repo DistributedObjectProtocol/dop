@@ -1,5 +1,5 @@
 
-dop.protocol._onsync = function( node, request_id, request, response ) {
+dop.protocol._onsubscribe = function( node, request_id, request, response ) {
 
     if (response[0] !== 0)
         request.promise.reject( dop.core.error.reject[response[0]] || response[0] );
