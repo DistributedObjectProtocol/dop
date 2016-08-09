@@ -5,7 +5,7 @@ dop.core.listener = function( options ) {
         options = {};
 
     if (typeof options.transport != 'function')
-        options.transport = dop.transport.nodejs.listen.WebSocket;
+        options.transport = dop.transport.listen.WebSocket;
 
     if (typeof options.namespace != 'string')
         options.namespace = '/' + dop.name;

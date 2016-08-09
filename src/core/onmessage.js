@@ -1,7 +1,7 @@
 
-dop.core.onmessage = function( listener_or_node, socket, message_string, message_transport ) {
+dop.core.onmessage = function( listener_or_node, socket, message_string, message_raw ) {
 
-    listener_or_node.emit( 'message', socket, message_string, message_transport );
+    listener_or_node.emit( 'message', socket, message_string, message_raw );
 
     var messages, 
         isListener = ( listener_or_node.socket !== socket ),

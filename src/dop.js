@@ -26,12 +26,7 @@ var dop = {
     protocol:{},
     listener:{},
     connector:{},
-
-    // Transports
-    transport: {
-        nodejs: {listen:{},connect:{}},
-        browser: {listen:{}, connect:{}}
-    }
+    transport:{listen:{}, connect:{}}
 
 
 };

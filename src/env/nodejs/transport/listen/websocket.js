@@ -1,5 +1,5 @@
 // https://github.com/websockets/ws
-dop.transport.nodejs.listen.WebSocket = function( listener, options ) {
+dop.transport.listen.WebSocket = function( listener, options ) {
 
     if (typeof options.httpServer != 'undefined')
         options.server = options.httpServer;
@@ -7,7 +7,7 @@ dop.transport.nodejs.listen.WebSocket = function( listener, options ) {
     else if (typeof options.port != 'number')
         options.port = 4444;
 
-    var transport = new dop.transport.nodejs.listen.WebSocket.api.Server( options );
+    var transport = new dop.transport.listen.WebSocket.api.Server( options );
 
     transport.on('connection', function( socket ){
 
@@ -15,7 +15,7 @@ dop.transport.nodejs.listen.WebSocket = function( listener, options ) {
             return socket.upgradeReq.connection.remoteAddress;
         };
 
-        dop.core.onopen( listener, socket, dop.transport.nodejs.listen.WebSocket._name );
+        dop.core.onopen( listener, socket, dop.transport.listen.WebSocket._name );
 
         socket.on('message', function(message) {
             dop.core.onmessage( listener, socket, message );
@@ -30,8 +30,8 @@ dop.transport.nodejs.listen.WebSocket = function( listener, options ) {
     return transport;
 
 };
-dop.transport.nodejs.listen.WebSocket.api = require('ws');
-dop.transport.nodejs.listen.WebSocket._name = 'WebSocket';
+dop.transport.listen.WebSocket.api = require('ws');
+dop.transport.listen.WebSocket._name = 'WebSocket';
 
 
 

@@ -5,7 +5,7 @@ dop.connect = function( options ) {
         options = {};
 
     if ( typeof options.transport != 'function' )
-        options.transport = dop.transport.browser.connect.WebSocket;
+        options.transport = dop.transport.connect.WebSocket;
 
 
     var node = new dop.core.node();
