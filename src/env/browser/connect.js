@@ -7,15 +7,6 @@ dop.connect = function( options ) {
     if ( typeof options.transport != 'function' )
         options.transport = dop.transport.connect.WebSocket;
 
-
-    var node = new dop.core.node();
-
-    node.options = options;
-
-    node.transport_name = options.transport._name;
-
-    node.socket = options.transport(node, options);
-
-    return node;
+    return dop.core.connect( options );
 
 };

@@ -1,7 +1,7 @@
 
 dop.core.node = function( ) {
 
-    // inherit emitter
+    // Inherit emitter
     dop.util.emitter.call( this );
 
     this.status = 0;

@@ -1,9 +1,9 @@
 
-dop.transport.connect.WebSocket = function( node, options ) {
+dop.transport.connect.WebSocket = function WebSocket( node, options, dop ) {
 
     var domain_prefix = /(ss|ps)?:\/\/([^\/]+)\/?(.+)?/.exec( options.url || window.location.href );
     var protocol = domain_prefix[1] ? 'wss' : 'ws';
-    var socket = new WebSocket(protocol+'://'+domain_prefix[2].toLocaleLowerCase()+'/', domain_prefix[3] || dop.name);
+    var socket = new dop.transport.connect.WebSocket.api(protocol+'://'+domain_prefix[2].toLocaleLowerCase()+'/', domain_prefix[3] || dop.name);
 
     socket.addEventListener('open', function() {
         dop.core.onopen( node, socket );
@@ -25,5 +25,4 @@ dop.transport.connect.WebSocket = function( node, options ) {
 
 };
 
-dop.transport.connect.WebSocket._name = 'WebSocket';
-dop.transport.connect.WebSocket.api = WebSocket;
+dop.transport.connect.WebSocket.api = window.WebSocket;

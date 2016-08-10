@@ -11,7 +11,6 @@ dop.createAsync = function() {
 };
 
 
-
 // mypromise = dop.createAsync();
 // mypromise.then(function(v){
 //     console.log('yeah',v)
@@ -21,8 +20,7 @@ dop.createAsync = function() {
 // },1000);
 
 
-
-// dop.createObserver = function() {
+// dop.createAsync = function() {
 //     var observable = Rx.Observable.create(function(observer) {
 //         observable.resolve = function(value){
 //             observer.onNext(value);
@@ -31,8 +29,9 @@ dop.createAsync = function() {
 //         observable.reject = observer.onError;
 //     });
 //     return observable;
+//     // return {stream:observable,resolve:observer.onNext,reject:observer.onError,cancel:cancel};
 // };
-// mypromise = dop.createObserver();
+// mypromise = dop.createAsync();
 // mypromise.subscribe(function(v){
 //     console.log('yeah',v);
 // });
