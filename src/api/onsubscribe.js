@@ -1,5 +1,5 @@
 
-dop.onsubscribe = function( name, object_callback, options ) {
+dop.onSubscribe = function( name, object_callback, options ) {
 
     if ( dop.util.typeof(dop.data.object_onsubscribe[name]) == 'object' )
         throw Error(dop.core.error.api.OBJECT_NAME_REGISTERED);
