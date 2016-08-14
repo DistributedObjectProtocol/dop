@@ -11,13 +11,13 @@ dop.protocol.onsubscribe = function( node, request_id, request ) {
 
 
     // If object_name has callback to process
-    else if ( typeof dop.data.object_onsubscribe[object_name] == 'function' ) {
+    else if ( typeof dop.data.object_onsubscribe[object_name].object == 'function' ) {
         var args = Array.prototype.slice.call(request, 2),
         req = {
             node: node,
             resolve: function(object, options){
                 var proxy = dop.core.registerObject(object, false, options ),
-                object_id = proxy[dop.specialkey.object_path][0];
+                    object_id = proxy[dop.specialkey.object_path][0];
                 dop.core.registerNodeObject(node, object_id, object_name);
                 response = dop.core.createResponse(request_id, 0, object_id, object);
                 node.send(dop.encode(response));
@@ -29,16 +29,20 @@ dop.protocol.onsubscribe = function( node, request_id, request ) {
             }
         };
         args.push(req);
-        dop.data.object_onsubscribe[object_name].apply(node, args);
+        dop.data.object_onsubscribe[object_name].object.apply(node, args);
     }
 
 
 
     // If object_name is already registered and we have the object_id
-    else if ( typeof dop.data.object_onsubscribe[object_name] === 'number' ) {
-        var object_id = dop.data.object_onsubscribe[object_name],
-            object = dop.data.object[object_id].object,
+    else if ( typeof dop.data.object_onsubscribe[object_name].object == 'object' ) {
+        var object = dop.data.object_onsubscribe[object_name].object,
+            object_id = object[dop.specialkey.object_path][0],
             response = dop.core.createResponse(request_id, 0, object_id, object);
+
+        if ( typeof dop.data.object[object_id] == 'undefined' )
+            dop.core.registerObject(object, false, dop.data.object_onsubscribe[object_name].options )
+
         dop.core.registerNodeObject(node, object_id, object_name);
         node.send(dop.encode(response));
     }

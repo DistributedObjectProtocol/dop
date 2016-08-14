@@ -2,7 +2,7 @@
 dop.protocol._onsubscribe = function( node, request_id, request, response ) {
 
     if (response[0] !== 0)
-        request.promise.reject( dop.core.error.reject[response[0]] || response[0] );
+        request.promise.reject( dop.core.getRejectError(response[0], request[2]) );
 
     else {
         var object_name = request[2],

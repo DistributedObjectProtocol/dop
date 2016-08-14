@@ -5,14 +5,13 @@ dop.onsubscribe = function( name, object_callback, options ) {
         throw Error(dop.core.error.api.OBJECT_NAME_REGISTERED);
 
     // When onsubscribe is based on function to provide different object anytime
-    if ( typeof object_callback == 'function' )
-        dop.data.object_onsubscribe[name] = object_callback;
+    if ( typeof object_callback.object == 'function' )
+        dop.data.object_onsubscribe[name] = {object:object_callback};
 
     // When onsubscribe is based on a specific object
     else {
-        var proxy = dop.core.registerObject(object_callback, false, options ),
-            object_id = proxy[dop.specialkey.object_path][0];
-        dop.data.object_onsubscribe[name] = object_id;
+        var proxy = dop.core.registerObject(object_callback, false, options );
+        dop.data.object_onsubscribe[name] = {object:proxy,options:options};
     }
 
 };

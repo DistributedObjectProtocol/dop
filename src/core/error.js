@@ -12,7 +12,7 @@ dop.core.error = {
 
     reject: {
         OBJECT_NAME_NOT_FOUND: 1,
-        1: 'Object not found to be subscribed',
+        1: 'Object "%s" not found to be subscribed',
     }
 
 };
