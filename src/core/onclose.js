@@ -10,7 +10,7 @@ dop.core.onclose = function( listener_or_node, socket ) {
 
         listener_or_node.emit( 'disconnect', node );
 
-        for ( var object_id in node.object_name ) {
+        for ( var object_id in node.object_id ) {
 
             // Deleting instance inside of dop.data.object
             dop.data.object[object_id].nodes -= 1;

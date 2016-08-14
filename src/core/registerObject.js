@@ -1,5 +1,5 @@
 
-dop.core.registerObject = function( node, object, node_owner, options ) {
+dop.core.registerObject = function( object, node_owner, options ) {
 
     // Getting id or creating new id
     var object_id;
@@ -12,10 +12,7 @@ dop.core.registerObject = function( node, object, node_owner, options ) {
     else
         object_id = dop.data.object_inc++;
 
-    var object_id = ( object.hasOwnProperty(dop.specialkey.object_path) ) ?
-        object[dop.specialkey.object_path][0]
-    :
-        dop.data.object_inc++;
+
 
     if ( dop.data.object[object_id] === undefined ) {
 

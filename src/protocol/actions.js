@@ -29,19 +29,19 @@ dop.protocol.actions = {
                         // [-1234, 0]
 
                         // Client -> Server
-    reconnect: 1,       // [ 1234, 1, <user_token>, [[<object_id, <data_to_merge>], ...] ]
+    reconnect: 1,       // [ 1234, 1, <new_user_token>, <old_user_token>, [[<object_id, <data_to_merge>], ...] ]
                         // [-1234, 0, [[<object_id>, <data_to_merge>], ...] ]
 
 
     request: 2,         // [ 1234, 2, <params...>]
-                        // [-1234, 0, <params...>]
+                        // [-1234, 0, <value>]
 
 
     subscribe: 3,       // [ 1234, 3, <params...>]
                         // [-1234, 0, <object_id>, <data_object>]
 
 
-    unsubscribe: 4,     // [ 1234, 4, <object_id>]
+    unsubscribe: 4,     // [ 1234, 4, <object_id>] // If object_id is negative means is unsubscribing his own object
                         // [-1234, 0]
 
 
