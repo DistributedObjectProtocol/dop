@@ -16,3 +16,5 @@ dop.util.sprintf = function( ) {
     });
 
 };
+// Usage: sprintf('Code error %s for %s', 25, 'Hi') -> "Code error 25 for Hi"
+// Usage2: sprintf('Code error %1 for %0', 25, 'Hi') -> "Code error Hi for 25"
