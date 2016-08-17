@@ -1,5 +1,5 @@
 
-dop.protocol.onsubscribe = function( node, request_id, request ) {
+dop.protocol.onsubscribe2 = function( node, request_id, request ) {
 
     var object_name = request[1], response,
         object_onsubscribe = dop.data.object_onsubscribe;
@@ -15,7 +15,7 @@ dop.protocol.onsubscribe = function( node, request_id, request ) {
     else if ( typeof object_onsubscribe[object_name].object == 'object' ) {
 
         var object = object_onsubscribe[object_name].object,
-            object_id = dop.getObjectId(object),
+            object_id = object[dop.specialkey.object_path][0],
             response;
 
         // If node is already subscribed to this object
@@ -38,8 +38,8 @@ dop.protocol.onsubscribe = function( node, request_id, request ) {
         req = {
             node: node,
             resolve: function(object, options){
-                var object = dop.register(object, options),
-                    object_id = dop.getObjectId(object);
+                var object_id = dop.register(object, options ),
+                    object = dop.data.object[object_id].object;
                 node.register(object_id, object_name);
                 response = dop.core.createResponse(request_id, 0, object_id, object);
                 node.send(dop.encode(response));

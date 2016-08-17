@@ -8,7 +8,7 @@ dop.register = function( object, options ) {
 
     // Already registered
     if ( object.hasOwnProperty(dop.specialkey.object_path) )
-        object_id = object[dop.specialkey.object_path][0];
+        object_id = dop.getObjectId(object);
 
     // Not registered yet
     else {
@@ -26,6 +26,6 @@ dop.register = function( object, options ) {
         };
 
 
-    return object_id;
+    return object;
 
 };

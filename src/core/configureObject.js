@@ -5,40 +5,33 @@ dop.core.configureObject = (function(){
 
     return function( object, path, shallWeProxy ) {
 
-        var proxy, shallWeDefinePath = !object.hasOwnProperty(dop.specialkey.object_path);
+        if (object.hasOwnProperty(dop.specialkey.object_path))
+            return object;
 
-        // // Making proxy object
-        // if ( canWeProxy && shallWeProxy )
-            // proxy = new Proxy(object, dop.core.proxyHandler);
+        var prop, value;
 
-        if ( shallWeDefinePath ) {
-            // Same than above for nested objects
-            dop.util.path( object, function( subpath, obj ) {
+        for (prop in object) {
 
-                var newpath = path.concat(subpath),
-                    value = obj[subpath[subpath.length-1]];
+            value = object[prop];
 
-                if ( dop.util.typeof(value) == 'object' && shallWeDefinePath ) {
+            if ( value && value !== object && (value.constructor === Object || (Array.isArray(value))) ) {
+                                
+                if (value.hasOwnProperty(dop.specialkey.object_path))
+                    object[prop] = value = dop.util.merge({},value);
 
-                    // // Making proxy object
-                    // if ( canWeProxy && shallWeProxy ){
-                    //     var object_deep = dop.util.get(proxy, subpath.slice(0,subpath.length-1));
-                    //     console.log(canWeProxy, shallWeProxy, object_deep instanceof Proxy )
-                    //     object_deep[prop] = new Proxy(value, dop.core.proxyHandler);
-                    // }
+                dop.core.configureObject( value, path.concat(prop), shallWeProxy);
+            }
 
-                    // Setting path
-                    Object.defineProperty( value, dop.specialkey.object_path, {value:newpath} );
-                }
-
-            });
         }
 
-        // Setting path
-        if ( shallWeDefinePath )
-            Object.defineProperty( object, dop.specialkey.object_path, {value:path} );
+        // Making proxy object
+        // if ( canWeProxy && shallWeProxy )
+            // object = new Proxy(object, dop.core.proxyHandler);
 
-        return proxy || object;
+        // Setting path
+        Object.defineProperty( object, dop.specialkey.object_path, {value:path} );
+
+        return object;
 
     };
 
