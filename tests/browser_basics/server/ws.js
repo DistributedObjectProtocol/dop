@@ -55,11 +55,10 @@ test('onopen onmessage', function(t){
 
 
 var token;
-var node;
 test('onconnect', function(t){
 
     myListener.on('connect', function( nod, tok ) {
-        node = nod;
+        global.node = nod;
         token = tok;
         t.equal(typeof token, 'string', 'listener.on');
         node.on('connect', function( token2 ) {
@@ -72,7 +71,6 @@ test('onconnect', function(t){
 });
 
 
-var PUBLIC_PROXY;
 var PUBLIC = {
     string:'string',
     boolean:true,
@@ -88,18 +86,45 @@ var PUBLIC = {
     regexp: /molamazo/g,
     function: function(){console.log(arguments)},
     deep:{
-        moreFun:function(){}
+        moreFun:function(){},
+        deeper:{the:'end'}
     }
 };
-test('onsubscribe', function(t){
+var PUBLIC_PROXY = dop.register( PUBLIC );
 
-    dop.onsubscribe('PRIVATE',function(user, pass, req){
-        PUBLIC_PROXY = req.resolve(PUBLIC,{makeProxy:false});
-        // console.log(PUBLIC_PROXY, PUBLIC)
-        t.equal(true, true, 'onsubscribe');
-        // t.end();
+
+
+test('onsubscribe public', () => {
+    dop.onsubscribe((name, req) => {
+        if (name === 'PUBLIC_DEEP') {
+            return PUBLIC.deep;
+        }
+        else if (name === 'PUBLIC') {
+            req.resolve(PUBLIC_PROXY)
+        }
+        else if (name === 'RE-PUBLIC_DEEP') {
+            return PUBLIC.deep;
+        }
+        else if (name === 'PRIVATE') {
+            return [Math.random(), PUBLIC.deep];
+        }
+        else if (name === 'ASYNC') {
+            setTimeout(function(){
+                req.resolve(PUBLIC_PROXY)
+            },10)
+            return req;
+        }
+        else if (name === 'RESOLVE NO OBJECT') {
+            req.resolve('')
+        }
+        else if (name === 'REJECT') {
+            req.reject({a:'aaa'})
+        }
+        // t.equal(true, true, 'onSubscribe');
+        // t.end();    
     });
 });
+
 
 
 

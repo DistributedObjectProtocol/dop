@@ -5,5 +5,5 @@ dop.core.getRejectError = function( error ) {
         args.unshift( dop.core.error.reject[error] );
         return dop.util.sprintf.apply(this, args);
     }
-    return response[0];  
+    return error;  
 };

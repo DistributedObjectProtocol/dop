@@ -1,6 +1,4 @@
 
-(function() {
-
 var dop = {
 
     version: '0.1.0',
@@ -9,15 +7,14 @@ var dop = {
     // special keys
     specialkey: {
         socket_token: '~TOKEN_DOP',
-        object_path: '~PATH'
+        object_path: '~dop'
     },
 
     data: {
         node_inc:0,
         node:{},
-        object_inc:0,
-        object:{},
-        object_onsubscribe:{}
+        object_inc:1,
+        object:{}
     },
 
     // src
@@ -27,6 +24,5 @@ var dop = {
     listener:{},
     connector:{},
     transport:{listen:{}, connect:{}}
-
 
 };

@@ -1,4 +1,3 @@
-
 // UMD https://github.com/umdjs/umd
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -14,5 +13,3 @@
         root.dop = factory();
   }
 }(this, function (){return dop}));
-
-}).call(this);

@@ -45,14 +45,44 @@ test('onopen onmessage onconnect', function(t){
 
 
 
-var PRIVATE;
 test('subscribe', function(t){
-    
-    node.subscribe('PRIVATE', 'user', 'pass').then(object => {
-        PRIVATE = object;
-        console.log(object)
+
+    node.subscribe('PUBLIC_DEEP').then(object => {
+        // console.log( 'PUBLIC_DEEP', object )
+        t.equal(typeof object, 'object', 'PUBLIC_DEEP object synced');
+    })
+
+    node.subscribe('PUBLIC').then(object => {
+        // console.log('PUBLIC', object)
+        t.equal(typeof object, 'object', 'PUBLIC object synced');
+    })
+
+    node.subscribe('RE-PUBLIC_DEEP').then(object => {
+        // console.log('RE-PUBLIC_DEEP', object)
+        t.equal(typeof object, 'object', 'RE-PUBLIC_DEEP object synced');
+    });
+
+    node.subscribe('PRIVATE').then(object => {
+        // console.log('PRIVATE', object)
         t.equal(typeof object, 'object', 'PRIVATE object synced');
+    });
+
+    node.subscribe('ASYNC').then(object => {
+        // console.log('ASYNC', object)
+        t.equal(typeof object, 'object', 'ASYNC object synced');
         t.end();
+    });
+
+    node.subscribe('REJECT').catch(function(err) {
+        t.equal(typeof err, 'object', 'REJECT');
+    });
+
+    node.subscribe('NOT DEFINED').catch(function(err) {
+        // NEVER CALLED BECAUSE IS AN ERROR ON SERVER
+    });
+    
+    node.subscribe('RESOLVE NO OBJECT').catch(function(err) {
+        // NEVER CALLED BECAUSE IS AN ERROR ON SERVER
     });
 
 });

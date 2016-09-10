@@ -8,5 +8,5 @@ dop.core.node.prototype.subscribe = function( name ) {
 
     this.send( dop.encode(request) );
 
-    return request.promise.stream;
+    return request.promise;
 };

@@ -19,7 +19,7 @@ dop.register = function( object, options ) {
     // Not stored
     if ( dop.data.object[object_id] === undefined )
         dop.data.object[object_id] = {
-            object: object,
+            object: dop.getObjectRoot(object),
             options: options,
             nodes: 0,
             node: {}

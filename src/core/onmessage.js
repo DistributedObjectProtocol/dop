@@ -35,7 +35,7 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
 
                 // If is only one request
                 message_typeof = dop.util.typeof(message[1]);
-                requests = (( message_typeof=='number' && message_typeof!='array') || (message_typeof=='string' && request_id<0) ) ? 
+                requests = (( message_typeof=='number' && message_typeof!='array') || request_id<0 ) ? 
                     [request_id, message.slice(1)]
                 :
                     requests = message;

@@ -20,6 +20,9 @@ dop.core.configureObject = (function(){
                     object[prop] = value = dop.util.merge({},value);
 
                 dop.core.configureObject( value, path.concat(prop), shallWeProxy);
+
+                //Parent object
+                value[dop.specialkey.object_path].p = object;
             }
 
         }

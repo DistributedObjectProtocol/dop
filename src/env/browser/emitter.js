@@ -5,8 +5,7 @@ dop.util.emitter = function() {
 
 };
 
-dop.util.emitter.prototype.on =
-dop.util.emitter.prototype.addListener = function( name, callback, once ) {
+dop.util.emitter.prototype.on = function( name, callback, once ) {
 
     if ( typeof callback == 'function' ) {
 
@@ -26,8 +25,7 @@ dop.util.emitter.prototype.addListener = function( name, callback, once ) {
 
 };
 
-dop.util.emitter.prototype.once =
-dop.util.emitter.prototype.addOnceListener = function( name, callback ) {
+dop.util.emitter.prototype.once = function( name, callback ) {
 
     return this.on( name, callback, true );
 

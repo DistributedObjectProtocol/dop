@@ -1,11 +1,13 @@
 
 dop.core.createAsync = function(node, request_id) {
-    var async = {};
-    async.stream = new Promise(function(resolve, reject){
-        async.resolve = resolve;
-        async.reject = reject;
+    var resolve, reject,
+    promise = new Promise(function(res, rej){
+        resolve = res;
+        reject = rej;
     });
-    return async;
+    promise.resolve = resolve;
+    promise.reject = reject;
+    return promise;
 };
 
 
