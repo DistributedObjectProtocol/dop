@@ -9,7 +9,7 @@ dop.protocol.onsubscribe = function( node, request_id, request ) {
             if ( value && typeof value == 'object' ) {
                 object = dop.register( value );
                 var object_id = dop.getObjectId(object);
-                response = dop.core.createResponse(request_id, 0, object[dop.specialkey.object_path]);
+                response = dop.core.createResponse(request_id, 0, object[dop.specialprop.dop]);
                 if ( dop.core.registerObjectToNode(node, object) )
                     response.push( dop.data.object[object_id].object );
                 node.send(dop.encode(response));

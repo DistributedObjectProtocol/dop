@@ -5,7 +5,7 @@ dop.core.configureObject = (function(){
 
     return function( object, path, shallWeProxy ) {
 
-        if (object.hasOwnProperty(dop.specialkey.object_path))
+        if (object.hasOwnProperty(dop.specialprop.dop))
             return object;
 
         var prop, value;
@@ -16,13 +16,13 @@ dop.core.configureObject = (function(){
 
             if ( value && value !== object && (value.constructor === Object || (Array.isArray(value))) ) {
                                 
-                if (value.hasOwnProperty(dop.specialkey.object_path))
+                if (value.hasOwnProperty(dop.specialprop.dop))
                     object[prop] = value = dop.util.merge({},value);
 
                 dop.core.configureObject( value, path.concat(prop), shallWeProxy);
 
                 //Parent object
-                value[dop.specialkey.object_path].p = object;
+                value[dop.specialprop.dop].p = object;
             }
 
         }
@@ -32,7 +32,7 @@ dop.core.configureObject = (function(){
             // object = new Proxy(object, dop.core.proxyHandler);
 
         // Setting path
-        Object.defineProperty( object, dop.specialkey.object_path, {value:path} );
+        Object.defineProperty( object, dop.specialprop.dop, {value:path} );
 
         return object;
 

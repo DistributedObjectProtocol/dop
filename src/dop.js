@@ -4,10 +4,10 @@ var dop = {
     version: '0.1.0',
     name: 'dop',
     
-    // special keys
-    specialkey: {
+    // special properties
+    specialprop: {
         socket_token: '~TOKEN_DOP',
-        object_path: '~dop'
+        dop: '~dop'
     },
 
     data: {

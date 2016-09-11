@@ -7,7 +7,7 @@ dop.register = function( object, options ) {
     options = dop.util.merge({makeProxy:true}, options);
 
     // Already registered
-    if ( object.hasOwnProperty(dop.specialkey.object_path) )
+    if ( object.hasOwnProperty(dop.specialprop.dop) )
         object_id = dop.getObjectId(object);
 
     // Not registered yet

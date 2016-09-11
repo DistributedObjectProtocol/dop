@@ -1,4 +1,4 @@
 
 dop.getNodeBySocket = function( socket ) {
-    return dop.data.node[ socket[dop.specialkey.socket_token] ];
+    return dop.data.node[ socket[dop.specialprop.socket_token] ];
 };

@@ -5,7 +5,7 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
 
     var messages, 
         isListener = ( listener_or_node.socket !== socket ),
-        node = ( isListener ) ? dop.data.node[ socket[dop.specialkey.socket_token] ] || {} : listener_or_node;
+        node = ( isListener ) ? dop.data.node[ socket[dop.specialprop.socket_token] ] || {} : listener_or_node;
 
 
     // Parsing messages
@@ -92,10 +92,10 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
 
 
     // var messages, 
-    //     user = (typeof socket[dop.specialkey.socket_token] == 'undefined' ) ?
+    //     user = (typeof socket[dop.specialprop.socket_token] == 'undefined' ) ?
     //         socket
     //     :
-    //         node.users[ socket[dop.specialkey.socket_token] ];
+    //         node.users[ socket[dop.specialprop.socket_token] ];
 
 
 
