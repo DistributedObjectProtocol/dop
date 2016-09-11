@@ -12,13 +12,13 @@ dop.protocol._onsubscribe = function( node, request_id, request, response ) {
                 object_remote = response[2],
                 object, object_id;
 
-            if ( node.object_ref[object_remote_id] === undefined ) {
+            if ( node.object_remote[object_remote_id] === undefined ) {
                 object = dop.register(object_remote);
                 object_id = dop.getObjectId(object);
-                node.object_ref[object_remote_id] = object_id;
+                node.object_remote[object_remote_id] = object_id;
             }
             else {
-                object_id = node.object_ref[object_remote_id];
+                object_id = node.object_remote[object_remote_id];
                 object = dop.data.object[object_id].object;
             }
 

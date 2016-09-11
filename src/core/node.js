@@ -5,7 +5,7 @@ dop.core.node = function( ) {
     this.status = 0;
     this.request_inc = 1;
     this.requests = {};
-    this.object_ref = {};
+    this.object_remote = {};
     this.object_id = {};
     this.object = {};
 };
