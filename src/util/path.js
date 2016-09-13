@@ -2,13 +2,13 @@
 dop.util.path = function ( source, callback, destiny ) {
 
     var hasCallback = typeof callback == 'function';
-     // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
+     // UNCOMMENT THIS FOR STOP & RE-ASIGN FEATURE
     // if (hasCallback)
         // config = {
             // stop:function(){config.stoped=true},
             // return:function(value){config.returned=value}
         // };
-    // UNCOMMENT THIS FOR STOP & REASIGN FEATURE 
+    // UNCOMMENT THIS FOR STOP & RE-ASIGN FEATURE 
 
     // dop.util.pathRecursive.call(config, [], source, destiny, callback, [], hasCallback, (destiny && typeof destiny=='object')); // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
     dop.util.pathRecursive(
@@ -29,7 +29,7 @@ dop.util.pathRecursive = function pathRecursive( source, destiny, callback, circ
 
     for (prop in source) {
 
-        if ( this.stoped === true ) return;
+        // if ( this.stoped === true ) return;
 
         value = source[prop];
 

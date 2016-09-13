@@ -3,7 +3,7 @@ dop.protocol.onconnect = function( node, request_id, request ) {
     
     var token=request[1], response;
 
-    if ( typeof dop.data.node[token] == 'undefined' ) {
+    if ( dop.data.node[token] === undefined ) {
         dop.data.node[token] = node;
         node.status = 1;
         node.token = token;

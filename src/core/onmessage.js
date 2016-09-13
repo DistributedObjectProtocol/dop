@@ -92,7 +92,7 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
 
 
     // var messages, 
-    //     user = (typeof socket[dop.specialprop.socket_token] == 'undefined' ) ?
+    //     user = (socket[dop.specialprop.socket_token] === undefined ) ?
     //         socket
     //     :
     //         node.users[ socket[dop.specialprop.socket_token] ];
