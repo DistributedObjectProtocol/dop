@@ -3,7 +3,7 @@ dop.protocol.connect = function( node ) {
     
     var token;
     do {
-        token = ( dop.data.node_inc++ ).toString(36) + (Math.random() * 100000000000000000).toString(36); // http://jsperfcom/token-generator;
+        token = dop.util.uuid();
     } while( dop.util.typeof( dop.data.node[token] )=='object' );
 
     dop.data.node[token] = node;
