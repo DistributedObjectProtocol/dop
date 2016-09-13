@@ -1,44 +1,39 @@
 
-dop.core.configureObject = (function(){
+dop.core.configureObject = (function() {
 
     var canWeProxy = typeof Proxy == 'function';
 
-    return function( object, path, shallWeProxy ) {
+    return function( object, path, shallWeProxy, parent ) {
 
+        // Creating a copy if is another object registered
         if (object.hasOwnProperty(dop.specialprop.dop))
-            return object;
+            return dop.core.configureObject( dop.util.merge({},object), path, shallWeProxy, parent);
 
-        var prop, value;
-
-        for (prop in object) {
-
-            value = object[prop];
-
-            if ( value && value !== object && (value.constructor === Object || (Array.isArray(value))) ) {
-                                
-                if (value.hasOwnProperty(dop.specialprop.dop))
-                    object[prop] = value = dop.util.merge({},value);
-
-                dop.core.configureObject( value, path.concat(prop), shallWeProxy);
-
-                //Parent object
-                value[dop.specialprop.dop].p = object;
-            }
-
+        // Recursion
+        var property, value;
+        for (property in object) {
+            value = object[property];
+            if ( value && value !== object && (value.constructor === Object || (Array.isArray(value))) )
+                object[property] = dop.core.configureObject(value, path.concat(property), shallWeProxy, object);
         }
 
-        // Making proxy object
-        // if ( canWeProxy && shallWeProxy )
-            // object = new Proxy(object, dop.core.proxyHandler);
-
         // Setting path
-        Object.defineProperty( object, dop.specialprop.dop, {value:path} );
+        Object.defineProperty( object, dop.specialprop.dop, {value:path.slice(0)} );
+
+        // Parent object
+        if (path.length > 1 && parent && typeof parent == 'object')
+            object[dop.specialprop.dop].p = parent;
+
+        // Making proxy object
+        if ( shallWeProxy && canWeProxy ) {
+            // Adding traps for mutations methods of arrays
+            if ( dop.util.typeof( object ) == 'array' )
+                Object.defineProperties(object, dop.core.proxyArrayHandler);
+            object = new Proxy(object, dop.core.proxyObjectHandler);
+        }
 
         return object;
 
     };
 
 })();
-
-
-
