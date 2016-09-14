@@ -16,7 +16,8 @@ dop.protocol.onsubscribe = function( node, request_id, request ) {
                 return object;
             }
             else
-                throw TypeError(dop.core.error.api.ONSUBSCRIBE_NOOBJECT_RESOLVED);
+                dop.util.invariant(false, 'dop.onsubscribe callback must return or resolve a regular object');
+
 
         }, function reject( error ){
             response = dop.core.createResponse( request_id );
