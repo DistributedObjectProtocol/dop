@@ -6,7 +6,7 @@ dop.core.onclose = function( listener_or_node, socket ) {
 
     listener_or_node.emit( 'close', socket );
 
-    if ( typeof node == 'object' ) {
+    if ( dop.isObject(node) ) {
 
         listener_or_node.emit( 'disconnect', node );
 

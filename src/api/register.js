@@ -2,12 +2,13 @@
 dop.register = function( object, options ) {
 
     var object_id;
+        isRegistered = dop.isRegistered(object);
 
     // Default options
     options = dop.util.merge({makeProxy:true}, options);
 
     // Already registered
-    if ( object.hasOwnProperty(dop.specialprop.dop) )
+    if ( isRegistered )
         object_id = dop.getObjectId(object);
 
     // Not registered yet

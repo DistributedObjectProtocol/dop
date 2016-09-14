@@ -9,10 +9,10 @@ dop.util.emitter.prototype.on = function( name, callback, once ) {
 
     if ( typeof callback == 'function' ) {
 
-        if ( typeof this._events != 'object' )
+        if ( !dop.isObject(this._events) )
             this._events = {};
 
-        if ( typeof this._events[name] != 'object' )
+        if ( !dop.isObject(this._events[name]) )
             this._events[name] = [];
 
         this._events[name].push(
@@ -35,7 +35,7 @@ dop.util.emitter.prototype.once = function( name, callback ) {
 
 dop.util.emitter.prototype.emit = function( name ) {
 
-    if ( typeof this._events[name] == 'object' && this._events[name].length > 0 ) {
+    if ( dop.isObject(this._events[name]) && this._events[name].length > 0 ) {
 
         for ( var i=0, fun=[], args=Array.prototype.slice.call( arguments, 1 ); i < this._events[name].length; i++ ) {
 
@@ -62,7 +62,7 @@ dop.util.emitter.prototype.emit = function( name ) {
 
 dop.util.emitter.prototype.removeListener = function( name, callback ) {
 
-    if ( typeof this._events[name] == 'object' && this._events[name].length > 0 ) {
+    if ( dop.isObject(this._events[name]) && this._events[name].length > 0 ) {
 
         for ( var i=0; i < this._events[name].length; i++ ) {
 

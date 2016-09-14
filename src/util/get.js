@@ -1,21 +1,16 @@
 
-dop.util.get = function( obj, path, callback_create ) {
+dop.util.get = function( obj, path ) {
 
     if ( path.length == 0 )
         return obj;
 
-    for (var i=0, l=path.length, tof; i<l; i++) {
+    for (var i=0, l=path.length; i<l; i++) {
 
-        tof = dop.util.typeof( obj[ path[i] ] );
-
-        if ( i+1<l && obj[ path[i] ] !== null && (tof == 'object' || tof == 'array') )
+        if ( i+1<l && obj[ path[i] ] !== null && dop.isObject(obj[ path[i] ]) )
             obj = obj[ path[i] ];
 
         else if ( obj.hasOwnProperty(path[i]) )
             return obj[ path[i] ];
-
-        else if ( callback_create && callback_create(obj, path[i], i) )
-            obj[ path[i] ] = {};
 
         else
             return undefined;
@@ -27,20 +22,20 @@ dop.util.get = function( obj, path, callback_create ) {
 };
 
 
+// dop.util.set = function( obj, path, value ) {
+
+//     path = path.slice(0);
+//     var prop = path.pop();
+
+//     obj = dop.util.get(obj, path, function(){return true});
+
+//     obj[prop] = value;
+
+//     return obj
+
+// };
+
 /*
-dop.util.get.set = function( obj, path, value, callback_create ) {
-
-    path = path.slice(0);
-    var prop = path.pop();
-
-    obj = dop.util.get(obj, path, callback_create);
-
-    obj[prop] = value;
-
-    return obj
-
-};
-
 dop.util.get.delete = function( obj, path, callback_create ) {
 
     path = path.slice(0);

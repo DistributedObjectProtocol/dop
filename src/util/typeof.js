@@ -1,8 +1,6 @@
 
 dop.util.typeof = function(value) {
-
     var s = typeof value;
-
     if ( s == 'object' ) {
         if (value) {
             if (Array.isArray( value ))
@@ -16,7 +14,6 @@ dop.util.typeof = function(value) {
             s = 'null';
     }
     return s;
-
 };
 
 

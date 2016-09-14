@@ -10,7 +10,7 @@ dop.util.path = function ( source, callback, destiny ) {
         // };
     // UNCOMMENT THIS FOR STOP & RE-ASIGN FEATURE 
 
-    // dop.util.pathRecursive.call(config, [], source, destiny, callback, [], hasCallback, (destiny && typeof destiny=='object')); // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
+    // dop.util.pathRecursive.call(config, [], source, destiny, callback, [], hasCallback, dop.isObject(destiny); // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
     dop.util.pathRecursive(
         source, 
         destiny, 
@@ -18,7 +18,7 @@ dop.util.path = function ( source, callback, destiny ) {
         [], 
         [],
         hasCallback,
-        (destiny && typeof destiny=='object')
+        dop.isObject(destiny)
     );
     return destiny;
 };

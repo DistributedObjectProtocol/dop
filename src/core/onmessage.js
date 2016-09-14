@@ -60,7 +60,7 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
 
                             request_id *= -1;
 
-                            if ( node.requests[request_id] && typeof node.requests[request_id]=='object' ) {
+                            if ( dop.isObject(node.requests[request_id]) ) {
 
                                 response = request;
                                 request = node.requests[request_id];

@@ -6,7 +6,7 @@ dop.core.configureObject = (function() {
     return function( object, path, shallWeProxy, parent ) {
 
         // Creating a copy if is another object registered
-        if (object.hasOwnProperty(dop.specialprop.dop))
+        if (dop.isRegistered(object))
             return dop.core.configureObject( dop.util.merge({},object), path, shallWeProxy, parent);
 
         // Recursion
@@ -21,7 +21,7 @@ dop.core.configureObject = (function() {
         Object.defineProperty( object, dop.specialprop.dop, {value:path.slice(0)} );
 
         // Parent object
-        if (path.length > 1 && parent && typeof parent == 'object')
+        if (path.length > 1 && dop.isObject(parent))
             object[dop.specialprop.dop].p = parent;
 
         // Making proxy object
