@@ -1,4 +1,4 @@
 
 dop.isObject = function( object ) {
-    return ( object && typeof == 'object' );
+    return ( object && typeof object == 'object' );
 };
