@@ -4,10 +4,7 @@ dop.protocol.onconnect = function( node, request_id, request ) {
     var token=request[1], response;
 
     if ( dop.data.node[token] === undefined ) {
-        dop.data.node[token] = node;
-        node.status = 1;
-        node.token = token;
-        node.socket[dop.specialprop.socket_token] = token;
+        dop.core.registerNode( node, token );
         response = dop.core.createResponse( request_id, 0 );
         node.emit('connect', token);
     }

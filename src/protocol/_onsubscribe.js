@@ -19,7 +19,7 @@ dop.protocol._onsubscribe = function( node, request_id, request, response ) {
             }
             else {
                 object_id = node.object_remote[object_remote_id];
-                object = dop.data.object[object_id].object;
+                object = dop.data.object[object_id];
             }
 
             request.promise.resolve( dop.util.get( object, object_path.slice(1) ) );

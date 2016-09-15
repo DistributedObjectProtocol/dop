@@ -20,9 +20,9 @@ dop.core.configureObject = (function() {
         // Setting path
         Object.defineProperty( object, dop.specialprop.dop, {value:path.slice(0)} );
 
-        // Parent object
-        if (path.length > 1 && dop.isObject(parent))
-            dop.getObjectDop(object).p = parent;
+        // // Parent object
+        // if (path.length > 1 && dop.isObject(parent))
+            // dop.getObjectDop(object).p = parent;
 
         // Making proxy object
         if ( shallWeProxy && canWeProxy ) {

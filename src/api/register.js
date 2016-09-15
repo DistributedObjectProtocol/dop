@@ -1,31 +1,15 @@
 
 dop.register = function( object, options ) {
 
-    var object_id;
-        isRegistered = dop.isRegistered(object);
+    if (dop.isRegistered(object))
+        return object;    
 
-    // Default options
+    var object_id = dop.data.object_inc++, object_data;
     options = dop.util.merge({makeProxy:true}, options);
-
-    // Already registered
-    if ( isRegistered )
-        object_id = dop.getObjectId(object);
-
-    // Not registered yet
-    else {
-        object_id = dop.data.object_inc++;
-        object = dop.core.configureObject( object, [object_id], options.makeProxy );
-    }
-
-    // Not stored
-    if ( dop.data.object[object_id] === undefined )
-        dop.data.object[object_id] = {
-            object: dop.getObjectRoot(object),
-            options: options,
-            nodes: 0,
-            node: {}
-        };
-
+    object = dop.core.configureObject( object, [object_id], options.makeProxy );
+    object_data = dop.getObjectDop(object);
+    object_data.options = options;
+    dop.data.object[object_id] = object;
 
     return object;
 
