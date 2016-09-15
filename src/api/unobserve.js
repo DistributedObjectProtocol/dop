@@ -3,7 +3,7 @@ dop.unobserve = function(object, callback) {
     dop.util.invariant(dop.isRegistered(object), 'dop.unobserve needs a registered object as first parameter');
     dop.util.invariant(typeof callback == 'function', 'dop.unobserve needs a callback as second parameter');
 
-    var observers = object[dop.specialprop.dop].o, indexOf;
+    var observers = dop.getObjectDop(object).o, indexOf;
     if ( dop.util.typeof(observers) != 'array' )
         return false;
 
@@ -15,7 +15,7 @@ dop.unobserve = function(object, callback) {
         observers.splice(indexOf, 1);
 
     if (observers.length == 0)
-        delete object[dop.specialprop.dop].o;
+        delete dop.getObjectDop(object).o;
 
     return true;
 };

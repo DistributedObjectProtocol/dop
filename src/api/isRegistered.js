@@ -1,4 +1,4 @@
 
 dop.isRegistered = function (object) {
-    return (dop.isObject(object) && object[dop.specialprop.dop] !== undefined);
+    return (dop.isObject(object) && dop.getObjectDop(object) !== undefined);
 };

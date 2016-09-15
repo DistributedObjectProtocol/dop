@@ -22,7 +22,7 @@ dop.core.configureObject = (function() {
 
         // Parent object
         if (path.length > 1 && dop.isObject(parent))
-            object[dop.specialprop.dop].p = parent;
+            dop.getObjectDop(object).p = parent;
 
         // Making proxy object
         if ( shallWeProxy && canWeProxy ) {

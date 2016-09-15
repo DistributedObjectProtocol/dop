@@ -4,7 +4,7 @@ dop.core.remoteFunction = function $DOP_REMOTE_FUNCTION( object, property ) {
     return function $DOP_REMOTE_FUNCTION() {
 
         // return that.call( path, Array.prototype.slice.call( arguments ) );
-        console.log(object[dop.specialprop.dop], property, Array.prototype.slice.call(arguments,0));
+        console.log(dop.getObjectDop(object), property, Array.prototype.slice.call(arguments,0));
 
     };
 
