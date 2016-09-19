@@ -72,6 +72,7 @@ test('onconnect', function(t){
 
 
 var PUBLIC = {
+    array:[4,5,6,7],
     string:'string',
     boolean:true,
     number:-123,
