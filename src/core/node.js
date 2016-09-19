@@ -7,7 +7,7 @@ dop.core.node = function( ) {
     this.requests = {};
     this.object_remote = {};
     this.object_id = {};
-    this.object = {};
+    // this.object = {};
 };
 
 // Extending from EventEmitter

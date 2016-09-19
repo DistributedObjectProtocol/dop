@@ -11,7 +11,7 @@ dop.protocol.onsubscribe = function( node, request_id, request ) {
                 var object_id = dop.getObjectId(object);
                 response = dop.core.createResponse(request_id, 0, dop.getObjectDop(object));
                 if ( dop.core.registerObjectToNode(node, object) )
-                    response.push( dop.data.object[object_id] );
+                    response.push( dop.getObjectRootById(object_id) );
                 node.send(dop.encode(response));
                 return object;
             }

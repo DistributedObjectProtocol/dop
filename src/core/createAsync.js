@@ -21,7 +21,7 @@ dop.core.createAsync = function(node, request_id) {
 // },1000);
 
 
-// dop.createAsync = function() {
+// dop.core.createAsync = function() {
 //     var observable = Rx.Observable.create(function(observer) {
 //         observable.resolve = function(value){
 //             observer.onNext(value);
@@ -39,3 +39,29 @@ dop.core.createAsync = function(node, request_id) {
 // setTimeout(function(){
 //     mypromise.resolve(1234567890);
 // },1000);
+
+
+
+
+// https://github.com/ReactiveX/rxjs/issues/556
+// function getData(num) {
+//   return new Promise((resolve, reject) => {
+//     resolve(num + 1);
+//   });
+// }
+
+// async function create() {
+//   var list = await Rx.Observable.range(1, 5)
+//     .flatMap(num => getData(num))
+//     .toArray().toPromise();
+
+//   return list;
+// }
+
+// console.clear();
+
+// Rx.Observable.fromPromise(create()).subscribe(list => {
+//   console.log(list);
+// }, err => {
+//   console.log(err);
+// });
