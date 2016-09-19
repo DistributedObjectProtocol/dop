@@ -9,7 +9,12 @@ dop.register = function( object, options ) {
     object = dop.core.configureObject( object, [object_id], options.makeProxy );
     object_data = dop.getObjectDop(object);
     object_data.options = options;
-    dop.data.object[object_id] = object;
+    dop.data.object[object_id] = {
+        object: object,
+        node: {},
+        nodes: 0,
+        collecting: false,
+    };
 
     return object;
 
