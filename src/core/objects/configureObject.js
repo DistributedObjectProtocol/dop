@@ -3,11 +3,11 @@ dop.core.configureObject = (function() {
 
     var canWeProxy = typeof Proxy == 'function';
 
-    return function( object, path, shallWeProxy ) {
+    return function( object, path, shallWeProxy, parent ) {
 
         // Creating a copy if is another object registered
         if (dop.isRegistered(object))
-            return dop.core.configureObject( dop.util.merge({},object), path, shallWeProxy);
+            return dop.core.configureObject( dop.util.merge({},object), path, shallWeProxy, parent);
 
         // Recursion
         var property, value, object_dop;
@@ -22,6 +22,11 @@ dop.core.configureObject = (function() {
         object_dop = dop.getObjectDop(object);
         object_dop.o = []; // observers
         object_dop.op = {}; // observers by property
+
+
+        // Setting parent
+        if (dop.isObject(parent))
+            object_dop._ = parent;
 
 
         // Making proxy object

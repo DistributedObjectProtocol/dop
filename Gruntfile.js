@@ -27,7 +27,7 @@ module.exports = function(grunt) {
                     'src/env/nodejs/**', // needed here dop.core.listener.prototype = Object.create( dop.util.emitter.prototype );
                     'src/util/*',
                     'src/api/*',
-                    'src/core/*',
+                    'src/core/**',
                     'src/protocol/*',
                     'src/node/*',
                     'src/umd.js'
@@ -40,7 +40,7 @@ module.exports = function(grunt) {
                     'src/env/browser/**', // needed here dop.core.listener.prototype = Object.create( dop.util.emitter.prototype );
                     'src/util/*',
                     'src/api/*',
-                    'src/core/*',
+                    'src/core/**',
                     'src/protocol/*',
                     'src/node/*',
                     'src/umd.js'

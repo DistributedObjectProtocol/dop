@@ -16,7 +16,8 @@ var dop = {
         object_inc:1,
         object:{},
         collecting:false,
-        collectingSystem:false
+        collectingSystem:false,
+        mutating:{},
     },
 
     // src
