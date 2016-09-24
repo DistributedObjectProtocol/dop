@@ -15,9 +15,9 @@ var dop = {
         node:{},
         object_inc:1,
         object:{},
-        collecting:false,
         collectingSystem:false,
         mutating:{},
+        lastGet:{}
     },
 
     // src
