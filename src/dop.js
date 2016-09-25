@@ -15,8 +15,9 @@ var dop = {
         node:{},
         object_inc:1,
         object:{},
+        mutations:[],
+        collecting:false,
         collectingSystem:false,
-        mutating:{},
         lastGet:{}
     },
 

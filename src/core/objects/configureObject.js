@@ -20,6 +20,7 @@ dop.core.configureObject = (function() {
         // Setting ~dop object
         Object.defineProperty( object, dop.specialprop.dop, {value:path.slice(0)} );
         object_dop = dop.getObjectDop(object);
+        object_dop.m = []; // mutations
         object_dop.o = []; // observers
         object_dop.op = {}; // observers by property
 

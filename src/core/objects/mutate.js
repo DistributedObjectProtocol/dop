@@ -19,18 +19,23 @@ dop.core.mutate = function(target, property, value) {
         if (isSet) {
             target[property] = value;
             if ( dop.isObject(value) ) {
-                var isRegistered = dop.isRegistered(value);
-                if ( !isRegistered || (isRegistered && dop.getObjectDop(value)._ !== proxy) ) {
+                var isRegistered = dop.isRegistered(value),
+                    object_dop_value = dop.getObjectDop(value);
+                if ( !isRegistered ) {
                     var shallWeProxy = (isRegistered) ? dop.data.object[dop.getObjectId(value)].options.proxy : true;
                     target[property] = dop.core.configureObject( value, object_dop.concat(property), shallWeProxy);
                 }
+                else if ( isRegistered && object_dop_value._ === target )
+                    object_dop_value[object_dop_value.length-1] = property;
+
+
             }
         }
         // Deleting
         else
             delete target[property];
 
-        var mutation = {property:property, object:proxy};
+        var mutation = {name:property, object:proxy};
         if (isSet)
             mutation.value = value;
         if (hasOwnProperty)

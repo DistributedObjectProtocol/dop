@@ -1,8 +1,8 @@
 
 dop.core.storeMutation = function(mutation) {
-    var object_id = dop.getObjectId(mutation.object);
-    dop.data.object[object_id].mutations.push(mutation);
-    dop.data.mutating[object_id] = true;
+    var object_dop = dop.getObjectDop(mutation.object);
+    object_dop.m.push(mutation);
+    dop.data.mutations.push(mutation);
 };
 
 // dop.core.storeMutation = function(mutation) {

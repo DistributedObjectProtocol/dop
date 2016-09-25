@@ -11,8 +11,6 @@ dop.register = function( object, options ) {
         object: object,
         node: {},
         nodes: 0,
-        mutations: [],
-        collecting: false,
         options: options
     };
 

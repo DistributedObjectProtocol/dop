@@ -1,9 +1,8 @@
 
-dop.core.canWeEmit = function(object_id) {
+dop.core.canWeEmit = function() {
     return ( 
-        // !dop.data.collecting && 
+        !dop.data.collecting && 
         !dop.data.collectingSystem && 
-        !dop.data.object[object_id].collecting && 
-        dop.data.object[object_id].mutations.length>0
+        dop.data.mutations.length>0
     );
 };
