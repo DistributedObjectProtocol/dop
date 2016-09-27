@@ -16,7 +16,7 @@ dop.core.mutate = function(target, property, value) {
         }
         
         // Setting
-        if (isSet) {
+        if ( isSet ) {
             target[property] = value;
             if ( dop.isObject(value) ) {
                 var isRegistered = dop.isRegistered(value),

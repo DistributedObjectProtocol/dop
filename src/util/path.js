@@ -54,10 +54,13 @@ dop.util.pathRecursive = function pathRecursive( source, destiny, callback, circ
             pathRecursive(value, value2, callback, circular, path, hasCallback, hasDestiny );
 
         }
-        else if ( hasDestiny && value !== undefined ) {
+        else if ( hasDestiny ) {
             // destiny[prop] = (hasCallback && this.hasOwnProperty('returned')) ? this.returned : value; // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
             // delete this.returned; // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
-            destiny[prop] = value; // COMMENT THIS FOR STOP & REASIGN FEATURE
+            if (value === undefined)
+                delete destiny[prop];
+            else
+                destiny[prop] = value;
         }
 
 

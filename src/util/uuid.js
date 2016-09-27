@@ -1,5 +1,5 @@
 
-dop.util.uuid = function (argument) {
+dop.util.uuid = function () {
 
     for (var i=0, uuid='', random; i < 32; i++) {
         random = Math.random() * 16 | 0;

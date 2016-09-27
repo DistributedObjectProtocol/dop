@@ -15,7 +15,6 @@ dop.core.emitMutations = function() {
             observersProperties,
             observers;
 
-        // Agrouping mutations by subobjects
         for (;index<total; ++index) {
             mutation = mutations[index];
             subobject = mutation.object;
@@ -38,7 +37,6 @@ dop.core.emitMutations = function() {
                 object_dop.m = [];
             }
         }
-
 
         dop.data.mutations = [];
 
