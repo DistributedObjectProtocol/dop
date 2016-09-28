@@ -1,53 +1,48 @@
 
-dop.core.configureObject = (function() {
+var canWeProxy = typeof Proxy == 'function';
+dop.core.configureObject = function( object, path, shallWeProxy, parent ) {
 
-    var canWeProxy = typeof Proxy == 'function';
+    // Creating a copy if is another object registered
+    if (dop.isRegistered(object))
+        return dop.core.configureObject( dop.util.merge({},object), path, shallWeProxy, parent);
 
-    return function( object, path, shallWeProxy, parent ) {
+    // Recursion
+    var property, value, object_dop;
+    for (property in object) {
+        value = object[property];
+        if ( value && value !== object && (value.constructor === Object || (Array.isArray(value))) )
+            object[property] = dop.core.configureObject(value, path.concat(property), shallWeProxy, object);
+    }
 
-        // Creating a copy if is another object registered
-        if (dop.isRegistered(object))
-            return dop.core.configureObject( dop.util.merge({},object), path, shallWeProxy, parent);
-
-        // Recursion
-        var property, value, object_dop;
-        for (property in object) {
-            value = object[property];
-            if ( value && value !== object && (value.constructor === Object || (Array.isArray(value))) )
-                object[property] = dop.core.configureObject(value, path.concat(property), shallWeProxy, object);
-        }
-
-        // Setting ~dop object
-        Object.defineProperty( object, dop.specialprop.dop, {value:path.slice(0)} );
-        object_dop = dop.getObjectDop(object);
-        object_dop.m = []; // mutations
-        object_dop.o = []; // observers
-        object_dop.op = {}; // observers by property
+    // Setting ~dop object
+    Object.defineProperty( object, dop.specialprop.dop, {value:path.slice(0)} );
+    object_dop = dop.getObjectDop(object);
+    object_dop.m = []; // mutations
+    object_dop.o = []; // observers
+    object_dop.op = {}; // observers by property
 
 
-        // Setting parent
-        if (dop.isObject(parent))
-            object_dop._ = parent;
+    // Setting parent
+    if (dop.util.isObject(parent))
+        object_dop._ = parent;
 
 
-        // Making proxy object
-        if ( shallWeProxy && canWeProxy ) {
+    // Making proxy object
+    if ( shallWeProxy && canWeProxy ) {
 
-            var target = object;
+        var target = object;
 
-            // Adding traps for mutations methods of arrays
-            if ( dop.util.typeof( object ) == 'array' )
-                Object.defineProperties(object, dop.core.proxyArrayHandler);
+        // Adding traps for mutations methods of arrays
+        if ( dop.util.typeof( object ) == 'array' )
+            Object.defineProperties(object, dop.core.proxyArrayHandler);
 
-            object = new Proxy(object, dop.core.proxyObjectHandler);
+        object = new Proxy(object, dop.core.proxyObjectHandler);
 
-            // Adding proxy and target alias
-            object_dop.p = object;
-            object_dop.t = target;
-        }
+        // Adding proxy and target alias
+        object_dop.p = object;
+        object_dop.t = target;
+    }
 
-        return object;
+    return object;
 
-    };
-
-})();
+};

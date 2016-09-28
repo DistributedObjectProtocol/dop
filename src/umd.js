@@ -1,15 +1,14 @@
-// UMD https://github.com/umdjs/umd
-(function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        define([], factory);
-    } else if (typeof module == 'object' && module.exports) {
-        // Node. Does not work with strict CommonJS, but
-        // only CommonJS-like environments that support module.exports,
-        // like Node.
-        module.exports = factory();
-    } else {
-        // Browser globals (root is window)
-        root.dop = factory();
-  }
-}(this, function (){return dop}));
+// AMD
+if (typeof define === 'function' && define.amd)
+    define([], function() { return dop });
+
+// Node
+else if (typeof module == 'object' && module.exports)
+    module.exports = dop;
+
+// Browser (root is window)
+else
+    root.dop = dop;
+
+})(this);
+// Based on: https://github.com/umdjs/umd

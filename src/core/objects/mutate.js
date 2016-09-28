@@ -18,7 +18,7 @@ dop.core.mutate = function(target, property, value) {
         // Setting
         if ( isSet ) {
             target[property] = value;
-            if ( dop.isObject(value) ) {
+            if ( dop.util.isObject(value) ) {
                 var isRegistered = dop.isRegistered(value),
                     object_dop_value = dop.getObjectDop(value);
                 if ( !isRegistered ) {
@@ -27,10 +27,9 @@ dop.core.mutate = function(target, property, value) {
                 }
                 else if ( isRegistered && object_dop_value._ === target )
                     object_dop_value[object_dop_value.length-1] = property;
-
-
             }
         }
+
         // Deleting
         else
             delete target[property];

@@ -25,7 +25,7 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
             messages = [messages];
 
         // Managing all messages one by one
-        for ( var i=0, t=messages.length, message, requests, request, request_id, response, action_type, message_typeof; i<t; i++ ) {
+        for ( var i=0, t=messages.length, message, requests, request, request_id, response, instruction_type, message_typeof; i<t; i++ ) {
 
             message = messages[i];
             request_id = message[0];
@@ -41,18 +41,18 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
                     requests = message;
 
 
-                for ( var j=1, t2=requests.length, action_function; j<t2; ++j ) {
+                for ( var j=1, t2=requests.length, instruction_function; j<t2; ++j ) {
                     
                     request = requests[j];
 
                     if ( dop.util.typeof(request)=='array' && ((typeof request[0]=='number' && request_id>0) || request_id<0) ) {
                         
-                        action_type = request[0];
-                        action_function = 'on'+dop.protocol.actions[action_type];
+                        instruction_type = request[0];
+                        instruction_function = 'on'+dop.protocol.instructions[instruction_type];
 
                         // REQUEST ===============================================================
-                        if (request_id>0 && typeof dop.protocol[action_function]=='function' )
-                            dop.protocol[action_function]( node, request_id, request );
+                        if (request_id>0 && typeof dop.protocol[instruction_function]=='function' )
+                            dop.protocol[instruction_function]( node, request_id, request );
 
 
                         // RESPONSE ===============================================================
@@ -60,16 +60,16 @@ dop.core.onmessage = function( listener_or_node, socket, message_string, message
 
                             request_id *= -1;
 
-                            if ( dop.isObject(node.requests[request_id]) ) {
+                            if ( dop.util.isObject(node.requests[request_id]) ) {
 
                                 response = request;
                                 request = node.requests[request_id];
 
-                                action_type = request[1];
-                                action_function = '_on'+dop.protocol.actions[action_type];
+                                instruction_type = request[1];
+                                instruction_function = '_on'+dop.protocol.instructions[instruction_type];
 
-                                if ( typeof dop.protocol[action_function]=='function' )
-                                    dop.protocol[action_function]( node, request_id, request, response );
+                                if ( typeof dop.protocol[instruction_function]=='function' )
+                                    dop.protocol[instruction_function]( node, request_id, request, response );
                                 
                                 delete node.requests[request_id];
 

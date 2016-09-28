@@ -6,7 +6,7 @@ dop.util.get = function( obj, path ) {
 
     for (var i=0, l=path.length; i<l; i++) {
 
-        if ( i+1<l && obj[ path[i] ] !== null && dop.isObject(obj[ path[i] ]) )
+        if ( i+1<l && obj[ path[i] ] !== null && dop.util.isObject(obj[ path[i] ]) )
             obj = obj[ path[i] ];
 
         else if ( obj.hasOwnProperty(path[i]) )
