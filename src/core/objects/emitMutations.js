@@ -13,12 +13,18 @@ dop.core.emitMutations = function() {
             total2,
             object_dop,
             observersProperties,
-            observers;
+            observers,
+            action = {},
+            unaction = {},
+            path,
+            object_id,
+            node_token;
 
         for (;index<total; ++index) {
             mutation = mutations[index];
             subobject = mutation.object;
             object_dop = dop.getObjectDop(subobject);
+            path = object_dop.slice(0).concat(mutation.name);
 
             // Emiting mutations to observerProperties
             observersProperties = object_dop.op[mutation.name];
@@ -36,9 +42,22 @@ dop.core.emitMutations = function() {
 
                 object_dop.m = [];
             }
+
+            // Storing action and unaction
+            dop.util.set(action, path, mutation.value);
+            dop.util.set(unaction, path, mutation.oldValue);
+
         }
+
+        // Emiting to nodes/subscriptors
+        for (object_id in action)
+            if ( dop.data.object[object_id].nodes > 0 )
+                for (node_token in dop.data.object[object_id].node)
+                    dop.protocol.merge(dop.data.node[node_token], object_id, action[object_id]);
+
 
         dop.data.mutations = [];
 
+        return {action:action, unaction:unaction};
     }
 };

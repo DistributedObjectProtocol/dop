@@ -92,7 +92,7 @@ var PUBLIC = {
     }
 };
 var PUBLIC_PROXY = dop.register( PUBLIC );
-
+global.PUBLIC = PUBLIC_PROXY;
 
 
 test('onsubscribe public', () => {

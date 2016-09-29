@@ -57,11 +57,11 @@ dop.protocol.instructions = {
                         // [-1234, 0]
 
                         // Owner -> Subscriptor
-    delete: 8,          // [ 1234, 8, [<object_id>, 'path','path'], <last_update_id>]
+    delete: 8,          // [ 1234, 8, <object_id>, ['path','path'], <last_update_id>]
                         // [-1234, 0]
 
                         // Owner -> Subscriptor
-    merge: 9,           // [ 1234, 9, [<object_id>], <object_data_to_merge>, <last_update_id>]
+    merge: 9,           // [ 1234, 9, <object_id>, <object_data_to_merge>, <last_update_id>]
                         // [-1234, 0]
 
 };

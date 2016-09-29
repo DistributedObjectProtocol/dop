@@ -5,7 +5,7 @@ dop.core.registerObjectToNode = function( node, object ) {
 
     if ( object_data.node[node.token] === undefined ) {
         object_data.node[node.token] = true;
-        object_data.nodes.length += 1;
+        object_data.nodes += 1;
         node.object_id[object_id] = true;
         return true;
     }
