@@ -5,8 +5,8 @@ dop.core.node = function( ) {
     this.status = 0;
     this.request_inc = 1;
     this.requests = {};
-    this.object_remote = {};
-    this.object_id = {};
+    this.object_owned = {};
+    this.object_subscribed = {};
     // this.object = {};
 };
 

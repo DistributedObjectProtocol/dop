@@ -8,17 +8,17 @@ dop.protocol._onsubscribe = function( node, request_id, request, response ) {
 
         else {
             var object_path = response[1],
-                object_remote_id = object_path[0],
-                object_remote = response[2],
+                object_owned_id = object_path[0],
+                object_owned = response[2],
                 object, object_id;
 
-            if ( node.object_remote[object_remote_id] === undefined ) {
-                object = dop.register(object_remote);
+            if ( node.object_owned[object_owned_id] === undefined ) {
+                object = dop.register(object_owned);
                 object_id = dop.getObjectId(object);
-                node.object_remote[object_remote_id] = object_id;
+                node.object_owned[object_owned_id] = object_id;
             }
             else {
-                object_id = node.object_remote[object_remote_id];
+                object_id = node.object_owned[object_owned_id];
                 object = dop.getObjectRootById(object_id);
             }
 
