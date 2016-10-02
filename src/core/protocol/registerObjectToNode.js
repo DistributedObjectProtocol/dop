@@ -1,7 +1,7 @@
 
 dop.core.registerObjectToNode = function( node, object ) {
     var object_id = dop.getObjectId(object),
-        object_data = dop.data.object[object_id];
+        object_data = dop.data.object_data[object_id];
 
     if ( object_data.node[node.token] === undefined ) {
         object_data.node[node.token] = true;

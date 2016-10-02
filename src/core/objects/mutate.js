@@ -22,7 +22,7 @@ dop.core.mutate = function(target, property, value) {
                 var isRegistered = dop.isRegistered(value),
                     object_dop_value = dop.getObjectDop(value);
                 if ( !isRegistered ) {
-                    var shallWeProxy = (isRegistered) ? dop.data.object[dop.getObjectId(value)].options.proxy : true;
+                    var shallWeProxy = (isRegistered) ? dop.data.object_data[dop.getObjectId(value)].options.proxy : true;
                     target[property] = dop.core.configureObject( value, object_dop.concat(property), shallWeProxy);
                 }
                 else if ( isRegistered && object_dop_value._ === target )
