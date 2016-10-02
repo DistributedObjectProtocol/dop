@@ -11,14 +11,13 @@ var dop = {
         dop: '~dop'
     },
 
+    // Where all the internal information is stored
     data: {
         node_inc:0,
         node:{},
         object_inc:1,
         object:{},
-        mutations:[],
-        collecting:false,
-        collectingSystem:false,
+        collectors:[],
         lastGet:{}
     },
 

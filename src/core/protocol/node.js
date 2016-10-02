@@ -1,14 +1,12 @@
 
 dop.core.node = function( ) {
     // Inherit emitter
-    dop.util.emitter.call( this );
+    Object.assign( this, dop.util.emitter.prototype );
     this.status = 0;
     this.request_inc = 1;
     this.requests = {};
+    this.requests_agrouped = [];
     this.object_owned = {};
     this.object_subscribed = {};
     // this.object = {};
 };
-
-// Extending from EventEmitter
-dop.core.node.prototype = Object.create( dop.util.emitter.prototype );

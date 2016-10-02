@@ -32,36 +32,33 @@ dop.protocol.instructions = {
     reconnect: 1,       // [ 1234, 1, <new_user_token>, <old_user_token>]
                         // [-1234, 0]
 
-
-    request: 2,         // [ 1234, 2, <params...>]
-                        // [-1234, 0, <value>]
-
                         // Subscriptor -> Owner
-    subscribe: 3,       // [ 1234, 3, <params...>]
+    subscribe: 2,       // [ 1234, 2, <params...>]
                         // [-1234, 0, [<object_id>], <data_object>, <last_update_id>]
                         // [-1234, 0, [<object_id>, 'path']]
 
-    unsubscribe: 4,     // [ 1234, 4, <object_id>] // If object_id is negative means is unsubscribing his own object
+                        // Subscriptor -> Owner
+    unsubscribe: 3,     // [ 1234, 3, <object_id>] // If object_id is negative means is unsubscribing his own object
                         // [-1234, 0]
 
                         // Subscriptor -> Owner
-    call: 5,            // [ 1234, 5, [<object_id>, 'path','path'], [<params...>]]
-                        // [-1234, 0, <value>]
+    call: 4,            // [ 1234, 4, [<object_id>,'path','path'], [<params...>]]
+                        // [-1234, 0, <return>]
 
                         // Subscriptor -> Owner
-    update: 6,          // [ 1234, 6, [<object_id>, 'path', 'path'], <last_update_id>]
+    update: 5,          // [ 1234, 5, [<object_id>, 'path', 'path'], <last_update_id>]
                         // [-1234, 0, [<object_id>, 'path', 'path'], <object_data_to_merge>, <last_update_id>]
 
                         // Owner -> Subscriptor
-    set: 7,             // [ 1234, 7, <object_id>, ['path','path'],'value', <last_update_id>]
+    merge: 6,           // [ 1234, 6, <object_id>, <object_data_to_merge>, <last_update_id>]
                         // [-1234, 0]
 
                         // Owner -> Subscriptor
-    delete: 8,          // [ 1234, 8, <object_id>, ['path','path'], <last_update_id>]
+    set: 7,             // [ 1234, 7, [<object_id>,'path','path'],'value', <last_update_id>]
                         // [-1234, 0]
 
                         // Owner -> Subscriptor
-    merge: 9,           // [ 1234, 9, <object_id>, <object_data_to_merge>, <last_update_id>]
+    delete: 8,          // [ 1234, 8, [<object_id>, 'path','path'], <last_update_id>]
                         // [-1234, 0]
 
 };
