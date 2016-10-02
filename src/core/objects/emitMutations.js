@@ -38,12 +38,11 @@ dop.core.emitMutations = function( mutations ) {
             object_dop.m = [];
         }
 
-        // Storing action and unaction
+        // Storing action
         dop.util.set(action, path, mutation.value);
-        dop.util.set(unaction, path, mutation.oldValue);
-
     }
 
-    return {action:action, unaction:unaction};
+
+    return action;
 
 };

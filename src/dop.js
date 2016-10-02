@@ -4,12 +4,6 @@ var dop = {
 
     version: '0.1.0',
     name: 'dop',
-    
-    // special properties
-    specialprop: {
-        socket_token: '~TOKEN_DOP',
-        dop: '~dop'
-    },
 
     // Where all the internal information is stored
     data: {
@@ -28,6 +22,13 @@ var dop = {
     protocol:{},
     listener:{},
     connector:{},
-    transport:{listen:{}, connect:{}}
+    transport:{listen:{}, connect:{}},
+
+
+    // Special properties assigned to user objects
+    specialprop: {
+        socket_token: '~TOKEN_DOP',
+        dop: '~dop'
+    }
 
 };
