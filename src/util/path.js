@@ -1,7 +1,8 @@
 
-dop.util.path = function ( source, callback, destiny ) {
+dop.util.path = function ( source, callback, destiny, mutate ) {
 
-    var hasCallback = typeof callback == 'function';
+    var hasCallback = typeof callback == 'function',
+        hasDestiny = dop.util.isObject(destiny);
      // UNCOMMENT THIS FOR STOP & RE-ASIGN FEATURE
     // if (hasCallback)
         // config = {
@@ -18,12 +19,13 @@ dop.util.path = function ( source, callback, destiny ) {
         [], 
         [],
         hasCallback,
-        dop.util.isObject(destiny)
+        hasDestiny,
+        hasDestiny && mutate === true
     );
     return destiny;
 };
 
-dop.util.pathRecursive = function pathRecursive( source, destiny, callback, circular, path, hasCallback, hasDestiny ) {
+dop.util.pathRecursive = function pathRecursive( source, destiny, callback, circular, path, hasCallback, hasDestiny, mutate ) {
 
     var prop, value, value2, isArray;
 
@@ -35,7 +37,7 @@ dop.util.pathRecursive = function pathRecursive( source, destiny, callback, circ
 
         if (hasCallback) {
             path.push( prop );
-            callback(path.slice(0), source, destiny, this );
+            callback(source, prop, value, path.slice(0), destiny, this );
             // if ( this.stoped === true ) return; // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
         }
 
@@ -51,10 +53,10 @@ dop.util.pathRecursive = function pathRecursive( source, destiny, callback, circ
                     destiny[prop];
             }
 
-            pathRecursive(value, value2, callback, circular, path, hasCallback, hasDestiny );
+            pathRecursive(value, value2, callback, circular, path, hasCallback, hasDestiny, mutate );
 
         }
-        else if ( hasDestiny ) {
+        else if ( mutate ) {
             // destiny[prop] = (hasCallback && this.hasOwnProperty('returned')) ? this.returned : value; // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
             // delete this.returned; // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
             if (value === undefined)

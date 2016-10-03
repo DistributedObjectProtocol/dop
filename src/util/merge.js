@@ -8,7 +8,7 @@ dop.util.merge = function mergeRecursive(first, second) {
         return mergeRecursive.apply(this, args);
     }
     else 
-        return dop.util.path(second, this, first);
+        return dop.util.path(second, this, first, true);
     // // I don't know why but this is slower
     // for (var i=arguments.length-1; i>0; --i)
     //     dop.util.path(arguments[i], this, arguments[i-1]);

@@ -1,6 +1,6 @@
 
 dop.core.storeMutation = function(mutation) {
-    var collectors=dop.data.collectors,
+    var collectors = dop.data.collectors,
         object_dop = dop.getObjectDop(mutation.object);
     object_dop.m.push(mutation);
 

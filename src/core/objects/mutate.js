@@ -4,7 +4,7 @@ dop.core.mutate = function(target, property, value) {
     var isSet = (arguments.length > 2), // is set or delete mutation
         hasOwnProperty = target.hasOwnProperty(property),
         oldValue = target[property],
-        proxy=target,
+        proxy = target,
         object_dop;
 
     if ( (isSet && oldValue !== value) || (!isSet && hasOwnProperty) ) {
