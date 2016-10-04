@@ -10,16 +10,13 @@ dop.core.emitMutations = function( mutations ) {
         total2,
         object_dop,
         observersProperties,
-        observers,
-        action = {},
-        unaction = {},
-        path;
+        observers;
 
     for (;index<total; ++index) {
         mutation = mutations[index];
         subobject = mutation.object;
         object_dop = dop.getObjectDop(subobject);
-        path = object_dop.slice(0).concat(mutation.name);
+        mutation.path = object_dop.slice(0).concat(mutation.name);
 
         // Emiting mutations to observerProperties
         observersProperties = object_dop.op[mutation.name];
@@ -37,12 +34,7 @@ dop.core.emitMutations = function( mutations ) {
 
             object_dop.m = [];
         }
-
-        // Storing action
-        dop.util.set(action, path, mutation.value);
     }
 
-
-    return action;
-
+    return mutations;
 };

@@ -3,16 +3,8 @@ dop.util.path = function ( source, callback, destiny, mutate ) {
 
     var hasCallback = typeof callback == 'function',
         hasDestiny = dop.util.isObject(destiny);
-     // UNCOMMENT THIS FOR STOP & RE-ASIGN FEATURE
-    // if (hasCallback)
-        // config = {
-            // stop:function(){config.stoped=true},
-            // return:function(value){config.returned=value}
-        // };
-    // UNCOMMENT THIS FOR STOP & RE-ASIGN FEATURE 
 
-    // dop.util.pathRecursive.call(config, [], source, destiny, callback, [], hasCallback, dop.util.isObject(destiny); // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
-    dop.util.pathRecursive(
+    pathRecursive(
         source, 
         destiny, 
         callback, 
@@ -22,23 +14,22 @@ dop.util.path = function ( source, callback, destiny, mutate ) {
         hasDestiny,
         hasDestiny && mutate === true
     );
+
     return destiny;
 };
 
-dop.util.pathRecursive = function pathRecursive( source, destiny, callback, circular, path, hasCallback, hasDestiny, mutate ) {
+function pathRecursive( source, destiny, callback, circular, path, hasCallback, hasDestiny, mutate ) {
 
     var prop, value, value2, isArray;
 
     for (prop in source) {
 
-        // if ( this.stoped === true ) return;
-
         value = source[prop];
 
         if (hasCallback) {
-            path.push( prop );
-            callback(source, prop, value, path.slice(0), destiny, this );
-            // if ( this.stoped === true ) return; // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
+            // path.push( prop );
+            // callback(source, prop, value, path.slice(0), destiny, this );
+            callback(source, prop, value, destiny, this );
         }
 
         // Objects or arrays
@@ -57,8 +48,6 @@ dop.util.pathRecursive = function pathRecursive( source, destiny, callback, circ
 
         }
         else if ( mutate ) {
-            // destiny[prop] = (hasCallback && this.hasOwnProperty('returned')) ? this.returned : value; // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
-            // delete this.returned; // UNCOMMENT THIS FOR STOP & REASIGN FEATURE
             if (value === undefined)
                 delete destiny[prop];
             else
@@ -66,8 +55,8 @@ dop.util.pathRecursive = function pathRecursive( source, destiny, callback, circ
         }
 
 
-        if (hasCallback)
-            path.pop();
+        // if (hasCallback)
+            // path.pop();
     }
 
 };
