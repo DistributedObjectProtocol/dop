@@ -7,10 +7,11 @@ dop.dispatch = function(mutations) {
     }
 
     if (mutations.length>0) {
-        dop.core.emitMutations(mutations);
-        if (action === undefined)
-            action = dop.getAction(mutations);
-        dop.core.emitActionSubscribers(action);
-        return action;
+        // if mutations With Subscribers
+        if ( dop.core.emitMutations(mutations) ) {
+            if (action === undefined)
+                action = dop.getAction(mutations);
+            dop.core.emitActionSubscribers(action);
+        }
     }
 };

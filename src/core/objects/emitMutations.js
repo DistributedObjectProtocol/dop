@@ -10,13 +10,17 @@ dop.core.emitMutations = function( mutations ) {
         total2,
         object_dop,
         observersProperties,
-        observers;
+        observers,
+        mutationsWithSubscribers = false;
 
     for (;index<total; ++index) {
         mutation = mutations[index];
         subobject = mutation.object;
         object_dop = dop.getObjectDop(subobject);
         mutation.path = object_dop.slice(0).concat(mutation.name);
+
+        if (!mutationsWithSubscribers && dop.data.object_data[object_dop[0]].nodes > 0)
+            mutationsWithSubscribers = true;
 
         // Emiting mutations to observerProperties
         observersProperties = object_dop.op[mutation.name];
@@ -36,5 +40,5 @@ dop.core.emitMutations = function( mutations ) {
         }
     }
 
-    return mutations;
+    return mutationsWithSubscribers;
 };
