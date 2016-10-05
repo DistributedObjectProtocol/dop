@@ -1,5 +1,5 @@
 
-dop.core.node = function( ) {
+dop.core.node = function() {
     // Inherit emitter
     Object.assign( this, dop.util.emitter.prototype );
     this.status = 0;
@@ -18,11 +18,9 @@ dop.core.node.prototype.send = function(message) {
 };
 
 
-
 dop.core.node.prototype.subscribe = function() {
     return dop.protocol.subscribe(node, arguments);
 };
-
 
 
 dop.core.node.prototype.close = function() {

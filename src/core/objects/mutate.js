@@ -21,12 +21,12 @@ dop.core.mutate = function(target, property, value) {
             if ( dop.util.isObject(value) ) {
                 var isRegistered = dop.isRegistered(value),
                     object_dop_value = dop.getObjectDop(value);
-                if ( !isRegistered ) {
-                    var shallWeProxy = (isRegistered) ? dop.data.object_data[dop.getObjectId(value)].options.proxy : true;
-                    target[property] = dop.core.configureObject( value, object_dop.concat(property), shallWeProxy);
-                }
-                else if ( isRegistered && object_dop_value._ === target )
+                if ( isRegistered && object_dop_value._ === target )
                     object_dop_value[object_dop_value.length-1] = property;
+                else {
+                    var shallWeProxy = (isRegistered) ? dop.data.object_data[dop.getObjectId(value)].options.proxy : true;
+                    target[property] = dop.core.configureObject( value, object_dop.concat(property), shallWeProxy, proxy);
+                }
             }
         }
 

@@ -1,17 +1,11 @@
 
-dop.dispatch = function(mutations) {
-    var action;
-    if (this.mutations===mutations ) {
-        action = this.action;
-        dop.data.collectors.splice(dop.data.collectors.indexOf(this), 1);
-    }
-
+dop.dispatch = function(mutations, action) {
     if (mutations.length>0) {
-        // if mutations With Subscribers
-        if ( dop.core.emitMutations(mutations) ) {
+        // if mutations With Nodes
+        if ( dop.core.emitObservers(mutations) ) {
             if (action === undefined)
                 action = dop.getAction(mutations);
-            dop.core.emitActionSubscribers(action);
+            dop.core.emitNodes(action);
         }
     }
 };

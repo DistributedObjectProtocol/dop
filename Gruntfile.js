@@ -28,7 +28,6 @@ module.exports = function(grunt) {
                     'src/util/*',
                     'src/api/*',
                     'src/core/**',
-                    'src/constructors/*',
                     'src/protocol/*',
                     'src/node/*',
                     'src/umd.js'
@@ -42,7 +41,6 @@ module.exports = function(grunt) {
                     'src/util/*',
                     'src/api/*',
                     'src/core/**',
-                    'src/constructors/*',
                     'src/protocol/*',
                     'src/node/*',
                     'src/umd.js'

@@ -9,6 +9,8 @@
   "author": "Josema Enzo (http://josema.es/)",
   "description": "Distributed Object Protocol for JavaScript",
   "keywords": [
+    "state management",
+    "data flow",
     "distributed",
     "objects",
     "protocol",
@@ -22,15 +24,13 @@
     "realtime",
     "websocket",
     "events",
-    "socket",
+    "sockets",
     "io",
     "xhr",
     "server",
     "client",
     "ria",
     "model",
-    "state management",
-    "data flow",
     "meteor"
   ],
   "dependencies": {

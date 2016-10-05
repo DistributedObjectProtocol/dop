@@ -5,7 +5,7 @@ dop.protocol.onsubscribe = function( node, request_id, request ) {
 
         var args = Array.prototype.slice.call(request, 1), object, response;
 
-        dop.core.localProcedureCall( node, dop.data.onsubscribe, args, function resolve( value ) {
+        dop.core.localProcedureCall( dop.data.onsubscribe, args, function resolve( value ) {
             if ( dop.util.isObject(value) ) {
                 object = dop.register( value );
                 var object_id = dop.getObjectId(object);
@@ -26,6 +26,9 @@ dop.protocol.onsubscribe = function( node, request_id, request ) {
             else
                 response.push( error );
             node.send(JSON.stringify(response));
+        }, function( req ) {
+            req.node = node;
+            return req;
         });
 
     }
