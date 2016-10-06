@@ -1,5 +1,5 @@
 
-dop.protocol.onsubscribe = function( node, request_id, request ) {
+dop.protocol.onsubscribe = function(node, request_id, request) {
 
     if ( typeof dop.data.onsubscribe == 'function' ) {
 
@@ -26,7 +26,7 @@ dop.protocol.onsubscribe = function( node, request_id, request ) {
             else
                 response.push( error );
             node.send(JSON.stringify(response));
-        }, function( req ) {
+        }, function(req) {
             req.node = node;
             return req;
         });

@@ -35,7 +35,7 @@ dop.util.typeof = (function() {
     };
 
 
-    return function( type ) {
+    return function(type) {
 
         return list[ Object.prototype.toString.call( type ) ];
 

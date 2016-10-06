@@ -1,5 +1,5 @@
 
-dop.core.registerNode = function( node, token ) {
+dop.core.registerNode = function(node, token) {
     node.status = 1;
     node.token = token;
     node.socket[CONS.socket_token] = token;

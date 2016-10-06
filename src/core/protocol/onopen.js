@@ -1,5 +1,5 @@
 
-dop.core.onopen = function( listener_or_node, socket, transport ){
+dop.core.onopen = function(listener_or_node, socket, transport){
 
     listener_or_node.emit( 'open', socket );
 

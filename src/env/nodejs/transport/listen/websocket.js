@@ -12,7 +12,7 @@ dop.transport.listen.WebSocket = function WebSocket( listener, options, dop ) {
 
     var transport = new dop.transport.listen.WebSocket.api.Server( options );
 
-    transport.on('connection', function( socket ){
+    transport.on('connection', function(socket){
 
         dop.core.onopen( listener, socket, dop.transport.listen.WebSocket );
 

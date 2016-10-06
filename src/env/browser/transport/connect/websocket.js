@@ -9,7 +9,7 @@ dop.transport.connect.WebSocket = function WebSocket( node, options, dop ) {
         dop.core.onopen( node, socket );
     });
 
-    socket.addEventListener('message', function( message ) {
+    socket.addEventListener('message', function(message) {
         dop.core.onmessage( node, socket, message.data, message );
     });
 
@@ -17,7 +17,7 @@ dop.transport.connect.WebSocket = function WebSocket( node, options, dop ) {
         dop.core.onclose( node, socket );
     });
 
-    // socket.addEventListener('error', function( error ) {
+    // socket.addEventListener('error', function(error) {
     //     dop.on.error( node, error );
     // });
 

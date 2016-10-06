@@ -1,5 +1,5 @@
 
-dop.listen = function( options ) {
+dop.listen = function(options) {
 
     if ( dop.util.typeof(options) != 'object' )
         options = {};

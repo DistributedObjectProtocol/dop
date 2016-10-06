@@ -1,5 +1,5 @@
 
-dop.util.set = function( object, path, value ) {
+dop.util.set = function(object, path, value) {
 
     if ( path.length == 0 )
         return object;

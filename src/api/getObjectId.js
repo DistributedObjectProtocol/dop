@@ -1,4 +1,4 @@
 
-dop.getObjectId = function( object ) {
+dop.getObjectId = function(object) {
     return dop.getObjectDop(object)[0];
 };

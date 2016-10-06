@@ -1,5 +1,5 @@
 
-dop.util.get = function( object, path ) {
+dop.util.get = function(object, path) {
 
     if ( path.length == 0 )
         return object;

@@ -1,5 +1,5 @@
 
-dop.core.unregisterNode = function( node ) {
+dop.core.unregisterNode = function(node) {
     var object_id, object_data;
     for ( object_id in node.object_subscribed ) {
 

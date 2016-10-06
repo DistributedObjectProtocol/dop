@@ -1,5 +1,5 @@
 
-dop.protocol._onsubscribe = function( node, request_id, request, response ) {
+dop.protocol._onsubscribe = function(node, request_id, request, response) {
 
     if (response[0] !== undefined) {
 

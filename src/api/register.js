@@ -1,5 +1,5 @@
 
-dop.register = function( object, options ) {
+dop.register = function(object, options) {
 
     dop.util.invariant(dop.util.isObject(object), 'dop.register needs a regular object as first parameter');
 

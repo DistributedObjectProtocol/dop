@@ -1,5 +1,5 @@
 
-dop.protocol.connect = function( node ) {
+dop.protocol.connect = function(node) {
     var token, request;
     do {
         token = dop.util.uuid();

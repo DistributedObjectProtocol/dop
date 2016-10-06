@@ -1,5 +1,5 @@
 
-dop.getAction = function( mutations ) {
+dop.getAction = function(mutations) {
 
     var action = {},
         index = 0,

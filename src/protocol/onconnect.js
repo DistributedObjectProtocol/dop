@@ -1,5 +1,5 @@
 
-dop.protocol.onconnect = function( node, request_id, request ) {
+dop.protocol.onconnect = function(node, request_id, request) {
     
     var token=request[1], response;
 

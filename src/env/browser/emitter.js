@@ -5,7 +5,7 @@ dop.util.emitter = function() {
 
 };
 
-dop.util.emitter.prototype.on = function( name, callback, once ) {
+dop.util.emitter.prototype.on = function(name, callback, once) {
 
     if ( typeof callback == 'function' ) {
 
@@ -25,7 +25,7 @@ dop.util.emitter.prototype.on = function( name, callback, once ) {
 
 };
 
-dop.util.emitter.prototype.once = function( name, callback ) {
+dop.util.emitter.prototype.once = function(name, callback) {
 
     return this.on( name, callback, true );
 
@@ -33,7 +33,7 @@ dop.util.emitter.prototype.once = function( name, callback ) {
 
 
 
-dop.util.emitter.prototype.emit = function( name ) {
+dop.util.emitter.prototype.emit = function(name) {
 
     if ( dop.util.isObject(this._events[name]) && this._events[name].length > 0 ) {
 
@@ -60,7 +60,7 @@ dop.util.emitter.prototype.emit = function( name ) {
 
 
 
-dop.util.emitter.prototype.removeListener = function( name, callback ) {
+dop.util.emitter.prototype.removeListener = function(name, callback) {
 
     if ( dop.util.isObject(this._events[name]) && this._events[name].length > 0 ) {
 

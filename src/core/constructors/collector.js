@@ -7,7 +7,7 @@ dop.core.collector = function() {
 
 
 
-dop.core.collector.prototype.add = function( mutation ) {
+dop.core.collector.prototype.add = function(mutation) {
     this.shallWeGenerateAction = true;
     this.shallWeGenerateUnaction = true;
     this.mutations.push(mutation);

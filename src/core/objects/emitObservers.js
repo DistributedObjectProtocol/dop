@@ -1,5 +1,5 @@
 
-dop.core.emitObservers = function( mutations ) {
+dop.core.emitObservers = function(mutations) {
 
     var mutation,
         subobjects = [],

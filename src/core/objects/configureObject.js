@@ -1,6 +1,6 @@
 
 var canWeProxy = typeof Proxy == 'function';
-dop.core.configureObject = function( object, path, shallWeProxy, parent ) {
+dop.core.configureObject = function(object, path, shallWeProxy, parent) {
 
     // Creating a copy if is another object registered
     if (dop.isRegistered(object))

@@ -1,5 +1,5 @@
 
-dop.getUnaction = function( mutations ) {
+dop.getUnaction = function(mutations) {
 
     var unaction = {},
         index = mutations.length-1,

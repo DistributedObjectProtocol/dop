@@ -1,5 +1,5 @@
 
-dop.core.remoteFunction = function $DOP_REMOTE_FUNCTION( object, property ) {
+dop.core.remoteFunction = function $DOP_REMOTE_function(object, property) {
 
     return function $DOP_REMOTE_FUNCTION() {
 

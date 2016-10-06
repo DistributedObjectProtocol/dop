@@ -1,5 +1,5 @@
 
-dop.core.getRejectError = function( error ) {
+dop.core.getRejectError = function(error) {
     if (typeof error == 'number' && dop.core.error.reject[error] !== undefined) {
         var args = Array.prototype.slice.call(arguments, 1);
         args.unshift( dop.core.error.reject[error] );

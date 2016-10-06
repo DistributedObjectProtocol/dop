@@ -1,5 +1,5 @@
 
-dop.core.listener = function( options ) {
+dop.core.listener = function(options) {
     // Inherit emitter
     Object.assign( this, dop.util.emitter.prototype );
     this.options = options;

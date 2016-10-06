@@ -1,5 +1,5 @@
 
-dop.core.emitNodes = function( action ) {
+dop.core.emitNodes = function(action) {
     var object_id, node_token, node;
     for (object_id in action) {
         if ( dop.data.object_data[object_id].nodes > 0 ) {
