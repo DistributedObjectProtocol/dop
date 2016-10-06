@@ -28,13 +28,13 @@ dop.core.emitObservers = function(mutations) {
             for (index2=0,total2=observersProperties.length; index2<total2; ++index2)
                 observersProperties[index2](mutation);
 
-        if ( subobjects.indexOf(subobject) === -1 ) {
+        if (subobjects.indexOf(subobject) === -1) {
             subobjects.push(subobject);
 
             // Emiting mutations to observers
             observers = object_dop.o;
             for (index2 = 0, total2 = observers.length;index2<total2; ++index2)
-                observers[index2]( object_dop.m.slice(0) );
+                observers[index2](object_dop.m.slice(0));
 
             object_dop.m = [];
         }

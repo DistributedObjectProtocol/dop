@@ -1,5 +1,5 @@
 
-dop.util.path = function ( source, callback, destiny, mutate ) {
+dop.util.path = function (source, callback, destiny, mutate) {
 
     var hasCallback = typeof callback == 'function',
         hasDestiny = dop.util.isObject(destiny);
@@ -13,12 +13,12 @@ dop.util.path = function ( source, callback, destiny, mutate ) {
         hasCallback,
         hasDestiny,
         hasDestiny && mutate === true
-    );
+   );
 
     return destiny;
 };
 
-function pathRecursive( source, destiny, callback, circular, path, hasCallback, hasDestiny, mutate ) {
+function pathRecursive(source, destiny, callback, circular, path, hasCallback, hasDestiny, mutate) {
 
     var prop, value, value2, isArray;
 
@@ -27,27 +27,27 @@ function pathRecursive( source, destiny, callback, circular, path, hasCallback, 
         value = source[prop];
 
         if (hasCallback) {
-            // path.push( prop );
-            // callback(source, prop, value, path.slice(0), destiny, this );
-            callback(source, prop, value, destiny, this );
+            // path.push(prop);
+            // callback(source, prop, value, path.slice(0), destiny, this);
+            callback(source, prop, value, destiny, this);
         }
 
         // Objects or arrays
-        if ( value && value !== source && (value.constructor === Object || (isArray=Array.isArray(value))) && circular.indexOf(value)==-1 ) {
+        if (value && value !== source && (value.constructor === Object || (isArray=Array.isArray(value))) && circular.indexOf(value)==-1) {
 
             circular.push(value);
 
-            if ( hasDestiny ) {
-                value2 = ( !destiny.hasOwnProperty(prop) ) ?
+            if (hasDestiny) {
+                value2 = (!destiny.hasOwnProperty(prop)) ?
                     (destiny[prop] = (isArray) ? [] : {})
                 :
                     destiny[prop];
             }
 
-            pathRecursive(value, value2, callback, circular, path, hasCallback, hasDestiny, mutate );
+            pathRecursive(value, value2, callback, circular, path, hasCallback, hasDestiny, mutate);
 
         }
-        else if ( mutate ) {
+        else if (mutate) {
             if (value === undefined)
                 delete destiny[prop];
             else

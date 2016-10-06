@@ -10,7 +10,7 @@ dop.collect = function(filter) {
 
 
 
-// setTimeout(function(){
+// setTimeout(function() {
 // console.clear();
 
 // obj=dop.register({mola:123,array:[1,2,{obj:'lol'},4,5,6,7,8],old:"old"})
@@ -30,11 +30,11 @@ dop.collect = function(filter) {
 // collector.emit();
 
 // unaction = collector.getUnaction();
-// // console.log(obj.array.slice(0), obj, unaction[3], collector.mutations.length );
+// // console.log(obj.array.slice(0), obj, unaction[3], collector.mutations.length);
 // console.log(obj.array.slice(0), obj.array.length, arr===obj.array);
 // dop.setAction(unaction);
-// console.log( str );
-// console.log(dop.encode(obj), str===dop.encode(obj) );
+// console.log(str);
+// console.log(dop.encode(obj), str===dop.encode(obj));
 // console.log(obj.array.slice(0), obj.array.length, arr===obj.array);
 
 // },1000)

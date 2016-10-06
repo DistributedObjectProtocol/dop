@@ -4,7 +4,7 @@ dop.core.proxyArrayCaller = function(method, array, args) {
         length = array.length,
         result = Array.prototype[method].apply(array, args);
 
-    if ( array.length > length )
+    if (array.length > length)
         dop.core.storeMutation({
             name:'length', 
             object:array, 

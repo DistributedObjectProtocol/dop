@@ -1,7 +1,7 @@
 
 dop.core.createAsync = function(node, request_id) {
     var resolve, reject,
-    promise = new Promise(function(res, rej){
+    promise = new Promise(function(res, rej) {
         resolve = res;
         reject = rej;
     });
@@ -13,17 +13,17 @@ dop.core.createAsync = function(node, request_id) {
 
 
 // mypromise = dop.createAsync();
-// mypromise.then(function(v){
+// mypromise.then(function(v) {
 //     console.log('yeah',v)
 // });
-// setTimeout(function(){
+// setTimeout(function() {
 //     mypromise.resolve(1234567890)
 // },1000);
 
 
 // dop.core.createAsync = function() {
 //     var observable = Rx.Observable.create(function(observer) {
-//         observable.resolve = function(value){
+//         observable.resolve = function(value) {
 //             observer.onNext(value);
 //             observer.onCompleted();
 //         };
@@ -33,10 +33,10 @@ dop.core.createAsync = function(node, request_id) {
 //     // return {stream:observable,resolve:observer.onNext,reject:observer.onError,cancel:cancel};
 // };
 // mypromise = dop.createAsync();
-// mypromise.subscribe(function(v){
+// mypromise.subscribe(function(v) {
 //     console.log('yeah',v);
 // });
-// setTimeout(function(){
+// setTimeout(function() {
 //     mypromise.resolve(1234567890);
 // },1000);
 

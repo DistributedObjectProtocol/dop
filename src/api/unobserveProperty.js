@@ -4,7 +4,7 @@ dop.unobserveProperty = function(object, property, callback) {
     dop.util.invariant(typeof callback == 'function', 'dop.unobserveProperty needs a callback as second parameter');
 
     var observers = dop.getObjectDop(object).op, indexOf;
-    if ( dop.util.typeof(observers) != 'object' || dop.util.typeof(observers[property]) != 'array' )
+    if (dop.util.typeof(observers) != 'object' || dop.util.typeof(observers[property]) != 'array')
         return false;
 
     observers = observers[property];

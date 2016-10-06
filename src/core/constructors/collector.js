@@ -23,7 +23,7 @@ dop.core.collector.prototype.emit = function() {
 dop.core.collector.prototype.getAction = function() {
     if (this.shallWeGenerateAction) {
         this.shallWeGenerateAction = false;
-        this.action = dop.getAction( this.mutations );
+        this.action = dop.getAction(this.mutations);
     }
     return this.action;
 };
@@ -32,7 +32,7 @@ dop.core.collector.prototype.getAction = function() {
 dop.core.collector.prototype.getUnaction = function() {
     if (this.shallWeGenerateUnaction) {
         this.shallWeGenerateUnaction = false;
-        this.unaction = dop.getUnaction( this.mutations );
+        this.unaction = dop.getUnaction(this.mutations);
     }
     return this.unaction;
 };

@@ -11,7 +11,7 @@ dop.getUnaction = function(mutations) {
             unaction,
             dop.getObjectDop(mutation.object).slice(0).concat(mutation.name),
             mutation.oldValue
-        );
+       );
     }
 
     return unaction;

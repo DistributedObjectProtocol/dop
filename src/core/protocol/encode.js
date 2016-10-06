@@ -6,13 +6,13 @@ dop.core.encode = function(property, value) {
     if (tof == 'function')
         return '~F';
 
-    else if ( value === Infinity )
+    else if (value === Infinity)
         return '~I';
 
-    else if ( value === -Infinity )
+    else if (value === -Infinity)
         return '~i';
     
-    else if ( tof == 'number' && isNaN(value) )
+    else if (tof == 'number' && isNaN(value))
         return '~N';
 
     else if (tof == 'object' && value instanceof RegExp)
@@ -28,7 +28,7 @@ dop.core.encode = function(property, value) {
 
 
 // // Extending example
-// (function(){
+// (function() {
 //     var encode = dop.core.encode;
 //     dop.core.encode = function(property, value) {
 //         if (typeof value == 'boolean')

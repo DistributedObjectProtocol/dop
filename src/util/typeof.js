@@ -1,13 +1,13 @@
 
 dop.util.typeof = function(value) {
     var s = typeof value;
-    if ( s == 'object' ) {
+    if (s == 'object') {
         if (value) {
-            if (Array.isArray( value ))
+            if (Array.isArray(value))
                 s = 'array';
-            else if ( value instanceof Date )
+            else if (value instanceof Date)
                 s = 'date';
-            else if ( value instanceof RegExp )
+            else if (value instanceof RegExp)
                 s = 'regexp';
         }
         else
@@ -37,7 +37,7 @@ dop.util.typeof = (function() {
 
     return function(type) {
 
-        return list[ Object.prototype.toString.call( type ) ];
+        return list[ Object.prototype.toString.call(type) ];
 
     };
 

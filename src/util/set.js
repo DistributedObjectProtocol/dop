@@ -1,7 +1,7 @@
 
 dop.util.set = function(object, path, value) {
 
-    if ( path.length == 0 )
+    if (path.length == 0)
         return object;
 
     path = path.slice(0);
@@ -22,7 +22,7 @@ dop.util.set = function(object, path, value) {
 
 /*
 ori = {test:{hs:124}}
-console.log(  dop.util.set(ori, ['test','more'], undefined) )
+console.log( dop.util.set(ori, ['test','more'], undefined))
 */
 
 

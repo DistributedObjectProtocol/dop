@@ -1,7 +1,7 @@
 
 dop.core.node = function() {
     // Inherit emitter
-    Object.assign(this, dop.util.emitter.prototyp);
+    Object.assign(this, dop.util.emitter.prototype);
     this.status = 0;
     this.object_owned = {};
     this.object_subscribed = {};
@@ -30,7 +30,7 @@ dop.core.node.prototype.close = function() {
 
 dop.protocol.subscribe = function(node, args) {
     args = Array.prototype.slice.call(args, 0);
-    args.unshift( node, dop.protocol.instructions.subscribe );
+    args.unshift(node, dop.protocol.instructions.subscribe);
     var request = dop.core.createRequest.apply(node, args);
     dop.core.storeRequest(node, request);
     dop.core.emitRequests(node);
