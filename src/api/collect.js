@@ -27,7 +27,7 @@ dop.collect = function(filter) {
 // obj.array.splice(2,{last:9},'coca','cola');
 // obj.array.reverse();
 // obj.array.push(dop.register({registered:true}));
-// collector.dispatch();
+// collector.emit();
 
 // unaction = collector.getUnaction();
 // // console.log(obj.array.slice(0), obj, unaction[3], collector.mutations.length );

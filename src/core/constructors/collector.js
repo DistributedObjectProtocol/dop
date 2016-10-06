@@ -14,9 +14,9 @@ dop.core.collector.prototype.add = function( mutation ) {
 };
 
 
-dop.core.collector.prototype.dispatch = function() {
+dop.core.collector.prototype.emit = function() {
     dop.data.collectors.splice(dop.data.collectors.indexOf(this), 1);
-    dop.dispatch(this.mutations, this.action);
+    dop.emit(this.mutations, this.action);
 };
 
 

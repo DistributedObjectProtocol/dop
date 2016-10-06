@@ -10,5 +10,5 @@ dop.core.storeMutation = function(mutation) {
             if (collectors[index].filter===undefined || collectors[index].filter(mutation) === true)
                 return collectors[index].add(mutation);
 
-    return dop.dispatch([mutation]);        
+    return dop.emit([mutation]);        
 };

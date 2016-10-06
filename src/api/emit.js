@@ -1,5 +1,5 @@
 
-dop.dispatch = function(mutations, action) {
+dop.emit = function(mutations, action) {
     if (mutations.length>0) {
         // if mutations With Nodes
         if ( dop.core.emitObservers(mutations) ) {

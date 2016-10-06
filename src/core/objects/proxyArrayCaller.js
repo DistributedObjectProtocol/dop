@@ -12,6 +12,6 @@ dop.core.proxyArrayCaller = function(method, array, args) {
             oldValue:length
         });
 
-    collector.dispatch();
+    collector.emit();
     return result;
 };

@@ -10,5 +10,5 @@ dop.setAction = function( action ) {
         }
     }, dop.data.object, false);
     collector.action = action;
-    return collector.dispatch();
+    return collector.emit();
 };

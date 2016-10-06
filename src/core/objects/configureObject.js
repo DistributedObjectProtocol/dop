@@ -15,7 +15,7 @@ dop.core.configureObject = function( object, path, shallWeProxy, parent ) {
     }
 
     // Setting ~dop object
-    Object.defineProperty( object, dop.specialprop.dop, {value:path.slice(0)} );
+    Object.defineProperty( object, CONS.dop, {value:path.slice(0)} );
     object_dop = dop.getObjectDop(object);
     object_dop.m = []; // mutations
     object_dop.o = []; // observers
