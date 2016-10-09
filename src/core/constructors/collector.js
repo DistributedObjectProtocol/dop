@@ -8,9 +8,13 @@ dop.core.collector = function() {
 
 
 dop.core.collector.prototype.add = function(mutation) {
-    this.shallWeGenerateAction = true;
-    this.shallWeGenerateUnaction = true;
-    this.mutations.push(mutation);
+    if (this.filter===undefined || this.filter(mutation) === true) {
+        this.shallWeGenerateAction = true;
+        this.shallWeGenerateUnaction = true;
+        this.mutations.push(mutation);
+        return true;
+    }
+    return false;
 };
 
 

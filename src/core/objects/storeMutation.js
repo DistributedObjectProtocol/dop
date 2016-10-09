@@ -7,8 +7,8 @@ dop.core.storeMutation = function(mutation) {
     // Running collectors
     if (collectors.length > 0)
         for (var index=0,total=collectors.length; index<total; index++)
-            if (collectors[index].filter===undefined || collectors[index].filter(mutation) === true)
-                return collectors[index].add(mutation);
+            if (collectors[index].add(mutation))
+                return;
 
     return dop.emit([mutation]);        
 };
