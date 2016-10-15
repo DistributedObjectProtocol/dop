@@ -27,6 +27,7 @@ dop.collect = function(filter) {
 // obj.array.splice(2,{last:9},'coca','cola');
 // obj.array.reverse();
 // obj.array.push(dop.register({registered:true}));
+// obj.array[7].obj='LOOOOOL!'
 // collector.emit();
 
 // unaction = collector.getUnaction();

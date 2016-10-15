@@ -54,11 +54,15 @@ dop.protocol.instructions = {
                         // [-1234, 0]
 
                         // Owner -> Subscriptor
-    set: 7,             // [ 1234, 7, [<object_id>,'path','path'],'value', <last_update_id>]
+    set: 7,             // [ 1234, 7, [<object_id>,'path','path'], 'value', <last_update_id>]
                         // [-1234, 0]
 
                         // Owner -> Subscriptor
     delete: 8,          // [ 1234, 8, [<object_id>, 'path','path'], <last_update_id>]
+                        // [-1234, 0]
+
+                        // Owner -> Subscriptor
+    splice: 9,          // [ 1234, 9, [<object_id>, 'path','path'], [1, 5, 'newitem'], <last_update_id>]
                         // [-1234, 0]
 
 };

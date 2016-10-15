@@ -4,7 +4,7 @@ dop.register = function(object, options) {
     dop.util.invariant(dop.util.isObject(object), 'dop.register needs a regular object as first parameter');
 
     if (dop.isRegistered(object))
-        return object;    
+        return dop.getObjectProxy(object);    
 
     var object_id = dop.data.object_inc++;
     options = dop.util.merge({proxy:true}, options);
