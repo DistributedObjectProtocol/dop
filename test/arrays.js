@@ -1,55 +1,14 @@
 
 var dop = require('../dist/nodejs');
 var test = require('tape');
-var tabe = require('tabe');
-// tabe.createStream( test );
-var set = dop.set;
-var del = dop.delete;
+// require('tabe').createStream( test );
 
 
 
-var object = dop.register({
-    prop:"prop",
-    subobject:{
-        a:1,
-        b:2,
-        c:{d:3}
-    }
-});
-var object_id = dop.getObjectId(object);
-
-
-
-test('Sets: Adding a new subobject must convert it as register', t => {
-    set(object, 'new',{isregisterd:true});
-    var dopobject = dop.getObjectDop(object.new);
-    t.equal(typeof dopobject, 'object');
-    t.equal(JSON.stringify(dopobject), JSON.stringify([object_id, 'new']));
+test('YEAHH', function(t) {
+    t.equal('ret', 'ret');
     t.end();
 });
-
-
-test('Sets: Copying object already registered must create a new one', t => {
-    set(object, 'new2', object.new);
-    var dopobject = dop.getObjectDop(object.new2);
-    t.equal(object.new === object.new2, false);
-    t.equal(JSON.stringify(dopobject), JSON.stringify([object_id, 'new2']));
-    t.end();
-});
-
-
-
-test('Sets: Copying object already registered into another deep object', t => {
-    set(object.subobject, 'new', object.new);
-    var dopobject = dop.getObjectDop(object.subobject.new);
-    t.equal(object.subobject.new === object.new, false);
-    t.equal(JSON.stringify(dopobject), JSON.stringify([object_id, 'subobject', 'new']));
-    t.end();
-});
-
-
-
-
 
 
 // setTimeout(function() {console.clear();

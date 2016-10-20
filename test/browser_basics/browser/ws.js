@@ -47,27 +47,27 @@ test('onopen onmessage onconnect', function(t){
 
 test('subscribe', function(t){
 
-    node.subscribe('PUBLIC_DEEP').then(object => {
+    node.subscribe('PUBLIC_DEEP').then(function(object) {
         // console.log( 'PUBLIC_DEEP', object )
         t.equal(typeof object, 'object', 'PUBLIC_DEEP object synced');
     })
 
-    node.subscribe('PUBLIC').then(object => {
+    node.subscribe('PUBLIC').then(function(object) {
         // console.log('PUBLIC', object)
         t.equal(typeof object, 'object', 'PUBLIC object synced');
     })
 
-    node.subscribe('RE-PUBLIC_DEEP').then(object => {
+    node.subscribe('RE-PUBLIC_DEEP').then(function(object) {
         // console.log('RE-PUBLIC_DEEP', object)
         t.equal(typeof object, 'object', 'RE-PUBLIC_DEEP object synced');
     });
 
-    node.subscribe('PRIVATE').then(object => {
+    node.subscribe('PRIVATE').then(function(object) {
         // console.log('PRIVATE', object)
         t.equal(typeof object, 'object', 'PRIVATE object synced');
     });
 
-    node.subscribe('ASYNC').then(object => {
+    node.subscribe('ASYNC').then(function(object) {
         // console.log('ASYNC', object)
         t.equal(typeof object, 'object', 'ASYNC object synced');
         t.end();
