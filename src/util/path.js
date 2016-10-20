@@ -59,4 +59,4 @@ function pathRecursive(source, destiny, callback, circular, path, hasCallback, h
             // path.pop();
     }
 
-};
+}

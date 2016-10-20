@@ -42,6 +42,8 @@ dop.core.configureObject = function(object, path, shallWeProxy, parent) {
         object_dop.p = object;
         object_dop.t = target;
     }
+    else
+        object_dop.p = object_dop.t = object;
 
     return object;
 

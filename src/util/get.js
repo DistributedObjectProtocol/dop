@@ -1,7 +1,7 @@
 
 dop.util.get = function(object, path) {
 
-    if (path.length == 0)
+    if (path.length === 0)
         return object;
 
     for (var index=0, total=path.length; index<total; index++) {
