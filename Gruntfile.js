@@ -65,9 +65,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
 
-    grunt.registerTask('default', ['concat:nodejs', 'concat:browser', 'uglify', 'watch']);
 
-
+    var tasks = ['concat:nodejs', 'concat:browser', 'uglify'];
+    if (grunt.option('build') === undefined)
+        tasks.push('watch');
+    grunt.registerTask('default', tasks);
 
 
 };

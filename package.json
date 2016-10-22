@@ -50,6 +50,7 @@
   },
   "scripts": {
     "grunt": "grunt",
+    "build": "grunt --build",
     "test": "tap test/**.js",
     "test-electron": "browserify test/*.js | tape-run --render=\"faucet\"",
     "test-chrome": "browserify test/*.js | tape-run --render=\"faucet\" --browser chrome",
