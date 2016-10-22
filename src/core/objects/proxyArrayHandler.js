@@ -15,11 +15,12 @@ dop.core.proxyArrayHandler = {
     unshift: {value:function() {
         return dop.core.unshift.apply(this, arguments);
     }},
-    fill: {value:function() {
-        return dop.core.fill.apply(this, arguments);
-    }},
+
     move: {value:function() {
         return dop.core.move.apply(this, arguments);
+    }},
+    fill: {value:function() {
+        return dop.core.fill.apply(this, arguments);
     }},
     reverse: {value:function() {
         return dop.core.reverse.apply(this, arguments);

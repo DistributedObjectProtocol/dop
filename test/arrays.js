@@ -14,7 +14,7 @@ var array = [
     'string',
     true,
     -123,
-    NaN,
+    // NaN, // not working with deepEqual, cuz (NaN===NaN) -> false
     -Infinity,
     1.234153454354341,
     12313214234312324353454534534,
@@ -73,14 +73,6 @@ var paramsCases = [
     [-2,-2,'string',1,true,{},[]],
 ];
 
-function apply(t, paramsCase) {
-    var register = dop.register(array.slice(0));
-    var original = array.slice(0);
-    var description = 'Splice case: '+JSON.stringify(paramsCase);
-    t.equal(gify(register.splice.apply(register, paramsCase)), gify(original.splice.apply(original, paramsCase)), description);
-    t.equal(gify(original), gify(register), description);
-}
-
 
 
 
@@ -94,9 +86,20 @@ test('for (i in ...) must return only array values', function(t) {
 
 
 
-test('splice', function(t) {
+test('Array.splice', function(t) {
     paramsCases.forEach(function(paramsCase) {
-        apply(t, paramsCase);
+        var register = dop.register(array.slice(0));
+        var original = array.slice(0);
+        var description = JSON.stringify(paramsCase);
+        t.equal(gify(register.splice.apply(register, paramsCase)), gify(original.splice.apply(original, paramsCase)), 'output case: '+description);
+        t.equal(gify(original), gify(register), 'stringify case: '+description);
+        t.deepEqual(original,register, 'deepEqual case: '+description);
+        for (var index in register) {
+            if (dop.util.isObject(register[index]) && dop.isRegistered(register[index])) {
+                var object_dop = dop.getObjectDop(register[index]);
+                t.equal(Number(index), Number(object_dop[object_dop.length-1]), 'correct path for subobject: '+index + ', Case:'+description);
+            }
+        }
     });
     t.end();
 });
@@ -109,6 +112,45 @@ test('splice', function(t) {
 
 
 
+
+dop.core.storeSplice = function(array, spliced, args) {
+
+    var start = args[0],
+        deleteCount = args[1],
+        index = 0,
+        total = array.length,
+        tof,
+        item,
+        object_dop;
+
+    // console.log( '' );
+    // console.log( args[1]>0, 'spliced:'+spliced.length, args.length>2 );
+    for (;index<total; ++index) {
+        item = array[index];
+        if (dop.util.isObjectStandard(item)) {
+
+            object_dop = dop.getObjectDop(item);
+
+            if (object_dop!==undefined && object_dop._ === array)
+                object_dop[object_dop.length-1] = index;
+
+            else
+                array[index] = dop.core.configureObject(
+                    item,
+                    dop.getObjectDop(array).concat(index),
+                    dop.data.object_data[dop.getObjectId(array)].options.proxy,
+                    array
+                );
+        }
+    }
+
+
+    dop.core.storeMutation({
+        object: dop.getObjectProxy(array),
+        splice: args,
+        spliced: spliced
+    });
+};
 
 
 
