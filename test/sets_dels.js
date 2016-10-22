@@ -6,11 +6,7 @@ var set = dop.set;
 var del = dop.del;
 var object = dop.register({
     prop:"prop",
-    subobject:{
-        a:1,
-        b:2,
-        c:{d:3}
-    }
+    subobject:{}
 });
 var object_id = dop.getObjectId(object);
 
@@ -33,6 +29,7 @@ test('Update a property with the same value return the value', function(t) {
     t.end();
 });
 
+
 test('Update a property no writable return same value but do not change value', function(t) {
     Object.defineProperty(object, 'nowritable', {value:1234, configurable:true});
     var ret = set(object, 'nowritable', 'newvalue');
@@ -46,6 +43,18 @@ test('Update a property no configurable return same value and change property', 
     var ret = set(object, 'noconfigurable', 'newvalue');
     t.equal(ret, 'newvalue');
     t.equal(object.noconfigurable, 'newvalue');
+    t.end();
+});
+
+test('Update a property as RegExp should not be registered', function(t) {
+    var ret = set(object, 'prop', /regexp/);
+    t.equal(dop.getObjectDop(object.prop), undefined);
+    t.end();
+});
+
+test('Update a property as Date should not be registered', function(t) {
+    var ret = set(object, 'prop', new Date());
+    t.equal(dop.getObjectDop(object.prop), undefined);
     t.end();
 });
 

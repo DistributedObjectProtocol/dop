@@ -11,10 +11,9 @@ dop.core.set = function(target, property, value) {
 
         // Setting
         target[property] = value;
-        if (dop.util.isObject(value)) {
-            // var isRegistered = dop.isRegistered(value),
-            //     object_dop = dop.getObjectDop(value);
-            // if (isRegistered && Array.isArray(object_dop._) && object_dop._ === dop.getObjectProxy(target))
+        if (dop.util.isObjectStandard(value)) {
+            // var object_dop = dop.getObjectDop(value);
+            // if (dop.isRegistered(value) && Array.isArray(object_dop._) && object_dop._ === dop.getObjectProxy(target))
             //     object_dop[object_dop.length-1] = property;
             // else {
                 var shallWeProxy = dop.data.object_data[dop.getObjectId(target)].options.proxy;

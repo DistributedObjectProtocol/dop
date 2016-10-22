@@ -1,12 +1,10 @@
 (function(root) {
 
-var dop = {version: '0.1.0'};
+var dop = {
+    version: '0.1.0',
 
-// Hidding but exposing api
-Object.defineProperties(dop, {
-  // Where all the internal information is stored
-  "data": {
-    value: {
+    // Where all the internal information is stored
+    "data": {
         node_inc:0,
         node:{},
         object_inc:1,
@@ -14,15 +12,14 @@ Object.defineProperties(dop, {
         object_data:{},
         collectors:[],
         lastGet:{}
-    }
-  },
-  // src
-  "util": {value: {}},
-  "core": {value: {}},
-  "protocol": {value: {}},
-  "transport": {value: {listen:{}, connect:{}}}
-});
-
+    },
+    
+    // src
+    "util": {},
+    "core": {},
+    "protocol": {},
+    "transport": {listen:{}, connect:{}}
+};
 
 
 // Special properties assigned to user objects

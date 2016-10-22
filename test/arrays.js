@@ -3,12 +3,120 @@ var dop = require('../dist/nodejs');
 var test = require('tape');
 // require('tabe').createStream( test );
 
+function gify(obj) {
+    this.prop=123;
+    return JSON.stringify(obj);
+}
 
 
-test('YEAHH', function(t) {
-    t.equal('ret', 'ret');
+var array = [
+    [4,5,6,7],
+    'string',
+    true,
+    -123,
+    NaN,
+    -Infinity,
+    1.234153454354341,
+    12313214234312324353454534534,
+    undefined,
+    null,
+    {subobject:'value'},
+    Symbol('sym'),
+    new Date(),
+    new gify(),
+    /myregexp/g
+];
+var paramsCases = [
+    [],
+    [0],
+    [1],
+    [2],
+    [-1],
+    [-2],
+
+    [0,0],
+    [0,1],
+    [0,2],
+    [1,0],
+    [1,1],
+    [1,2],
+    [2,0],
+    [2,1],
+    [2,2],
+
+    [0,-1],
+    [0,-2],
+    [-1,0],
+    [-1,-1],
+    [-1,-2],
+    [-2,0],
+    [2,-1],
+    [-2,-2],
+
+    [0,0,'string',1,true,{},[]],
+    [0,1,'string',1,true,{},[]],
+    [0,2,'string',1,true,{},[]],
+    [1,0,'string',1,true,{},[]],
+    [1,1,'string',1,true,{},[]],
+    [1,2,'string',1,true,{},[]],
+    [2,0,'string',1,true,{},[]],
+    [2,1,'string',1,true,{},[]],
+    [2,2,'string',1,true,{},[]],
+
+    [0,-1,'string',1,true,{},[]],
+    [0,-2,'string',1,true,{},[]],
+    [-1,0,'string',1,true,{},[]],
+    [-1,-1,'string',1,true,{},[]],
+    [-1,-2,'string',1,true,{},[]],
+    [-2,0,'string',1,true,{},[]],
+    [2,-1,'string',1,true,{},[]],
+    [-2,-2,'string',1,true,{},[]],
+];
+
+function apply(t, paramsCase) {
+    var register = dop.register(array.slice(0));
+    var original = array.slice(0);
+    var description = 'Splice case: '+JSON.stringify(paramsCase);
+    t.equal(gify(register.splice.apply(register, paramsCase)), gify(original.splice.apply(original, paramsCase)), description);
+    t.equal(gify(original), gify(register), description);
+}
+
+
+
+
+test('for (i in ...) must return only array values', function(t) {
+    var register = dop.register(array.slice(0));
+    t.equal(gify(Object.keys(register)), gify(Object.keys(array)));
     t.end();
 });
+
+
+
+
+
+test('splice', function(t) {
+    paramsCases.forEach(function(paramsCase) {
+        apply(t, paramsCase);
+    });
+    t.end();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // setTimeout(function() {console.clear();

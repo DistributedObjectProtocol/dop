@@ -4,7 +4,12 @@ dop.core.configureObject = function(object, path, shallWeProxy, parent) {
 
     // Creating a copy if is another object registered
     if (dop.isRegistered(object))
-        return dop.core.configureObject(dop.util.merge({},object), path, shallWeProxy, parent);
+        return dop.core.configureObject(
+            dop.util.merge( Array.isArray(object)?[]:{}, object),
+            path,
+            shallWeProxy,
+            parent
+        );
 
     // Recursion
     var property, value, object_dop;
