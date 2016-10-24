@@ -14,45 +14,27 @@ dop.core.splice = function() {
 
 dop.core.storeSplice = function(array, spliced, args) {
 
-    var start = args[0],
-        deleteCount = args[1],
-        index,
-        total,
-        tof,
+    var length = array.length,
+        start = (typeof args[0] == 'number') ? args[0] : 0,
+        deleteCount = (typeof args[1] == 'number') ? ((args[1] > length) ? length-start : args[1]) : 0,
+        itemslength = (args.length>2) ? (args.length-2) : 0,
+        index = start,
+        total = array.length,
         item,
         object_dop,
-        length=(array.length+spliced.length)-args.length-2; // original length
+        length=(array.length+spliced.length)-itemslength; // original length
 
 
-    if (args.length>2) {
-        total = array.length;
-        if (args[0]<0)
-            index = (array.length+args[0])-(args.length-2);
-        else if (args[0]>length)
-            index = length;
-        else
-            index = args[0]
+    if (start<0)
+        index = (array.length+start)-itemslength;
+    else if (start>length)
+        index = length;
 
-        if (args[1]===args.length-2) {
-            total = index+args[1];
-        }
+    if (deleteCount===itemslength)
+        total = index+deleteCount;
 
-    }
-    else if (args.length === 1 || (args.length === 2 && args[1]<0)) {
-        index=0;
-        total=0;
-    }
-    else if (args.length === 2) {
-        total = array.length;
-        if (args[0]<0)
-            index = array.length+args[0];
-        else
-            index = args[0];
-    }
-
-
-    if (total-index === 0)
-        return;
+    if (args.length === 1 || (args.length === 2 && deleteCount<0))
+        total = -1;
 
 
     for (;index<total; ++index) {
