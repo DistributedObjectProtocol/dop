@@ -20,20 +20,22 @@ dop.core.storeSplice = function(array, spliced, args) {
         total,
         tof,
         item,
-        object_dop;
+        object_dop,
+        length=(array.length+spliced.length)-args.length-2; // original length
 
 
     if (args.length>2) {
         total = array.length;
         if (args[0]<0)
             index = (array.length+args[0])-(args.length-2);
-        else if (args[0]>array.length)
-            index = array.length;
+        else if (args[0]>length)
+            index = length;
         else
             index = args[0]
 
-        if (args[1]===args.length-2)
+        if (args[1]===args.length-2) {
             total = index+args[1];
+        }
 
     }
     else if (args.length === 1 || (args.length === 2 && args[1]<0)) {
@@ -55,7 +57,7 @@ dop.core.storeSplice = function(array, spliced, args) {
 
     for (;index<total; ++index) {
         item = array[index];
-        if (dop.util.isObjectStandard(item)) {
+        if (dop.util.isObjectPlain(item)) {
 
             object_dop = dop.getObjectDop(item);
 

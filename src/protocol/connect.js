@@ -3,7 +3,7 @@ dop.protocol.connect = function(node) {
     var token, request;
     do {
         token = dop.util.uuid();
-    } while(dop.util.typeof(dop.data.node[token])=='object');
+    } while(typeof dop.data.node[token]=='object');
 
     dop.data.node[token] = node;
     node.token = token;

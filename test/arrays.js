@@ -38,6 +38,8 @@ var paramsCases = [
     [2],
     [-1],
     [-2],
+    [50],
+    [-50],
 
     [0,0],
     [0,1],
@@ -48,6 +50,11 @@ var paramsCases = [
     [2,0],
     [2,1],
     [2,2],
+    [0,50],
+    [1,50],
+    [50,0],
+    [50,1],
+    [50,50],
 
     [0,-1],
     [0,-2],
@@ -57,25 +64,40 @@ var paramsCases = [
     [-2,0],
     [2,-1],
     [-2,-2],
+    [0,-50],
+    [-1,-50],
+    [-50,0],
+    [50,-1],
+    [-50,-50],
 
-    [0,0, {},'string',{},1,true,{},[]],
-    [0,1, {},'string',{},1,true,{},[]],
-    [0,2, {},'string',{},1,true,{},[]],
-    [1,0, {},'string',{},1,true,{},[]],
-    [1,1, {},'string',{},1,true,{},[]],
-    [1,2, {},'string',{},1,true,{},[]],
-    [2,0, {},'string',{},1,true,{},[]],
-    [2,1, {},'string',{},1,true,{},[]],
-    [2,2, {},'string',{},1,true,{},[]],
+    [0,0, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [0,1, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [0,2, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [1,0, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [1,1, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [1,2, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [2,0, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [2,1, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [2,2, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [0,50, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [1,50, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [50,0, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [50,1, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [50,50, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
 
-    [0,-1, {},'string',{},1,true,{},[]],
-    [0,-2, {},'string',{},1,true,{},[]],
-    [-1,0, {},'string',{},1,true,{},[]],
-    [-1,-1, {},'string',{},1,true,{},[]],
-    [-1,-2, {},'string',{},1,true,{},[]],
-    [-2,0, {},'string',{},1,true,{},[]],
-    [2,-1, {},'string',{},1,true,{},[]],
-    [-2,-2, {},'string',{},1,true,{},[]],
+    [0,-1, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [0,-2, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [-1,0, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [-1,-1, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [-1,-2, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [-2,0, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [2,-1, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [-2,-2, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [0,-50, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [-1,-50, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [-50,0, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [50,-1, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
+    [-50,-50, {},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]],
 ];
 
 
@@ -101,7 +123,7 @@ test('Splice', function(t) {
         t.deepEqual(original,register, 'deepEqual case: '+description);
         for (var index in register) {
             var item = register[index];
-            if (dop.util.isObjectStandard(item)) {
+            if (dop.util.isObjectPlain(item)) {
 
                 if (dop.isRegistered(item)) {
                     var object_dop = dop.getObjectDop(item);
