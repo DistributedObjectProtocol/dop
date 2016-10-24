@@ -121,13 +121,14 @@ test('Splice', function(t) {
         t.equal(gify(register.splice.apply(register, paramsCase)), gify(original.splice.apply(original, paramsCase)), 'output case: '+description);
         t.equal(gify(original), gify(register), 'stringify case: '+description);
         t.deepEqual(original,register, 'deepEqual case: '+description);
-        for (var index in register) {
+
+        for (var index=0,total=register.length; index<total; ++index) {
             var item = register[index];
             if (dop.util.isObjectPlain(item)) {
 
                 if (dop.isRegistered(item)) {
                     var object_dop = dop.getObjectDop(item);
-                    t.equal(Number(index), Number(object_dop[object_dop.length-1]), 'correct path for subobject: '+index + ', Case:'+description);
+                    t.equal(Number(object_dop[object_dop.length-1]), Number(index), 'correct path for subobject: '+index + ', Case:'+description);
                 }
                 else if (item.constructor === Object)
                     t.equal(false, true, 'object not registered: '+index + ', Case:'+description + ' ' + gify(item));

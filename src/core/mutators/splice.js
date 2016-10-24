@@ -4,8 +4,9 @@ dop.core.splice = function() {
     if (arguments.length===0)
         return [];
     var objectTarget = dop.getObjectTarget(this),
+        objectProxy = dop.getObjectProxy(this),
         output = Array.prototype.splice.apply(objectTarget, arguments);
-    if (objectTarget !== this)
+    if (objectTarget===objectProxy || this===objectProxy)
         dop.core.storeSplice(objectTarget, output, Array.prototype.slice.call(arguments, 0));
     return output;
 };
