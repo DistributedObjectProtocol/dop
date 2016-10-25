@@ -1,70 +1,80 @@
 
-
 dop.core.splice = function() {
-    if (arguments.length===0)
-        return [];
-    var objectTarget = dop.getObjectTarget(this),
-        objectProxy = dop.getObjectProxy(this),
-        output = Array.prototype.splice.apply(objectTarget, arguments);
-    if (objectTarget===objectProxy || this===objectProxy)
-        dop.core.storeSplice(objectTarget, output, Array.prototype.slice.call(arguments, 0));
-    return output;
-};
 
-
-
-dop.core.storeSplice = function(array, spliced, args) {
-
-    var length = array.length,
+    var args = arguments,
+        array = this,
+        argslength = args.length,
+        originallength = array.length,
+        shallWeStore = true,
+        shallWeUpdate = true,
         start = (typeof args[0] == 'number') ? args[0] : 0,
-        deleteCount = (typeof args[1] == 'number') ? ((args[1] > length) ? length-start : args[1]) : 0,
+        deleteCount = (Number(args[1])>0) ? args[1] : 0,
         itemslength = (args.length>2) ? (args.length-2) : 0,
-        index = start,
-        total = array.length,
-        item,
-        object_dop,
-        length=(array.length+spliced.length)-itemslength; // original length
+        objectTarget = dop.getObjectTarget(array),
+        objectProxy = dop.getObjectProxy(array),
+        spliced, end, item, object_dop;
 
 
+    // If only one argument or no splice items no mutation will happen
+    if (args.length===0 || (args.length===2 && deleteCount===0))
+        return [];
+
+    // We dont need update becase no items remaining after splice
+    if (args.length===1)
+        shallWeUpdate = false;
+
+    // Defaults for start
     if (start<0)
-        index = (array.length+start)-itemslength;
-    else if (start>length)
-        index = length;
+        start = (array.length+start)-itemslength;
+    else if (start>originallength)
+        start = originallength;
 
-    if (deleteCount===itemslength)
-        total = index+deleteCount;
-
-    if (args.length === 1 || (args.length === 2 && deleteCount<0))
-        total = -1;
+    // Splicing!!
+    spliced = Array.prototype.splice.apply(objectTarget, args);
 
 
-    for (;index<total; ++index) {
-        item = array[index];
-        if (dop.util.isObjectPlain(item)) {
+    // If deleteCount is the same of items to add means the new lengh is the same and we only need to update the new elements
+    end = (args.length>2 && deleteCount===itemslength) ?
+        start+deleteCount
+    :
+        objectTarget.length;
 
-            object_dop = dop.getObjectDop(item);
 
-            if (object_dop!==undefined && object_dop._ === array)
-                object_dop[object_dop.length-1] = index;
+    // If enviroment do not allow proxies (objectTarget and objectProxy are same object in that case) 
+    // or if the array is the proxy itself
+    if (objectTarget===objectProxy || array===objectProxy) {
 
-            else
-                array[index] = dop.core.configureObject(
-                    item,
-                    dop.getObjectDop(array).concat(index),
-                    dop.data.object_data[dop.getObjectId(array)].options.proxy,
-                    array
-                );
+        if (shallWeUpdate) {
+
+            for (;start<end; ++start) {
+                item = array[start];
+                if (dop.util.isObjectPlain(item)) {
+
+                    object_dop = dop.getObjectDop(item);
+
+                    if (object_dop!==undefined && object_dop._ === array)
+                        object_dop[object_dop.length-1] = start;
+
+                    else
+                        array[start] = dop.core.configureObject(
+                            item,
+                            dop.getObjectDop(array).concat(start),
+                            dop.data.object_data[dop.getObjectId(array)].options.proxy,
+                            array
+                        );
+                }
+            }
         }
+
+
+        if (shallWeStore)
+            dop.core.storeMutation({
+                object: objectProxy,
+                splice: args,
+                spliced: spliced
+            });
+
     }
 
-
-    dop.core.storeMutation({
-        object: dop.getObjectProxy(array),
-        splice: args,
-        spliced: spliced
-    });
+    return spliced;
 };
-
-
-
-

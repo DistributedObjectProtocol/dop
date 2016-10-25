@@ -34,11 +34,8 @@ dop.core.configureObject = function(object, path, shallWeProxy, parent) {
 
     // Making proxy object
     if (shallWeProxy && canWeProxy) {
-
         var target = object;
-
         object = new Proxy(object, dop.core.proxyObjectHandler);
-
         // Adding proxy and target alias
         object_dop.p = object;
         object_dop.t = target;
@@ -46,10 +43,11 @@ dop.core.configureObject = function(object, path, shallWeProxy, parent) {
     else
         object_dop.p = object_dop.t = object;
 
+
     // Adding traps for mutations methods of arrays
     if (dop.util.typeof(object) == 'array')
         Object.defineProperties(object, dop.core.proxyArrayHandler);
 
-    return object;
 
+    return object;
 };
