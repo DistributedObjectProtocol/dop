@@ -9,10 +9,6 @@ dop.core.splice = function() {
         spliced;
 
 
-    // // If only one argument or no splice items no mutation will happen
-    // if (args.length===0 || (args.length===2 && deleteCount===0))
-    //     return [];
-
 
     // Splicing!!
     spliced = Array.prototype.splice.apply(objectTarget, args);
@@ -22,55 +18,53 @@ dop.core.splice = function() {
     if (objectTarget===objectProxy || array===objectProxy) {
 
         var argslength = args.length,
-            shallWeStore = true,
-            shallWeUpdate = true,
-            start = (typeof args[0] == 'number') ? args[0] : 0,
+            length = objectTarget.length,
+            start = Number(args[0]),
             deleteCount = (Number(args[1])>0) ? args[1] : 0,
             itemslength = (args.length>2) ? (args.length-2) : 0,
             end, item, object_dop;
 
 
-        // We dont need update becase no items remaining after splice
-        if (args.length===1)
-            shallWeUpdate = false;
-
         // Defaults for start
-        if (start<0)
-            start = (array.length+start)-itemslength;
+        if (isNaN(start))
+            start = 0;
+        else if (start<0)
+            start = (length+start < 0) ? 0 : length+start;
         else if (start>originallength)
             start = originallength;
 
-        // If deleteCount is the same of items to add means the new lengh is the same and we only need to update the new elements
-        end = (args.length>2 && deleteCount===itemslength) ?
-            start+deleteCount
-        :
-            objectTarget.length;
+
+        // We dont need update becase no items remaining after splice
+        end = (argslength===1) ? 0 :
+            // If deleteCount is the same of items to add means the new lengh is the same and we only need to update the new elements
+            (argslength>2 && deleteCount===itemslength) ?
+                start+deleteCount
+            :
+                objectTarget.length;
 
 
-        if (shallWeUpdate) {
 
-            for (;start<end; ++start) {
-                item = array[start];
-                if (dop.util.isObjectPlain(item)) {
+        for (;start<end; ++start) {
+            item = objectTarget[start];
+            if (dop.util.isObjectPlain(item)) {
 
-                    object_dop = dop.getObjectDop(item);
+                object_dop = dop.getObjectDop(item);
 
-                    if (object_dop!==undefined && object_dop._ === array)
-                        object_dop[object_dop.length-1] = start;
+                if (object_dop!==undefined && object_dop._ === objectTarget)
+                    object_dop[object_dop.length-1] = start;
 
-                    else
-                        array[start] = dop.core.configureObject(
-                            item,
-                            dop.getObjectDop(array).concat(start),
-                            dop.data.object_data[dop.getObjectId(array)].options.proxy,
-                            array
-                        );
-                }
+                else
+                    objectTarget[start] = dop.core.configureObject(
+                        item,
+                        dop.getObjectDop(objectTarget).concat(start),
+                        dop.data.object_data[dop.getObjectId(objectTarget)].options.proxy,
+                        objectTarget
+                    );
             }
         }
 
 
-        if (shallWeStore) {
+        if (originallength!==length || itemslength>0) {
             var mutation = {object:objectProxy, splice:args};
             if (spliced.length > 0)
                 mutation.spliced = spliced;

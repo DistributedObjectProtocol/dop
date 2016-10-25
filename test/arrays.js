@@ -181,10 +181,9 @@ var array = [
     /myregexp/g
 ];
 
-var types = [0, 0, 1, 2, 12, 50, -1, -2, -12, -50, null, undefined, '', '0', '2', '50'];
+var types = [0, 1, 2, 12, 50, -1, -2, -12, -50, null, undefined, '', '0', '2', '50'];
 var argsCases = [[]];
 var single = types.map(function(item) {return [item]});
 argsCases = argsCases.concat(single) 
-var cmb = Combinatorics.combination(types, 2);
-while(a = cmb.next()) argsCases.push(a, a.concat({},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]));
-
+var cmb = Combinatorics.baseN(types, 2);
+while(a = cmb.next()) argsCases.push(a)//argsCases.push(a, a.concat({},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]));
