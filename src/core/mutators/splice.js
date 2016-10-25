@@ -19,30 +19,30 @@ dop.core.splice = function() {
     if (args.length===0 || (args.length===2 && deleteCount===0))
         return [];
 
-    // We dont need update becase no items remaining after splice
-    if (args.length===1)
-        shallWeUpdate = false;
-
-    // Defaults for start
-    if (start<0)
-        start = (array.length+start)-itemslength;
-    else if (start>originallength)
-        start = originallength;
-
     // Splicing!!
     spliced = Array.prototype.splice.apply(objectTarget, args);
-
-
-    // If deleteCount is the same of items to add means the new lengh is the same and we only need to update the new elements
-    end = (args.length>2 && deleteCount===itemslength) ?
-        start+deleteCount
-    :
-        objectTarget.length;
 
 
     // If enviroment do not allow proxies (objectTarget and objectProxy are same object in that case) 
     // or if the array is the proxy itself
     if (objectTarget===objectProxy || array===objectProxy) {
+
+        // We dont need update becase no items remaining after splice
+        if (args.length===1)
+            shallWeUpdate = false;
+
+        // Defaults for start
+        if (start<0)
+            start = (array.length+start)-itemslength;
+        else if (start>originallength)
+            start = originallength;
+
+        // If deleteCount is the same of items to add means the new lengh is the same and we only need to update the new elements
+        end = (args.length>2 && deleteCount===itemslength) ?
+            start+deleteCount
+        :
+            objectTarget.length;
+
 
         if (shallWeUpdate) {
 
