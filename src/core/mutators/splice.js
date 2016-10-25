@@ -3,29 +3,32 @@ dop.core.splice = function() {
 
     var args = arguments,
         array = this,
-        argslength = args.length,
         originallength = array.length,
-        shallWeStore = true,
-        shallWeUpdate = true,
-        start = (typeof args[0] == 'number') ? args[0] : 0,
-        deleteCount = (Number(args[1])>0) ? args[1] : 0,
-        itemslength = (args.length>2) ? (args.length-2) : 0,
         objectTarget = dop.getObjectTarget(array),
         objectProxy = dop.getObjectProxy(array),
-        spliced, end, item, object_dop;
+        spliced;
 
 
-    // If only one argument or no splice items no mutation will happen
-    if (args.length===0 || (args.length===2 && deleteCount===0))
-        return [];
+    // // If only one argument or no splice items no mutation will happen
+    // if (args.length===0 || (args.length===2 && deleteCount===0))
+    //     return [];
+
 
     // Splicing!!
     spliced = Array.prototype.splice.apply(objectTarget, args);
 
-
     // If enviroment do not allow proxies (objectTarget and objectProxy are same object in that case) 
     // or if the array is the proxy itself
     if (objectTarget===objectProxy || array===objectProxy) {
+
+        var argslength = args.length,
+            shallWeStore = true,
+            shallWeUpdate = true,
+            start = (typeof args[0] == 'number') ? args[0] : 0,
+            deleteCount = (Number(args[1])>0) ? args[1] : 0,
+            itemslength = (args.length>2) ? (args.length-2) : 0,
+            end, item, object_dop;
+
 
         // We dont need update becase no items remaining after splice
         if (args.length===1)
@@ -67,12 +70,12 @@ dop.core.splice = function() {
         }
 
 
-        if (shallWeStore)
-            dop.core.storeMutation({
-                object: objectProxy,
-                splice: args,
-                spliced: spliced
-            });
+        if (shallWeStore) {
+            var mutation = {object:objectProxy, splice:args};
+            if (spliced.length > 0)
+                mutation.spliced = spliced;
+            dop.core.storeMutation(mutation);
+        }
 
     }
 

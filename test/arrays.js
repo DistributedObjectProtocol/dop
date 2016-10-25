@@ -51,7 +51,109 @@ test('Splice', function(t) {
 
 
 
+test('Shift', function(t) {
+    var register = dop.register(array.slice(0));
+    var original = array.slice(0);
+    do {
+        var description = original.length;
+        t.equal(gify(register.shift.apply(register)), gify(original.shift.apply(original)), 'output case: '+description);
+        t.equal(gify(original), gify(register), 'stringify case: '+description);
+        t.deepEqual(original,register, 'deepEqual case: '+description);
+        for (var index=0,total=register.length; index<total; ++index) {
+            var item = register[index];
+            if (dop.util.isObjectPlain(item)) {
 
+                if (dop.isRegistered(item)) {
+                    var object_dop = dop.getObjectDop(item);
+                    t.equal(Number(object_dop[object_dop.length-1]), Number(index), 'correct path for subobject: '+index + ', Case:'+description);
+                }
+                else if (item.constructor === Object)
+                    t.equal(false, true, 'object not registered: '+index + ', Case:'+description + ' ' + gify(item));
+            }
+        }
+    } while(original.length>0);
+
+    t.end();
+});
+
+
+
+test('Pop', function(t) {
+    var register = dop.register(array.slice(0));
+    var original = array.slice(0);
+    do {
+        var description = original.length;
+        t.equal(gify(register.pop.apply(register)), gify(original.pop.apply(original)), 'output case: '+description);
+        t.equal(gify(original), gify(register), 'stringify case: '+description);
+        t.deepEqual(original,register, 'deepEqual case: '+description);
+        for (var index=0,total=register.length; index<total; ++index) {
+            var item = register[index];
+            if (dop.util.isObjectPlain(item)) {
+
+                if (dop.isRegistered(item)) {
+                    var object_dop = dop.getObjectDop(item);
+                    t.equal(Number(object_dop[object_dop.length-1]), Number(index), 'correct path for subobject: '+index + ', Case:'+description);
+                }
+                else if (item.constructor === Object)
+                    t.equal(false, true, 'object not registered: '+index + ', Case:'+description + ' ' + gify(item));
+            }
+        }
+    } while(original.length>0);
+
+    t.end();
+});
+
+
+
+test('Push', function(t) {
+    argsCases.forEach(function(paramsCase) {
+        var register = dop.register(array.slice(0));
+        var original = array.slice(0);
+        var description = JSON.stringify(paramsCase);
+        t.equal(gify(register.push.apply(register, paramsCase)), gify(original.push.apply(original, paramsCase)), 'output case: '+description);
+        for (var index=0,total=register.length; index<total; ++index) {
+            var item = register[index];
+            if (dop.util.isObjectPlain(item)) {
+
+                if (dop.isRegistered(item)) {
+                    var object_dop = dop.getObjectDop(item);
+                    t.equal(Number(object_dop[object_dop.length-1]), Number(index), 'correct path for subobject: '+index + ', Case:'+description);
+                }
+                else if (item.constructor === Object)
+                    t.equal(false, true, 'object not registered: '+index + ', Case:'+description + ' ' + gify(item));
+            }
+        }
+    });
+    t.end();
+});
+
+
+
+
+test('Unshift', function(t) {
+    argsCases.forEach(function(paramsCase) {
+        var register = dop.register(array.slice(0));
+        var original = array.slice(0);
+        var description = JSON.stringify(paramsCase);
+        t.equal(gify(register.unshift.apply(register, paramsCase)), gify(original.unshift.apply(original, paramsCase)), 'output case: '+description);
+        t.equal(gify(original), gify(register), 'stringify case: '+description);
+        t.deepEqual(original,register, 'deepEqual case: '+description);
+
+        for (var index=0,total=register.length; index<total; ++index) {
+            var item = register[index];
+            if (dop.util.isObjectPlain(item)) {
+
+                if (dop.isRegistered(item)) {
+                    var object_dop = dop.getObjectDop(item);
+                    t.equal(Number(object_dop[object_dop.length-1]), Number(index), 'correct path for subobject: '+index + ', Case:'+description);
+                }
+                else if (item.constructor === Object)
+                    t.equal(false, true, 'object not registered: '+index + ', Case:'+description + ' ' + gify(item));
+            }
+        }
+    });
+    t.end();
+});
 
 
 
