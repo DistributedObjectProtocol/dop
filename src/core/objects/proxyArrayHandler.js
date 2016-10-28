@@ -16,17 +16,15 @@ dop.core.proxyArrayHandler = {
         return dop.core.unshift.apply(this, arguments);
     }},
 
-    move: {value:function() {
-        return dop.core.move.apply(this, arguments);
-    }},
-    fill: {value:function() {
-        return dop.core.fill.apply(this, arguments);
-    }},
+
     reverse: {value:function() {
         return dop.core.reverse.apply(this, arguments);
     }},
     sort: {value:function() {
         return dop.core.sort.apply(this, arguments);
+    }},
+    fill: {value:function() {
+        return dop.core.fill.apply(this, arguments);
     }},
     copyWithin: {value:function() {
         return dop.core.copyWithin.apply(this, arguments);
