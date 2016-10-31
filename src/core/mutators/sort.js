@@ -3,25 +3,23 @@
 // http://khan4019.github.io/front-end-Interview-Questions/sort.html#bubbleSort
 // https://github.com/benoitvallon/computer-science-in-javascript/tree/master/sorting-algorithms-in-javascript
 dop.core.sort = function(compareFunction) {
-
     var array = this,
         objectTarget = dop.getObjectTarget(array),
         objectProxy = dop.getObjectProxy(array),
         copy = array.slice(0),
-        swaps = [],
-        tmp, output;
+        tmp, output, swaps;
 
-    output = objectTarget.sort(compareFunction);
-    dop.core.sortDiff(objectTarget, copy, swaps);
+    output = Array.prototype.sort.call(objectTarget, compareFunction);
+    swaps = dop.core.sortDiff(objectTarget, copy);
     return output;
-
 };
 
 
-dop.core.sortDiff = function (array, copy, swaps) {
+dop.core.sortDiff = function (array, copy) {
 
-    var index1 = 0,
-        total = copy.length,
+    var total = copy.length,
+        swaps = [],
+        index1 = 0,
         index2, tmp;
 
     for (;index1<total; ++index1) {
@@ -31,6 +29,9 @@ dop.core.sortDiff = function (array, copy, swaps) {
             copy[index1] = copy[index2];
             copy[index2] = tmp;
             swaps.push(index1, index2);
+            // Updating path
+            dop.core.updatePathArray(copy, index1);
+            dop.core.updatePathArray(copy, index2);
         }
     }
 
