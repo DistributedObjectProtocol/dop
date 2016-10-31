@@ -156,27 +156,81 @@ test('for (i in ...) must return only array values', function(t) {
 // });
 
 
-test('Reverse', function(t) {
-    var register = dop.register(array.slice(0));
-    var original = array.slice(0);
-    test=register[0];
-    t.equal(gify(register.reverse()), gify(original.reverse()), 'output case');
-    t.equal(gify(original), gify(register), 'stringify case');
-    t.deepEqual(original,register, 'deepEqual case');
-    for (var index=0,total=register.length; index<total; ++index) {
-        var item = register[index];
-        if (dop.util.isObjectPlain(item)) {
+// test('Reverse', function(t) {
+//     var register = dop.register(array.slice(0));
+//     var original = array.slice(0);
+//     t.equal(gify(register.reverse()), gify(original.reverse()), 'output case');
+//     t.equal(gify(original), gify(register), 'stringify case');
+//     t.deepEqual(original,register, 'deepEqual case');
+//     for (var index=0,total=register.length; index<total; ++index) {
+//         var item = register[index];
+//         if (dop.util.isObjectPlain(item)) {
 
-            if (dop.isRegistered(item)) {
-                var object_dop = dop.getObjectDop(item);
-                t.equal(Number(object_dop[object_dop.length-1]), Number(index), 'correct path for subobject: '+index + ', Case:');
-            }
-            else if (item.constructor === Object)
-                t.equal(false, true, 'object not registered: '+index + ', Case:' + ' ' + gify(item));
-        }
+//             if (dop.isRegistered(item)) {
+//                 var object_dop = dop.getObjectDop(item);
+//                 t.equal(Number(object_dop[object_dop.length-1]), Number(index), 'correct path for subobject: '+index + ', Case:');
+//             }
+//             else if (item.constructor === Object)
+//                 t.equal(false, true, 'object not registered: '+index + ', Case:' + ' ' + gify(item));
+//         }
+//     }
+//     t.end();
+// });
+
+
+
+
+var compareFunctions = [
+    undefined,
+    function(a,b) {return a-b},
+    function(a,b) {return b-a},
+    function(a,b) {return a>b},
+    function(a,b) {return b>a},
+    function(a,b) {return a===b},
+    function(a,b) {return 1},
+    function(a,b) {return -1},
+    function(a,b) {return 0},
+    function(a,b) {
+        if (a>b) return 1;
+        if (b>a) return -1;
+        return 0;
+    },
+    function(a,b) {
+        if (String(a)>String(b)) return 1;
+        if (String(b)>String(a)) return -1;
+        return 0;
     }
+];
+
+test('Sort', function(t) {
+
+    compareFunctions.forEach(function(compareFunction) {
+
+        var arrayOriginal = types.slice(0);
+        var copy = arrayOriginal.slice(0);
+        var swaps = [];
+        arrayOriginal.sort(compareFunction);
+        dop.core.sortDiff(arrayOriginal, copy, swaps);
+        // console.log( gify(arrayOriginal) );
+        t.equal(gify(arrayOriginal), gify(copy), 'stringify');
+        t.deepEqual(arrayOriginal, copy, 'deepEqual function:'+compareFunction);
+
+
+        arrayOriginal = array.slice(0);
+        arrayOriginal[13] = true;
+        copy = arrayOriginal.slice(0);
+        swaps = [];
+        arrayOriginal.sort(compareFunction);
+        dop.core.sortDiff(arrayOriginal, copy, swaps);
+        // console.log( gify(arrayOriginal) );
+        t.equal(gify(arrayOriginal), gify(copy), 'stringify');
+        t.deepEqual(arrayOriginal, copy, 'deepEqual function:'+compareFunction);
+
+
+    });
     t.end();
 });
+
 
 
 
