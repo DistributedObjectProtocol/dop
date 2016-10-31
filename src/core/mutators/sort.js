@@ -6,11 +6,15 @@ dop.core.sort = function(compareFunction) {
     var array = this,
         objectTarget = dop.getObjectTarget(array),
         objectProxy = dop.getObjectProxy(array),
-        copy = array.slice(0),
-        tmp, output, swaps;
+        output, swaps;
 
     output = Array.prototype.sort.call(objectTarget, compareFunction);
-    swaps = dop.core.sortDiff(objectTarget, copy);
+    swaps = dop.core.sortDiff(objectTarget, array.slice(0));
+    if (swaps.length>1 && (objectTarget===objectProxy || array===objectProxy))
+        dop.core.storeMutation({
+            object:objectProxy,
+            swaps:swaps
+        });
     return output;
 };
 
