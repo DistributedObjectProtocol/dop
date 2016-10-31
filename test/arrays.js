@@ -14,14 +14,11 @@ function gify(obj) {
 
 
 
-test('for (i in ...) must return only array values', function(t) {
-    var register = dop.register(array.slice(0));
-    t.equal(gify(Object.keys(register)), gify(Object.keys(array)));
-    t.end();
-});
-
-
-
+// test('for (i in ...) must return only array values', function(t) {
+//     var register = dop.register(array.slice(0));
+//     t.equal(gify(Object.keys(register)), gify(Object.keys(array)));
+//     t.end();
+// });
 
 
 // test('Splice', function(t) {
@@ -219,13 +216,25 @@ test('Sort', function(t) {
         t.equal(gify(arrayOriginal), gify(copy), 'stringify');
         t.deepEqual(arrayOriginal, copy, 'deepEqual function:'+compareFunction);
 
-        arrayOriginal = array.slice(0);
+        arrayOriginal = dop.register(array.slice(0));
         arrayOriginal[13] = true;
         copy = arrayOriginal.slice(0);
         arrayOriginal.sort(compareFunction);
         dop.core.sortDiff(arrayOriginal, copy);
         t.equal(gify(arrayOriginal), gify(copy), 'stringify');
         t.deepEqual(arrayOriginal, copy, 'deepEqual function:'+compareFunction);
+        for (var index=0,total=arrayOriginal.length; index<total; ++index) {
+            var item = arrayOriginal[index];
+            if (dop.util.isObjectPlain(item)) {
+
+                if (dop.isRegistered(item)) {
+                    var object_dop = dop.getObjectDop(item);
+                    t.equal(Number(object_dop[object_dop.length-1]), Number(index), 'correct path for subobject: '+index + ', Case:');
+                }
+                else if (item.constructor === Object)
+                    t.equal(false, true, 'object not registered: '+index + ', Case:' + ' ' + gify(item));
+            }
+        }
     });
 
 
@@ -235,19 +244,6 @@ test('Sort', function(t) {
     var output1 = arrayOriginal.sort();
     var output2 = copy.sort();
     t.equal(gify(output1), gify(output2), 'output');
-    for (var index=0,total=arrayOriginal.length; index<total; ++index) {
-        var item = arrayOriginal[index];
-        if (dop.util.isObjectPlain(item)) {
-
-            if (dop.isRegistered(item)) {
-                var object_dop = dop.getObjectDop(item);
-                t.equal(Number(object_dop[object_dop.length-1]), Number(index), 'correct path for subobject: '+index + ', Case:');
-            }
-            else if (item.constructor === Object)
-                t.equal(false, true, 'object not registered: '+index + ', Case:' + ' ' + gify(item));
-        }
-    }
-
 
 
     t.end();
