@@ -6,8 +6,8 @@
   "license": "MIT",
   "repository": "https://github.com/DistributedObjectProtocol/dop",
   "url": "http://www.distributedobjectprotocol.org",
-  "author": "Josema Enzo (http://josema.es/)",
-  "description": "Distributed Object Protocol for JavaScript",
+  "author": "Josema Gonzalez (http://josema.es/)",
+  "description": "A state management for your whole architecture. Based on Distributed Object Protocol.",
   "keywords": [
     "state management",
     "data flow",
@@ -27,6 +27,7 @@
     "sockets",
     "io",
     "xhr",
+    "flux",
     "server",
     "client",
     "ria",

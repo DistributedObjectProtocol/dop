@@ -275,7 +275,7 @@ var array = [
     /myregexp/g
 ];
 
-var types = [0, 1, 2, 12, 50, -1, -2, -12, -50, null, undefined, '', '0', '2', '50'];
+var types = [0, 1, Infinity, -Infinity, 2, 12, 50, -1, -2, -12, -50, null, undefined, '', '0', '2', '50'];
 var argsCases = [[]];
 var single = types.map(function(item) {return [item]});
 argsCases = argsCases.concat(single) 
