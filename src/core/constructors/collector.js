@@ -11,7 +11,7 @@ dop.core.collector = function(queue, index) {
 
 
 dop.core.collector.prototype.add = function(mutation) {
-    if (this.active && (this.filter===undefined || this.filter(mutation) === true)) {
+    if (this.active && (this.filter===undefined || this.filter(mutation)===true)) {
         this.shallWeGenerateAction = true;
         this.shallWeGenerateUnaction = true;
         this.mutations.push(mutation);
@@ -22,8 +22,10 @@ dop.core.collector.prototype.add = function(mutation) {
 
 
 dop.core.collector.prototype.emit = function() {
-    this.active = false;
-    dop.emit(this.mutations, this.action);
+    var mutations = this.mutations;
+    dop.emit(mutations, this.action);
+    this.mutations = [];
+    return mutations;
 };
 
 
@@ -46,5 +48,6 @@ dop.core.collector.prototype.getUnaction = function() {
 
 
 dop.core.collector.prototype.destroy = function() {
+    this.active = false;
     this.queue.splice(this.queue.indexOf(this), 1);
 };

@@ -10,5 +10,7 @@ dop.setAction = function(action) {
         }
     }, dop.data.object, false);
     collector.action = action;
-    return collector.emit();
+    collector.emit();
+    collector.destroy();
+    return collector;
 };

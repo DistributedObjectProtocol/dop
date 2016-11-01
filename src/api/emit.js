@@ -1,7 +1,7 @@
 
 dop.emit = function(mutations, action) {
     if (mutations.length>0) {
-        // if mutations With Nodes
+        // This is true if we have nodes subscribed to those object/mutations
         if (dop.core.emitObservers(mutations)) {
             if (action === undefined)
                 action = dop.getAction(mutations);
