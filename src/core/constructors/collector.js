@@ -5,7 +5,6 @@ dop.core.collector = function(queue, index) {
     this.shallWeGenerateUnaction = true;
     this.mutations = [];
     this.queue = queue;
-    this.index = index;
     queue.splice(index, 0, this);
 };
 
@@ -47,5 +46,5 @@ dop.core.collector.prototype.getUnaction = function() {
 
 
 dop.core.collector.prototype.destroy = function() {
-    this.queue.splice(index, 1);
+    this.queue.splice(this.queue.indexOf(this), 1);
 };
