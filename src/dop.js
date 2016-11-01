@@ -1,10 +1,11 @@
-(function(root) {
+var dop = (function dopFactory() {
 
 var dop = {
     version: '0.1.0',
+    dopFactory: dopFactory,
 
     // Where all the internal information is stored
-    "data": {
+    data: {
         node_inc:0,
         node:{},
         object_inc:1,
@@ -16,10 +17,10 @@ var dop = {
     },
     
     // src
-    "util": {},
-    "core": {},
-    "protocol": {},
-    "transport": {listen:{}, connect:{}}
+    util: {},
+    core: {},
+    protocol: {},
+    transport: {listen:{}, connect:{}}
 };
 
 
