@@ -1,13 +1,8 @@
 
 dop.collect = function(filter) {
     dop.util.invariant(arguments.length===0 || (arguments.length>0 && typeof filter=='function'), 'dop.collect only accept one argument as function');
-    var collector = new dop.core.collector();
-    collector.filter = filter;
-    dop.data.collectors.push(collector);
-    return collector;
+    return dop.core.createCollector(dop.data.collectors, dop.data.collectors.length, filter);
 };
-
-
 
 
 // setTimeout(function() {

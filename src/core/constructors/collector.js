@@ -1,14 +1,18 @@
 
-dop.core.collector = function() {
+dop.core.collector = function(queue, index) {
+    this.active = true;
     this.shallWeGenerateAction = true;
     this.shallWeGenerateUnaction = true;
     this.mutations = [];
+    this.queue = queue;
+    this.index = index;
+    queue.splice(index, 0, this);
 };
 
 
 
 dop.core.collector.prototype.add = function(mutation) {
-    if (this.filter===undefined || this.filter(mutation) === true) {
+    if (this.active && (this.filter===undefined || this.filter(mutation) === true)) {
         this.shallWeGenerateAction = true;
         this.shallWeGenerateUnaction = true;
         this.mutations.push(mutation);
@@ -19,7 +23,7 @@ dop.core.collector.prototype.add = function(mutation) {
 
 
 dop.core.collector.prototype.emit = function() {
-    dop.data.collectors.splice(dop.data.collectors.indexOf(this), 1);
+    this.active = false;
     dop.emit(this.mutations, this.action);
 };
 
@@ -39,4 +43,9 @@ dop.core.collector.prototype.getUnaction = function() {
         this.unaction = dop.getUnaction(this.mutations);
     }
     return this.unaction;
+};
+
+
+dop.core.collector.prototype.destroy = function() {
+    this.queue.splice(index, 1);
 };
