@@ -1,7 +1,7 @@
 
 dop.core.splice = function() {
 
-    var args = arguments,
+    var args = Array.prototype.slice.call(arguments, 0),
         array = this,
         originallength = array.length,
         objectTarget = dop.getObjectTarget(array),
