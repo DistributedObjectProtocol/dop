@@ -29,6 +29,18 @@ dop.core.collector.prototype.emit = function() {
 };
 
 
+dop.core.collector.prototype.destroy = function() {
+    this.active = false;
+    this.queue.splice(this.queue.indexOf(this), 1);
+};
+
+
+dop.core.collector.prototype.emitAndDestroy = function() {
+    this.destroy();
+    return this.emit();
+};
+
+
 dop.core.collector.prototype.getAction = function() {
     if (this.shallWeGenerateAction) {
         this.shallWeGenerateAction = false;
@@ -44,10 +56,4 @@ dop.core.collector.prototype.getUnaction = function() {
         this.unaction = dop.getUnaction(this.mutations);
     }
     return this.unaction;
-};
-
-
-dop.core.collector.prototype.destroy = function() {
-    this.active = false;
-    this.queue.splice(this.queue.indexOf(this), 1);
 };
