@@ -6,6 +6,9 @@ dop.core.encode = function(property, value) {
     if (tof == 'function')
         return '~F';
 
+    else if (tof == 'undefined') // http://stackoverflow.com/questions/17648150/how-does-json-parse-manage-undefined
+        return '~U';
+
     else if (value === Infinity)
         return '~I';
 
@@ -17,9 +20,6 @@ dop.core.encode = function(property, value) {
 
     else if (tof == 'object' && value instanceof RegExp)
         return '~R' + value.toString();
-
-    // else if (tof == 'undefined') // http://stackoverflow.com/questions/17648150/how-does-json-parse-manage-undefined
-        // return '~U';
 
     return value;
 

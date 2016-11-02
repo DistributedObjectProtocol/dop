@@ -1,4 +1,14 @@
 
 dop.decode = function(data) {
-    return JSON.parse(data, dop.core.decode);
+    var undefineds = [],
+        index = 0,
+        total,
+        output = JSON.parse(data, function(property, value) {
+            return dop.core.decode.call(this, property, value, undefineds);
+        });
+
+    for (total=undefineds.length; index<total; ++index)
+        undefineds[index][0][undefineds[index][1]] = undefined;
+
+    return output;
 };

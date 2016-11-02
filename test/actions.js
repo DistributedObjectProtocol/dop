@@ -2,26 +2,33 @@
 var test = require('tape');
 // require('tabe').createStream( test );
 var requireNew = require('require-new');
-var dopServer = require('../dist/nodejs');
-var dopClient = dopServer.dopFactory();
-var set = dopServer.set;
-var del = dopServer.del;
-var encode = dopServer.encode;
+var dop = require('../dist/nodejs');
+var dopClient = dop.dopFactory();
+var set = dop.set;
+var del = dop.del;
+var encode = dop.encode;
+var decode = dop.decode;
 
 
 
 
 
-var objectServer = dopServer.register({});
+var objectServer = dop.register({});
 var objectClient = dopClient.register({});
 
 
 function applyAction(collector) {
-    dopClient.setAction(collector.getAction());
+    var action = collector.getAction();
+    dopClient.setAction(decode(encode(action)));
     collector.destroy();
+    return action;
 }
 
-
+function maketest(t, objectClient, objectServer, action) {
+    t.deepEqual(objectClient, objectServer, 'deepEqual Action: '+encode(action));
+    t.equal(encode(objectClient), encode(objectServer), 'equal Result: '+encode(objectClient));
+    t.end();
+}
 
 
 
@@ -34,77 +41,104 @@ function applyAction(collector) {
 
 test('Adding property', function(t) {
     // mutations
-    var collector = dopServer.collect();
+    var collector = dop.collect();
     set(objectServer, 'one', 'one');
-    applyAction(collector);
+    var action = applyAction(collector);
     // tests
-    t.deepEqual(objectClient, objectServer);
-    t.equal(encode(objectClient), encode(objectServer), encode(objectClient));
-    t.end();
+    maketest(t, objectClient, objectServer, action);
 });
 
 
 test('Editing property with the same value', function(t) {
     // mutations
-    var collector = dopServer.collect();
+    var collector = dop.collect();
     set(objectServer, 'one', 'one');
-    applyAction(collector);
+    var action = applyAction(collector);
     // tests
-    t.deepEqual(objectClient, objectServer);
-    t.equal(encode(objectClient), encode(objectServer), encode(objectClient));
-    t.end();
+    maketest(t, objectClient, objectServer, action);
 });
 
 
 test('Editing property already registered', function(t) {
     // mutations
-    var collector = dopServer.collect();
+    var collector = dop.collect();
     set(objectServer, 'one', 'oneChanged');
-    applyAction(collector);
+    var action = applyAction(collector);
     // tests
-    t.deepEqual(objectClient, objectServer);
-    t.equal(encode(objectClient), encode(objectServer), encode(objectClient));
-    t.end();
+    maketest(t, objectClient, objectServer, action);
 });
 
 
 test('Delete property', function(t) {
     // mutations
-    var collector = dopServer.collect();
+    var collector = dop.collect();
     del(objectServer, 'one');
-    applyAction(collector);
+    var action = applyAction(collector);
     // tests
-    t.deepEqual(objectClient, objectServer);
-    t.equal(encode(objectClient), encode(objectServer), encode(objectClient));
-    t.end();
+    maketest(t, objectClient, objectServer, action);
+});
+
+
+test('Change and delete a removed item', function(t) {
+    // mutations
+    var collector = dop.collect();
+    set(objectServer, 'one', 'Changeddd');
+    del(objectServer, 'one');
+    set(objectServer, 'two', 'two');
+    var action = applyAction(collector);
+    // tests
+    maketest(t, objectClient, objectServer, action);
+});
+
+test('Creating a subobject', function(t) {
+    // mutations
+    var collector = dop.collect();
+    set(objectServer, 'one', {});
+    var action = applyAction(collector);
+    // tests
+    maketest(t, objectClient, objectServer, action);
+});
+
+test('Adding a property of the subobject', function(t) {
+    // mutations
+    var collector = dop.collect();
+    set(objectServer.one, 'one', 'uno');
+    var action = applyAction(collector);
+    // tests
+    maketest(t, objectClient, objectServer, action);
+});
+
+test('Adding a subobject of subobject', function(t) {
+    // mutations
+    var collector = dop.collect();
+    del(objectServer, 'two');
+    set(objectServer.one, 'two', {two:'dos'});
+    var action = applyAction(collector);
+    // tests
+    maketest(t, objectClient, objectServer, action);
+});
+
+test('Editing a property of subobject', function(t) {
+    // mutations
+    var collector = dop.collect();
+    set(objectServer.one.two, 'two', 'dosChanged');
+    var action = applyAction(collector);
+    // tests
+    maketest(t, objectClient, objectServer, action);
+});
+
+test('Editing a property of subobject and after removing the parent', function(t) {
+    // mutations
+    var collector = dop.collect();
+    set(objectServer.one.two, 'two', 'dosChangedAgain');
+    del(objectServer, 'one');
+    var action = applyAction(collector);
+    // tests
+    maketest(t, objectClient, objectServer, action);
 });
 
 
 
-
-
-
-// test('Adding new property', function(t) {
-//     var collector = dopServer.collect();
-//     objectServer.array=[];
-//     applyAction(collector.getAction());
-//     t.deepEqual(objectServer, objectClient);
-//     t.end();
-// });
-
-
-// test('Editing property', function(t) {
-//     var collector = dopServer.collect();
-//     set(objectServer, 'array', []);
-//     set(objectServer.array, 0, {subobject:'uno', megasub:{end:'end'}});
-//     del(objectServer, 'array');
-//     // set(objectServer.array, '1', {subobject:'dos'});
-//     // set(objectServer.array[0],'subobject', 'unoChanged');
-//     // set(objectServer.array[0].megasub, 'end', 'FIN');
-//     // objectServer.array.shift();
-//     // set(objectServer.array[0],'subobject', 'dosChanged');
-//     applyAction(collector.getAction());
-//     // t.deepEqual(objectServer, objectClient);
-//     t.end();
-// });
-
+////////////////////
+/////////// ARRAYS
+////////////////////
