@@ -3,44 +3,49 @@ dop.getAction = function(mutations) {
 
     var action = {},
         index = 0,
-        total = mutations.length,
-        mutation,
-        path;
+        total = mutations.length;
 
-    for (;index<total; ++index) {
-        mutation = mutations[index];
-        path = (mutation.path===undefined) ? dop.getObjectDop(mutation.object).slice(0).concat(mutation.name) : mutation.path;
-        // dop.util.mergeMutation(action, path, mutation);
-        console.log( mutation.object["~dop"].slice(0) );
-    }
+    for (;index<total; ++index)
+        if (dop.core.objectIsStillStoredOnPath(mutations[index].object))
+            dop.util.injectMutationInAction(action, mutations[index]);
 
     return action;
 };
 
-dop.util.mergeMutation = function(object, path, mutation) {
+dop.core.objectIsStillStoredOnPath = function(object) {
 
-    if (path.length == 0)
-        return object;
+    var path = dop.getObjectDop(object),
+        index = path.length-1,
+        parent;
 
-    path = path.slice(0);
-    var obj = object, objdeep, index=0, total=path.length-1;
-
-    for (;index<total; ++index) {
-        objdeep = obj[path[index]];
-        obj = (objdeep && typeof objdeep == 'object') ?
-            objdeep
-        :
-            obj[path[index]] = {};
+    for (;index>0; --index) {
+        parent = (index>1) ? dop.getObjectDop(object)._ : dop.data.object[path[0]];
+        if ( parent[path[index]] !== object )
+            return false;
+        object = dop.getObjectProxy(parent);
     }
 
-        console.log( obj[path[index]], path );
-    if (Array.isArray(mutation.value) || mutation.splice!==undefined || mutation.swaps!==undefined) {
-        console.log( 'isArray' );
-    } 
-    else
-        obj[path[index]] = mutation.value;
+    return true;
+};
 
-    return object;
+dop.util.injectMutationInAction = function(action, mutation) {
+
+    var path = (mutation.path===undefined) ? dop.getObjectDop(mutation.object).slice(0).concat(mutation.name) : mutation.path,
+        index = 0,
+        total = path.length-1,
+        objdeep;
+
+    for (;index<total; ++index) {
+        objdeep = action[path[index]];
+        action = (dop.util.isObject(objdeep)) ? objdeep : action[path[index]]={};
+    }
+
+        // console.log( obj[path[index]], path );
+    // if (Array.isArray(mutation.value) || mutation.splice!==undefined || mutation.swaps!==undefined) {
+    //     console.log( 'isArray' );
+    // } 
+    // else
+        action[path[index]] = mutation.value;
 };
 
 

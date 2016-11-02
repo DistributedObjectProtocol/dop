@@ -13,11 +13,11 @@ dop.core.set = function(target, property, value) {
         target[property] = value;
         if (dop.util.isObjectPlain(value)) {
             // var object_dop = dop.getObjectDop(value);
-            // if (dop.isRegistered(value) && Array.isArray(object_dop._) && object_dop._ === dop.getObjectProxy(target))
+            // if (dop.isRegistered(value) && Array.isArray(object_dop._) && object_dop._ === target)
             //     object_dop[object_dop.length-1] = property;
             // else {
                 var shallWeProxy = dop.data.object_data[dop.getObjectId(target)].options.proxy;
-                target[property] = dop.core.configureObject(value, dop.getObjectDop(target).concat(property), shallWeProxy, proxy);
+                target[property] = dop.core.configureObject(value, dop.getObjectDop(target).concat(property), shallWeProxy, target);
             // }
         }
 
