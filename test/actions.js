@@ -153,9 +153,10 @@ test('Adding property array', function(t) {
     objectServer.array.push('1,2,3,4')
     set(objectServer.array, 1, {});
     set(objectServer.array, 3, 'CUATRO');
-    // objectServer.array.splice(0,1);
+    objectServer.array.splice(0,1);
     objectServer.array.push('mola');
-    set(objectServer.array[1], 'subpro', {});
+    set(objectServer.array[0], 'subpro', {});
+    objectServer.array.reverse();
     var action = applyAction(collector);
     // tests
     maketest(t, objectClient, objectServer, action);

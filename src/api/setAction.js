@@ -8,7 +8,7 @@ dop.setAction = function(action) {
 };
 
 
-dop.core.setActionProtocol = function(source, prop, value, destiny, path) {
+dop.core.setActionProtocol = function(source, prop, value, destiny) {
 
     if (prop === CONS.dop)
         return true;
@@ -26,8 +26,10 @@ dop.core.setActionProtocol = function(source, prop, value, destiny, path) {
         for (;index<total; ++index) {
             mutation = mutations[index];
             // swaps
-            if (mutation[0]<0 || mutation[1]<0)
-                dop.core.swap.apply(destiny[prop], mutation);
+            if (mutation[0]<0 || mutation[1]<0) {
+                (mutation[0]<0) ? mutation[0] = mutation[0]*-1 : mutation[1] = mutation[1]*-1;
+                dop.core.swap.call(destiny[prop], mutation);
+            }
             // set
             else if (mutation.length===3 && mutation[1]===0)
                 dop.set(destiny[prop], mutation[0], mutation[2]);
