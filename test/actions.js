@@ -149,11 +149,13 @@ test('Adding property array', function(t) {
     var collector = dop.collect();
     set(objectServer, 'array', {});
     set(objectServer, 'array', []);
-    // objectServer.array.push(1,2,3,4)
-    // objectServer.array.push('1,2,3,4')
+    objectServer.array.push(1,2,3,4)
+    objectServer.array.push('1,2,3,4')
     set(objectServer.array, 1, {});
-
-    // objectServer.array.push('mola')
+    set(objectServer.array, 3, 'CUATRO');
+    // objectServer.array.splice(0,1);
+    objectServer.array.push('mola');
+    set(objectServer.array[1], 'subpro', {});
     var action = applyAction(collector);
     // tests
     maketest(t, objectClient, objectServer, action);

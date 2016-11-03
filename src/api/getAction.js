@@ -8,7 +8,7 @@ dop.getAction = function(mutations) {
     for (;index<total; ++index)
         if (dop.core.objectIsStillStoredOnPath(mutations[index].object)) // Only need it for arrays but is faster than injectMutation
             dop.util.injectMutationInAction(action, mutations[index]);
-console.log( action[1].array );
+
     return action;
 };
 
@@ -52,11 +52,19 @@ dop.util.injectMutationInAction = function(action, mutation) {
             action[prop] = {};
             action[prop][CONS.dop] = [[0]];
         }
+        // set
         else if (isArray(mutation.object))
             action[CONS.dop].push([mutation.name, 0, mutation.value]);
+        // splice
         else if (mutation.splice!==undefined)
             action[prop][CONS.dop].push(mutation.splice);
-
+        // swaps
+        else if (mutation.swaps!==undefined) {
+            var swaps = mutation.swaps.slice(0),
+                tochange = (swaps[0]>0) ? 0 : 1;
+            swaps[tochange] = swaps[tochange]*-1;
+            action[prop][CONS.dop].push(swaps);
+        }
 
 
 // console.log( '' );
@@ -106,6 +114,7 @@ action = {
                 [0, 0, 'String'], // set
                 [1, 0, {object:'data'}] // set
                 [0, 1], // splice
+                [-0, 1], // move
             ],
             "0": {object:"Changed"}
         }
