@@ -11,8 +11,7 @@ var dop = {
         object_inc:1,
         object:{},
         object_data:{},
-        collectors:[],
-        collectorsSystem:[],
+        collectors:[[],[]],
         lastGet:{}
     },
     
