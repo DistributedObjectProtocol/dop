@@ -1,11 +1,11 @@
 
-dop.core.set = function(target, property, value) {
+dop.core.set = function(object, property, value) {
 
-    var descriptor = Object.getOwnPropertyDescriptor(target, property);
+    var descriptor = Object.getOwnPropertyDescriptor(object, property);
 
     if (!descriptor || (descriptor && descriptor.writable)) {
-        target = dop.getObjectTarget(target);
-        var proxy = dop.getObjectProxy(target),
+        var target = dop.getObjectTarget(object),
+            proxy = dop.getObjectProxy(object),
             oldValue = target[property],
             hasOwnProperty = target.hasOwnProperty(property);
 
@@ -21,14 +21,15 @@ dop.core.set = function(target, property, value) {
             // }
         }
 
-        var mutation = {object:proxy, name:property, value:value};
-        if (hasOwnProperty)
-            mutation.oldValue = oldValue;
+        if (object === proxy) {
+            var mutation = {object:proxy, name:property, value:value};
+            if (hasOwnProperty)
+                mutation.oldValue = oldValue;
 
-        dop.core.storeMutation(mutation);
+            dop.core.storeMutation(mutation);
 
-        return mutation;
-
+            return mutation;
+        }
     }
 
 };

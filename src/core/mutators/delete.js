@@ -1,15 +1,19 @@
 
-dop.core.delete = function(target, property) {
-    var descriptor = Object.getOwnPropertyDescriptor(target, property);
+dop.core.delete = function(object, property) {
+    var descriptor = Object.getOwnPropertyDescriptor(object, property);
     if (descriptor && descriptor.configurable) {
-        target = dop.getObjectTarget(target);
-        var mutation = {
-            object:dop.getObjectProxy(target),
-            name:property,
-            oldValue:target[property]
-        };
+        
+        var target = dop.getObjectTarget(object);
         delete target[property];
-        dop.core.storeMutation(mutation);
-        return mutation;
+
+        if (object !== target) {
+            var mutation = {
+                object:dop.getObjectProxy(target),
+                name:property,
+                oldValue:target[property]
+            };
+            dop.core.storeMutation(mutation);
+            return mutation;
+        }
     }
 };
