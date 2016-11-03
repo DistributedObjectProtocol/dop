@@ -8,7 +8,7 @@ dop.getAction = function(mutations) {
     for (;index<total; ++index)
         if (dop.core.objectIsStillStoredOnPath(mutations[index].object)) // Only need it for arrays but is faster than injectMutation
             dop.util.injectMutationInAction(action, mutations[index]);
-
+console.log( action[1].array );
     return action;
 };
 
@@ -32,49 +32,63 @@ dop.util.injectMutationInAction = function(action, mutation) {
 
     var path = (mutation.path===undefined) ? dop.getObjectDop(mutation.object).slice(0).concat(mutation.name) : mutation.path,
         index = 0,
-        mutationArray = (mutation.splice!==undefined || mutation.swaps!==undefined),
-        total = path.length-((mutationArray) ? 2 : 1),
-        objdeep,
+        total = path.length-1,
+        object = mutation.object,
+        prop = mutation.name,
         value = mutation.value,
-        isArray = Array.isArray;
+        isArray = Array.isArray,
+        parent;
 
 
     for (;index<total; ++index) {
-        objdeep = action[path[index]];
-        action = (dop.util.isObject(objdeep)) ? objdeep : action[path[index]]={};
+        parent = action[path[index]];
+        action = (dop.util.isObject(parent)) ? parent : action[path[index]]={};
     }
 
 
-    var object = objdeep, prop = path[index];
-    if (isArray(mutation.object) || isArray(value)) {
+    if (mutation.splice!==undefined || mutation.swaps!==undefined || isArray(mutation.object) || isArray(value)) {
         
-        // Making defaults
-        if (isArray(value) || !dop.util.isObject(action[prop]) || isArray(action[prop]))
+        if (isArray(value)) {
             action[prop] = {};
-        var arrayMutations = (isArray(action[prop][CONS.dop])) ? 
-            action[prop][CONS.dop]
-        : 
-            action[prop][CONS.dop] = [];
-
-
-console.log( path );
-        // Setting a property but representing it as splice instruction
-        if (isArray(object)) {
-
+            action[prop][CONS.dop] = [[0]];
         }
-        // Setting a new array
-        else if (isArray(value)) {
-            arrayMutations.push([0]);
-            if (value.length>0) {
-                var items = value.slice(0);
-                items.unshift(0, 0);
-                arrayMutations.push(items);
-            }
-        }
+        else if (isArray(mutation.object))
+            action[CONS.dop].push([mutation.name, 0, mutation.value]);
+        else if (mutation.splice!==undefined)
+            action[prop][CONS.dop].push(mutation.splice);
+
+
+
+// console.log( '' );
+// console.log( '' );
+
+    //     // Making defaults
+    //     if (isArray(value) || !dop.util.isObject(action[prop]) || isArray(action[prop]))
+    //         action[prop] = {};
+    //     var arrayMutations = (isArray(action[prop][CONS.dop])) ? 
+    //         action[prop][CONS.dop]
+    //     : 
+    //         action[prop][CONS.dop] = [];
+
+
+    //     // Setting a property but representing it as splice instruction
+    //     if (isArray(object)) {
+
+    //     }
+    //     // Setting a new array
+    //     else if (isArray(value)) {
+    //         arrayMutations.push([0]);
+    //         if (value.length>0) {
+    //             var items = value.slice(0);
+    //             items.unshift(0, 0);
+    //             arrayMutations.push(items);
+    //         }
+    //     }
     }
 
     else
         action[prop] = value;
+
 
 
 };

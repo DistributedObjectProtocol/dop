@@ -65,7 +65,11 @@ dop.core.splice = function() {
 
 
         if (originallength!==length || itemslength>0) {
-            var mutation = {object:objectProxy, splice:args};
+            var mutation = {
+                object:dop.getObjectDop(objectProxy)._,
+                name:dop.getObjectProperty(objectProxy),
+                splice:args
+            };
             if (spliced.length > 0)
                 mutation.spliced = spliced;
             dop.core.storeMutation(mutation);
