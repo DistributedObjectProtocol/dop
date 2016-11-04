@@ -30,7 +30,8 @@ dop.core.objectIsStillStoredOnPath = function(object) {
 
 dop.util.injectMutationInAction = function(action, mutation) {
 
-    var path = (mutation.path===undefined) ? dop.getObjectDop(mutation.object).slice(0).concat(mutation.name) : mutation.path,
+    var isMutationArray = mutation.splice!==undefined || mutation.swaps!==undefined,
+        path = dop.getObjectDop(mutation.object).slice(0),
         index = 0,
         total = path.length-1,
         object = mutation.object,
@@ -40,15 +41,23 @@ dop.util.injectMutationInAction = function(action, mutation) {
         parent;
 
 
+    if (!isMutationArray) {
+        path.push(mutation.name);
+        total += 1;
+    }
+
+
     for (;index<total; ++index) {
         parent = action[path[index]];
         action = (dop.util.isObject(parent)) ? parent : action[path[index]]={};
     }
 
 
-    if (mutation.splice!==undefined || mutation.swaps!==undefined || isArray(mutation.object) || isArray(value)) {
-        
-        if (isArray(value)) {
+    if (isMutationArray || isArray(mutation.object) || isArray(value)) {
+
+        prop = path[index];
+
+        if (isArray(value) || !dop.util.isObject(action[prop]) || !dop.util.isObject(action[prop][CONS.dop])) {
             action[prop] = {};
             action[prop][CONS.dop] = [[0]];
         }
@@ -65,33 +74,6 @@ dop.util.injectMutationInAction = function(action, mutation) {
             swaps[tochange] = swaps[tochange]*-1;
             action[prop][CONS.dop].push(swaps);
         }
-
-
-// console.log( '' );
-// console.log( '' );
-
-    //     // Making defaults
-    //     if (isArray(value) || !dop.util.isObject(action[prop]) || isArray(action[prop]))
-    //         action[prop] = {};
-    //     var arrayMutations = (isArray(action[prop][CONS.dop])) ? 
-    //         action[prop][CONS.dop]
-    //     : 
-    //         action[prop][CONS.dop] = [];
-
-
-    //     // Setting a property but representing it as splice instruction
-    //     if (isArray(object)) {
-
-    //     }
-    //     // Setting a new array
-    //     else if (isArray(value)) {
-    //         arrayMutations.push([0]);
-    //         if (value.length>0) {
-    //             var items = value.slice(0);
-    //             items.unshift(0, 0);
-    //             arrayMutations.push(items);
-    //         }
-    //     }
     }
 
     else
@@ -105,21 +87,21 @@ dop.util.injectMutationInAction = function(action, mutation) {
 
 
 
-action = {
-    1: {
-        hola: "cruel",
-        array: {
-            "~dop": [
-                [0], // set new array as empty
-                [0, 0, 'String'], // set
-                [1, 0, {object:'data'}] // set
-                [0, 1], // splice
-                [-0, 1], // move
-            ],
-            "0": {object:"Changed"}
-        }
-    }
-}
+// action = {
+//     1: {
+//         hola: "cruel",
+//         array: {
+//             "~dop": [
+//                 [0], // set new array as empty
+//                 [0, 0, 'String'], // set
+//                 [1, 0, {object:'data'}] // set
+//                 [0, 1], // splice
+//                 [-0, 1], // move
+//             ],
+//             "0": {object:"Changed"}
+//         }
+//     }
+// }
 
 
 

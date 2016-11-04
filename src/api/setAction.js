@@ -1,9 +1,9 @@
 
-dop.setAction = function(action) {
+dop.setAction = function(action, dontEmit) {
     var collector = dop.collectFirst();
     dop.util.path(action, dop.core.setActionProtocol, dop.data.object, false);
-    collector.action = action;
-    collector.emitAndDestroy();
+    if (dontEmit !== false)
+        collector.emitAndDestroy();
     return collector;
 };
 
@@ -21,7 +21,7 @@ dop.core.setActionProtocol = function(source, prop, value, destiny) {
             total=mutations.length;
 
         if (!Array.isArray(destiny[prop]))
-            dop.core.set(dop.getObjectTarget(destiny), prop, []);
+            dop.core.set(destiny, prop, []);
 
         for (;index<total; ++index) {
             mutation = mutations[index];

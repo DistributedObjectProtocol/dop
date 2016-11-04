@@ -17,7 +17,6 @@ dop.core.emitObservers = function(mutations) {
         mutation = mutations[index];
         subobject = mutation.object;
         object_dop = dop.getObjectDop(subobject);
-        mutation.path = object_dop.slice(0).concat(mutation.name);
 
         if (!mutationsWithSubscribers && dop.data.object_data[object_dop[0]].nodes > 0)
             mutationsWithSubscribers = true;
