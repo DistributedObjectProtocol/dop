@@ -90,7 +90,7 @@ test('Destroying', function(t) {
 test('Filtering', function(t) {
     var totalArray = object.array.length;
     var collector1 = dop.collect(function(mutation){
-        return (mutation.object[mutation.name].length===totalArray+1);
+        return (mutation.object.length===totalArray+1);
     });
     object.array.push(Math.random());
     var collector2 = dop.collect();

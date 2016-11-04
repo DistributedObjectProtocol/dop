@@ -26,8 +26,7 @@ dop.core.reverse = function() {
 
     if (shallWeStore && swaps.length>0)
         dop.core.storeMutation({
-            object:dop.getObjectDop(objectProxy)._,
-            name:dop.getObjectProperty(objectProxy),
+            object:objectProxy,
             swaps:swaps
         });
 
