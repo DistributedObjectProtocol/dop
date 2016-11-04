@@ -3,14 +3,14 @@ dop.core.delete = function(object, property) {
     var descriptor = Object.getOwnPropertyDescriptor(object, property);
     if (descriptor && descriptor.configurable) {
         
-        var target = dop.getObjectTarget(object);
-        delete target[property];
+        var objectTarget = dop.getObjectTarget(object);
+        delete objectTarget[property];
 
-        if (object !== target) {
+        if (object !== objectTarget) {
             var mutation = {
-                object:dop.getObjectProxy(target),
+                object:dop.getObjectProxy(objectTarget),
                 name:property,
-                oldValue:target[property]
+                oldValue:objectTarget[property]
             };
             dop.core.storeMutation(mutation);
             return mutation;
