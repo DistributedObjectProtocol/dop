@@ -1,8 +1,8 @@
-var dop = (function dopFactory() {
+(function factory(root) {
 
 var dop = {
     version: '0.1.0',
-    dopFactory: dopFactory,
+    create: factory,
 
     // Where all the internal information is stored
     data: {

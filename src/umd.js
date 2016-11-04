@@ -1,4 +1,6 @@
-return dop})();
+// Factory
+if (root === undefined)
+    return dop;
 
 // AMD
 if (typeof define === 'function' && define.amd)
@@ -10,5 +12,6 @@ else if (typeof module == 'object' && module.exports)
 
 // Browser (window)
 else
-    this.dop = dop;
+    root.dop = dop;
 
+})(this);
