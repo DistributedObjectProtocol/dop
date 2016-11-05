@@ -53,25 +53,24 @@ debugger;
         action = (dop.util.isObject(object)) ? object : action[path[index]]={};
     }
 
-    if (isArray(mutation.object) || isArray(value)) {//isMutationArray || 
+    if (isArray(mutation.object) || isArray(value)) {
 
         prop = path[index];
-        object = action;
         if (!isMutationArray && isArray(mutation.object)) {
             prop = path[index-1];
-            object = parent;
+            action = parent;
         }
 
-        if (!dop.util.isObject(object[prop]))
-            object[prop] = {};
+        if (!dop.util.isObject(action[prop]))
+            action[prop] = {};
 
 
-        if (!dop.util.isObject(object[prop][CONS.dop]))
-            object[prop][CONS.dop] = [];
+        if (!dop.util.isObject(action[prop][CONS.dop]))
+            action[prop][CONS.dop] = [];
 
         // new array
         if (isArray(value))
-            object[prop][CONS.dop].push([0]);
+            action[prop][CONS.dop].push([0]);
 
         // splice
         else if (mutation.splice!==undefined)
@@ -87,7 +86,7 @@ debugger;
 
         // set
         else
-            object[prop][CONS.dop].push([mutation.name, 0, mutation.value]);
+            action[prop][CONS.dop].push([mutation.name, 0, mutation.value]);
     }
 
     else
