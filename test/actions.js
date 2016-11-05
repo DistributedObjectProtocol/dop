@@ -146,22 +146,105 @@ function maketest(t, actions) {
 ////////////////////
 
 
-test('Adding property array', function(t) {
+// test('Adding property array', function(t) {
+//     // mutations
+//     var collector = dop.collect();
+//     set(objectServer, 'array', {});
+//     set(objectServer, 'array', []);
+//     // objectServer.array.push(1,2,3,4)
+//     // objectServer.array.push('1,2,3,4')
+//     // set(objectServer.array, 1, {});
+//     // set(objectServer.array, 3, 'CUATRO');
+//     // objectServer.array.splice(0,1);
+//     // objectServer.array.push('mola');
+//     // set(objectServer.array[0], 'subpro', {});
+//     // objectServer.array.reverse();
+//     // var actions = applyAction(collector);
+//     // tests
+//     // maketest(t, actions);
+// });
+
+
+
+
+test('empty object', function(t) {
     // mutations
     var collector = dop.collect();
     set(objectServer, 'array', {});
+    collector.destroy();
+    var action = collector.getAction()[1];
+    t.equal(encode(action),'{"array":{}}', encode(action));
+    console.log( '' );
+    t.end();
+});
+
+test('empty array from object', function(t) {
+    // mutations
+    var collector = dop.collect();
     set(objectServer, 'array', []);
-    // objectServer.array.push(1,2,3,4)
-    // objectServer.array.push('1,2,3,4')
-    // set(objectServer.array, 1, {});
-    // set(objectServer.array, 3, 'CUATRO');
-    // objectServer.array.splice(0,1);
-    // objectServer.array.push('mola');
-    // set(objectServer.array[0], 'subpro', {});
-    // objectServer.array.reverse();
-    var actions = applyAction(collector);
-    // tests
-    maketest(t, actions);
+    collector.destroy();
+    var action = collector.getAction()[1];
+    t.equal(encode(action),'{"array":{"~dop":[[0]]}}', encode(action));
+    console.log( '' );
+    t.end();
 });
 
 
+test('empty array from undefined', function(t) {
+    // mutations
+    var collector = dop.collect();
+    del(objectServer, 'array');
+    set(objectServer, 'array', []);
+    collector.destroy();
+    var action = collector.getAction()[1];
+    t.equal(encode(action),'{"array":{"~dop":[[0]]}}', encode(action));
+    console.log( '' );
+    t.end();
+});
+
+
+test('empty array from array', function(t) {
+    // mutations
+    var collector = dop.collect();
+    set(objectServer, 'array', []);
+    collector.destroy();
+    var action = collector.getAction()[1];
+    t.equal(encode(action),'{"array":{"~dop":[[0]]}}', encode(action));
+    console.log( '' );
+    t.end();
+});
+
+test('empty array from not empty array', function(t) {
+    // mutations
+    var collector = dop.collect();
+    set(objectServer.array, 0, 'A');
+    set(objectServer, 'array', []);
+    collector.destroy();
+    var action = collector.getAction()[1];
+    t.equal(encode(action),'{"array":{"~dop":[[0]]}}', encode(action));
+    console.log( '' );
+    t.end();
+});
+
+
+test('adding item as property', function(t) {
+    // mutations
+    var collector = dop.collect();
+    set(objectServer.array, 0, 'A');
+    collector.destroy();
+    var action = collector.getAction()[1];
+    t.equal(encode(action),'{"array":{"~dop":[[0,0,"A"]]}}', encode(action));
+    console.log( '' );
+    t.end();
+});
+
+test('push item', function(t) {
+    // mutations
+    var collector = dop.collect();
+    objectServer.array.push('B')
+    collector.destroy();
+    var action = collector.getAction()[1];
+    t.equal(encode(action),'{"array":{"~dop":[[1,0,"B"]]}}', encode(action));
+    console.log( '' );
+    t.end();
+});

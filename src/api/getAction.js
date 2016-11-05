@@ -38,7 +38,7 @@ dop.util.injectMutationInAction = function(action, mutation) {
         prop = mutation.name,
         value = mutation.value,
         isArray = Array.isArray,
-        parent;
+        parent, object;
 
 
     if (!isMutationArray) {
@@ -46,27 +46,37 @@ dop.util.injectMutationInAction = function(action, mutation) {
         total += 1;
     }
 
-
+debugger;
     for (;index<total; ++index) {
-        parent = action[path[index]];
-        action = (dop.util.isObject(parent)) ? parent : action[path[index]]={};
+        parent = action;
+        object = action[path[index]];
+        action = (dop.util.isObject(object)) ? object : action[path[index]]={};
     }
 
-
-    if (isMutationArray || isArray(mutation.object) || isArray(value)) {
+    if (isArray(mutation.object) || isArray(value)) {//isMutationArray || 
 
         prop = path[index];
-
-        if (isArray(value) || !dop.util.isObject(action[prop]) || !dop.util.isObject(action[prop][CONS.dop])) {
-            action[prop] = {};
-            action[prop][CONS.dop] = [[0]];
+        object = action;
+        if (!isMutationArray && isArray(mutation.object)) {
+            prop = path[index-1];
+            object = parent;
         }
-        // set
-        else if (isArray(mutation.object))
-            action[CONS.dop].push([mutation.name, 0, mutation.value]);
+
+        if (!dop.util.isObject(object[prop]))
+            object[prop] = {};
+
+
+        if (!dop.util.isObject(object[prop][CONS.dop]))
+            object[prop][CONS.dop] = [];
+
+        // new array
+        if (isArray(value))
+            object[prop][CONS.dop].push([0]);
+
         // splice
         else if (mutation.splice!==undefined)
             action[prop][CONS.dop].push(mutation.splice);
+
         // swaps
         else if (mutation.swaps!==undefined) {
             var swaps = mutation.swaps.slice(0),
@@ -74,6 +84,10 @@ dop.util.injectMutationInAction = function(action, mutation) {
             swaps[tochange] = swaps[tochange]*-1;
             action[prop][CONS.dop].push(swaps);
         }
+
+        // set
+        else
+            object[prop][CONS.dop].push([mutation.name, 0, mutation.value]);
     }
 
     else
