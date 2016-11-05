@@ -46,7 +46,6 @@ dop.util.injectMutationInAction = function(action, mutation) {
         total += 1;
     }
 
-debugger;
     for (;index<total; ++index) {
         parent = action;
         object = action[path[index]];
@@ -61,39 +60,44 @@ debugger;
             action = parent;
         }
 
-        if (!dop.util.isObject(action[prop]))
+        if (!dop.util.isObject(action[prop])) 
             action[prop] = {};
-
 
         if (!dop.util.isObject(action[prop][CONS.dop]))
             action[prop][CONS.dop] = [];
 
+
+        var mutations = action[prop][CONS.dop];
+
         // new array
-        if (isArray(value))
-            action[prop][CONS.dop].push([0]);
+        if (isArray(value)) {
+            mutations.push([0]);
+            if (value.length>0) {
+                value = value.slice(0);
+                value.unshift(0,0);
+                mutations.push(value);
+            }
+        }
 
         // splice
         else if (mutation.splice!==undefined)
-            action[prop][CONS.dop].push(mutation.splice);
+            mutations.push(mutation.splice);
 
         // swaps
         else if (mutation.swaps!==undefined) {
             var swaps = mutation.swaps.slice(0),
                 tochange = (swaps[0]>0) ? 0 : 1;
             swaps[tochange] = swaps[tochange]*-1;
-            action[prop][CONS.dop].push(swaps);
+            mutations.push(swaps);
         }
 
         // set
         else
-            action[prop][CONS.dop].push([mutation.name, 0, mutation.value]);
+            mutations.push([mutation.name, 0, mutation.value]);
     }
 
     else
         action[prop] = value;
-
-
-
 };
 
 
