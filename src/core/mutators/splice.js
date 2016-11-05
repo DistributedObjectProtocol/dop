@@ -1,9 +1,7 @@
 
-dop.core.splice = function() {
+dop.core.splice = function(array, args) {
 
-    var args = Array.prototype.slice.call(arguments, 0),
-        array = this,
-        originallength = array.length,
+    var originallength = array.length,
         objectTarget = dop.getObjectTarget(array),
         objectProxy = dop.getObjectProxy(array),
         spliced;

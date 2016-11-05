@@ -28,7 +28,7 @@ dop.core.setActionProtocol = function(source, prop, value, destiny) {
             // swaps
             if (mutation[0]<0 || mutation[1]<0) {
                 (mutation[0]<0) ? mutation[0] = mutation[0]*-1 : mutation[1] = mutation[1]*-1;
-                dop.core.swap.call(destiny[prop], mutation);
+                dop.core.swap(destiny[prop], mutation);
             }
             // set
             else if (mutation.length===3 && mutation[1]===0)

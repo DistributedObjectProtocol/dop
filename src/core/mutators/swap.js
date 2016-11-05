@@ -1,10 +1,9 @@
 
-dop.core.swap = function(swaps) {
+dop.core.swap = function(array, swaps) {
 
     if (swaps.length>1) {
 
-        var array = this,
-            objectTarget = dop.getObjectTarget(array),
+        var objectTarget = dop.getObjectTarget(array),
             objectProxy = dop.getObjectProxy(array),
             index = 0,
             total = array.length-1,

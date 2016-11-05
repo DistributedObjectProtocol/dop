@@ -1,7 +1,6 @@
 // https://jsperf.com/array-reverse-algorithm
-dop.core.reverse = function() {
-    var array = this,
-        objectTarget = dop.getObjectTarget(array),
+dop.core.reverse = function(array) {
+    var objectTarget = dop.getObjectTarget(array),
         objectProxy = dop.getObjectProxy(array),
         total = objectTarget.length/2,
         index = 0,
@@ -30,7 +29,7 @@ dop.core.reverse = function() {
             swaps:swaps
         });
 
-    return this;
+    return array;
 };
 
 

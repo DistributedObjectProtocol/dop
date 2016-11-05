@@ -2,9 +2,8 @@
 // https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
 // http://khan4019.github.io/front-end-Interview-Questions/sort.html#bubbleSort
 // https://github.com/benoitvallon/computer-science-in-javascript/tree/master/sorting-algorithms-in-javascript
-dop.core.sort = function(compareFunction) {
-    var array = this,
-        objectTarget = dop.getObjectTarget(array),
+dop.core.sort = function(array, compareFunction) {
+    var objectTarget = dop.getObjectTarget(array),
         objectProxy = dop.getObjectProxy(array),
         output, swaps;
 

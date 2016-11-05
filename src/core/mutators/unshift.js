@@ -1,9 +1,8 @@
 
-dop.core.unshift = function() {
-    if (arguments.length === 0)
-        return this.length;
-    var items = Array.prototype.slice.call(arguments, 0);
+dop.core.unshift = function(array, items) {
+    if (items.length === 0)
+        return array.length;
     items.unshift(0, 0);
-    var spliced = dop.core.splice.apply(this, items);
-    return this.length;
+    var spliced = dop.core.splice(array, items);
+    return array.length;
 };
