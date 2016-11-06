@@ -260,3 +260,32 @@ test('push item', function(t) {
     console.log( '' );
     t.end();
 });
+
+
+test('delete array', function(t) {
+    // mutations
+    var collector = dop.collect();
+    del(objectServer,'array');
+    collector.destroy();
+    var action = collector.getAction()[1];
+    t.equal(encode(action),'{"array":"~U"}', encode(action));
+    console.log( '' );
+    t.end();
+});
+
+
+test('add array from delete and multiple mutations', function(t) {
+    // mutations
+    var collector = dop.collect();
+    debugger;
+    set(objectServer,'array', ['LOL',{}]);
+    set(objectServer.array[1], 'the', 'END');
+    set(objectServer.array, 2, 'B');
+    objectServer.array.shift();
+    collector.destroy();
+    var action = collector.getAction()[1];
+    t.equal(encode(action),'{"array":{"0":{"the":"END"},"~dop":[[0],[0,0,"LOL",{}],[2,0,"B"],[0,1]]}}', encode(action));
+    console.log( '' );
+    t.end();
+});
+

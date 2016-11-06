@@ -26,11 +26,9 @@ dop.core.configureObject = function(object, path, shallWeProxy, parent) {
     object_dop.o = []; // observers
     object_dop.op = {}; // observers by property
 
-    // if (dop.isObject(parent))
-        // object_dop._ = parent;
-    // Probably slower but more consistent, cuz we know the parent always will be the object target instead of the proxy
-    if (dop.isRegistered(parent))
-        object_dop._ = dop.getObjectTarget(parent);
+
+    if (dop.util.isObject(parent))
+        object_dop._ = (dop.isRegistered(parent)) ? dop.getObjectTarget(parent) : parent;
 
 
     // Making proxy object

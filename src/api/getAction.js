@@ -6,7 +6,7 @@ dop.getAction = function(mutations) {
         total = mutations.length;
 
     for (;index<total; ++index)
-        if (dop.core.objectIsStillStoredOnPath(mutations[index].object)) // Only need it for arrays but is faster than injectMutation
+        if (dop.core.objectIsStillStoredOnPath(mutations[index].object)) // Only need it for arrays but is faster than injectMutation directly
             dop.util.injectMutationInAction(action, mutations[index]);
 
     return action;
@@ -73,7 +73,7 @@ dop.util.injectMutationInAction = function(action, mutation) {
         if (isArray(value)) {
             mutations.push([0]);
             if (value.length>0) {
-                value = value.slice(0);
+                value = mutation.valueOriginal.slice(0);
                 value.unshift(0,0);
                 mutations.push(value);
             }
