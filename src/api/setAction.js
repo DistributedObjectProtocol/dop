@@ -40,7 +40,7 @@ dop.core.setActionProtocol = function(source, prop, value, destiny) {
 
     }
 
-    else if (!dop.util.isObjectPlain(value))
+    else if (!dop.util.isObjectRegistrable(value))
         (value===undefined) ? 
             dop.del(destiny, prop)
         : 

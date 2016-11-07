@@ -11,7 +11,7 @@ dop.core.set = function(object, property, value) {
 
         // Setting
         objectTarget[property] = value;
-        if (dop.util.isObjectPlain(value)) {
+        if (dop.util.isObjectRegistrable(value)) {
             // var object_dop = dop.getObjectDop(value);
             // if (dop.isRegistered(value) && Array.isArray(object_dop._) && object_dop._ === objectTarget)
             //     object_dop[object_dop.length-1] = property;
