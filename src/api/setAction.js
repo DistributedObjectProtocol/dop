@@ -35,12 +35,12 @@ dop.core.setActionProtocol = function(source, prop, value, destiny) {
                 dop.set(destiny[prop], mutation[0], mutation[2]);
             // splice
             else
-                dop.core.splice.apply(destiny[prop], mutation);
+                dop.core.splice(destiny[prop], mutation);
         }
 
     }
 
-    else if (prop!==CONS.dop && dop.isRegistered(destiny) && (dop.isRegistered(value) || !dop.util.isObject(value)))
+    else if (!dop.util.isObjectPlain(value))
         (value===undefined) ? 
             dop.del(destiny, prop)
         : 

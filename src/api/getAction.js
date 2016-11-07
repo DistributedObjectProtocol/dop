@@ -36,7 +36,7 @@ dop.util.injectMutationInAction = function(action, mutation) {
         total = path.length-1,
         object = mutation.object,
         prop = mutation.name,
-        value = mutation.value,
+        value = object[prop],
         isArray = Array.isArray,
         parent, object;
 
@@ -93,11 +93,11 @@ dop.util.injectMutationInAction = function(action, mutation) {
 
         // set
         else
-            mutations.push([mutation.name, 0, mutation.value]);
+            mutations.push([mutation.name, 0, value]);
     }
 
     else
-        action[prop] = value;
+        action[prop] = (dop.util.typeof(value) == 'object') ? dop.util.merge({},value) : value;
 };
 
 

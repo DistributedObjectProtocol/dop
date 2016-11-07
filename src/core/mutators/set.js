@@ -22,10 +22,10 @@ dop.core.set = function(object, property, value) {
         }
 
         if (objectTarget===objectProxy || object===objectProxy) {
-            var mutation = {object:objectProxy, name:property, value:value};
+            var mutation = {object:objectProxy, name:property};
             if (hasOwnProperty)
                 mutation.oldValue = oldValue;
-            if ( Array.isArray(value) && value.length>0 ) // We cant store the original array cuz when we inject the mutation into the action object could be different from the original
+            if (Array.isArray(value)) // We cant store the original array cuz when we inject the mutation into the action object could be different from the original
                 mutation.valueOriginal = dop.util.merge([], value);
 
             dop.core.storeMutation(mutation);
