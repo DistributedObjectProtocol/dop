@@ -1,19 +1,16 @@
 
 dop.setAction = function(action, dontEmit) {
     var collector = dop.collectFirst();
-    dop.util.path(action, dop.core.setActionProtocol, dop.data.object, false);
+    dop.util.path(action, dop.core.setActionLoop, dop.data.object, dop.setActionMutator);
     if (dontEmit !== false)
         collector.emitAndDestroy();
     return collector;
 };
 
+dop.setActionMutator = function(destiny, prop, value, typeofValue) {
 
-dop.core.setActionProtocol = function(source, prop, value, destiny) {
-
-    if (prop === CONS.dop)
-        return true;
-
-    if (dop.util.isObject(value) && value.hasOwnProperty(CONS.dop)) {
+    // Array mutations
+    if (typeofValue=='object' && value.hasOwnProperty(CONS.dop)) {
 
         var mutations = value[CONS.dop],
             mutation,
@@ -40,9 +37,22 @@ dop.core.setActionProtocol = function(source, prop, value, destiny) {
 
     }
 
-    else if (!dop.util.isObjectRegistrable(value))
-        (value===undefined) ? 
-            dop.del(destiny, prop)
-        : 
-            dop.set(destiny, prop, value);
+    // Delete
+    else if (typeofValue=='undefined')
+        dop.core.del(destiny, prop);
+
+    // Set
+    else if (!destiny.hasOwnProperty(prop)) {
+        if (typeofValue == 'object')
+            value = dop.util.merge({}, value);
+        else if (typeofValue == 'array')
+            value = dop.util.merge([], value);
+        dop.core.set(destiny, prop, value);
+    }
+
+};
+
+dop.core.setActionLoop = function(source, prop) {
+    if (prop === CONS.dop)
+        return true;
 };

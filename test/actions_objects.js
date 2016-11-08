@@ -9,10 +9,9 @@ var del = dop.del;
 var encode = dop.encode;
 var decode = dop.decode;
 
-var objectServer = dop.register({});
-var objectClient = dopClient.register({});
-var objectClientTwo = dopClientTwo.register({});
-
+var objectServer = dop.register({},{proxy:false});
+var objectClient = dopClient.register({},{proxy:false});
+var objectClientTwo = dopClientTwo.register({},{proxy:false});
 
 function applyAction(collectorServer) {
     var actionServer = collectorServer.getAction();
@@ -52,26 +51,26 @@ function MyClass(){this.test=123;}
 
 
 
-// test('Adding property', function(t) {
-//     t.comment("### Before: " + encode(objectClient));
-//     // mutations
-//     var collector = dop.collect();
-//     set(objectServer, 'one', 'one');
-//     var actions = applyAction(collector);
-//     // tests
-//     maketest(t, actions);
-// });
+test('Adding property', function(t) {
+    t.comment("### Before: " + encode(objectClient));
+    // mutations
+    var collector = dop.collect();
+    set(objectServer, 'one', 'one');
+    var actions = applyAction(collector);
+    // tests
+    maketest(t, actions);
+});
 
 
-// test('Editing property with the same value', function(t) {
-//     t.comment("### Before: " + encode(objectClient));
-//     // mutations
-//     var collector = dop.collect();
-//     set(objectServer, 'one', 'one');
-//     var actions = applyAction(collector);
-//     // tests
-//     maketest(t, actions);
-// });
+test('Editing property with the same value', function(t) {
+    t.comment("### Before: " + encode(objectClient));
+    // mutations
+    var collector = dop.collect();
+    set(objectServer, 'one', 'one');
+    var actions = applyAction(collector);
+    // tests
+    maketest(t, actions);
+});
 
 
 // test('Editing property already registered', function(t) {
@@ -176,7 +175,6 @@ test('Adding special values', function(t) {
     // set(objectServer.special, 'long', 12313214234312324353454534534);
     // set(objectServer.special, 'undefined', undefined);
     // set(objectServer.special, 'null', null);
-    debugger;
     set(objectServer.special, 'class', new MyClass());
     // set(objectServer.special, 'date',  new Date());
     // set(objectServer.special, 'regexp', /molamazo/g);

@@ -34,7 +34,7 @@ dop.protocol.instructions = {
 
                         // Subscriptor -> Owner
     subscribe: 2,       // [ 1234, 2, <params...>]
-                        // [-1234, 0, [<object_id>], <data_object>, <last_update_id>]
+                        // [-1234, 0, [<object_id>], <data_object>, <options>]
                         // [-1234, 0, [<object_id>, 'path']]
 
                         // Subscriptor -> Owner
@@ -46,23 +46,11 @@ dop.protocol.instructions = {
                         // [-1234, 0, <return>]
 
                         // Subscriptor -> Owner
-    update: 5,          // [ 1234, 5, [<object_id>, 'path', 'path'], <last_update_id>]
-                        // [-1234, 0, [<object_id>, 'path', 'path'], <object_data_to_merge>, <last_update_id>]
+    update: 5,          // [ 1234, 5, [<object_id>, 'path', 'path'], <options>]
+                        // [-1234, 0, [<object_id>, 'path', 'path'], <object_data_to_merge>, <options>]
 
                         // Owner -> Subscriptor
-    merge: 6,           // [ 1234, 6, <object_id>, <object_data_to_merge>, <last_update_id>]
-                        // [-1234, 0]
-
-                        // Owner -> Subscriptor
-    set: 7,             // [ 1234, 7, [<object_id>,'path','path'], 'value', <last_update_id>]
-                        // [-1234, 0]
-
-                        // Owner -> Subscriptor
-    delete: 8,          // [ 1234, 8, [<object_id>, 'path','path'], <last_update_id>]
-                        // [-1234, 0]
-
-                        // Owner -> Subscriptor
-    splice: 9,          // [ 1234, 9, [<object_id>, 'path','path'], [1, 5, 'newitem'], <last_update_id>]
+    merge: 6,           // [ 1234, 6, <object_id>, <object_data_to_merge>, <options>]
                         // [-1234, 0]
 
 };

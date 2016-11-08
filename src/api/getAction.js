@@ -52,51 +52,51 @@ dop.util.injectMutationInAction = function(action, mutation) {
         action = (dop.util.isObject(object)) ? object : action[path[index]]={};
     }
 
-    if (isArray(mutation.object) || isArray(value)) {
+    // if (isArray(mutation.object) || isArray(value)) {
 
-        prop = path[index];
-        if (!isMutationArray && isArray(mutation.object)) {
-            prop = path[index-1];
-            action = parent;
-        }
+    //     prop = path[index];
+    //     if (!isMutationArray && isArray(mutation.object)) {
+    //         prop = path[index-1];
+    //         action = parent;
+    //     }
 
-        if (!dop.util.isObject(action[prop])) 
-            action[prop] = {};
+    //     if (!dop.util.isObject(action[prop])) 
+    //         action[prop] = {};
 
-        if (!dop.util.isObject(action[prop][CONS.dop]))
-            action[prop][CONS.dop] = [];
+    //     if (!dop.util.isObject(action[prop][CONS.dop]))
+    //         action[prop][CONS.dop] = [];
 
 
-        var mutations = action[prop][CONS.dop];
+    //     var mutations = action[prop][CONS.dop];
 
-        // new array
-        if (isArray(value)) {
-            mutations.push([0]);
-            if (value.length>0) {
-                value = mutation.valueOriginal.slice(0);
-                value.unshift(0,0);
-                mutations.push(value);
-            }
-        }
+    //     // new array
+    //     if (isArray(value)) {
+    //         mutations.push([0]);
+    //         if (value.length>0) {
+    //             value = mutation.valueOriginal.slice(0);
+    //             value.unshift(0,0);
+    //             mutations.push(value);
+    //         }
+    //     }
 
-        // splice
-        else if (mutation.splice!==undefined)
-            mutations.push(mutation.splice);
+    //     // splice
+    //     else if (mutation.splice!==undefined)
+    //         mutations.push(mutation.splice);
 
-        // swaps
-        else if (mutation.swaps!==undefined) {
-            var swaps = mutation.swaps.slice(0),
-                tochange = (swaps[0]>0) ? 0 : 1;
-            swaps[tochange] = swaps[tochange]*-1;
-            mutations.push(swaps);
-        }
+    //     // swaps
+    //     else if (mutation.swaps!==undefined) {
+    //         var swaps = mutation.swaps.slice(0),
+    //             tochange = (swaps[0]>0) ? 0 : 1;
+    //         swaps[tochange] = swaps[tochange]*-1;
+    //         mutations.push(swaps);
+    //     }
 
-        // set
-        else
-            mutations.push([mutation.name, 0, value]);
-    }
+    //     // set
+    //     else
+    //         mutations.push([mutation.name, 0, value]);
+    // }
 
-    else
+    // else
         action[prop] = (dop.util.typeof(value) == 'object') ? dop.util.merge({},value) : value;
 };
 

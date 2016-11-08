@@ -9,10 +9,6 @@ dop.util.merge = function mergeRecursive(first, second) {
     }
     else 
         return dop.util.path(second, this, first, dop.util.mergeMutator);
-    // // I don't know why but this is slower
-    // for (var i=arguments.length-1; i>0; --i)
-    //     dop.util.path(arguments[i], this, arguments[i-1]);
-    // return first;
 };
 
 dop.util.mergeMutator = function(destiny, prop, value, typeofValue) {
