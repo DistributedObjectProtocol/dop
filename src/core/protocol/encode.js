@@ -6,20 +6,23 @@ dop.core.encode = function(property, value) {
     if (tof == 'function')
         return '~F';
 
-    else if (tof == 'undefined') // http://stackoverflow.com/questions/17648150/how-does-json-parse-manage-undefined
+    if (tof == 'undefined') // http://stackoverflow.com/questions/17648150/how-does-json-parse-manage-undefined
         return '~U';
 
-    else if (value === Infinity)
+    if (value === Infinity)
         return '~I';
 
-    else if (value === -Infinity)
+    if (value === -Infinity)
         return '~i';
     
-    else if (tof == 'number' && isNaN(value))
+    if (tof == 'number' && isNaN(value))
         return '~N';
 
-    else if (tof == 'object' && value instanceof RegExp)
+    if (tof == 'object' && value instanceof RegExp)
         return '~R' + value.toString();
+
+    if (tof == 'string' && value[0] === '~')
+        return '~'+value; // https://jsperf.com/charat-vs-index/5
 
     return value;
 
