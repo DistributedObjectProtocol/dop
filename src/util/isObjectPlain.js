@@ -1,10 +1,10 @@
 
-// dop.util.isObjectPlain = function(object) {
-//     if (!object)
-//         return false;
-//     var prototype = Object.getPrototypeOf(object);
-//     return (prototype === Object.prototype || prototype == Array.prototype);
-// };
+dop.util.isObjectPlain = function(object) {
+    if (!object)
+        return false;
+    var prototype = Object.getPrototypeOf(object);
+    return (prototype === Object.prototype || prototype === Array.prototype);
+};
 
 // function Test(){}
 // console.log(isObjectPlain(null));

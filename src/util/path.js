@@ -1,10 +1,10 @@
 
-dop.util.path = function (source, callback, destiny, mutate) {
+dop.util.path = function (source, callback, destiny, mutator) {
 
     var hasCallback = typeof callback == 'function',
         hasDestiny = dop.util.isObject(destiny);
 
-    pathRecursive(
+    dop.util.pathRecursive(
         source, 
         destiny, 
         callback, 
@@ -12,15 +12,15 @@ dop.util.path = function (source, callback, destiny, mutate) {
         [],
         hasCallback,
         hasDestiny,
-        hasDestiny && mutate === true
+        mutator
    );
 
     return destiny;
 };
 
-function pathRecursive(source, destiny, callback, circular, path, hasCallback, hasDestiny, mutate) {
+dop.util.pathRecursive = function (source, destiny, callback, circular, path, hasCallback, hasDestiny, mutator) {
 
-    var prop, value, value2, isArray, skip;
+    var prop, value, typeofValue, skip;
 
     for (prop in source) {
 
@@ -35,32 +35,20 @@ function pathRecursive(source, destiny, callback, circular, path, hasCallback, h
 
         if (skip !== true) {
 
+            typeofValue = dop.util.typeof(value);
+
+            if (hasDestiny)
+                mutator(destiny, prop, value, typeofValue);
+
             // Objects or arrays
-            if (value && value !== source && (value.constructor === Object || (isArray=Array.isArray(value))) && circular.indexOf(value)==-1) {
-
+            if ((typeofValue=='object' || typeofValue=='array') && value!==source && circular.indexOf(value)==-1) {
                 circular.push(value);
-
-                if (hasDestiny) {
-                    value2 = (!destiny.hasOwnProperty(prop)) ?
-                        (destiny[prop] = (isArray) ? [] : {})
-                    :
-                        destiny[prop];
-                }
-
-                pathRecursive(value, value2, callback, circular, path, hasCallback, hasDestiny, mutate);
-
-            }
-            else if (mutate) {
-                if (value === undefined)
-                    delete destiny[prop];
-                else
-                    destiny[prop] = value;
+                dop.util.pathRecursive(value, destiny[prop], callback, circular, path, hasCallback, hasDestiny, mutator);
             }
 
 
             // if (hasCallback)
-            //     path.pop();
+                // path.pop();
         }
     }
-
-}
+};
