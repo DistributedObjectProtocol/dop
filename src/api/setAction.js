@@ -39,10 +39,10 @@ dop.setActionMutator = function(destiny, prop, value, typeofValue) {
 
     // Delete
     else if (typeofValue=='undefined')
-        dop.core.del(destiny, prop);
+        dop.core.delete(destiny, prop);
 
     // Set
-    else if (!destiny.hasOwnProperty(prop)) {
+    else if (!destiny.hasOwnProperty(prop) || (typeofValue!='object' && typeofValue!='array')) {
         if (typeofValue == 'object')
             value = dop.util.merge({}, value);
         else if (typeofValue == 'array')
