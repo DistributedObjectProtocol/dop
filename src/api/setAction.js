@@ -9,6 +9,10 @@ dop.setAction = function(action, dontEmit) {
 
 dop.setActionMutator = function(destiny, prop, value, typeofValue) {
 
+    var valueIsObjectRegistrable = (typeofValue=='object' || typeofValue=='array'),
+        destinyIsObjectRegistrable = dop.util.isObjectRegistrable(destiny[prop]);
+
+/*
     // Array mutations
     if (typeofValue=='object' && value.hasOwnProperty(CONS.dop)) {
 
@@ -36,20 +40,18 @@ dop.setActionMutator = function(destiny, prop, value, typeofValue) {
         }
 
     }
+    
+    // Extending
+    else*/ if (valueIsObjectRegistrable && !destinyIsObjectRegistrable)
+        dop.core.set(destiny, prop, (typeofValue == 'array') ? [] : {});
 
     // Delete
     else if (typeofValue=='undefined')
         dop.core.delete(destiny, prop);
 
     // Set
-    else if (!destiny.hasOwnProperty(prop) || (typeofValue!='object' && typeofValue!='array')) {
-        if (typeofValue == 'object')
-            value = dop.util.merge({}, value);
-        else if (typeofValue == 'array')
-            value = dop.util.merge([], value);
+    else if (!valueIsObjectRegistrable)
         dop.core.set(destiny, prop, value);
-    }
-
 };
 
 dop.core.setActionLoop = function(source, prop) {

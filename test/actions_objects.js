@@ -14,12 +14,11 @@ var objectClient = dopClient.register({},{proxy:false});
 var objectClientTwo = dopClientTwo.register({},{proxy:false});
 
 function applyAction(collectorServer) {
-    var actionServer = collectorServer.getAction();
+    var actionServer = decode(encode(collectorServer.getAction()));
     collectorServer.destroy();
-    debugger
-    var collectorClient = dopClient.setAction(decode(encode(actionServer)), false);
-    var actionClient = collectorClient.getAction();
-    var collectorClientTwo = dopClientTwo.setAction(decode(encode(actionClient)), false);
+    var collectorClient = dopClient.setAction(actionServer, false);
+    var actionClient = decode(encode(collectorClient.getAction()));
+    var collectorClientTwo = dopClientTwo.setAction(actionClient, false);
     var actionClientTwo = collectorClientTwo.getAction();
     return [actionServer, actionClient, actionClientTwo];
 }
@@ -38,7 +37,7 @@ function maketest(t, actions) {
     console.log( '' );
     t.end();
 }
-function MyClass(){this.test=123;}
+function MyClass(){this.classProperty=123;}
 
 
 
@@ -192,7 +191,7 @@ test('Adding special values', function(t) {
 
 
 
-test('Creating a subobject', function(t) {
+test('Creating a subclass', function(t) {
     t.comment("### Before: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
@@ -203,7 +202,7 @@ test('Creating a subobject', function(t) {
     maketest(t, actions);
 });
 
-test('Adding a property of the subobject', function(t) {
+test('Adding a property of the subclass', function(t) {
     t.comment("### Before: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
@@ -213,22 +212,23 @@ test('Adding a property of the subobject', function(t) {
     maketest(t, actions);
 });
 
-test('Adding a subobject of subobject', function(t) {
+test('Adding a subobject of subclass', function(t) {
     t.comment("### Before: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     del(objectServer, 'two');
-    set(objectServer.one, 'two', {two:'dos'});
+    set(objectServer.one, 'two', {three:'tres'});
     var actions = applyAction(collector);
     // tests
     maketest(t, actions);
 });
 
-test('Editing a property of subobject', function(t) {
+test('Editing a property of subclass', function(t) {
     t.comment("### Before: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
-    set(objectServer.one.two, 'two', 'dosChanged');
+    set(objectServer.one.two, 'three', new MyClass());
+        debugger;
     var actions = applyAction(collector);
     // tests
     maketest(t, actions);
