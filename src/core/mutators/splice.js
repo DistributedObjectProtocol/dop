@@ -55,7 +55,7 @@ dop.core.splice = function(array, args) {
                     objectTarget[start] = dop.core.configureObject(
                         item,
                         dop.getObjectDop(objectTarget).concat(start),
-                        dop.data.object_data[dop.getObjectId(objectTarget)].options.proxy,
+                        // dop.data.object_data[dop.getObjectId(objectTarget)].options.proxy,
                         objectTarget
                     );
             }

@@ -1,13 +1,12 @@
 
 var canWeProxy = typeof Proxy == 'function';
-dop.core.configureObject = function(object, path, shallWeProxy, parent) {
+dop.core.configureObject = function(object, path, parent) {
 
     // Creating a copy if is another object registered
     if (dop.isRegistered(object))
         return dop.core.configureObject(
             dop.util.merge( Array.isArray(object)?[]:{}, object),
             path,
-            shallWeProxy,
             parent
         );
 
@@ -16,7 +15,7 @@ dop.core.configureObject = function(object, path, shallWeProxy, parent) {
     for (property in object) {
         value = object[property];
         if (value && value !== object && (value.constructor === Object || (Array.isArray(value))))
-            object[property] = dop.core.configureObject(value, path.concat(property), shallWeProxy, object);
+            object[property] = dop.core.configureObject(value, path.concat(property), object);
     }
 
     // Setting ~dop object
@@ -32,7 +31,7 @@ dop.core.configureObject = function(object, path, shallWeProxy, parent) {
 
 
     // Making proxy object
-    if (shallWeProxy && canWeProxy) {
+    if (canWeProxy) {
         var target = object;
         object = new Proxy(object, dop.core.proxyObjectHandler);
         // Adding proxy and target alias
