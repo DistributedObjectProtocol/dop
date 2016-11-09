@@ -32,13 +32,14 @@ dop.util.injectMutationInAction = function(action, mutation) {
 
     var isMutationArray = mutation.splice!==undefined || mutation.swaps!==undefined,
         path = dop.getObjectDop(mutation.object).slice(0),
+        object = dop.data.object,
+        prop = mutation.name,
+        value = mutation.object[prop],
+        typeofValue = dop.util.typeof(value),
         index = 0,
         total = path.length-1,
-        object = mutation.object,
-        prop = mutation.name,
-        value = object[prop],
         isArray = Array.isArray,
-        parent, object;
+        parent, pathIndex;
 
 
     if (!isMutationArray) {
@@ -48,11 +49,38 @@ dop.util.injectMutationInAction = function(action, mutation) {
 
     for (;index<total; ++index) {
         parent = action;
-        object = action[path[index]];
-        action = (dop.util.isObject(object)) ? object : action[path[index]]={};
+        pathIndex = path[index];
+        object = object[pathIndex];
+        action = action.hasOwnProperty(pathIndex) ? action[pathIndex] : action[pathIndex]=isArray(object) ? [] : {};
     }
 
-    // if (isArray(mutation.object) || isArray(value)) {
+    action[prop] = (typeofValue=='object' || typeofValue=='array') ? dop.util.merge(typeofValue=='array'?[]:{},value) : value;
+};
+
+
+
+
+
+// action = {
+//     1: {
+//         hola: "cruel",
+//         array: {
+//             "~dop": [
+//                 [0], // set new array as empty
+//                 [0, 0, 'String'], // set
+//                 [1, 0, {object:'data'}] // set
+//                 [0, 1], // splice
+//                 [-0, 1], // move
+//             ],
+//             "0": {object:"Changed"}
+//         }
+//     }
+// }
+
+
+
+
+    // if (isArray(mutation.object) || typeofValue=='array') {
 
     //     prop = path[index];
     //     if (!isMutationArray && isArray(mutation.object)) {
@@ -70,7 +98,7 @@ dop.util.injectMutationInAction = function(action, mutation) {
     //     var mutations = action[prop][CONS.dop];
 
     //     // new array
-    //     if (isArray(value)) {
+    //     if (typeofValue=='array') {
     //         mutations.push([0]);
     //         if (value.length>0) {
     //             value = mutation.valueOriginal.slice(0);
@@ -97,52 +125,3 @@ dop.util.injectMutationInAction = function(action, mutation) {
     // }
 
     // else
-        action[prop] = (dop.util.typeof(value) == 'object') ? dop.util.merge({},value) : value;
-};
-
-
-
-
-
-// action = {
-//     1: {
-//         hola: "cruel",
-//         array: {
-//             "~dop": [
-//                 [0], // set new array as empty
-//                 [0, 0, 'String'], // set
-//                 [1, 0, {object:'data'}] // set
-//                 [0, 1], // splice
-//                 [-0, 1], // move
-//             ],
-//             "0": {object:"Changed"}
-//         }
-//     }
-// }
-
-
-
-
-
-// dop.getAction = function(mutations) {
-
-//     var action = {},
-//         index = 0,
-//         total = mutations.length,
-//         mutation,
-//         path;
-
-//     for (;index<total; ++index) {
-//         mutation = mutations[index];
-//         path = (mutation.path===undefined) ?
-//             dop.getObjectDop(mutation.object).slice(0).concat(prop)
-//         :
-//             mutation.path;
-
-//         dop.util.set(action, path, value);
-//     }
-
-//     return action;
-// };
-
-

@@ -18,20 +18,23 @@ function applyAction(collectorServer) {
     var collectorClient = dopClient.setAction(actionServer, false);
     var actionClient = decode(encode(collectorClient.getAction()));
     var collectorClientTwo = dopClientTwo.setAction(actionClient, false);
+    console.log("### Mutations length: " +  collectorServer.mutations.length, collectorClient.mutations.length, collectorClientTwo.mutations.length );
     var actionClientTwo = collectorClientTwo.getAction();
     return [actionServer, actionClient, actionClientTwo];
 }
 
-function maketest(t, actions) {
-    t.comment("### After: " + encode(objectClient));
-    t.comment("### Action1: " + encode(actions[0][1]));
-    t.comment("### Action2: " + encode(actions[1][1]));
-    t.comment("### Action3: " + encode(actions[2][1]));
+function maketest(t, actions, checkactions) {
+    console.log("### After server: " + encode(objectServer));
+    console.log("### After client: " + encode(objectClient));
+    console.log("### Action1: " + encode(actions[0][1]));
+    console.log("### Action2: " + encode(actions[1][1]));
+    console.log("### Action3: " + encode(actions[2][1]));
     t.deepEqual(objectClient, objectServer, 'deepEqual');
     t.equal(encode(objectClient), encode(objectServer), 'equal');
     t.deepEqual(objectClientTwo, objectServer, 'deepEqual objectClientTwo');
     t.equal(encode(objectClientTwo), encode(objectServer), 'equal objectClientTwo');
-    // t.deepEqual(actions[0], actions[2], 'deepEqual action');
+    if (checkactions!==false)
+    t.equal(encode(actions[0]), encode(actions[2]), 'equal encode actions');
     console.log( '' );
     console.log( '' );
     t.end();
@@ -44,25 +47,28 @@ function MyClass(){this.classProperty=123;}
 
 
 
-
-
-
+////////////////
+/////// Plain objects
+////////////////
 
 
 
 test('Adding property', function(t) {
-    t.comment("### Before: " + encode(objectClient));
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer, 'one', 'one');
     var actions = applyAction(collector);
     // tests
     maketest(t, actions);
+    t.end();
 });
 
 
 test('Editing property with the same value', function(t) {
-    t.comment("### Before: " + encode(objectClient));
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer, 'one', 'one');
@@ -73,7 +79,8 @@ test('Editing property with the same value', function(t) {
 
 
 test('Editing property already registered', function(t) {
-    t.comment("### Before: " + encode(objectClient));
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer, 'one', 'oneChanged');
@@ -84,7 +91,8 @@ test('Editing property already registered', function(t) {
 
 
 test('Delete property', function(t) {
-    t.comment("### Before: " + encode(objectClient));
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     del(objectServer, 'one');
@@ -95,7 +103,8 @@ test('Delete property', function(t) {
 
 
 test('Change and delete a removed item', function(t) {
-    t.comment("### Before: " + encode(objectClient));
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer, 'one', 'Changeddd');
@@ -103,11 +112,12 @@ test('Change and delete a removed item', function(t) {
     set(objectServer, 'two', 'two');
     var actions = applyAction(collector);
     // tests
-    maketest(t, actions);
+    maketest(t, actions, false);
 });
 
 test('Creating a subobject', function(t) {
-    t.comment("### Before: " + encode(objectClient));
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer, 'one', {});
@@ -117,7 +127,8 @@ test('Creating a subobject', function(t) {
 });
 
 test('Adding a property of the subobject', function(t) {
-    t.comment("### Before: " + encode(objectClient));
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer.one, 'one', 'uno');
@@ -127,7 +138,8 @@ test('Adding a property of the subobject', function(t) {
 });
 
 test('Adding a subobject of subobject', function(t) {
-    t.comment("### Before: " + encode(objectClient));
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     del(objectServer, 'two');
@@ -137,18 +149,20 @@ test('Adding a subobject of subobject', function(t) {
     maketest(t, actions);
 });
 
-// test('Editing a property of subobject', function(t) {
-//     t.comment("### Before: " + encode(objectClient));
-//     // mutations
-//     var collector = dop.collect();
-//     set(objectServer.one.two, 'two', 'dosChanged');
-//     var actions = applyAction(collector);
-//     // tests
-//     maketest(t, actions);
-// });
+test('Editing a property of subobject', function(t) {
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
+    // mutations
+    var collector = dop.collect();
+    set(objectServer.one.two, 'two', 'dosChanged');
+    var actions = applyAction(collector);
+    // tests
+    maketest(t, actions);
+});
 
 test('Editing a property of subobject and after removing the parent', function(t) {
-    t.comment("### Before: " + encode(objectClient));
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer.one.two, 'two', 'dosChangedAgain');
@@ -162,7 +176,8 @@ test('Editing a property of subobject and after removing the parent', function(t
 
 
 test('Adding special values', function(t) {
-    t.comment("### Before: " + encode(objectClient));
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer, 'special', {});
@@ -189,9 +204,14 @@ test('Adding special values', function(t) {
 
 
 
+////////////////////
+/////////// Classes
+////////////////////
+
 
 test('Creating a subclass', function(t) {
-    t.comment("### Before: " + encode(objectClient));
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     del(objectServer, 'special');
@@ -202,7 +222,8 @@ test('Creating a subclass', function(t) {
 });
 
 test('Adding a property of the subclass', function(t) {
-    t.comment("### Before: " + encode(objectClient));
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer.one, 'one', 'uno');
@@ -212,7 +233,8 @@ test('Adding a property of the subclass', function(t) {
 });
 
 test('Adding a subobject of subclass', function(t) {
-    t.comment("### Before: " + encode(objectClient));
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     del(objectServer, 'two');
@@ -223,18 +245,19 @@ test('Adding a subobject of subclass', function(t) {
 });
 
 test('Editing a property of subclass', function(t) {
-    t.comment("### Before: " + encode(objectClient));
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer.one.two, 'three', new MyClass());
-        debugger;
     var actions = applyAction(collector);
     // tests
     maketest(t, actions);
 });
 
 test('Editing a property of subobject and after removing the parent', function(t) {
-    t.comment("### Before: " + encode(objectClient));
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer.one.two, 'two', 'dosChangedAgain');
@@ -243,4 +266,86 @@ test('Editing a property of subobject and after removing the parent', function(t
     // tests
     maketest(t, actions);
 });
+
+
+
+
+
+
+////////////////////
+/////////// Arrays
+////////////////////
+
+
+test('Creating a subarray', function(t) {
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
+    // mutations
+    var collector = dop.collect();
+    set(objectServer, 'one', []);
+    var actions = applyAction(collector);
+    // tests
+    maketest(t, actions);
+});
+
+test('Creating a subarray with items', function(t) {
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
+    // mutations
+    var collector = dop.collect();
+    set(objectServer, 'one', [1,2,[3,4]]);
+    debugger
+    var actions = applyAction(collector);
+    // tests
+    maketest(t, actions);
+});
+
+// test('Adding a property of the subclass', function(t) {
+//     console.log("### Before Server: " + encode(objectServer));
+//     console.log("### Before Client: " + encode(objectClient));
+//     // mutations
+//     var collector = dop.collect();
+//     set(objectServer.one, 'one', 'uno');
+//     var actions = applyAction(collector);
+//     // tests
+//     maketest(t, actions);
+// });
+
+// test('Adding a subobject of subclass', function(t) {
+//     console.log("### Before Server: " + encode(objectServer));
+//     console.log("### Before Client: " + encode(objectClient));
+//     // mutations
+//     var collector = dop.collect();
+//     del(objectServer, 'two');
+//     set(objectServer.one, 'two', {three:'tres'});
+//     var actions = applyAction(collector);
+//     // tests
+//     maketest(t, actions);
+// });
+
+// test('Editing a property of subclass', function(t) {
+//     console.log("### Before Server: " + encode(objectServer));
+//     console.log("### Before Client: " + encode(objectClient));
+//     // mutations
+//     var collector = dop.collect();
+//     set(objectServer.one.two, 'three', new MyClass());
+//         debugger;
+//     var actions = applyAction(collector);
+//     // tests
+//     maketest(t, actions);
+// });
+
+// test('Editing a property of subobject and after removing the parent', function(t) {
+//     console.log("### Before Server: " + encode(objectServer));
+//     console.log("### Before Client: " + encode(objectClient));
+//     // mutations
+//     var collector = dop.collect();
+//     set(objectServer.one.two, 'two', 'dosChangedAgain');
+//     del(objectServer, 'one');
+//     var actions = applyAction(collector);
+//     // tests
+//     maketest(t, actions);
+// });
+
+
 

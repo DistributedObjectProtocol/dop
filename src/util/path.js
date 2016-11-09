@@ -15,17 +15,18 @@ dop.util.pathRecursive = function (source, callback, destiny, mutator, circular,
         skip = false;
         value = source[prop];
 
-        if (hasCallback)
-            // path.push(prop);
+        if (hasCallback) {
+            path.push(prop);
             // skip = callback(source, prop, value, destiny, path.slice(0), this);
             skip = callback(source, prop, value, destiny, this);
+        }
 
         if (skip !== true) {
 
             typeofValue = dop.util.typeof(value);
 
             if (hasDestiny)
-                mutator(destiny, prop, value, typeofValue);
+                mutator(destiny, prop, value, typeofValue, path.slice(0));
 
             // Objects or arrays
             if ((typeofValue=='object' || typeofValue=='array') && value!==source && circular.indexOf(value)==-1) {
@@ -33,8 +34,8 @@ dop.util.pathRecursive = function (source, callback, destiny, mutator, circular,
                 dop.util.pathRecursive(value, callback, destiny[prop], mutator, circular, path, hasCallback, hasDestiny);
             }
 
-            // if (hasCallback)
-                // path.pop();
+            if (hasCallback)
+                path.pop();
         }
     }
 };

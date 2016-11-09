@@ -7,10 +7,45 @@ dop.setAction = function(action, dontEmit) {
     return collector;
 };
 
-dop.setActionMutator = function(destiny, prop, value, typeofValue) {
+dop.core.setActionLoop = function(source, prop, value, destiny, path) {
+    if (prop === CONS.dop)
+        return true;
+};
 
+dop.setActionMutator = function(destiny, prop, value, typeofValue, path) {
+if (path.length > 1) {
+    // console.log( path, prop );
     var valueIsObjectRegistrable = (typeofValue=='object' || typeofValue=='array'),
-        destinyIsObjectRegistrable = dop.util.isObjectRegistrable(destiny[prop]);
+        destinyTypeof = dop.util.typeof(destiny[prop]);
+
+
+    if (valueIsObjectRegistrable && destinyTypeof!='object' && destinyTypeof!='array') {
+        if (destinyTypeof == 'object')
+            1+1;
+        else if (destinyTypeof == 'array')
+            2+2;
+
+        dop.core.set(destiny, prop, (typeofValue == 'array') ? [] : {});
+    }
+
+    // Delete
+    else if (typeofValue=='undefined')
+        dop.core.delete(destiny, prop);
+
+    // Set
+    else if (!valueIsObjectRegistrable) {
+        if (typeofValue=='object')
+            value = dop.util.merge({}, value);
+        if (typeofValue=='array')
+            value = dop.util.merge([], value);
+        dop.core.set(destiny, prop, value);
+    }
+}
+};
+
+
+
+
 
 /*
     // Array mutations
@@ -42,19 +77,4 @@ dop.setActionMutator = function(destiny, prop, value, typeofValue) {
     }
     
     // Extending
-    else*/ if (valueIsObjectRegistrable && !destinyIsObjectRegistrable)
-        dop.core.set(destiny, prop, (typeofValue == 'array') ? [] : {});
-
-    // Delete
-    else if (typeofValue=='undefined')
-        dop.core.delete(destiny, prop);
-
-    // Set
-    else if (!valueIsObjectRegistrable)
-        dop.core.set(destiny, prop, value);
-};
-
-dop.core.setActionLoop = function(source, prop) {
-    if (prop === CONS.dop)
-        return true;
-};
+    else*/ 
