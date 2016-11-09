@@ -282,7 +282,7 @@ test('Creating a subarray', function(t) {
     console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
-    set(objectServer, 'one', []);
+    set(objectServer, 'one', {});
     var actions = applyAction(collector);
     // tests
     maketest(t, actions);

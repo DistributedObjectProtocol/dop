@@ -13,34 +13,35 @@ dop.core.setActionLoop = function(source, prop, value, destiny, path) {
 };
 
 dop.setActionMutator = function(destiny, prop, value, typeofValue, path) {
-if (path.length > 1) {
-    // console.log( path, prop );
-    var valueIsObjectRegistrable = (typeofValue=='object' || typeofValue=='array'),
-        destinyTypeof = dop.util.typeof(destiny[prop]);
+
+    if (path.length > 1) {
+
+        var valueIsObjectRegistrable = (typeofValue=='object' || typeofValue=='array'),
+            destinyTypeof = dop.util.typeof(destiny[prop]);
 
 
-    if (valueIsObjectRegistrable && destinyTypeof!='object' && destinyTypeof!='array') {
-        if (destinyTypeof == 'object')
-            1+1;
-        else if (destinyTypeof == 'array')
-            2+2;
+        if (valueIsObjectRegistrable && destinyTypeof!='object' && destinyTypeof!='array') {
+            if (destinyTypeof == 'object')
+                1+1;
+            else if (destinyTypeof == 'array')
+                2+2;
 
-        dop.core.set(destiny, prop, (typeofValue == 'array') ? [] : {});
+            dop.core.set(destiny, prop, (typeofValue == 'array') ? [] : {});
+        }
+
+        // Delete
+        else if (typeofValue=='undefined')
+            dop.core.delete(destiny, prop);
+
+        // Set
+        else if (!valueIsObjectRegistrable) {
+            if (typeofValue=='object')
+                value = dop.util.merge({}, value);
+            if (typeofValue=='array')
+                value = dop.util.merge([], value);
+            dop.core.set(destiny, prop, value);
+        }
     }
-
-    // Delete
-    else if (typeofValue=='undefined')
-        dop.core.delete(destiny, prop);
-
-    // Set
-    else if (!valueIsObjectRegistrable) {
-        if (typeofValue=='object')
-            value = dop.util.merge({}, value);
-        if (typeofValue=='array')
-            value = dop.util.merge([], value);
-        dop.core.set(destiny, prop, value);
-    }
-}
 };
 
 
