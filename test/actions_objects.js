@@ -1,6 +1,5 @@
 var test = require('tape');
 // require('tabe').createStream( test );
-var requireNew = require('require-new');
 var dop = require('../dist/nodejs');
 var dopClient = dop.create();
 var dopClientTwo = dop.create();

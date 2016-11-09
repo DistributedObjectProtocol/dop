@@ -30,7 +30,7 @@ dop.core.decode = function(property, value, undefineds) {
             return new RegExp(split[1], split[2]);
         }
 
-        if (value[0] === '~')
+        if (value[0] === '~') // https://jsperf.com/charat-vs-index/5
             return value.substring(1);
 
 

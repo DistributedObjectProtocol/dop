@@ -21,8 +21,8 @@ dop.core.encode = function(property, value) {
     if (tof == 'object' && value instanceof RegExp)
         return '~R' + value.toString();
 
-    if (tof == 'string' && value[0] === '~')
-        return '~'+value; // https://jsperf.com/charat-vs-index/5
+    if (tof == 'string' && value[0] === '~') // https://jsperf.com/charat-vs-index/5
+        return '~'+value;
 
     return value;
 

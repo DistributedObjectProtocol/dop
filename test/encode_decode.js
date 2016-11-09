@@ -31,7 +31,7 @@ test('Multiple data', function(t) {
     decoded = dop.decode(dop.encode(data));
     t.equal(JSON.stringify(decoded), JSON.stringify(data), 'Stringify');
     t.equal(typeof decoded.function, 'function', 'Has function');
-    console.log( decoded);
+    // console.log( decoded);
     t.end();
 });
 

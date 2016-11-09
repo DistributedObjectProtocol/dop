@@ -27,3 +27,7 @@ dop.getObjectRootById = function(object_id) {
 dop.getObjectTarget = function(object) {
     return dop.getObjectDop(object).t;
 };
+
+dop.isRegistered = function (object) {
+    return (dop.util.isObject(object) && dop.getObjectDop(object) !== undefined);
+};
