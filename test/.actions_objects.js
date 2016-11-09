@@ -8,9 +8,9 @@ var del = dop.del;
 var encode = dop.encode;
 var decode = dop.decode;
 
-var objectServer = dop.register({},{proxy:false});
-var objectClient = dopClient.register({},{proxy:false});
-var objectClientTwo = dopClientTwo.register({},{proxy:false});
+var objectServer = dop.register({});
+var objectClient = dopClient.register({});
+var objectClientTwo = dopClientTwo.register({});
 
 function applyAction(collectorServer) {
     var actionServer = decode(encode(collectorServer.getAction()));
@@ -282,7 +282,7 @@ test('Creating a subarray', function(t) {
     console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
-    set(objectServer, 'one', {});
+    set(objectServer, 'one', []);
     var actions = applyAction(collector);
     // tests
     maketest(t, actions);

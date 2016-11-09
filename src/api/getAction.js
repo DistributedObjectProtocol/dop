@@ -37,24 +37,41 @@ dop.util.injectMutationInAction = function(action, mutation) {
         value = mutation.object[prop],
         typeofValue = dop.util.typeof(value),
         index = 0,
-        total = path.length-1,
         isArray = Array.isArray,
-        parent, pathIndex;
+        parent;
 
 
-    if (!isMutationArray) {
-        path.push(mutation.name);
-        total += 1;
-    }
+    if (!isMutationArray)
+        path.push(prop);
 
-    for (;index<total; ++index) {
+    for (;index<path.length-1; ++index) {
         parent = action;
-        pathIndex = path[index];
-        object = object[pathIndex];
-        action = action.hasOwnProperty(pathIndex) ? action[pathIndex] : action[pathIndex]=isArray(object) ? [] : {};
+        prop = path[index];
+        object = object[prop];
+        action = action.hasOwnProperty(prop) ? action[prop] : action[prop]=isArray(object) ? [] : {};
     }
 
-    action[prop] = (typeofValue=='object' || typeofValue=='array') ? dop.util.merge(typeofValue=='array'?[]:{},value) : value;
+    prop = path[index];
+
+    if (isMutationArray || isArray(object)) {
+console.log( isArray(object), object );
+
+        if (!dop.util.isObject(action[prop])) 
+            action[prop] = {};
+
+        if (!dop.util.isObject(action[prop][CONS.dop]))
+            action[prop][CONS.dop] = [];
+
+        var mutations = action[prop][CONS.dop];
+
+        // splice
+        if (mutation.splice!==undefined)
+            mutations.push(mutation.splice);
+
+    }
+
+    else
+        action[prop] = (typeofValue=='object' || typeofValue=='array') ? dop.util.merge(typeofValue=='array'?[]:{},value) : value;
 };
 
 
