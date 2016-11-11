@@ -336,21 +336,17 @@ test('Setting a array internaly', function(t) {
 });
 
 
-// test('Pushing items and changing properties internaly', function(t) {
-//     var actionExpected = {"one":{"2":{"2":{"array":["lol","xD"]}}}};
-//     var mutationsExpected = 1;
+test('Pushing items and changing properties internaly', function(t) {
+    var actionExpected = {one:{3:{2:{array:{"~dop":[[2,1,"juas"],[3,0,"omg"]]}}},"~dop":[[5,0,"omg"],[0,-5,1,4,2,3]]},two:undefined};
+    var mutationsExpected = 5;
 
-//     var collector = dop.collect();
-//     set(objectServer.one[2][2].array, 2, 'juas');
-//     console.log(objectServer.one[2][2].array["~dop"].slice(0))
-//     // objectServer.one[2][2].array.push('omg');
-//     objectServer.one.push('omg');
-//     console.log(objectServer.one[2][2].array["~dop"].slice(0))
-// debugger;
-//     objectServer.one.reverse();
-//     console.log(objectServer.one[3][2].array["~dop"].slice(0))
-//     // del(objectServer, 'two');
-//     var actionGenerated = applyAction(collector);
-//     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
-//     maketest(t, actionGenerated, actionExpected);
-// });
+    var collector = dop.collect();
+    set(objectServer.one[2][2].array, 2, 'juas');
+    objectServer.one[2][2].array.push('omg');
+    objectServer.one.push('omg');
+    objectServer.one.reverse();
+    del(objectServer, 'two');
+    var actionGenerated = applyAction(collector);
+    t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
+    maketest(t, actionGenerated, actionExpected);
+});
