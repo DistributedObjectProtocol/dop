@@ -11,8 +11,7 @@ dop.core.sort = function(array, compareFunction) {
     swaps = dop.core.sortDiff(objectTarget, array.slice(0));
     if (swaps.length>1 && (objectTarget===objectProxy || array===objectProxy))
         dop.core.storeMutation({
-            object:dop.getObjectDop(objectProxy)._,
-            name:dop.getObjectProperty(objectProxy),
+            object:objectProxy,
             swaps:swaps
         });
     return output;

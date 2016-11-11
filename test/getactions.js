@@ -16,6 +16,7 @@ function applyAction(collector) {
 }
 
 function maketest(t, actionGenerated, actionExpected, checkEncode) {
+    console.log( '###', encode(actionGenerated) );
     t.deepEqual(actionGenerated, actionExpected, 'deepEqual');
     if (checkEncode!==false)
     t.equal(encode(actionGenerated), encode(actionExpected), 'equal');
@@ -236,15 +237,26 @@ test('Setting an object after array', function(t) {
     maketest(t, actionGenerated, actionExpected);
 });
 
+test('Setting an array and pushing changes', function(t) {
+    var actionExpected = {one:[0,2,[3,4],5]};
+    var mutationsExpected = 3;
 
+    var collector = dop.collect();
+    set(objectServer, 'one', [1,2,[3,4]]);
+    set(objectServer.one, 0, 0);
+    objectServer.one.push(5);
+    var actionGenerated = applyAction(collector);
+    t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
+    maketest(t, actionGenerated, actionExpected);
+});
 
 
 test('Pushing an item', function(t) {
-    var actionExpected = {one:{"~dop":[[3,0,6]]}};
+    var actionExpected = {one:{"~dop":[[4,0,7]]}};
     var mutationsExpected = 1;
 
     var collector = dop.collect();
-    objectServer.one.push(6);
+    objectServer.one.push(7);
     var actionGenerated = applyAction(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, actionGenerated, actionExpected);
@@ -254,13 +266,91 @@ test('Pushing an item', function(t) {
 
 
 test('Setting an item of array', function(t) {
-    var actionExpected = {one:{"~dop":[[2,1,'DOS']]}};
+    var actionExpected = {one:{"~dop":[[1,1,'DOS']]}};
     var mutationsExpected = 1;
 
     var collector = dop.collect();
     set(objectServer.one, 1, 'DOS');
-    debugger
     var actionGenerated = applyAction(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, actionGenerated, actionExpected);
 });
+
+
+test('Setting a subobject into an array', function(t) {
+    var actionExpected = {"one":{"2":{"~dop":[[2,1,{}]]}}};
+    var mutationsExpected = 1;
+
+    var collector = dop.collect();
+    set(objectServer.one[2], 2, {});
+    var actionGenerated = applyAction(collector);
+    t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
+    maketest(t, actionGenerated, actionExpected);
+});
+
+test('Setting a property of a subobject that is into an array', function(t) {
+    var actionExpected = {"one":{"2":{"2":{the:"end"}}}};
+    var mutationsExpected = 1;
+
+    var collector = dop.collect();
+    set(objectServer.one[2][2], 'the', 'end');
+    var actionGenerated = applyAction(collector);
+    t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
+    maketest(t, actionGenerated, actionExpected);
+});
+
+
+test('Setting a property of a subobject that is into an array', function(t) {
+    var actionExpected = {"one":{"2":{"2":{array:['lol']}}}};
+    var mutationsExpected = 1;
+
+    var collector = dop.collect();
+    set(objectServer.one[2][2], 'array', ['lol']);
+    var actionGenerated = applyAction(collector);
+    t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
+    maketest(t, actionGenerated, actionExpected);
+});
+
+
+test('Pushing an item of a subarray that is into an array', function(t) {
+    var actionExpected = {"one":{"2":{"2":{"array":{"~dop":[[1,0,"xD"]]}}}}};
+    var mutationsExpected = 1;
+
+    var collector = dop.collect();
+    objectServer.one[2][2].array.push('xD');
+    var actionGenerated = applyAction(collector);
+    t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
+    maketest(t, actionGenerated, actionExpected);
+});
+
+
+test('Setting a array internaly', function(t) {
+    var actionExpected = {"one":{"2":{"2":{"array":["lol","xD"]}}}};
+    var mutationsExpected = 1;
+
+    var collector = dop.collect();
+    set(objectServer.one[2][2], 'array', ['lol','xD']);
+    var actionGenerated = applyAction(collector);
+    t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
+    maketest(t, actionGenerated, actionExpected);
+});
+
+
+// test('Pushing items and changing properties internaly', function(t) {
+//     var actionExpected = {"one":{"2":{"2":{"array":["lol","xD"]}}}};
+//     var mutationsExpected = 1;
+
+//     var collector = dop.collect();
+//     set(objectServer.one[2][2].array, 2, 'juas');
+//     console.log(objectServer.one[2][2].array["~dop"].slice(0))
+//     // objectServer.one[2][2].array.push('omg');
+//     objectServer.one.push('omg');
+//     console.log(objectServer.one[2][2].array["~dop"].slice(0))
+// debugger;
+//     objectServer.one.reverse();
+//     console.log(objectServer.one[3][2].array["~dop"].slice(0))
+//     // del(objectServer, 'two');
+//     var actionGenerated = applyAction(collector);
+//     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
+//     maketest(t, actionGenerated, actionExpected);
+// });

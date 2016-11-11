@@ -12,24 +12,8 @@ dop.getAction = function(mutations) {
     return action;
 };
 
-dop.core.objectIsStillStoredOnPath = function(object) {
-
-    var path = dop.getObjectDop(object),
-        index = path.length-1,
-        parent;
-
-    for (;index>0; --index) {
-        parent = (index>1) ? dop.getObjectDop(object)._ : dop.data.object[path[0]];
-        if (parent[path[index]] !== object)
-            return false;
-        object = dop.getObjectProxy(parent);
-    }
-
-    return true;
-};
-
 dop.util.injectMutationInAction = function(action, mutation) {
-
+var act=action;
     var isMutationArray = mutation.splice!==undefined || mutation.swaps!==undefined,
         path = dop.getObjectDop(mutation.object).slice(0),
         object = dop.data.object,
@@ -48,33 +32,62 @@ dop.util.injectMutationInAction = function(action, mutation) {
         parent = action;
         prop = path[index];
         object = object[prop];
-        action = action.hasOwnProperty(prop) ? action[prop] : action[prop]=isArray(object) ? [] : {};
+        action = action.hasOwnProperty(prop) ? action[prop] : action[prop]={};
     }
 
     prop = path[index];
 
     if (isMutationArray || isArray(object)) {
-console.log( isArray(object), object );
 
-        if (!dop.util.isObject(action[prop])) 
+        if (isMutationArray && !dop.util.isObject(action[prop])) 
             action[prop] = {};
 
-        if (!dop.util.isObject(action[prop][CONS.dop]))
-            action[prop][CONS.dop] = [];
+        if (isMutationArray)
+            action = action[prop];
 
-        var mutations = action[prop][CONS.dop];
+        if (!dop.util.isObject(action[CONS.dop]))
+            action[CONS.dop] = [];
+            
+        var mutations = action[CONS.dop];
 
         // splice
         if (mutation.splice!==undefined)
-            mutations.push(mutation.splice);
+            mutations.push(mutation.splice.slice(0));
 
+        // swap
+        else if (mutation.swaps!==undefined) {
+            var swaps = mutation.swaps.slice(0),
+                tochange = (swaps[0]>0) ? 0 : 1;
+            swaps[tochange] = swaps[tochange]*-1;
+            mutations.push(swaps);
+        }
+
+        // set
+        else
+            mutations.push([prop, 1, value]);
     }
 
+    // set
     else
         action[prop] = (typeofValue=='object' || typeofValue=='array') ? dop.util.merge(typeofValue=='array'?[]:{},value) : value;
 };
 
 
+dop.core.objectIsStillStoredOnPath = function(object) {
+
+    var path = dop.getObjectDop(object),
+        index = path.length-1,
+        parent;
+
+    for (;index>0; --index) {
+        parent = (index>1) ? dop.getObjectDop(object)._ : dop.data.object[path[0]];
+        if (parent[path[index]] !== object)
+            return false;
+        object = dop.getObjectProxy(parent);
+    }
+
+    return true;
+};
 
 
 
