@@ -24,10 +24,10 @@ dop.util.pathRecursive = function (source, callback, destiny, mutator, circular,
             typeofValue = dop.util.typeof(value);
 
             if (hasDestiny)
-                mutator(destiny, prop, value, typeofValue, path);
+                skip = mutator(destiny, prop, value, typeofValue, path);
 
             // Objects or arrays
-            if ((typeofValue=='object' || typeofValue=='array') && value!==source && circular.indexOf(value)==-1) {
+            if ((typeofValue=='object' || typeofValue=='array') && skip !== true && value!==source && circular.indexOf(value)==-1) {
                 circular.push(value);
                 dop.util.pathRecursive(value, callback, hasDestiny?destiny[prop]:undefined, mutator, circular, path, hasCallback, hasDestiny);
             }

@@ -294,58 +294,75 @@ test('Creating a subarray with items', function(t) {
     // mutations
     var collector = dop.collect();
     set(objectServer, 'one', [1,2,[3,4]]);
-    debugger
     var actions = applyAction(collector);
     // tests
     maketest(t, actions);
 });
 
-// test('Adding a property of the subclass', function(t) {
-//     console.log("### Before Server: " + encode(objectServer));
-//     console.log("### Before Client: " + encode(objectClient));
-//     // mutations
-//     var collector = dop.collect();
-//     set(objectServer.one, 'one', 'uno');
-//     var actions = applyAction(collector);
-//     // tests
-//     maketest(t, actions);
-// });
 
-// test('Adding a subobject of subclass', function(t) {
-//     console.log("### Before Server: " + encode(objectServer));
-//     console.log("### Before Client: " + encode(objectClient));
-//     // mutations
-//     var collector = dop.collect();
-//     del(objectServer, 'two');
-//     set(objectServer.one, 'two', {three:'tres'});
-//     var actions = applyAction(collector);
-//     // tests
-//     maketest(t, actions);
-// });
-
-// test('Editing a property of subclass', function(t) {
-//     console.log("### Before Server: " + encode(objectServer));
-//     console.log("### Before Client: " + encode(objectClient));
-//     // mutations
-//     var collector = dop.collect();
-//     set(objectServer.one.two, 'three', new MyClass());
-//         debugger;
-//     var actions = applyAction(collector);
-//     // tests
-//     maketest(t, actions);
-// });
-
-// test('Editing a property of subobject and after removing the parent', function(t) {
-//     console.log("### Before Server: " + encode(objectServer));
-//     console.log("### Before Client: " + encode(objectClient));
-//     // mutations
-//     var collector = dop.collect();
-//     set(objectServer.one.two, 'two', 'dosChangedAgain');
-//     del(objectServer, 'one');
-//     var actions = applyAction(collector);
-//     // tests
-//     maketest(t, actions);
-// });
+test('Editing items of array', function(t) {
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
+    // mutations
+    var collector = dop.collect();
+    set(objectServer.one, 0, 'Changed');
+    var actions = applyAction(collector);
+    // tests
+    maketest(t, actions);
+});
 
 
+test('Pushing and unshift', function(t) {
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
+    // mutations
+    var collector = dop.collect();
+    objectServer.one.unshift();
+    objectServer.one.push(5,[6,7]);
+    var actions = applyAction(collector);
+    // tests
+    maketest(t, actions);
+});
 
+
+test('Reverse', function(t) {
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
+    // mutations
+    var collector = dop.collect();
+    objectServer.one.reverse();
+    var actions = applyAction(collector);
+    // tests
+    maketest(t, actions);
+});
+
+
+test('Sort', function(t) {
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
+    // mutations
+    var collector = dop.collect();
+    objectServer.one.sort();
+    var actions = applyAction(collector);
+    // tests
+    maketest(t, actions);
+});
+
+
+test('All array mutations', function(t) {
+    console.log("### Before Server: " + encode(objectServer));
+    console.log("### Before Client: " + encode(objectClient));
+    // mutations
+    var collector = dop.collect();
+    set(objectServer.one, 4, 'Changed Again');
+    objectServer.one.push({new:"Item"});
+    set(objectServer.one[5], 'Other', 'property');
+    objectServer.one.sort();
+    objectServer.one.pop();
+    objectServer.one.push({new2:"Item2"});
+    set(objectServer.one[5], 'Other2', 'property2');
+    objectServer.one.reverse();
+    var actions = applyAction(collector);
+    // tests
+    maketest(t, actions, false);
+});

@@ -5,10 +5,11 @@
 dop.core.sort = function(array, compareFunction) {
     var objectTarget = dop.getObjectTarget(array),
         objectProxy = dop.getObjectProxy(array),
+        copy = objectTarget.slice(0),
         output, swaps;
 
     output = Array.prototype.sort.call(objectTarget, compareFunction);
-    swaps = dop.core.sortDiff(objectTarget, array.slice(0));
+    swaps = dop.core.sortDiff(objectTarget, copy);
     if (swaps.length>1 && (objectTarget===objectProxy || array===objectProxy))
         dop.core.storeMutation({
             object:objectProxy,

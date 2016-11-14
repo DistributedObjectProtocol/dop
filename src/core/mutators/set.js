@@ -24,7 +24,7 @@ dop.core.set = function(object, property, value) {
             }
 
             if (objectTarget===objectProxy || object===objectProxy) {
-                var mutation = {object:objectProxy, name:property};
+                var mutation = {object:objectProxy, name:property, value:value};
                 if (hasOwnProperty)
                     mutation.oldValue = oldValue;
                 if (Array.isArray(value)) // We cant store the original array cuz when we inject the mutation into the action object could be different from the original

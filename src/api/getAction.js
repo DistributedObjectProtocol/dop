@@ -13,12 +13,12 @@ dop.getAction = function(mutations) {
 };
 
 dop.util.injectMutationInAction = function(action, mutation) {
-var act=action;
+
     var isMutationArray = mutation.splice!==undefined || mutation.swaps!==undefined,
         path = dop.getObjectDop(mutation.object).slice(0),
         object = dop.data.object,
         prop = mutation.name,
-        value = mutation.object[prop],
+        value = mutation.value,
         typeofValue = dop.util.typeof(value),
         index = 0,
         isArray = Array.isArray,
