@@ -14,12 +14,10 @@ dop.util.pathRecursive = function (source, callback, destiny, mutator, circular,
 
         skip = false;
         value = source[prop];
+        path.push(prop);
 
-        if (hasCallback) {
-            path.push(prop);
+        if (hasCallback)
             skip = callback(source, prop, value, destiny, path, this);
-            // skip = callback(source, prop, value, destiny, this);
-        }
 
         if (skip !== true) {
 
@@ -34,8 +32,7 @@ dop.util.pathRecursive = function (source, callback, destiny, mutator, circular,
                 dop.util.pathRecursive(value, callback, hasDestiny?destiny[prop]:undefined, mutator, circular, path, hasCallback, hasDestiny);
             }
 
-            if (hasCallback)
-                path.pop();
+            path.pop();
         }
     }
 };

@@ -1,5 +1,5 @@
 var test = require('tape');
-var dop = require('../dist/nodejs');
+var dop = require('../dist/nodejs').create();
 var set = dop.set;
 var del = dop.del;
 var encode = dop.encode;
@@ -12,7 +12,7 @@ var arrayServer = dop.register([]);
 function applyAction(collector) {
     var actionServer = decode(encode(collector.getAction()));
     collector.destroy();
-    return actionServer[1]||actionServer;
+    return actionServer[1]||actionServer[2]||actionServer;
 }
 
 function maketest(t, actionGenerated, actionExpected, checkEncode) {
@@ -350,3 +350,78 @@ test('Pushing items and changing properties internaly', function(t) {
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, actionGenerated, actionExpected);
 });
+
+
+
+
+
+
+//////////
+// ARRAYS
+//////////
+
+
+test('Setting a property literaly', function(t) {
+    var actionExpected = {"~dop":[[0,1,"testing"]]};
+    var mutationsExpected = 1;
+
+    var collector = dop.collect();
+    set(arrayServer, 0, 'testing');
+    var actionGenerated = applyAction(collector);
+    t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
+    maketest(t, actionGenerated, actionExpected);
+});
+
+
+test('Pushing a property', function(t) {
+    var actionExpected = {"~dop":[[1,0,"second"]]};
+    var mutationsExpected = 1;
+
+    var collector = dop.collect();
+    arrayServer.push('second');
+    var actionGenerated = applyAction(collector);
+    t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
+    maketest(t, actionGenerated, actionExpected);
+});
+
+test('Adding a subobject', function(t) {
+    var actionExpected = {"~dop":[[2,0,{"obj":123}]]};
+    var mutationsExpected = 1;
+
+    var collector = dop.collect();
+    arrayServer.push({obj:123});
+    var actionGenerated = applyAction(collector);
+    t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
+    maketest(t, actionGenerated, actionExpected);
+});
+
+
+test('Shift and editing subobject', function(t) {
+    var actionExpected = {"1":{"prop":456},"~dop":[[0,1]]};
+    var mutationsExpected = 2;
+
+    var collector = dop.collect();
+    set(arrayServer[2], 'prop', 456);
+    arrayServer.shift();
+    var actionGenerated = applyAction(collector);
+    t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
+    maketest(t, actionGenerated, actionExpected);
+});
+
+
+
+test('Pushing literal arrays', function(t) {
+    var actionExpected = {"1":{"prop":["my","array"]},"~dop":[[2,0,[7,8,[9,10]],11],[0,1,"first"]]};
+    var mutationsExpected = 3;
+
+    var collector = dop.collect();
+    arrayServer.push([7,8,[9,10]],11);
+    set(arrayServer[1], 'prop', ['my','array']);
+    set(arrayServer, 0, 'first');
+    var actionGenerated = applyAction(collector);
+    t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
+    maketest(t, actionGenerated, actionExpected);
+});
+
+
+
