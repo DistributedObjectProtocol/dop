@@ -24,7 +24,7 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
                 total=mutations.length;
 
             if (typeofDestiny!='array')
-                dop.core.set(destiny, prop, []);
+                dop.set(destiny, prop, []);
 
             for (;index<total; ++index) {
                 mutation = mutations[index];
@@ -36,7 +36,7 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
                 }
                 // set
                 else if (mutation.length===3 && mutation[1]===0)
-                    dop.core.set(destiny[prop], mutation[0], mutation[2]);
+                    dop.set(destiny[prop], mutation[0], mutation[2]);
                 // splice
                 else
                     dop.core.splice(destiny[prop], mutation);
@@ -50,23 +50,23 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
 
             // Deeply
             if (typeofValue=='object' && typeofDestiny!='object') {
-                dop.core.set(destiny, prop, {});
+                dop.set(destiny, prop, {});
             }
 
             // Delete
             else if (typeofValue=='undefined')
-                dop.core.delete(destiny, prop);
+                dop.del(destiny, prop);
 
 
             // Set array and skip path deep
             else if (typeofValue=='array') {
-                dop.core.set(destiny, prop, dop.util.merge([], value));
+                dop.set(destiny, prop, dop.util.merge([], value));
                 return true;
             }
 
             // Set value
             else if (typeofValue!='object')
-                dop.core.set(destiny, prop, value);
+                dop.set(destiny, prop, value);
 
         }
     // }
