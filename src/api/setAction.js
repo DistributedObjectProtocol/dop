@@ -35,13 +35,21 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
                     dop.core.swap(destiny[prop], mutation);
                 }
                 // set
-                else if (mutation.length===3 && mutation[1]===0)
-                    dop.set(destiny[prop], mutation[0], mutation[2]);
-                // splice
-                else
-                    dop.core.splice(destiny[prop], mutation);
+                else {
+                    if (destiny[prop].length<mutation[0])
+                        dop.getObjectTarget(destiny[prop]).length = mutation[0];
+                    // set
+                    if (mutation.length===3 && mutation[1]===1) {
+                        (mutation[2] === undefined) ?
+                           dop.del(destiny[prop], mutation[0])
+                        :
+                            dop.set(destiny[prop], mutation[0], mutation[2]);
+                    }
+                    // splice
+                    else
+                        dop.core.splice(destiny[prop], mutation);
+                }
             }
-
 
             return true; // Skiping to dont go inside of dop object/mutations
         }

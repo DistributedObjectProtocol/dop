@@ -38,8 +38,16 @@ dop.util.injectMutationInAction = function(action, mutation, isUnaction) {
             
         var mutations = action[CONS.dop];
 
+        // swap
+        if (mutation.swaps!==undefined) {
+            var swaps = mutation.swaps.slice(0),
+                tochange = (swaps[0]>0) ? 0 : 1;
+            swaps[tochange] = swaps[tochange]*-1;
+            mutations.push(swaps);
+        }
+
         // splice
-        if (mutation.splice!==undefined) {
+        else if (mutation.splice!==undefined) {
             var splice;
             if (isUnaction) {
                 splice = (mutation.spliced) ? mutation.spliced.slice(0) : [];
@@ -51,17 +59,13 @@ dop.util.injectMutationInAction = function(action, mutation, isUnaction) {
             mutations.push(splice);
         }
 
-        // swap
-        else if (mutation.swaps!==undefined) {
-            var swaps = mutation.swaps.slice(0),
-                tochange = (swaps[0]>0) ? 0 : 1;
-            swaps[tochange] = swaps[tochange]*-1;
-            mutations.push(swaps);
-        }
 
         // set
         else
-            mutations.push([prop, 1, value]);
+            mutations.push(//(isUnaction===true && mutation.length<Number(mutation.name)) ?
+                // [mutation.length]
+            // :
+                [prop, 1, value]);
     }
 
     // set
