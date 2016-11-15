@@ -57,9 +57,8 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
         else {
 
             // Deeply
-            if (typeofValue=='object' && typeofDestiny!='object') {
+            if (typeofValue=='object' && !destiny.hasOwnProperty(prop))
                 dop.set(destiny, prop, {});
-            }
 
             // Delete
             else if (typeofValue=='undefined')
@@ -69,6 +68,12 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
             // Set array and skip path deep
             else if (typeofValue=='array') {
                 dop.set(destiny, prop, dop.util.merge([], value));
+                return true;
+            }
+
+            // Set array and skip path deep
+            else if (typeofValue=='object' && typeofDestiny!='object' && typeofDestiny!='array') {
+                dop.set(destiny, prop, dop.util.merge({}, value));
                 return true;
             }
 
