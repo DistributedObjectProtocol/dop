@@ -5,14 +5,8 @@ dop.getUnaction = function(mutations) {
         index = mutations.length-1,
         mutation;
 
-    for (;index>-1; --index) {
-        mutation = mutations[index];
-        dop.util.set(
-            unaction,
-            dop.getObjectDop(mutation.object).slice(0).concat(mutation.name),
-            mutation.oldValue
-       );
-    }
+    for (;index>-1; --index)
+        dop.util.injectMutationInAction(unaction, mutations[index], true);
 
     return unaction;
 };

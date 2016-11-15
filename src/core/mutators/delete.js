@@ -5,7 +5,6 @@ dop.core.delete = function(object, property) {
         
         var objectTarget = dop.getObjectTarget(object),
             objectProxy = dop.getObjectProxy(object);
-        delete objectTarget[property];
 
         if (objectTarget===objectProxy || object===objectProxy) {
             var mutation = {
@@ -14,7 +13,8 @@ dop.core.delete = function(object, property) {
                 oldValue:objectTarget[property]
             };
             dop.core.storeMutation(mutation);
-            return mutation;
         }
+
+        return delete objectTarget[property];
     }
 };

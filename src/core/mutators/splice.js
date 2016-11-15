@@ -63,6 +63,8 @@ dop.core.splice = function(array, args) {
 
 
         if (originallength!==length || itemslength>0) {
+            if (args[0]<0)
+                args[0] = array.length+args[0];
             var mutation = {
                 object:objectProxy,
                 splice:args
