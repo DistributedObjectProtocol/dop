@@ -28,8 +28,8 @@ dop.core.set = function(object, property, value) {
                 var mutation = {object:objectProxy, name:property, value:value};
                 if (hasOwnProperty)
                     mutation.oldValue = oldValue;
-                // if (Array.isArray(objectTarget)) // if is array we must store the length in order to revert it with setUnaction
-                    // mutation.length = length;
+                if (Array.isArray(objectTarget)) // if is array we must store the length in order to revert it with setUnaction
+                    mutation.length = length;
                 if (Array.isArray(value)) // We cant store the original array cuz when we inject the mutation into the action object could be different from the original
                     mutation.valueOriginal = dop.util.merge([], value);
 

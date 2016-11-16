@@ -255,7 +255,6 @@ test('Editing a property of subclass', function(t) {
     console.log("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
-    debugger
     set(objectServer.one.two, 'three', new MyClass());
     // tests
     maketest(t, collector);

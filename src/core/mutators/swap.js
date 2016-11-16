@@ -6,7 +6,7 @@ dop.core.swap = function(array, swaps) {
         var objectTarget = dop.getObjectTarget(array),
             objectProxy = dop.getObjectProxy(array),
             index = 0,
-            total = array.length-1,
+            total = swaps.length,
             tempItem, swapA, swapB;
 
         for (;index<total; index+=2) {

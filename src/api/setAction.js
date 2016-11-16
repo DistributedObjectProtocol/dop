@@ -1,15 +1,12 @@
 
 dop.setAction = function(action) {
     var collector = dop.collectFirst();
-    dop.core.setAction(action, dop.data.object);
+    dop.util.path(action, null, dop.data.object, dop.core.setAction);
     return collector;
 };
 
 
-dop.core.setAction = function(action, destiny) {
-    return dop.util.path(action, null, destiny, dop.core.setActionMutator);
-};
-dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
+dop.core.setAction = function(destiny, prop, value, typeofValue, path) {
 
     // if (path.length > 1) {
 
@@ -51,7 +48,11 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
                 }
             }
 
-            return true; // Skiping to dont go inside of dop object/mutations
+            if (typeof value.length == 'number' && value.length>-1)
+                destiny[prop].length = value.length;
+
+
+            return true; // Skiping to dont go inside of {~dop:...}
         }
 
         else {
@@ -63,7 +64,6 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
             // Delete
             else if (typeofValue=='undefined')
                 dop.del(destiny, prop);
-
 
             // Set array and skip path deep
             else if (typeofValue=='array') {

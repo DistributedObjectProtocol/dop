@@ -59,13 +59,12 @@ dop.util.injectMutationInAction = function(action, mutation, isUnaction) {
             mutations.push(splice);
         }
 
-
         // set
         else
-            mutations.push(//(isUnaction===true && mutation.length<Number(mutation.name)) ?
-                // [mutation.length]
-            // :
-                [prop, 1, value]);
+            mutations.push([prop, 1, value]);
+
+        if (isUnaction===true && mutation.length!==undefined && mutation.length!==object_data.length)
+            action.length = mutation.length;
     }
 
     // set
