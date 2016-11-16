@@ -1,12 +1,17 @@
 var test = require('tape');
 // require('tabe').createStream( test );
-var dop = require('../dist/nodejs');
+var dop = require('../dist/nodejs').create();
 var dopClient = dop.create();
 var dopClientTwo = dop.create();
 var set = dop.set;
 var del = dop.del;
 var encode = dop.encode;
 var decode = dop.decode;
+
+function consolelog() {
+    if (typeof window == 'undefined')
+        console.log.apply(this, arguments);
+}
 
 var objectServer = dop.register([]);
 var objectClient = dopClient.register([]);
@@ -23,15 +28,15 @@ function maketest(t, collectorServer, checkactions) {
     var collectorClient = dopClient.setAction(actionServer);
     var actionClient = decode(encode(collectorClient.getAction()));
     var collectorClientTwo = dopClientTwo.setAction(actionClient);
-    console.log("### Mutations length: " +  collectorServer.mutations.length, collectorClient.mutations.length, collectorClientTwo.mutations.length );
+    consolelog("### Mutations length: " +  collectorServer.mutations.length, collectorClient.mutations.length, collectorClientTwo.mutations.length );
     var actionClientTwo = collectorClientTwo.getAction();
 
-    console.log("### After server: " + encode(objectServer));
-    console.log("### After client: " + encode(objectClient));
-    console.log("### Action1: " + encode(actionServer[1]));
-    console.log("### Action2: " + encode(actionClient[1]));
-    console.log("### Action3: " + encode(actionClientTwo[1]));
-    console.log("### Unaction: " + encode(unaction[1]));
+    consolelog("### After server: " + encode(objectServer));
+    consolelog("### After client: " + encode(objectClient));
+    consolelog("### Action1: " + encode(actionServer[1]));
+    consolelog("### Action2: " + encode(actionClient[1]));
+    consolelog("### Action3: " + encode(actionClientTwo[1]));
+    consolelog("### Unaction: " + encode(unaction[1]));
     t.deepEqual(objectClient, objectServer, 'deepEqual');
     t.equal(encode(objectClient), encode(objectServer), 'equal');
     t.equal(objectClient.length, objectServer.length, 'length');
@@ -43,15 +48,15 @@ function maketest(t, collectorServer, checkactions) {
 
     // Unaction
     dopClient.setAction(unaction);
-    console.log("### Undo client: " + encode(objectClient));
-    t.deepEqual(objectClientCopy, objectClient, 'deepEqual unaction');
+    consolelog("### Undo client: " + encode(objectClient));
+    t.deepEqual(objectClient, objectClientCopy, 'deepEqual unaction');
     t.equal(objectClientCopy.length, objectClient.length, 'length unaction');
     var collectorClient = dopClient.setAction(actionServer);
     t.equal(objectClient.length, objectServer.length, 'length unaction');
-    console.log("### Redo client: " + encode(objectClient));
+    consolelog("### Redo client: " + encode(objectClient));
 
-    console.log( '' );
-    console.log( '' );
+    consolelog( '' );
+    consolelog( '' );
 }
 
 
@@ -67,8 +72,8 @@ function maketest(t, collectorServer, checkactions) {
 
 
 test('Adding property', function(t) {
-    console.log("### Before Server: " + encode(objectServer));
-    console.log("### Before Client: " + encode(objectClient));
+    consolelog("### Before Server: " + encode(objectServer));
+    consolelog("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer, '1', 'one');
@@ -79,8 +84,8 @@ test('Adding property', function(t) {
 
 
 test('Editing property with the same value', function(t) {
-    console.log("### Before Server: " + encode(objectServer));
-    console.log("### Before Client: " + encode(objectClient));
+    consolelog("### Before Server: " + encode(objectServer));
+    consolelog("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer, 0, 'one');
@@ -91,8 +96,8 @@ test('Editing property with the same value', function(t) {
 
 
 test('Editing property already registered', function(t) {
-    console.log("### Before Server: " + encode(objectServer));
-    console.log("### Before Client: " + encode(objectClient));
+    consolelog("### Before Server: " + encode(objectServer));
+    consolelog("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer, 0, 'oneChanged');
@@ -103,8 +108,8 @@ test('Editing property already registered', function(t) {
 
 
 test('Delete property', function(t) {
-    console.log("### Before Server: " + encode(objectServer));
-    console.log("### Before Client: " + encode(objectClient));
+    consolelog("### Before Server: " + encode(objectServer));
+    consolelog("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     del(objectServer, 0);
@@ -115,8 +120,8 @@ test('Delete property', function(t) {
 
 
 test('Change and delete a removed item', function(t) {
-    console.log("### Before Server: " + encode(objectServer));
-    console.log("### Before Client: " + encode(objectClient));
+    consolelog("### Before Server: " + encode(objectServer));
+    consolelog("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer, 0, 'Changeddd');
@@ -128,8 +133,8 @@ test('Change and delete a removed item', function(t) {
 });
 
 test('Creating a subobject', function(t) {
-    console.log("### Before Server: " + encode(objectServer));
-    console.log("### Before Client: " + encode(objectClient));
+    consolelog("### Before Server: " + encode(objectServer));
+    consolelog("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer, 0, {});
@@ -139,8 +144,8 @@ test('Creating a subobject', function(t) {
 });
 
 test('Adding a property of the subobject', function(t) {
-    console.log("### Before Server: " + encode(objectServer));
-    console.log("### Before Client: " + encode(objectClient));
+    consolelog("### Before Server: " + encode(objectServer));
+    consolelog("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer[0], 'one', 'uno');
@@ -150,8 +155,8 @@ test('Adding a property of the subobject', function(t) {
 });
 
 test('Adding a subobject of subobject', function(t) {
-    console.log("### Before Server: " + encode(objectServer));
-    console.log("### Before Client: " + encode(objectClient));
+    consolelog("### Before Server: " + encode(objectServer));
+    consolelog("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     del(objectServer, 0);
@@ -175,8 +180,8 @@ test('Adding a subobject of subobject', function(t) {
 
 
 test('Creating a subarray', function(t) {
-    console.log("### Before Server: " + encode(objectServer));
-    console.log("### Before Client: " + encode(objectClient));
+    consolelog("### Before Server: " + encode(objectServer));
+    consolelog("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer, 0, []);
@@ -186,8 +191,8 @@ test('Creating a subarray', function(t) {
 });
 
 test('Creating a subarray with items', function(t) {
-    console.log("### Before Server: " + encode(objectServer));
-    console.log("### Before Client: " + encode(objectClient));
+    consolelog("### Before Server: " + encode(objectServer));
+    consolelog("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer, 0, [1,2,[3,4]]);
@@ -198,8 +203,8 @@ test('Creating a subarray with items', function(t) {
 
 
 test('Editing items of array', function(t) {
-    console.log("### Before Server: " + encode(objectServer));
-    console.log("### Before Client: " + encode(objectClient));
+    consolelog("### Before Server: " + encode(objectServer));
+    consolelog("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer, 0, 'Changed');
@@ -210,12 +215,13 @@ test('Editing items of array', function(t) {
 
 
 test('Pushing and unshift', function(t) {
-    console.log("### Before Server: " + encode(objectServer));
-    console.log("### Before Client: " + encode(objectClient));
+    consolelog("### Before Server: " + encode(objectServer));
+    consolelog("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     objectServer.unshift();
-    objectServer.push(5,[6,7]);
+    var l = objectServer.push(5,[6,7]);
+    objectServer.splice(l-2,1);
     // tests
     maketest(t, collector);
     t.end();
@@ -223,8 +229,8 @@ test('Pushing and unshift', function(t) {
 
 
 test('Reverse', function(t) {
-    console.log("### Before Server: " + encode(objectServer));
-    console.log("### Before Client: " + encode(objectClient));
+    consolelog("### Before Server: " + encode(objectServer));
+    consolelog("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     objectServer.reverse();
@@ -235,8 +241,8 @@ test('Reverse', function(t) {
 
 
 test('Sort', function(t) {
-    console.log("### Before Server: " + encode(objectServer));
-    console.log("### Before Client: " + encode(objectClient));
+    consolelog("### Before Server: " + encode(objectServer));
+    consolelog("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     objectServer.sort();
@@ -247,8 +253,8 @@ test('Sort', function(t) {
 
 
 test('All array mutations', function(t) {
-    console.log("### Before Server: " + encode(objectServer));
-    console.log("### Before Client: " + encode(objectClient));
+    consolelog("### Before Server: " + encode(objectServer));
+    consolelog("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
     set(objectServer, 4, 'Changed Again');

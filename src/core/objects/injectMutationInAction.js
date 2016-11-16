@@ -40,8 +40,10 @@ dop.util.injectMutationInAction = function(action, mutation, isUnaction) {
 
         // swap
         if (mutation.swaps!==undefined) {
-            var swaps = mutation.swaps.slice(0),
-                tochange = (swaps[0]>0) ? 0 : 1;
+            var swaps = mutation.swaps.slice(0);
+            if (isUnaction)
+                swaps.reverse();
+            var tochange = (swaps[0]>0) ? 0 : 1;
             swaps[tochange] = swaps[tochange]*-1;
             mutations.push(swaps);
         }
@@ -63,7 +65,7 @@ dop.util.injectMutationInAction = function(action, mutation, isUnaction) {
         else
             mutations.push([prop, 1, value]);
 
-        if (isUnaction===true && mutation.length!==undefined && mutation.length!==object_data.length)
+        if (isUnaction && mutation.length!==undefined && mutation.length!==object_data.length)
             action.length = mutation.length;
     }
 
