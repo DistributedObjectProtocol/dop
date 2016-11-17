@@ -47,11 +47,14 @@ function maketest(t, collectorServer, checkactions) {
     t.equal(encode(actionServer), encode(actionClientTwo), 'equal encode actions');
 
     // Unaction
-    dopClient.setAction(unaction);
+    dop.setAction(unaction).destroy();
+    dopClient.setAction(unaction).destroy();
     consolelog("### Undo client: " + encode(objectClient));
-    t.deepEqual(objectClient, objectClientCopy, 'deepEqual unaction');
+    t.deepEqual(objectServer, objectClientCopy, 'deepEqual unaction server');
+    t.deepEqual(objectClient, objectClientCopy, 'deepEqual unaction client');
     t.equal(objectClientCopy.length, objectClient.length, 'length unaction');
-    var collectorClient = dopClient.setAction(actionServer);
+    dop.setAction(actionServer).destroy();
+    dopClient.setAction(actionServer).destroy();
     t.equal(objectClient.length, objectServer.length, 'length unaction');
     consolelog("### Redo client: " + encode(objectClient));
 
@@ -159,7 +162,6 @@ test('Adding a subobject of subobject', function(t) {
     consolelog("### Before Client: " + encode(objectClient));
     // mutations
     var collector = dop.collect();
-    del(objectServer, 0);
     set(objectServer, '1', {two:'dos'});
     // tests
     maketest(t, collector);
@@ -167,6 +169,26 @@ test('Adding a subobject of subobject', function(t) {
 });
 
 
+
+
+
+
+test('Push and shifts', function(t) {
+    consolelog("### Before Server: " + encode(objectServer));
+    consolelog("### Before Client: " + encode(objectClient));
+    // mutations
+    var collector = dop.collect();
+    objectServer.push({one:'one'});
+    objectServer.shift();
+    objectServer.push({two:'two'});
+    objectServer.shift();
+    objectServer.push({three:'three'});
+    objectServer.shift();
+    // tests
+    debugger
+    maketest(t, collector);
+    t.end();
+});
 
 
 
@@ -266,7 +288,6 @@ test('All array mutations', function(t) {
     set(objectServer[5], 'Other2', 'property2');
     objectServer.reverse();
     // tests
-    debugger
     maketest(t, collector, false);
     t.end();
 });
