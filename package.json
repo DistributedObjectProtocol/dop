@@ -4,8 +4,11 @@
   "main": "./dist/nodejs.js",
   "browser": "./dist/browser.js",
   "license": "MIT",
-  "repository": "https://github.com/DistributedObjectProtocol/dop",
   "url": "http://www.distributedobjectprotocol.org",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DistributedObjectProtocol/dop.git"
+  },
   "author": "Josema Gonzalez (http://josema.es/)",
   "description": "A state management for your whole architecture. Based on Distributed Object Protocol.",
   "keywords": [
@@ -58,5 +61,9 @@
     "test-chrome": "browserify test/*.js | tape-run --render=\"faucet\" --browser chrome",
     "test-safari": "browserify test/*.js | tape-run --render=\"faucet\" --browser safari",
     "test-firefox": "browserify test/*.js | tape-run --render=\"faucet\" --browser firefox"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/DistributedObjectProtocol/transports/issues"
+  },
+  "license": "MIT"
 }

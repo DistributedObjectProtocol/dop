@@ -185,7 +185,6 @@ test('Push and shifts', function(t) {
     objectServer.push({three:'three'});
     objectServer.shift();
     // tests
-    debugger
     maketest(t, collector);
     t.end();
 });
