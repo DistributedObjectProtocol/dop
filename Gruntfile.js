@@ -17,7 +17,7 @@ module.exports = function(grunt) {
 
         copy: {
             main: {
-                src: '../dop-transports/javascript/browser/websocket/connect.js',
+                src: 'node_modules/dop-transports/browser/websocket/connect.js',
                 dest: 'src/env/browser/websocket.js',
             },
         },

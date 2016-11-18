@@ -1,8 +1,9 @@
 
-dop.core.connector = function(options) {
+dop.core.connector = function(args) {
     var node = new dop.core.node();
-    node.options = options;
-    node.transport = options.transport;
-    node.socket = options.transport(options, dop, node);
+    args.unshift(dop, node);
+    node.options = args[2];
+    node.transport = node.options.transport;
+    node.socket = node.options.transport.apply(this, args);
     return node;
 };

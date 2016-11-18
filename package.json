@@ -39,7 +39,7 @@
     "meteor"
   ],
   "dependencies": {
-    "ws": "^0.7.2"
+    "dop-transports": "^1.0.0"
   },
   "devDependencies": {
     "express": "^4.13.4",

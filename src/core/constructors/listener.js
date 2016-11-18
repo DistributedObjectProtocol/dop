@@ -1,9 +1,10 @@
 
-dop.core.listener = function(options) {
+dop.core.listener = function(args) {
     // Inherit emitter
     dop.util.emitter.call(this); //https://jsperf.com/inheritance-call-vs-object-assign
-    this.options = options;
-    this.transport = options.transport(options, dop, this);
+    args.unshift(dop, this);
+    this.options = args[2];
+    this.transport = this.options.transport.apply(this, args);
 };
 // Inherit emitter
 Object.assign(dop.core.listener.prototype, dop.util.emitter.prototype);
