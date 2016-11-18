@@ -4,5 +4,5 @@ dop.connect = function(options) {
         options = {};
     if (typeof options.transport != 'function')
         options.transport = dop.transport.connect.WebSocket;
-    return dop.core.connect(options);
+    return dop.core.connector(options);
 };

@@ -13,6 +13,7 @@
   "description": "A state management for your whole architecture. Based on Distributed Object Protocol.",
   "keywords": [
     "state management",
+    "realtime",
     "data flow",
     "distributed",
     "objects",

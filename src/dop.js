@@ -2,6 +2,7 @@
 
 var dop = {
     version: '0.1.0',
+    name: 'dop', // Useful for transport (websockets namespaces)
     create: factory,
 
     // Where all the internal information is stored
