@@ -65,6 +65,5 @@
   },
   "bugs": {
     "url": "https://github.com/DistributedObjectProtocol/transports/issues"
-  },
-  "license": "MIT"
+  }
 }

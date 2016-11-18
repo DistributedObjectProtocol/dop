@@ -15,6 +15,13 @@ module.exports = function(grunt) {
             },
         },
 
+        copy: {
+            main: {
+                src: '../dop-transports/javascript/browser/websocket/connect.js',
+                dest: 'src/env/browser/websocket.js',
+            },
+        },
+
         concat: {
             options: {
                 process: function(src, filepath) {
@@ -60,13 +67,13 @@ module.exports = function(grunt) {
 
 
 
-    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
 
-
-    var tasks = ['concat:nodejs', 'concat:browser', 'uglify'];
+    var tasks = ['copy', 'concat:nodejs', 'concat:browser', 'uglify'];
     if (grunt.option('build') === undefined)
         tasks.push('watch');
     grunt.registerTask('default', tasks);

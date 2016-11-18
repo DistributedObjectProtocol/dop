@@ -1,7 +1,7 @@
 
 dop.core.node = function() {
     // Inherit emitter
-    Object.assign(this, dop.util.emitter.prototype);
+    dop.util.emitter.call(this); //https://jsperf.com/inheritance-call-vs-object-assign
     this.status = 0;
     this.object_owned = {};
     this.object_subscribed = {};
@@ -10,6 +10,8 @@ dop.core.node = function() {
     this.requests_queue = [];
     this.sends_queue = [];
 };
+// Inherit emitter
+Object.assign(dop.core.node.prototype, dop.util.emitter.prototype);
 
 
 
