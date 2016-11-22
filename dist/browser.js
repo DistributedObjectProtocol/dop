@@ -188,22 +188,6 @@ var connectWebsocket = function(dop, node, options) {
     return socket;
 };
 
-// //nodejs
-// window=undefined
-// module.exports = true
-// dop=undefined
-
-// //es6
-// window={}
-// module.exports = {}
-// dop=undefined
-
-// //cdn
-// window={}
-// module.exports = undefined
-// dop={}
-
-
 if (typeof dop=='undefined' && typeof module == 'object' && module.exports) {
     connectWebsocket.api = require('ws');
     module.exports = connectWebsocket;
