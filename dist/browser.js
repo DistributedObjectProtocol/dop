@@ -3,7 +3,7 @@
 (function factory(root) {
 
 var dop = {
-    version: '0.3.0',
+    version: '0.3.1',
     name: 'dop', // Useful for transport (websockets namespaces)
     create: factory,
 
@@ -188,11 +188,9 @@ var connectWebsocket = function(dop, node, options) {
     return socket;
 };
 
-if (typeof dop=='undefined' && typeof module == 'object' && module.exports) {
-    connectWebsocket.api = require('ws');
+if (typeof dop=='undefined' && typeof module == 'object' && module.exports)
     module.exports = connectWebsocket;
-}
-else if (typeof window != 'undefined')
+else
     connectWebsocket.api = window.WebSocket;
 
 

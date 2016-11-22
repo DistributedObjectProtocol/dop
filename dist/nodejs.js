@@ -3,7 +3,7 @@
 (function factory(root) {
 
 var dop = {
-    version: '0.3.0',
+    version: '0.3.1',
     name: 'dop', // Useful for transport (websockets namespaces)
     create: factory,
 
