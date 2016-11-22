@@ -4,7 +4,7 @@ var dopTransportConnectWebSocket = function(dop, node, options) {
     var url = 'ws://localhost:4444/';
 
     if (typeof options.url == 'string')
-        url = options.url;
+        url = options.url.replace('http','ws');
     else if (/http/.test(window.location.href)) {
         var domain_prefix = /(ss|ps)?:\/\/([^\/]+)\/?(.+)?/.exec(window.location.href);
         var protocol = domain_prefix[1] ? 'wss' : 'ws';

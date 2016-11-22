@@ -25,11 +25,11 @@ dop.protocol.instructions = {
 
 
                         // Server -> Client
-    connect: 0,         // [ 1234, 0, <user_token>]
+    connect: 0,         // [ 1234, 0, <user_token>, <options>]
                         // [-1234, 0]
 
                         // Client -> Server
-    reconnect: 1,       // [ 1234, 1, <new_user_token>, <old_user_token>]
+    reconnect: 1,       // [ 1234, 1, <new_user_token>, <old_user_token>, <options>]
                         // [-1234, 0]
 
                         // Subscriptor -> Owner
