@@ -190,7 +190,7 @@ var connectWebsocket = function(dop, node, options) {
 
 if (typeof dop=='undefined' && typeof module == 'object' && module.exports)
     module.exports = connectWebsocket;
-else
+else if (typeof window != 'undefined')
     connectWebsocket.api = window.WebSocket;
 
 
