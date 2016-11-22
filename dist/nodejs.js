@@ -3,7 +3,7 @@
 (function factory(root) {
 
 var dop = {
-    version: '0.1.0',
+    version: '0.3.0',
     name: 'dop', // Useful for transport (websockets namespaces)
     create: factory,
 
@@ -33,6 +33,24 @@ var CONS = {
 };
 
 
+
+
+
+
+//////////  src/env/nodejs/connect.js
+
+dop.connect = function(options) {
+
+    var args = Array.prototype.slice.call(arguments, 0);
+
+    if (dop.util.typeof(args[0]) != 'object')
+        options = args[0] = {};
+
+    if (typeof options.transport != 'function')
+        options.transport = require('dop-transports').connect.websocket;
+
+    return dop.core.connector(args);
+};
 
 
 
@@ -917,13 +935,11 @@ Object.assign(dop.core.listener.prototype, dop.util.emitter.prototype);
 dop.core.node = function() {
     // Inherit emitter
     dop.util.emitter.call(this); //https://jsperf.com/inheritance-call-vs-object-assign
-    this.status = 0;
     this.object_owned = {};
     this.object_subscribed = {};
     this.request_inc = 1;
     this.requests = {};
     this.requests_queue = [];
-    this.sends_queue = [];
 };
 // Inherit emitter
 Object.assign(dop.core.node.prototype, dop.util.emitter.prototype);
@@ -2115,7 +2131,7 @@ dop.core.onopen = function(listener_or_node, socket, transport) {
 
     listener_or_node.emit('open', socket);
 
-    // if side is listener we send token
+    // if listener_or_node is listener we send token
     if (listener_or_node.socket !== socket) {
         var node = new dop.core.node();
         node.transport = transport;
@@ -2124,7 +2140,6 @@ dop.core.onopen = function(listener_or_node, socket, transport) {
         node.listener = listener_or_node;
         dop.protocol.connect(node);
     }
-
 };
 
 
@@ -2136,7 +2151,6 @@ dop.core.onopen = function(listener_or_node, socket, transport) {
 //////////  src/core/protocol/registerNode.js
 
 dop.core.registerNode = function(node, token) {
-    node.status = 1;
     node.token = token;
     node.socket[CONS.socket_token] = token;
     dop.data.node[token] = node;  
@@ -2221,7 +2235,6 @@ dop.protocol._onconnect = function(node, request_id, request, response) {
 
     // Node is connected correctly
     if (response[0]===0) {
-        node.status = 1;
         node.listener.emit('connect', node, token);
         node.emit('connect', token);
     }
@@ -2326,11 +2339,11 @@ dop.protocol.instructions = {
 
 
                         // Server -> Client
-    connect: 0,         // [ 1234, 0, <user_token>]
+    connect: 0,         // [ 1234, 0, <user_token>, <options>]
                         // [-1234, 0]
 
                         // Client -> Server
-    reconnect: 1,       // [ 1234, 1, <new_user_token>, <old_user_token>]
+    reconnect: 1,       // [ 1234, 1, <new_user_token>, <old_user_token>, <options>]
                         // [-1234, 0]
 
                         // Subscriptor -> Owner

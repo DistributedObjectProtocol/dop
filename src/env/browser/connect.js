@@ -7,7 +7,7 @@ dop.connect = function(options) {
         options = args[0] = {};
 
     if (typeof options.transport != 'function')
-        options.transport = dopTransportConnectWebSocket;
+        options.transport = connectWebsocket;
 
     return dop.core.connector(args);
 };

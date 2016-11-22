@@ -3,7 +3,7 @@
 (function factory(root) {
 
 var dop = {
-    version: '0.1.0',
+    version: '0.3.0',
     name: 'dop', // Useful for transport (websockets namespaces)
     create: factory,
 
@@ -47,7 +47,7 @@ dop.connect = function(options) {
         options = args[0] = {};
 
     if (typeof options.transport != 'function')
-        options.transport = dopTransportConnectWebSocket;
+        options.transport = connectWebsocket;
 
     return dop.core.connector(args);
 };
@@ -144,22 +144,33 @@ emitter.emit(name, 4);
 
 //////////  src/env/browser/websocket.js
 
-var dopTransportConnectWebSocket = function(dop, node, options) {
+var connectWebsocket = function(dop, node, options) {
 
     var url = 'ws://localhost:4444/';
 
     if (typeof options.url == 'string')
-        url = options.url;
-    else if (/http/.test(window.location.href)) {
-        var domain_prefix = /(ss|ps)?:\/\/([^\/]+)\/?(.+)?/.exec(window.location.href);
-        var protocol = domain_prefix[1] ? 'wss' : 'ws';
+        url = options.url.replace('http','ws');
+    else if (typeof window!='undefined' && /http/.test(window.location.href)) {
+        var domain_prefix = /(ss|ps)?:\/\/([^\/]+)\/?(.+)?/.exec(window.location.href),
+            protocol = domain_prefix[1] ? 'wss' : 'ws';
         url = protocol+'://'+domain_prefix[2].toLocaleLowerCase()+'/';
     }
 
-    var socket = new options.transport.api(url);
+    var socket = new options.transport.api(url),
+        send = socket.send,
+        send_queue = [];
+
+    socket.send = function(message) {
+        (socket.readyState !== 1) ?
+            send_queue.push(message)
+        :
+            send.call(socket, message);
+    };
 
     socket.addEventListener('open', function() {
         dop.core.onopen(node, socket);
+        while (send_queue.length>0)
+            send.call(socket, send_queue.shift());
     });
 
     socket.addEventListener('message', function(message) {
@@ -177,11 +188,28 @@ var dopTransportConnectWebSocket = function(dop, node, options) {
     return socket;
 };
 
-dopTransportConnectWebSocket.api = window.WebSocket;
+// //nodejs
+// window=undefined
+// module.exports = true
+// dop=undefined
 
-if (typeof dop == 'undefined' && typeof module == 'object' && module.exports)
-    module.exports = dopTransportConnectWebSocket;
+// //es6
+// window={}
+// module.exports = {}
+// dop=undefined
 
+// //cdn
+// window={}
+// module.exports = undefined
+// dop={}
+
+
+if (typeof dop=='undefined' && typeof module == 'object' && module.exports) {
+    connectWebsocket.api = require('ws');
+    module.exports = connectWebsocket;
+}
+else if (typeof window != 'undefined')
+    connectWebsocket.api = window.WebSocket;
 
 
 
@@ -1039,13 +1067,11 @@ Object.assign(dop.core.listener.prototype, dop.util.emitter.prototype);
 dop.core.node = function() {
     // Inherit emitter
     dop.util.emitter.call(this); //https://jsperf.com/inheritance-call-vs-object-assign
-    this.status = 0;
     this.object_owned = {};
     this.object_subscribed = {};
     this.request_inc = 1;
     this.requests = {};
     this.requests_queue = [];
-    this.sends_queue = [];
 };
 // Inherit emitter
 Object.assign(dop.core.node.prototype, dop.util.emitter.prototype);
@@ -2237,7 +2263,7 @@ dop.core.onopen = function(listener_or_node, socket, transport) {
 
     listener_or_node.emit('open', socket);
 
-    // if side is listener we send token
+    // if listener_or_node is listener we send token
     if (listener_or_node.socket !== socket) {
         var node = new dop.core.node();
         node.transport = transport;
@@ -2246,7 +2272,6 @@ dop.core.onopen = function(listener_or_node, socket, transport) {
         node.listener = listener_or_node;
         dop.protocol.connect(node);
     }
-
 };
 
 
@@ -2258,7 +2283,6 @@ dop.core.onopen = function(listener_or_node, socket, transport) {
 //////////  src/core/protocol/registerNode.js
 
 dop.core.registerNode = function(node, token) {
-    node.status = 1;
     node.token = token;
     node.socket[CONS.socket_token] = token;
     dop.data.node[token] = node;  
@@ -2343,7 +2367,6 @@ dop.protocol._onconnect = function(node, request_id, request, response) {
 
     // Node is connected correctly
     if (response[0]===0) {
-        node.status = 1;
         node.listener.emit('connect', node, token);
         node.emit('connect', token);
     }
@@ -2448,11 +2471,11 @@ dop.protocol.instructions = {
 
 
                         // Server -> Client
-    connect: 0,         // [ 1234, 0, <user_token>]
+    connect: 0,         // [ 1234, 0, <user_token>, <options>]
                         // [-1234, 0]
 
                         // Client -> Server
-    reconnect: 1,       // [ 1234, 1, <new_user_token>, <old_user_token>]
+    reconnect: 1,       // [ 1234, 1, <new_user_token>, <old_user_token>, <options>]
                         // [-1234, 0]
 
                         // Subscriptor -> Owner

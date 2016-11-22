@@ -1,11 +1,11 @@
 
-var dopTransportConnectWebSocket = function(dop, node, options) {
+var connectWebsocket = function(dop, node, options) {
 
     var url = 'ws://localhost:4444/';
 
     if (typeof options.url == 'string')
         url = options.url.replace('http','ws');
-    else if (/http/.test(window.location.href)) {
+    else if (typeof window!='undefined' && /http/.test(window.location.href)) {
         var domain_prefix = /(ss|ps)?:\/\/([^\/]+)\/?(.+)?/.exec(window.location.href),
             protocol = domain_prefix[1] ? 'wss' : 'ws';
         url = protocol+'://'+domain_prefix[2].toLocaleLowerCase()+'/';
@@ -43,7 +43,25 @@ var dopTransportConnectWebSocket = function(dop, node, options) {
     return socket;
 };
 
-dopTransportConnectWebSocket.api = window.WebSocket;
+// //nodejs
+// window=undefined
+// module.exports = true
+// dop=undefined
 
-if (typeof dop == 'undefined' && typeof module == 'object' && module.exports)
-    module.exports = dopTransportConnectWebSocket;
+// //es6
+// window={}
+// module.exports = {}
+// dop=undefined
+
+// //cdn
+// window={}
+// module.exports = undefined
+// dop={}
+
+
+if (typeof dop=='undefined' && typeof module == 'object' && module.exports) {
+    connectWebsocket.api = require('ws');
+    module.exports = connectWebsocket;
+}
+else if (typeof window != 'undefined')
+    connectWebsocket.api = window.WebSocket;
