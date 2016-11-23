@@ -1,5 +1,5 @@
 
-var connectWebsocket = function(dop, node, options) {
+var connectWebsocket = function websocket(dop, node, options) {
 
     var url = 'ws://localhost:4444/';
 

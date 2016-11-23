@@ -19,8 +19,7 @@ var dop = {
     // src
     util: {},
     core: {},
-    protocol: {},
-    transport: {listen:{}, connect:{}}
+    protocol: {}
 };
 
 
