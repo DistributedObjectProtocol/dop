@@ -155,7 +155,8 @@ var connectWebsocket = function websocket(dop, node, options) {
         url = protocol+'://'+domain_prefix[2].toLocaleLowerCase()+'/'+dop.name;
     }
 
-    var socket = new options.transport.api(url),
+    var api = options.transport.api(),
+        socket = new api(url),
         send = socket.send,
         send_queue = [];
 
@@ -190,7 +191,9 @@ var connectWebsocket = function websocket(dop, node, options) {
 if (typeof dop=='undefined' && typeof module == 'object' && module.exports)
     module.exports = connectWebsocket;
 else if (typeof window != 'undefined')
-    connectWebsocket.api = window.WebSocket;
+    connectWebsocket.api = function() { 
+        return window.WebSocket;
+    };
 
 
 
