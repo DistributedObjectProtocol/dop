@@ -21,8 +21,7 @@ var dop = {
     // src
     util: {},
     core: {},
-    protocol: {},
-    transport: {listen:{}, connect:{}}
+    protocol: {}
 };
 
 
@@ -144,16 +143,16 @@ emitter.emit(name, 4);
 
 //////////  src/env/browser/websocket.js
 
-var connectWebsocket = function(dop, node, options) {
+var connectWebsocket = function websocket(dop, node, options) {
 
-    var url = 'ws://localhost:4444/';
+    var url = 'ws://localhost:4444/'+dop.name;
 
     if (typeof options.url == 'string')
         url = options.url.replace('http','ws');
     else if (typeof window!='undefined' && /http/.test(window.location.href)) {
         var domain_prefix = /(ss|ps)?:\/\/([^\/]+)\/?(.+)?/.exec(window.location.href),
             protocol = domain_prefix[1] ? 'wss' : 'ws';
-        url = protocol+'://'+domain_prefix[2].toLocaleLowerCase()+'/';
+        url = protocol+'://'+domain_prefix[2].toLocaleLowerCase()+'/'+dop.name;
     }
 
     var socket = new options.transport.api(url),
@@ -1038,7 +1037,7 @@ dop.core.listener = function(args) {
     this.transport = this.options.transport.apply(this, args);
 };
 // Inherit emitter
-Object.assign(dop.core.listener.prototype, dop.util.emitter.prototype);
+dop.util.merge(dop.core.listener.prototype, dop.util.emitter.prototype);
 
 
 
@@ -1056,7 +1055,7 @@ dop.core.node = function() {
     this.requests_queue = [];
 };
 // Inherit emitter
-Object.assign(dop.core.node.prototype, dop.util.emitter.prototype);
+dop.util.merge(dop.core.node.prototype, dop.util.emitter.prototype);
 
 
 
@@ -2466,7 +2465,7 @@ dop.protocol.instructions = {
                         // [-1234, 0, [<object_id>, 'path']]
 
                         // Subscriptor -> Owner
-    unsubscribe: 3,     // [ 1234, 3, <object_id>] // If object_id is negative means is unsubscribing his own object
+    unsubscribe: 3,     // [ 1234, 3, <object_id>]
                         // [-1234, 0]
 
                         // Subscriptor -> Owner

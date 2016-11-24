@@ -38,7 +38,7 @@ dop.protocol.instructions = {
                         // [-1234, 0, [<object_id>, 'path']]
 
                         // Subscriptor -> Owner
-    unsubscribe: 3,     // [ 1234, 3, <object_id>] // If object_id is negative means is unsubscribing his own object
+    unsubscribe: 3,     // [ 1234, 3, <object_id>]
                         // [-1234, 0]
 
                         // Subscriptor -> Owner

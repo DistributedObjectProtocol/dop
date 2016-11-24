@@ -7,4 +7,4 @@ dop.core.listener = function(args) {
     this.transport = this.options.transport.apply(this, args);
 };
 // Inherit emitter
-Object.assign(dop.core.listener.prototype, dop.util.emitter.prototype);
+dop.util.merge(dop.core.listener.prototype, dop.util.emitter.prototype);

@@ -1,14 +1,14 @@
 
 var connectWebsocket = function websocket(dop, node, options) {
 
-    var url = 'ws://localhost:4444/';
+    var url = 'ws://localhost:4444/'+dop.name;
 
     if (typeof options.url == 'string')
         url = options.url.replace('http','ws');
     else if (typeof window!='undefined' && /http/.test(window.location.href)) {
         var domain_prefix = /(ss|ps)?:\/\/([^\/]+)\/?(.+)?/.exec(window.location.href),
             protocol = domain_prefix[1] ? 'wss' : 'ws';
-        url = protocol+'://'+domain_prefix[2].toLocaleLowerCase()+'/';
+        url = protocol+'://'+domain_prefix[2].toLocaleLowerCase()+'/'+dop.name;
     }
 
     var socket = new options.transport.api(url),

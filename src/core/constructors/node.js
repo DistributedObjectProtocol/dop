@@ -9,7 +9,7 @@ dop.core.node = function() {
     this.requests_queue = [];
 };
 // Inherit emitter
-Object.assign(dop.core.node.prototype, dop.util.emitter.prototype);
+dop.util.merge(dop.core.node.prototype, dop.util.emitter.prototype);
 
 
 

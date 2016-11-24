@@ -7,7 +7,7 @@ dop.listen = function(options) {
         options = args[0] = {};
 
     if (typeof options.transport != 'function')
-        options.transport = require('dop-transports').listen.websocket;
+        options.transport = require('dop-transports').listen.ws;
 
     if (typeof options.try_connects != 'number' || options.try_connects<0)
         options.try_connects = 99;
