@@ -1,5 +1,5 @@
-
-var connectWebsocket = function websocket(dop, node, options) {
+(function(root){
+function websocket(dop, node, options) {
 
     var url = 'ws://localhost:4444/'+dop.name;
 
@@ -45,8 +45,13 @@ var connectWebsocket = function websocket(dop, node, options) {
 };
 
 if (typeof dop=='undefined' && typeof module == 'object' && module.exports)
-    module.exports = connectWebsocket;
-else if (typeof window != 'undefined')
-    connectWebsocket.api = function() { 
-        return window.WebSocket;
-    };
+    module.exports = websocket;
+else {
+    websocket.api = function() { return window.WebSocket };
+    (typeof dop != 'undefined') ?
+        dop.transports.connect.websocket = websocket
+    :
+        root.dopTransportsConnectWebsocket = websocket;
+}
+
+})(this);

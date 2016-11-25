@@ -1,7 +1,7 @@
 (function factory(root) {
 
 var dop = {
-    version: '0.3.1',
+    version: '0.3.2',
     name: 'dop', // Useful for transport (websockets namespaces)
     create: factory,
 
@@ -19,7 +19,8 @@ var dop = {
     // src
     util: {},
     core: {},
-    protocol: {}
+    protocol: {},
+    transports: {listen:{}, connect:{}}
 };
 
 

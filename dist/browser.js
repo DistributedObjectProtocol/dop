@@ -3,7 +3,7 @@
 (function factory(root) {
 
 var dop = {
-    version: '0.3.1',
+    version: '0.3.2',
     name: 'dop', // Useful for transport (websockets namespaces)
     create: factory,
 
@@ -21,7 +21,8 @@ var dop = {
     // src
     util: {},
     core: {},
-    protocol: {}
+    protocol: {},
+    transports: {listen:{}, connect:{}}
 };
 
 
@@ -46,7 +47,7 @@ dop.connect = function(options) {
         options = args[0] = {};
 
     if (typeof options.transport != 'function')
-        options.transport = connectWebsocket;
+        options.transport = dop.transports.connect.websocket;
 
     return dop.core.connector(args);
 };
@@ -142,8 +143,8 @@ emitter.emit(name, 4);
 
 
 //////////  src/env/browser/websocket.js
-
-var connectWebsocket = function websocket(dop, node, options) {
+(function(root){
+function websocket(dop, node, options) {
 
     var url = 'ws://localhost:4444/'+dop.name;
 
@@ -189,11 +190,16 @@ var connectWebsocket = function websocket(dop, node, options) {
 };
 
 if (typeof dop=='undefined' && typeof module == 'object' && module.exports)
-    module.exports = connectWebsocket;
-else if (typeof window != 'undefined')
-    connectWebsocket.api = function() { 
-        return window.WebSocket;
-    };
+    module.exports = websocket;
+else {
+    websocket.api = function() { return window.WebSocket };
+    (typeof dop != 'undefined') ?
+        dop.transports.connect.websocket = websocket
+    :
+        root.dopTransportsConnectWebsocket = websocket;
+}
+
+})(this);
 
 
 
