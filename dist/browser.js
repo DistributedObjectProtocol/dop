@@ -162,16 +162,16 @@ function websocket(dop, node, options) {
         send_queue = [];
 
     socket.send = function(message) {
-        (socket.readyState !== 1) ?
-            send_queue.push(message)
-        :
+        // (socket.readyState !== 1) ?
+            // send_queue.push(message)
+        // :
             send.call(socket, message);
     };
 
     socket.addEventListener('open', function() {
         dop.core.onopen(node, socket);
-        while (send_queue.length>0)
-            send.call(socket, send_queue.shift());
+        // while (send_queue.length>0)
+            // send.call(socket, send_queue.shift());
     });
 
     socket.addEventListener('message', function(message) {
@@ -227,6 +227,37 @@ dop.util.get = function(object, path) {
     return object[ path[index] ];
 
 };
+
+
+
+
+// dop.util.set = function(object, path, value) {
+
+//     if (path.length == 0)
+//         return object;
+
+//     path = path.slice(0);
+//     var obj = object, objdeep, index=0, total=path.length-1;
+
+//     for (;index<total; ++index) {
+//         objdeep = obj[path[index]];
+//         obj = (objdeep && typeof objdeep == 'object') ?
+//             objdeep
+//         :
+//             obj[path[index]] = {};
+//     }
+
+//     obj[path[index]] = value;
+
+//     return object;
+// };
+
+// /*
+// ori = {test:{hs:124}}
+// console.log( dop.util.set(ori, ['test','more'], undefined))
+// */
+
+
 
 
 
@@ -353,40 +384,6 @@ dop.util.pathRecursive = function (source, callback, destiny, mutator, circular,
         }
     }
 };
-
-
-
-
-//////////  src/util/set.js
-
-// dop.util.set = function(object, path, value) {
-
-//     if (path.length == 0)
-//         return object;
-
-//     path = path.slice(0);
-//     var obj = object, objdeep, index=0, total=path.length-1;
-
-//     for (;index<total; ++index) {
-//         objdeep = obj[path[index]];
-//         obj = (objdeep && typeof objdeep == 'object') ?
-//             objdeep
-//         :
-//             obj[path[index]] = {};
-//     }
-
-//     obj[path[index]] = value;
-
-//     return object;
-// };
-
-// /*
-// ori = {test:{hs:124}}
-// console.log( dop.util.set(ori, ['test','more'], undefined))
-// */
-
-
-
 
 
 
@@ -1062,6 +1059,8 @@ dop.core.node = function() {
     this.request_inc = 1;
     this.requests = {};
     this.requests_queue = [];
+    this.send_queue = [];
+    this.readyState = 0; //0:close, 1:open, 2:connected
 };
 // Inherit emitter
 dop.util.merge(dop.core.node.prototype, dop.util.emitter.prototype);
@@ -1069,27 +1068,17 @@ dop.util.merge(dop.core.node.prototype, dop.util.emitter.prototype);
 
 
 dop.core.node.prototype.send = function(message) {
-    return this.socket.send(message);
+    (this.readyState>0) ? this.socket.send(message) : this.send_queue.push(message);
 };
 
 
 dop.core.node.prototype.subscribe = function() {
-    return dop.protocol.subscribe(node, arguments);
+    return dop.protocol.subscribe(this, arguments);
 };
 
 
 dop.core.node.prototype.close = function() {
     return this.socket.close();
-};
-
-
-dop.protocol.subscribe = function(node, args) {
-    args = Array.prototype.slice.call(args, 0);
-    args.unshift(node, dop.protocol.instructions.subscribe);
-    var request = dop.core.createRequest.apply(node, args);
-    dop.core.storeRequest(node, request);
-    dop.core.emitRequests(node);
-    return request.promise;
 };
 
 
@@ -2123,6 +2112,7 @@ dop.core.onclose = function(listener_or_node, socket) {
     listener_or_node.emit('close', socket);
 
     if (dop.util.isObject(node)) {
+        node.readyState = 0;
         listener_or_node.emit('disconnect', node);
         dop.core.unregisterNode(node);
     }
@@ -2256,10 +2246,13 @@ dop.core.onopen = function(listener_or_node, socket, transport) {
     // if listener_or_node is listener we send token
     if (listener_or_node.socket !== socket) {
         var node = new dop.core.node();
+        node.readyState = 1;
         node.transport = transport;
         node.socket = socket;
         node.try_connects = listener_or_node.options.try_connects;
         node.listener = listener_or_node;
+        while (node.send_queue.length>0)
+            node.send(node.send_queue.shift());
         dop.protocol.connect(node);
     }
 };
@@ -2357,6 +2350,7 @@ dop.protocol._onconnect = function(node, request_id, request, response) {
 
     // Node is connected correctly
     if (response[0]===0) {
+        node.readyState = 2;
         node.listener.emit('connect', node, token);
         node.emit('connect', token);
     }
@@ -2521,6 +2515,7 @@ dop.protocol.onconnect = function(node, request_id, request) {
     if (dop.data.node[token] === undefined) {
         dop.core.registerNode(node, token);
         response = dop.core.createResponse(request_id, 0);
+        node.readyState = 2;
         node.emit('connect', token);
     }
     else
@@ -2570,6 +2565,20 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
 
     }
 
+};
+
+
+
+
+//////////  src/protocol/subscribe.js
+
+dop.protocol.subscribe = function(node, args) {
+    args = Array.prototype.slice.call(args, 0);
+    args.unshift(node, dop.protocol.instructions.subscribe);
+    var request = dop.core.createRequest.apply(node, args);
+    dop.core.storeRequest(node, request);
+    dop.core.emitRequests(node);
+    return request.promise;
 };
 
 
