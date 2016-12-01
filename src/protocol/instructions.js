@@ -25,34 +25,25 @@ dop.protocol.instructions = {
 
 
                         // Server -> Client
-    connect: 0,         // [ 1234, 0, <user_token>, <options>]
-                        // [-1234, 0]
-
-                        // Client -> Server
-    reconnect: 1,       // [ 1234, 1, <new_user_token>, <old_user_token>, <options>]
+    connect: 0,         // [ 1234, <instruction>, <user_token>, <options>]
                         // [-1234, 0]
 
                         // Subscriptor -> Owner
-    subscribe: 2,       // [ 1234, 2, <params...>]
-                        // [-1234, 0, [<object_id>], <data_object>, <options>]
+    subscribe: 1,       // [ 1234, <instruction>, <params...>]
+                        // [-1234, 0, [<object_id>], <data_object>]
                         // [-1234, 0, [<object_id>, 'path']]
 
                         // Subscriptor -> Owner
-    unsubscribe: 3,     // [ 1234, 3, <object_id>]
+    unsubscribe: 2,     // [ 1234, <instruction>, <object_id>]
                         // [-1234, 0]
 
                         // Subscriptor -> Owner
-    call: 4,            // [ 1234, 4, [<object_id>,'path','path'], [<params...>]]
+    call: 3,            // [ 1234, <instruction>, [<object_id>,'path','path'], [<params...>]]
                         // [-1234, 0, <return>]
 
-                        // Subscriptor -> Owner
-    update: 5,          // [ 1234, 5, [<object_id>, 'path', 'path'], <options>]
-                        // [-1234, 0, [<object_id>, 'path', 'path'], <object_data_to_merge>, <options>]
-
                         // Owner -> Subscriptor
-    merge: 6,           // [ 1234, 6, <object_id>, <object_data_to_merge>, <options>]
+    merge: 4,           // [ 1234, <instruction>, <object_id>, <object_data_to_merge>]
                         // [-1234, 0]
-
 };
 
 for (var instruction in dop.protocol.instructions)

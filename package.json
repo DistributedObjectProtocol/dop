@@ -62,8 +62,5 @@
     "test-chrome": "browserify test/*.js | tape-run --render=\"faucet\" --browser chrome",
     "test-safari": "browserify test/*.js | tape-run --render=\"faucet\" --browser safari",
     "test-firefox": "browserify test/*.js | tape-run --render=\"faucet\" --browser firefox"
-  },
-  "bugs": {
-    "url": "https://github.com/DistributedObjectProtocol/transports/issues"
   }
 }
