@@ -158,20 +158,14 @@ function websocket(dop, node, options) {
 
     var api = options.transport.api(),
         socket = new api(url),
-        send = socket.send,
-        send_queue = [];
+        send = socket.send;
 
     socket.send = function(message) {
-        // (socket.readyState !== 1) ?
-            // send_queue.push(message)
-        // :
-            send.call(socket, message);
+        send.call(socket, message);
     };
 
     socket.addEventListener('open', function() {
         dop.core.onopen(node, socket);
-        // while (send_queue.length>0)
-            // send.call(socket, send_queue.shift());
     });
 
     socket.addEventListener('message', function(message) {
@@ -1040,7 +1034,8 @@ dop.core.listener = function(args) {
     dop.util.emitter.call(this); //https://jsperf.com/inheritance-call-vs-object-assign
     args.unshift(dop, this);
     this.options = args[2];
-    this.transport = this.options.transport.apply(this, args);
+    this.transport = this.options.transport;
+    this.listener = this.options.transport.apply(this, args);
 };
 // Inherit emitter
 dop.util.merge(dop.core.listener.prototype, dop.util.emitter.prototype);

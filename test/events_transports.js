@@ -8,8 +8,8 @@ var localtransportconnect = require('dop-transports').connect.local;
 var server = dop.listen({transport:localtransportlisten});
 var client = dopClient.connect({transport:localtransportconnect, listener:server});
 // node.js (WebSockets)
-var server = dop.listen({});
-var client = dopClient.connect({});
+// var server = dop.listen({});
+// var client = dopClient.connect({});
 
 
 test('Events', function(t) {
@@ -24,6 +24,7 @@ test('Events', function(t) {
 
     server.listener.on('connection', function(socket){
         sock.on('message', onmessageserver);
+        sock.on('close', oncloseserver);
         t.equal(order++, 2, 'server/connection');
         t.equal(sock, socket, 'server/connection sock');
     });
@@ -35,6 +36,7 @@ test('Events', function(t) {
 
     client.socket.on('open', function(){
         sock2.on('message', onmessageclient);
+        sock2.on('close', oncloseclient);
         t.equal(order++, 4, 'clientsocket/open');
         t.equal(sock2, this, 'clientsocket/open sock');
     });
@@ -58,11 +60,28 @@ test('Events', function(t) {
     function onmessageserver(message){
         t.equal(order++, 8, 'serverlistener/message');
         t.equal(msg, message, 'serverlistener/message msg');
-        t.end();
-        try {server.listener.close()} catch(e) {}
+        (Math.round(Math.random()*100)%2) ? sock.close() : sock2.close();
     };
 
 
+    client.on('close', function(){
+        t.equal(order++, 9, 'client/close');
+    });
+    function oncloseclient(){
+        t.equal(order++, 10, 'clientsocket/close');
+    };
+
+
+
+    server.on('close', function(socket){
+        t.equal(order++, 11, 'server/close');
+        t.equal(sock, socket, 'server/close sock');
+    });
+    function oncloseserver(){
+        t.equal(order++, 12, 'serverlistener/close');
+        t.end();
+        try {server.listener.close()} catch(e) {}
+    };
 
 
 
