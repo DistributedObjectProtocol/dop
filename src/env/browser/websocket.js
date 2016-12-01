@@ -13,20 +13,14 @@ function websocket(dop, node, options) {
 
     var api = options.transport.api(),
         socket = new api(url),
-        send = socket.send,
-        send_queue = [];
+        send = socket.send;
 
     socket.send = function(message) {
-        // (socket.readyState !== 1) ?
-            // send_queue.push(message)
-        // :
-            send.call(socket, message);
+        send.call(socket, message);
     };
 
     socket.addEventListener('open', function() {
         dop.core.onopen(node, socket);
-        // while (send_queue.length>0)
-            // send.call(socket, send_queue.shift());
     });
 
     socket.addEventListener('message', function(message) {
