@@ -7,8 +7,7 @@ dop.core.node = function() {
     this.request_inc = 1;
     this.requests = {};
     this.requests_queue = [];
-    this.send_queue = [];
-    this.readyState = 0; //0:close, 1:open, 2:connected
+    this.readyState = 0; //0:disconnect, 1:open, 2:connected
 };
 // Inherit emitter
 dop.util.merge(dop.core.node.prototype, dop.util.emitter.prototype);
@@ -16,7 +15,7 @@ dop.util.merge(dop.core.node.prototype, dop.util.emitter.prototype);
 
 
 dop.core.node.prototype.send = function(message) {
-    (this.readyState>0) ? this.socket.send(message) : this.send_queue.push(message);
+    this.socket.send(message);
 };
 
 
