@@ -7,7 +7,8 @@ dop.core.node = function() {
     this.request_inc = 1;
     this.requests = {};
     this.requests_queue = [];
-    this.readyState = 0; //0:disconnect, 1:open, 2:connected
+    this.send_queue = [];
+    this.readyState = dop.CONS.CLOSE;
     // Generating token
     do { this.token = dop.util.uuid() }
     while (typeof dop.data.node[this.token]=='object');
@@ -18,15 +19,15 @@ dop.util.merge(dop.core.node.prototype, dop.util.emitter.prototype);
 
 
 dop.core.node.prototype.send = function(message) {
-    this.socket.send(message);
+    (this.readyState===dop.CONS.OPEN || this.readyState===dop.CONS.CONNECT) ? this.socket.send(message) : this.send_queue.push(message);
 };
 
+dop.core.node.prototype.close = function() {
+    this.readyState = dop.CONS.CLOSE;
+    return this.socket.close();
+};
 
 dop.core.node.prototype.subscribe = function() {
     return dop.protocol.subscribe(this, arguments);
 };
 
-
-dop.core.node.prototype.close = function() {
-    return this.socket.close();
-};

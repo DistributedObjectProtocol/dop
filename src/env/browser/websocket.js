@@ -20,7 +20,7 @@ function websocket(dop, node, options) {
     };
 
     socket.addEventListener('open', function() {
-        dop.core.onopen(node, socket);
+        dop.core.onopenClient(node, socket);
     });
 
     socket.addEventListener('message', function(message) {
@@ -28,7 +28,7 @@ function websocket(dop, node, options) {
     });
 
     socket.addEventListener('close', function() {
-        dop.core.onclose(node, socket);
+        dop.core.oncloseClient(node, socket);
     });
 
     // socket.addEventListener('error', function(error) {

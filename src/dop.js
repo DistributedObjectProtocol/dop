@@ -20,7 +20,15 @@ var dop = {
     util: {},
     core: {},
     protocol: {},
-    transports: {listen:{}, connect:{}}
+    transports: {listen:{}, connect:{}},
+
+    CONS: {
+        CLOSE: 0,
+        OPEN: 1,
+        CONNECT: 2,
+        RECONNECT: 3
+    }
+    
 };
 
 

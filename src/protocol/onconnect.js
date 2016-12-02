@@ -4,7 +4,7 @@ dop.protocol.onconnect = function(node, request_id, request) {
     // If not reconnecting, todoo
     dop.core.registerNode(node, tokenServer);
     response = dop.core.createResponse(request_id, 0);
-    node.readyState = 2;
+    node.readyState = dop.CONS.CONNECT;
     node.emit('connect');
     node.send(JSON.stringify(response));
 };
