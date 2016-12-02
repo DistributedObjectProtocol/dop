@@ -1,6 +1,7 @@
 
-dop.core.registerNode = function(node, token) {
-    node.token = token;
-    node.socket[CONS.socket_token] = token;
-    dop.data.node[token] = node;  
+dop.core.registerNode = function(node, tokenServer) {
+    node.socket[CONS.socket_token] = node.token;
+    dop.data.node[node.token] = node;
+    if (tokenServer !== undefined)
+        node.tokenServer = tokenServer;
 };

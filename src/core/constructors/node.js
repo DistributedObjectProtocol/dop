@@ -8,6 +8,9 @@ dop.core.node = function() {
     this.requests = {};
     this.requests_queue = [];
     this.readyState = 0; //0:disconnect, 1:open, 2:connected
+    // Generating token
+    do { this.token = dop.util.uuid() }
+    while (typeof dop.data.node[this.token]=='object');
 };
 // Inherit emitter
 dop.util.merge(dop.core.node.prototype, dop.util.emitter.prototype);

@@ -11,6 +11,7 @@ dop.core.onopen = function(listener_or_node, socket, transport) {
         node.socket = socket;
         node.try_connects = listener_or_node.options.try_connects;
         node.listener = listener_or_node;
+        dop.core.registerNode(node);
         dop.protocol.connect(node);
         return node;
     }
