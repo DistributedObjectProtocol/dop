@@ -60,6 +60,9 @@ module.exports = function(grunt) {
             build: {
                 src: 'dist/browser.js',
                 dest: 'dist/browser.min.js'
+            },
+            options: {
+                banner: '/* dop@<%= pkg.version %> - (c) 2016 Josema Gonzalez - MIT Licensed */\n'
             }
         },
 
