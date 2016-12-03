@@ -63,6 +63,18 @@ module.exports = function(grunt) {
             }
         },
 
+        'optimize-js': {
+            options: {
+                sourceMap: false,
+                silent: false
+            },
+            dist: {
+                files: {
+                    'dist/browser.min.opt.js': 'dist/browser.min.js'
+                }
+            }
+        }
+
     });
 
 
@@ -71,9 +83,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-optimize-js');
 
 
-    var tasks = ['copy', 'concat:nodejs', 'concat:browser', 'uglify'];
+    var tasks = ['copy', 'concat:nodejs', 'concat:browser', 'uglify', 'optimize-js'];
     if (grunt.option('build') === undefined)
         tasks.push('watch');
     grunt.registerTask('default', tasks);
