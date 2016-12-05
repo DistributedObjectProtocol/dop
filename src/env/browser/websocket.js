@@ -1,7 +1,8 @@
 (function(root){
 function websocket(dop, node, options) {
 
-    var url = 'ws://localhost:4444/'+dop.name;
+    var url = 'ws://localhost:4444/'+dop.name,
+        args = arguments;
 
     if (typeof options.url == 'string')
         url = options.url.replace('http','ws');
@@ -14,21 +15,27 @@ function websocket(dop, node, options) {
     var api = options.transport.api(),
         socket = new api(url),
         send = socket.send;
+    
+    node.reconnect = function() {
+        var oldSocket = node.socket;
+        node.socket = node.options.transport.apply(node, args);
+        node.send(node.tokenServer);
+    };
 
     socket.send = function(message) {
         send.call(socket, message);
     };
 
     socket.addEventListener('open', function() {
-        dop.core.onopenClient(node, socket);
+        dop.core.onOpenClient(node, socket);
     });
 
     socket.addEventListener('message', function(message) {
-        dop.core.onmessage(node, socket, message.data, message);
+        dop.core.onMessageClient(node, socket, message.data, message);
     });
 
     socket.addEventListener('close', function() {
-        dop.core.oncloseClient(node, socket);
+        dop.core.onCloseClient(node, socket);
     });
 
     // socket.addEventListener('error', function(error) {

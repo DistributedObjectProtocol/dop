@@ -19,10 +19,19 @@ dop.util.merge(dop.core.node.prototype, dop.util.emitter.prototype);
 
 
 dop.core.node.prototype.send = function(message) {
-    (this.readyState===dop.CONS.OPEN || this.readyState===dop.CONS.CONNECT) ? this.socket.send(message) : this.send_queue.push(message);
+    if (this.readyState===dop.CONS.OPEN || this.readyState===dop.CONS.CONNECT) {
+        try {
+            this.socket.send(message);
+        } catch(err) {
+            this.emit('error', err);
+            this.send_queue.push(message);
+        }
+    }
+    else
+        this.send_queue.push(message);
 };
 
-dop.core.node.prototype.close = function() {
+dop.core.node.prototype.disconnect = function() {
     this.readyState = dop.CONS.CLOSE;
     return this.socket.close();
 };

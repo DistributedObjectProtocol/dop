@@ -5,11 +5,11 @@ var localtransportlisten = require('dop-transports').listen.local;
 var localtransportconnect = require('dop-transports').connect.local;
 
 // Browsers
-var server = dop.listen({transport:localtransportlisten});
-var client = dopClient.connect({transport:localtransportconnect, listener:server});
+// var server = dop.listen({transport:localtransportlisten});
+// var client = dopClient.connect({transport:localtransportconnect, listener:server});
 // node.js (WebSockets)
-// var server = dop.listen({});
-// var client = dopClient.connect({});
+var server = dop.listen();
+var client = dopClient.connect();
 
 
 test('Events', function(t) {

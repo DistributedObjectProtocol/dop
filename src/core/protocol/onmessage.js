@@ -1,5 +1,6 @@
 
-dop.core.onmessage = function(listener_or_node, socket, message_string, message_raw) {
+dop.core.onMessageServer =
+dop.core.onMessageClient = function(listener_or_node, socket, message_string, message_raw) {
 
     listener_or_node.emit('message', socket, message_string, message_raw);
 

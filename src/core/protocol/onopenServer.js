@@ -1,5 +1,5 @@
 
-dop.core.onopenServer = function(listener, socket, transport) {
+dop.core.onOpenServer = function(listener, socket, transport) {
     listener.emit('open', socket);
     var node = new dop.core.node();
     node.readyState = dop.CONS.OPEN;
