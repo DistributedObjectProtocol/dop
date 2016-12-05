@@ -10,7 +10,7 @@ if (typeof define === 'function' && define.amd)
 else if (typeof module == 'object' && module.exports)
     module.exports = dop;
 
-// Browser (window)
+// Browser
 else if (window && typeof window == 'object')
     window.dop = dop;
 

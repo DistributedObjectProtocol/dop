@@ -24,6 +24,12 @@ module.exports = function(grunt) {
 
         concat: {
             options: {
+                banner: '/*\n' +
+                ' * dop@<%= pkg.version %>\n' +
+                ' * www.distributedobjectprotocol.org\n' +
+                ' * © 2016 Josema Gonzalez\n' +
+                ' * MIT License.\n' +
+                ' */\n',
                 process: function(src, filepath) {
                     return '\n//////////  ' + filepath + '\n' + src + '\n\n\n';
                 }
@@ -62,7 +68,7 @@ module.exports = function(grunt) {
                 dest: 'dist/browser.min.js'
             },
             options: {
-                banner: '/* dop@<%= pkg.version %> - (c) 2016 Josema Gonzalez - MIT Licensed */\n'
+                banner: '/* dop@<%= pkg.version %> - © 2016 Josema Gonzalez - MIT Licensed */\n'
             }
         },
 
@@ -89,7 +95,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-optimize-js');
 
 
-    var tasks = ['copy', 'concat:nodejs', 'concat:browser', 'uglify', 'optimize-js'];
+    var tasks = ['copy', 'concat:nodejs', 'concat:browser', 'uglify'/*, 'optimize-js'*/];
     if (grunt.option('build') === undefined)
         tasks.push('watch');
     grunt.registerTask('default', tasks);

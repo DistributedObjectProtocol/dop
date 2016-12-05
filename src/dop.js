@@ -1,9 +1,3 @@
-/*
- * dop (www.distributedobjectprotocol.org)
- * (c) 2016 Josema Gonzalez
- * MIT License.
- */
-
 (function factory(root) {
 
 var dop = {
