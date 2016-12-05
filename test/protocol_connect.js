@@ -15,7 +15,7 @@ var client = dopClient.connect();
 
 
 dop.env = 'SERVER'
-// dopClient.env = 'CLIENT'
+dopClient.env = 'CLIENT'
 
 
 
@@ -25,7 +25,7 @@ dop.env = 'SERVER'
         console.log( '❌ open' );
     });
     server.on('message', function(socket, message){
-        console.log( '❌ message', message, dop.getNodeBySocket(socket).readyState);
+        console.log( '❌ message', message);
     });
     server.on('close', function(socket){
         console.log( '❌ close' );
@@ -50,7 +50,7 @@ dop.env = 'SERVER'
         console.log( '✅ open' );
     });
     client.on('message', function(socket, message){
-        console.log( '✅ message', message );
+        console.log( '✅ message', client.readyState, message );
     });
     client.on('close', function(socket){
         console.log( '✅ close' );
@@ -64,9 +64,9 @@ dop.env = 'SERVER'
         nod = node;
         console.log( '✅ connect' );
     });
-    // client.on('disconnect', function(node){
-    //     console.log( 'disconnect', node.readyState );
-    // });
+    client.on('disconnect', function(node){
+        console.log( '✅ disconnect' );
+    });
 
 
 setTimeout(function(){
