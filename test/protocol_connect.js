@@ -17,16 +17,19 @@ var client = dopClient.connect();
 dop.env = 'SERVER'
 dopClient.env = 'CLIENT'
 
+var nod;
 
 
-
-    server.on('open', function(nod){
-        socket = nod.socket;
-        node = nod;
-        token = node.token;
+    server.on('open', function(node){
+        if (nod === undefined) {
+            nod = node;
+            socket = node.socket;
+            token = node.token;
+        }
         console.log( '❌ open' );
     });
     server.on('message', function(node, message){
+        console.log( nod===node );
         console.log( '❌ message', '`'+message+'`');
     });
     server.on('close', function(node){
@@ -42,7 +45,7 @@ dopClient.env = 'CLIENT'
         console.log( '❌ disconnect', node.readyState );
     });
     server.on('reconnect', function(node, oldSocket){
-        console.log( '❌ reconnect', node.readyState, node.token, oldSocket["~TOKEN_DOP"], node.token["~TOKEN_DOP"] );
+        console.log( '❌ reconnect', node.readyState, node.token, oldSocket["~TOKEN_DOP"], node.socket["~TOKEN_DOP"] );
     });
 
     client.on('open', function(){
@@ -53,11 +56,11 @@ dopClient.env = 'CLIENT'
         console.log( '✅ message', client.readyState, '`'+message+'`' );
     });
     client.on('close', function(){
-        console.log( '✅ close', client.readyState );
+        console.log( '✅ close' );
         // nod.send('mierda desde server')
         // client.send('mierda desde client')
         setTimeout(function(){
-        // client.reconnect();
+        client.reconnect();
         }, 2000)
     });
     client.on('connect', function(token){
@@ -69,7 +72,13 @@ dopClient.env = 'CLIENT'
 
 
 setTimeout(function(){
-    client.disconnect();
-    // client.send('---antes')
-}, 2000)
+    client.socket.close();
+    // client.send('---despues')
+}, 1000)
+
+
+setTimeout(function(){
+    client.socket.close();
+    // client.send('---despues')
+}, 10000)
 

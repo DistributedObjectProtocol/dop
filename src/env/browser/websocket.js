@@ -19,7 +19,7 @@ function websocket(dop, node, options) {
         send_queue = [];
     
 
-    // We use this function as alias to store sends when connection is not OPEN
+    // We use this function as alias to store messages when connection is not OPEN
     function send(message) {
         (socket.readyState === socket.constructor.OPEN) ? 
             socket.send(message)
@@ -27,36 +27,41 @@ function websocket(dop, node, options) {
             send_queue.push(message);
     }
 
-    // node.readyState = dop.CONS.CLOSE;
-    // node.reconnect = function() {
-    //     oldSocket = node.socket;
-    //     node.socket = node.options.transport.apply(node, args);
-    //     node.readyState = dop.CONS.RECONNECT;
-    //     send(node.tokenServer);
-    // };
+    node.readyState = dop.CONS.CLOSE;
+    node.reconnect = function() {
+        oldSocket = node.socket;
+        node.socket = node.options.transport.apply(node, args);
+        node.readyState = dop.CONS.RECONNECT;
+    };
     node.on(dop.CONS.SEND, function(message) {
         send(message);
     });
-    // node.on('close', function() {
-    //     node.readyState = dop.CONS.CLOSE;
-    //     socket.close();
-    // });
+    node.on(dop.CONS.DISCONNECT, function() {
+        node.readyState = dop.CONS.CLOSE;
+        socket.close();
+    });
 
 
 
     socket.addEventListener('open', function() {
-        node.readyState = dop.CONS.OPEN;
-        send(); // Empty means we want to get connected, the token means reconnect
+        // Reconnect
+        if (node.readyState === dop.CONS.RECONNECT)
+            send(node.tokenServer)
+        // Connect
+        else {
+            send(); // Empty means we want to get connected
+            node.readyState = dop.CONS.OPEN;
+        }
         dop.core.onOpenClient(node, socket, options.transport);
     });
     socket.addEventListener('message', function(message) {
         dop.core.emitMessage(node, message.data, message);
     });
     socket.addEventListener('close', function() {
-        dop.core.onCloseClient(node, socket);
+        dop.core.emitClose(node);
         // If node.readyState === dop.CONS.CLOSE means node.disconnect() has been called and we DON'T try to reconnect
         if (node.readyState === dop.CONS.CLOSE)
-            dop.core.onDisconnectClient(node, socket);
+            dop.core.emitDisconnect(node);
     });
 
 
