@@ -26,7 +26,8 @@ var dop = {
         CLOSE: 0,
         OPEN: 1,
         CONNECT: 2,
-        RECONNECT: 3
+        RECONNECT: 3,
+        SEND: 4
     }
     
 };

@@ -17,14 +17,14 @@ dop.util.merge(dop.core.node.prototype, dop.util.emitter.prototype);
 
 
 dop.core.node.prototype.send = function(message) {
-    return this.socket.send(message);
+    this.emit(dop.CONS.SEND, message);
 };
 
 dop.core.node.prototype.disconnect = function() {
-    return this.socket.close();
+    this.emit(dop.CONS.DISCONNECT);
 };
 
 dop.core.node.prototype.subscribe = function() {
-    return dop.protocol.subscribe(this, arguments);
+    dop.protocol.subscribe(this, arguments);
 };
 

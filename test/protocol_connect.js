@@ -20,51 +20,50 @@ dopClient.env = 'CLIENT'
 
 
 
-    server.on('open', function(socket){
-        sock = socket;
+    server.on('open', function(nod){
+        socket = nod.socket;
+        node = nod;
+        token = node.token;
         console.log( '❌ open' );
     });
-    server.on('message', function(socket, message){
-        console.log( '❌ message', message);
+    server.on('message', function(node, message){
+        console.log( '❌ message', '`'+message+'`');
     });
-    server.on('close', function(socket){
-        console.log( '❌ close' );
+    server.on('close', function(node){
+        console.log( '❌ close'/*, nod.readyState*/ );
         console.log( '' );
         console.log( '---------' );
         console.log( '' );
     });
-    server.on('connect', function(node, token){
-        nod = node;
-        tok = token;
-        console.log( '❌ connect', token );
+    server.on('connect', function(node){
+        console.log( '❌ connect' );
     });
     server.on('disconnect', function(node){
         console.log( '❌ disconnect', node.readyState );
     });
-    server.on('reconnect', function(node, oldSocket, newSocket){
-        console.log( '❌ reconnect', node.readyState, node.token, oldSocket["~TOKEN_DOP"], newSocket["~TOKEN_DOP"] );
+    server.on('reconnect', function(node, oldSocket){
+        console.log( '❌ reconnect', node.readyState, node.token, oldSocket["~TOKEN_DOP"], node.token["~TOKEN_DOP"] );
     });
 
-    client.on('open', function(socket){
-        sock = socket;
+    client.on('open', function(){
+        sock = client.socket;
         console.log( '✅ open' );
     });
-    client.on('message', function(socket, message){
-        console.log( '✅ message', client.readyState, message );
+    client.on('message', function(message){
+        console.log( '✅ message', client.readyState, '`'+message+'`' );
     });
-    client.on('close', function(socket){
-        console.log( '✅ close' );
+    client.on('close', function(){
+        console.log( '✅ close', client.readyState );
         // nod.send('mierda desde server')
         // client.send('mierda desde client')
         setTimeout(function(){
-        client.reconnect();
+        // client.reconnect();
         }, 2000)
     });
-    client.on('connect', function(node, token){
-        nod = node;
+    client.on('connect', function(token){
         console.log( '✅ connect' );
     });
-    client.on('disconnect', function(node){
+    client.on('disconnect', function(){
         console.log( '✅ disconnect' );
     });
 
@@ -72,5 +71,5 @@ dopClient.env = 'CLIENT'
 setTimeout(function(){
     client.disconnect();
     // client.send('---antes')
-}, 1000)
+}, 2000)
 
