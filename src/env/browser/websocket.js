@@ -15,7 +15,6 @@ function websocket(dop, node, options) {
 
     var api = options.transport.getApi(),
         socket = new api(url),
-        oldSocket,
         send_queue = [];
     
 
@@ -33,6 +32,10 @@ function websocket(dop, node, options) {
         node.socket = node.options.transport.apply(node, args);
         node.readyState = dop.CONS.RECONNECT;
     };
+    node.once(dop.CONS.CONNECT, function() {
+        node.readyState = dop.CONS.CONNECT;
+        dop.core.emitConnect(node);
+    });
     node.on(dop.CONS.SEND, function(message) {
         send(message);
     });
@@ -55,7 +58,13 @@ function websocket(dop, node, options) {
         dop.core.onOpenClient(node, socket, options.transport);
     });
     socket.addEventListener('message', function(message) {
-        dop.core.emitMessage(node, message.data, message);
+        // Reconnecting
+        if (message.data===node.tokenServer && node.readyState===dop.CONS.RECONNECT) {
+            node.readyState = dop.CONS.CONNECT;
+            dop.core.emitReconnectClient(node, oldSocket);
+        }
+        else
+            dop.core.emitMessage(node, message.data, message);
     });
     socket.addEventListener('close', function() {
         dop.core.emitClose(node);
