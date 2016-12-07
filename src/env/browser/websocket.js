@@ -20,10 +20,11 @@ function websocket(dop, node, options) {
 
     // We use this function as alias to store messages when connection is not OPEN
     function send(message) {
-        (socket.readyState === socket.constructor.OPEN) ? 
-            socket.send(message)
-        : 
-            send_queue.push(message);
+        (socket.readyState === socket.constructor.OPEN) ? socket.send(message) : send_queue.push(message);
+    }
+    function sendQueue(message) {
+        while (send_queue.length>0)
+            socket.send(send_queue.shift());
     }
 
     node.readyState = dop.CONS.CLOSE;
@@ -35,6 +36,7 @@ function websocket(dop, node, options) {
     node.once(dop.CONS.CONNECT, function() {
         node.readyState = dop.CONS.CONNECT;
         dop.core.emitConnect(node);
+        sendQueue();
     });
     node.on(dop.CONS.SEND, function(message) {
         send(message);
@@ -48,8 +50,10 @@ function websocket(dop, node, options) {
 
     socket.addEventListener('open', function() {
         // Reconnect
-        if (node.readyState === dop.CONS.RECONNECT)
-            send(node.tokenServer)
+        if (node.readyState === dop.CONS.RECONNECT) {
+            send(node.tokenServer);
+            sendQueue();
+        }
         // Connect
         else {
             send(); // Empty means we want to get connected

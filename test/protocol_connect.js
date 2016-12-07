@@ -32,7 +32,7 @@ test('CONNECT TEST', function(t) {
         t.equal(node.socket, socketServer, '❌ connect');
     });
     server.on('message', function(node, message){
-        t.equal(message, '[-1,0]', '❌ message `'+message+'`');
+        t.equal(message==='[-1,0]'||message==='Before', true, '❌ message `'+message+'`');
     });
     server.on('close', function(socket){
         timeoutCheck = new Date().getTime();
@@ -62,10 +62,11 @@ test('CONNECT TEST', function(t) {
     nodeClient.on('close', function(socket){
         t.equal(socket, socketClient, '✅ close');
     });
-
-
 });
 
-setTimeout(function(){
-    nodeClient.disconnect();
-}, 1000)
+
+// Sending messages before is connected
+nodeClient.send('Before');
+// Disconnecting
+setTimeout(nodeClient.disconnect.bind(nodeClient), 1000)
+
