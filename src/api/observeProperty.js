@@ -1,7 +1,7 @@
 
 dop.observeProperty = function(object, property, callback) {
     dop.util.invariant(dop.isRegistered(object), 'dop.observeProperty needs a registered object as first parameter');
-    dop.util.invariant(typeof callback == 'function', 'dop.observeProperty needs a callback as third parameter');
+    dop.util.invariant(isFunction(callback), 'dop.observeProperty needs a callback as third parameter');
 
     if (dop.util.typeof(dop.getObjectDop(object).op) != 'object')
         dop.getObjectDop(object).op = {};

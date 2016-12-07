@@ -11,7 +11,7 @@ dop.core.updatePathArray = function (array, newIndex) {
 
             // Updating neested objects
             dop.util.path(item, function(source, prop, value) {
-                if (dop.util.isObject(value))
+                if (isObject(value))
                     dop.getObjectDop(value)[index] = newIndex;
             });
         }

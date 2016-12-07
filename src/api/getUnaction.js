@@ -6,7 +6,7 @@ dop.getUnaction = function(mutations) {
         mutation;
 
     for (;index>-1; --index)
-        dop.util.injectMutationInAction(unaction, mutations[index], true);
+        dop.core.injectMutationInAction(unaction, mutations[index], true);
 
     return unaction;
 };

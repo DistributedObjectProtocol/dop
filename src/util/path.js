@@ -1,7 +1,7 @@
 
 dop.util.path = function (source, callback, destiny, mutator) {
-    var hasCallback = typeof callback == 'function',
-        hasDestiny = dop.util.isObject(destiny);
+    var hasCallback = isFunction(callback),
+        hasDestiny = isObject(destiny);
     dop.util.pathRecursive(source, callback, destiny, mutator, [], [], hasCallback, hasDestiny);
     return destiny;
 };

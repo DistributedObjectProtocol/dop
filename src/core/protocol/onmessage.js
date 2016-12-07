@@ -52,7 +52,7 @@ dop.core.onMessageClient = function(listener_or_node, socket, message_string, me
                         instruction_function = 'on'+dop.protocol.instructions[instruction_type];
 
                         // REQUEST ===============================================================
-                        if (request_id>0 && typeof dop.protocol[instruction_function]=='function')
+                        if (request_id>0 && isFunction(dop.protocol[instruction_function]))
                             dop.protocol[instruction_function](node, request_id, request);
 
 
@@ -61,7 +61,7 @@ dop.core.onMessageClient = function(listener_or_node, socket, message_string, me
 
                             request_id *= -1;
 
-                            if (dop.util.isObject(node.requests[request_id])) {
+                            if (isObject(node.requests[request_id])) {
 
                                 response = request;
                                 request = node.requests[request_id];
@@ -69,7 +69,7 @@ dop.core.onMessageClient = function(listener_or_node, socket, message_string, me
                                 instruction_type = request[1];
                                 instruction_function = '_on'+dop.protocol.instructions[instruction_type];
 
-                                if (typeof dop.protocol[instruction_function]=='function')
+                                if (isFunction(dop.protocol[instruction_function]))
                                     dop.protocol[instruction_function](node, request_id, request, response);
                                 
                                 delete node.requests[request_id];

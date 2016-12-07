@@ -1,5 +1,5 @@
 
 dop.onsubscribe = function(callback) {
-    dop.util.invariant(typeof callback == 'function', 'dop.onsubscribe only accept a function as parameter');
+    dop.util.invariant(isFunction(callback), 'dop.onsubscribe only accept a function as parameter');
     dop.data.onsubscribe = callback;
 };

@@ -1,7 +1,7 @@
 
 dop.unobserveProperty = function(object, property, callback) {
     dop.util.invariant(dop.isRegistered(object), 'dop.unobserveProperty needs a registered object as first parameter');
-    dop.util.invariant(typeof callback == 'function', 'dop.unobserveProperty needs a callback as second parameter');
+    dop.util.invariant(isFunction(callback), 'dop.unobserveProperty needs a callback as second parameter');
 
     var observers = dop.getObjectDop(object).op, indexOf;
     if (dop.util.typeof(observers) != 'object' || dop.util.typeof(observers[property]) != 'array')

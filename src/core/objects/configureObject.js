@@ -1,5 +1,5 @@
 
-var canWeProxy = typeof Proxy == 'function';
+var canWeProxy = isFunction(Proxy);
 dop.core.configureObject = function(object, path, parent) {
 
     // Creating a copy if is another object registered
@@ -26,7 +26,7 @@ dop.core.configureObject = function(object, path, parent) {
     object_dop.op = {}; // observers by property
 
 
-    if (dop.util.isObject(parent))
+    if (isObject(parent))
         object_dop._ = (dop.isRegistered(parent)) ? dop.getObjectTarget(parent) : parent;
 
 

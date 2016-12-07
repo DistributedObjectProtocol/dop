@@ -1,5 +1,5 @@
 
-dop.util.injectMutationInAction = function(action, mutation, isUnaction) {
+dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
 
     var isMutationArray = mutation.splice!==undefined || mutation.swaps!==undefined,
         path = dop.getObjectDop(mutation.object).slice(0),
@@ -20,20 +20,20 @@ dop.util.injectMutationInAction = function(action, mutation, isUnaction) {
         prop = path[index];
         if (object_data!==undefined)
             object_data = object_data[prop];
-        action = dop.util.isObject(action[prop]) ? action[prop] : action[prop]={};
+        action = isObject(action[prop]) ? action[prop] : action[prop]={};
     }
 
     prop = path[index];
 
     if (isMutationArray || isArray(object_data)) {
 
-        if (isMutationArray && !dop.util.isObject(action[prop])) 
+        if (isMutationArray && !isObject(action[prop])) 
             action[prop] = {};
 
         if (isMutationArray)
             action = action[prop];
 
-        if (!dop.util.isObject(action[CONS.dop]))
+        if (!isObject(action[CONS.dop]))
             action[CONS.dop] = [];
             
         var mutations = action[CONS.dop];

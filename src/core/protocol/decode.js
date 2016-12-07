@@ -8,7 +8,7 @@ dop.core.decode = function(property, value, undefineds) {
         if (value === '~F')
             return dop.core.remoteFunction(this, property);
 
-        if (value == '~U' && dop.util.isObject(undefineds)) {
+        if (value == '~U' && isObject(undefineds)) {
             undefineds.push([this, property]); // http://stackoverflow.com/questions/17648150/how-does-json-parse-manage-undefined
             return undefined;
         }
