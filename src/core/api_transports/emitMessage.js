@@ -1,5 +1,5 @@
 
-dop.core.emitMessage = function(node, message_string, message_raw) {
+dop.core.emitMessage = function(node, socket, message_string, message_raw) {
 
     // If server
     if (node.listener)

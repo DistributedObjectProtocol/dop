@@ -55,7 +55,7 @@ function websocket(dop, node, options) {
             send(); // Empty means we want to get connected
             node.readyState = dop.CONS.OPEN;
         }
-        dop.core.onOpenClient(node, socket, options.transport);
+        dop.core.emitOpen(node, socket, options.transport);
     });
     socket.addEventListener('message', function(message) {
         // Reconnecting
@@ -64,13 +64,10 @@ function websocket(dop, node, options) {
             dop.core.emitReconnectClient(node, oldSocket);
         }
         else
-            dop.core.emitMessage(node, message.data, message);
+            dop.core.emitMessage(node, socket, message.data, message);
     });
     socket.addEventListener('close', function() {
-        dop.core.emitClose(node);
-        // If node.readyState === dop.CONS.CLOSE means node.disconnect() has been called and we DON'T try to reconnect
-        if (node.readyState === dop.CONS.CLOSE)
-            dop.core.emitDisconnect(node);
+        dop.core.emitClose(node, socket);
     });
 
 

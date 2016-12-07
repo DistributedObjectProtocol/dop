@@ -1,6 +1,7 @@
 var test = require('tape');
-var dop = require('../dist/nodejs').create();
-var dopClient = require('../dist/nodejs').create();
+var dop = require('../dist/nodejs');
+var dopServer = dop.create();
+var dopClient = dop.create();
 var localtransportlisten = require('dop-transports').listen.local;
 var localtransportconnect = require('dop-transports').connect.local;
 var localtransportlistensocketio = require('dop-transports').listen.socketio;
@@ -10,82 +11,61 @@ var localtransportconnectsocketio = require('dop-transports').connect.socketio;
 // var client = dopClient.connect({transport:localtransportconnect, listener:server});
 // server = dop.listen({transport:localtransportlistensocketio});
 // client = dopClient.connect({transport:localtransportconnectsocketio});
-var server = dop.listen();
-var client = dopClient.connect();
-
-
-dop.env = 'SERVER'
+var timeoutDisconnect = 2, timeoutCheck; // seconds
+var server = dopServer.listen({timeout:timeoutDisconnect});
+var nodeClient = dopClient.connect();
+dopServer.env = 'SERVER'
 dopClient.env = 'CLIENT'
+var nodeServer, socketServer, socketClient;
+var tokenServer, tokenClient;
+var order = 0;
 
-var nod;
+test('CONNECT TEST', function(t) {
 
-server.on('open', function(node){
-    if (nod === undefined) {
-        nod = node;
-        socket = node.socket;
-        token = node.token;
-    }
-    console.log( '❌ open', node===nod );
-});
-server.on('message', function(node, message){
-    // console.log( nod===node );
-    console.log( '❌ message', '`'+message+'`', node===nod);
-});
-server.on('close', function(node){
-    console.log( '❌ close'/*, nod.readyState*/ );
-    console.log( '' );
-    console.log( '---------' );
-    console.log( '' );
-});
-server.on('connect', function(node){
-    console.log( '❌ connect' );
-});
-server.on('disconnect', function(node){
-    console.log( '❌ disconnect', node.readyState );
-});
-server.on('reconnect', function(node, oldSocket){
-    console.log( '❌ reconnect', node.readyState, node.token, oldSocket["~TOKEN_DOP"], node.socket["~TOKEN_DOP"] );
-});
+    server.on('open', function(socket) {
+        socketServer = socket;
+        t.equal(dopServer.getNodeBySocket(socket).socket, socket, '❌ open');
+    });
+    server.on('connect', function(node) {
+        nodeServer = node;
+        tokenServer = node.token;
+        t.equal(node.socket, socketServer, '❌ connect');
+    });
+    server.on('message', function(node, message){
+        t.equal(message, '[-1,0]', '❌ message `'+message+'`');
+    });
+    server.on('close', function(socket){
+        timeoutCheck = new Date().getTime();
+        t.equal(socket, socketServer, '❌ close');
+    });
+    server.on('disconnect', function(node){
+        var timeoutCheckEnd = Math.round( (new Date().getTime()-timeoutCheck)/1000 );
+        t.equal(timeoutCheckEnd, timeoutDisconnect, '❌ disconnect');
+        t.end();
+        try {server.listener.close()} catch(e) {}
+    });
 
 
 
 
-
-client.on('open', function(){
-    sock = client.socket;
-    console.log( '✅ open' );
-});
-client.on('message', function(message){
-    console.log( '✅ message', client.readyState, '`'+message+'`' );
-});
-client.on('close', function(){
-    console.log( '✅ close' );
-    // nod.send('mierda desde server')
-    // client.send('mierda desde client')
-    setTimeout(function(){
-    client.reconnect();
-    }, 2000)
-});
-client.on('connect', function(token){
-    console.log( '✅ connect' );
-});
-client.on('disconnect', function(){
-    console.log( '✅ disconnect' );
-});
-client.on('reconnect', function(oldSocket){
-    console.log( '✅ reconnect', client.readyState, client.token, oldSocket["~TOKEN_DOP"], client.socket["~TOKEN_DOP"] );
-});
+    nodeClient.on('open', function(socket) {
+        socketClient = socket;
+        t.equal(dopClient.getNodeBySocket(socket).socket, socket, '✅ open');
+    });
+    nodeClient.on('connect', function() {
+        tokenClient = nodeClient.token;
+        t.equal(nodeClient.socket, socketClient, '✅ connect');
+    });
+    nodeClient.on('message', function(message){
+        t.equal(message.slice(0,5), '[1,0,', '✅ message `'+message+'`');
+    });
+    nodeClient.on('close', function(socket){
+        t.equal(socket, socketClient, '✅ close');
+    });
 
 
+});
 
 setTimeout(function(){
-    client.socket.close();
-    // client.send('---despues')
+    nodeClient.disconnect();
 }, 1000)
-
-
-setTimeout(function(){
-    // client.socket.close();
-    client.send('---despues')
-}, 5000)
-

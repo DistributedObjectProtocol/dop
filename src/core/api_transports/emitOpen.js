@@ -13,6 +13,6 @@ dop.core.emitOpen = function(listener_node, socket, transport) {
     node.socket = socket;
     node.transport = transport;
     dop.core.registerNode(node);
-    listener_node.emit('open', node);
+    listener_node.emit('open', socket);
     return node;
 };

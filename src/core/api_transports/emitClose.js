@@ -1,6 +1,6 @@
 
-dop.core.emitClose = function(node) {
+dop.core.emitClose = function(node, socket) {
     if (node.listener)
-        node.listener.emit('close', node);
-    node.emit('close');
+        node.listener.emit('close', socket);
+    node.emit('close', socket);
 };

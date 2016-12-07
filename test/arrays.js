@@ -10,12 +10,14 @@ function gify(obj) {
     this.myClassProperty=123;
     return JSON.stringify(obj);
 }
-
+function isObjectRegistrable(object) {
+    var tof = dop.util.typeof(object);
+    return (tof === 'object' || tof == 'array');
+}
 
 
 
 test('for (i in ...) must return only array values', function(t) {
-    debugger
     var register = dop.register(array.slice(0));
     t.equal(gify(Object.keys(register)), gify(Object.keys(array)));
     t.end();
@@ -33,7 +35,7 @@ test('Splice', function(t) {
 
         for (var index=0,total=register.length; index<total; ++index) {
             var item = register[index];
-            if (dop.util.isObjectRegistrable(item)) {
+            if (isObjectRegistrable(item)) {
 
                 if (dop.isRegistered(item)) {
                     var object_dop = dop.getObjectDop(item);
@@ -59,7 +61,7 @@ test('Shift', function(t) {
         t.deepEqual(original,register, 'deepEqual case: '+description);
         for (var index=0,total=register.length; index<total; ++index) {
             var item = register[index];
-            if (dop.util.isObjectRegistrable(item)) {
+            if (isObjectRegistrable(item)) {
 
                 if (dop.isRegistered(item)) {
                     var object_dop = dop.getObjectDop(item);
@@ -86,7 +88,7 @@ test('Pop', function(t) {
         t.deepEqual(original,register, 'deepEqual case: '+description);
         for (var index=0,total=register.length; index<total; ++index) {
             var item = register[index];
-            if (dop.util.isObjectRegistrable(item)) {
+            if (isObjectRegistrable(item)) {
 
                 if (dop.isRegistered(item)) {
                     var object_dop = dop.getObjectDop(item);
@@ -111,7 +113,7 @@ test('Push', function(t) {
         t.equal(gify(register.push.apply(register, paramsCase)), gify(original.push.apply(original, paramsCase)), 'output case: '+description);
         for (var index=0,total=register.length; index<total; ++index) {
             var item = register[index];
-            if (dop.util.isObjectRegistrable(item)) {
+            if (isObjectRegistrable(item)) {
 
                 if (dop.isRegistered(item)) {
                     var object_dop = dop.getObjectDop(item);
@@ -139,7 +141,7 @@ test('Unshift', function(t) {
 
         for (var index=0,total=register.length; index<total; ++index) {
             var item = register[index];
-            if (dop.util.isObjectRegistrable(item)) {
+            if (isObjectRegistrable(item)) {
 
                 if (dop.isRegistered(item)) {
                     var object_dop = dop.getObjectDop(item);
@@ -162,7 +164,7 @@ test('Reverse', function(t) {
     t.deepEqual(original,register, 'deepEqual case');
     for (var index=0,total=register.length; index<total; ++index) {
         var item = register[index];
-        if (dop.util.isObjectRegistrable(item)) {
+        if (isObjectRegistrable(item)) {
 
             if (dop.isRegistered(item)) {
                 var object_dop = dop.getObjectDop(item);
@@ -225,7 +227,7 @@ test('Sort', function(t) {
         t.deepEqual(arrayOriginal, copy, 'deepEqual function:'+compareFunction);
         for (var index=0,total=arrayOriginal.length; index<total; ++index) {
             var item = arrayOriginal[index];
-            if (dop.util.isObjectRegistrable(item)) {
+            if (isObjectRegistrable(item)) {
 
                 if (dop.isRegistered(item)) {
                     var object_dop = dop.getObjectDop(item);
