@@ -14,7 +14,7 @@ dop.core.configureObject = function(object, path, parent) {
     var property, value, object_dop;
     for (property in object) {
         value = object[property];
-        if (dop.util.isObjectRegistrable(value))
+        if (dop.isObjectRegistrable(value))
             object[property] = dop.core.configureObject(value, path.concat(property), object);
     }
 

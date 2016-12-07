@@ -44,7 +44,7 @@ dop.core.splice = function(array, args) {
 
         for (;start<end; ++start) {
             item = objectTarget[start];
-            if (dop.util.isObjectRegistrable(item)) {
+            if (dop.isObjectRegistrable(item)) {
 
                 object_dop = dop.getObjectDop(item);
 

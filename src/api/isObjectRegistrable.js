@@ -1,5 +1,5 @@
 
-dop.util.isObjectRegistrable = function(object) {
+dop.isObjectRegistrable = function(object) {
     var tof = dop.util.typeof(object);
     return (tof === 'object' || tof == 'array');
 };
