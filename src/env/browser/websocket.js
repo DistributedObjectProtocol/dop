@@ -34,9 +34,8 @@ function websocket(dop, node, options) {
 
     function onopen() {
         // Reconnect
-        if (node.readyState === dop.CONS.RECONNECT) {
+        if (node.readyState === dop.CONS.RECONNECT)
             socket.send(node.tokenServer);
-        }
         // Connect
         else {
             socket.send(''); // Empty means we want to get connected
@@ -46,8 +45,9 @@ function websocket(dop, node, options) {
     }
     function onmessage(message) {
         // Reconnecting
-        if (message.data===node.tokenServer && node.readyState===dop.CONS.RECONNECT) {
+        if (node.readyState===dop.CONS.RECONNECT && message.data===node.tokenServer) {
             node.readyState = dop.CONS.CONNECT;
+            node.socket = socket;
             dop.core.emitReconnectClient(node, oldSocket);
             // sendQueue();
         }
@@ -64,12 +64,16 @@ function websocket(dop, node, options) {
     node.readyState = dop.CONS.CLOSE;
     node.reconnect = function() {
         oldSocket = socket;
-        node.socket = socket = new api(url);
+        socket = new api(url);
         addListeners(socket, onopen, onmessage, onclose);
         removeListeners(oldSocket, onopen, onmessage, onclose);
         node.readyState = dop.CONS.RECONNECT;
     };
     node.on(dop.CONS.CONNECT, function() {
+        if (node.readyState === dop.CONS.RECONNECT) {
+            node.socket = socket;
+            dop.core.emitDisconnect(node);
+        }
         node.readyState = dop.CONS.CONNECT;
         dop.core.emitConnect(node);
     });
@@ -80,8 +84,6 @@ function websocket(dop, node, options) {
         node.readyState = dop.CONS.CLOSE;
         socket.close();
     });
-
-    
 
     return socket;
 };

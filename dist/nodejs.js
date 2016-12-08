@@ -1133,7 +1133,6 @@ dop.core.listener = function(args) {
 
 
 
-
 //////////  src/core/constructors/node.js
 
 dop.core.node = function() {
@@ -2283,7 +2282,7 @@ dop.core.unregisterNode = function(node) {
 
 
 //////////  src/protocol/_onconnect.js
-
+// server side
 dop.protocol._onconnect = function(node, request_id, request, response) {
 
     var token = request[2];
@@ -2396,7 +2395,7 @@ dop.protocol.instructions = {
                         // [-1234, 0, <return>]
 
                         // Owner -> Subscriptor
-    merge: 4,           // [ 1234, <instruction>, <object_id>, <object_data_to_merge>]
+    mutation: 4,        // [ 1234, <instruction>, <object_id>, <object_data_to_merge>]
                         // [-1234, 0]
 };
 
@@ -2422,16 +2421,14 @@ dop.protocol.merge = function(node, object_id, action) {
 
 
 //////////  src/protocol/onconnect.js
-
+// client side
 dop.protocol.onconnect = function(node, request_id, request) {
     var tokenServer=request[1],
         response = dop.core.createResponse(request_id, 0);
     node.tokenServer = tokenServer;
-    node.send(JSON.stringify(response));
     node.emit(dop.CONS.CONNECT);
+    node.send(JSON.stringify(response));
 };
-
-
 
 
 
