@@ -20,23 +20,56 @@ function websocket(dop, node, options) {
 
     // We use this function as alias to store messages when connection is not OPEN
     function send(message) {
-        (socket.readyState === socket.constructor.OPEN) ? socket.send(message) : send_queue.push(message);
-    }
-    function sendQueue(message) {
-        while (send_queue.length>0)
-            send(send_queue.shift());
+        (socket.readyState === socket.constructor.OPEN && node.readyState === dop.CONS.CONNECT) ?
+            socket.send(message)
+        :
+            console.log( 'save', message ); 
     }
 
+    // This function emit all the queue messages
+    function sendQueue(message) {
+        while (send_queue.length>0)
+            socket.send(send_queue.shift());
+    }
+
+    function onopen() {
+        // Reconnect
+        if (node.readyState === dop.CONS.RECONNECT) {
+            socket.send(node.tokenServer);
+        }
+        // Connect
+        else {
+            socket.send(''); // Empty means we want to get connected
+            node.readyState = dop.CONS.OPEN;
+        }
+        dop.core.emitOpen(node, socket, options.transport);
+    }
+    function onmessage(message) {
+        // // Reconnecting
+        // if (message.data===node.tokenServer && node.readyState===dop.CONS.RECONNECT) {
+        //     node.readyState = dop.CONS.CONNECT;
+        //     dop.core.emitReconnectClient(node, oldSocket);
+        //     sendQueue();
+        // }
+        // else
+            dop.core.emitMessage(node, socket, message.data, message);
+    }
+    function onclose() {
+        dop.core.emitClose(node, socket);
+    }
+
+
     node.readyState = dop.CONS.CLOSE;
-    node.reconnect = function() {
-        oldSocket = node.socket;
-        node.socket = node.options.transport.apply(node, args);
-        node.readyState = dop.CONS.RECONNECT;
-    };
-    node.once(dop.CONS.CONNECT, function() {
+    // node.reconnect = function() {
+    //     oldSocket = socket;
+    //     node.socket = socket = new api(url);
+    //     addListeners(socket, onopen, onmessage, onclose);
+    //     removeListeners(oldSocket, onopen, onmessage, onclose);
+    //     node.readyState = dop.CONS.RECONNECT;
+    // };
+    node.on(dop.CONS.CONNECT, function() {
         node.readyState = dop.CONS.CONNECT;
         dop.core.emitConnect(node);
-        sendQueue();
     });
     node.on(dop.CONS.SEND, function(message) {
         send(message);
@@ -46,38 +79,24 @@ function websocket(dop, node, options) {
         socket.close();
     });
 
-
-
-    socket.addEventListener('open', function() {
-        // Reconnect
-        if (node.readyState === dop.CONS.RECONNECT) {
-            send(node.tokenServer);
-            sendQueue();
-        }
-        // Connect
-        else {
-            send(); // Empty means we want to get connected
-            node.readyState = dop.CONS.OPEN;
-        }
-        dop.core.emitOpen(node, socket, options.transport);
-    });
-    socket.addEventListener('message', function(message) {
-        // Reconnecting
-        if (message.data===node.tokenServer && node.readyState===dop.CONS.RECONNECT) {
-            node.readyState = dop.CONS.CONNECT;
-            dop.core.emitReconnectClient(node, oldSocket);
-        }
-        else
-            dop.core.emitMessage(node, socket, message.data, message);
-    });
-    socket.addEventListener('close', function() {
-        dop.core.emitClose(node, socket);
-    });
-
+    addListeners(socket, onopen, onmessage, onclose);
 
     return socket;
 };
 
+function addListeners(socket, onopen, onmessage, onclose) {
+    socket.addEventListener('open', onopen);
+    socket.addEventListener('message', onmessage);
+    socket.addEventListener('close', onclose);
+}
+function removeListeners(socket, onopen, onmessage, onclose) {
+    socket.removeEventListener('open', onopen);
+    socket.removeEventListener('message', onmessage);
+    socket.removeEventListener('close', onclose);
+}
+
+
+// UMD
 if (typeof dop=='undefined' && typeof module == 'object' && module.exports)
     module.exports = websocket;
 else {
@@ -87,5 +106,6 @@ else {
     :
         root.dopTransportsConnectWebsocket = websocket;
 }
+
 
 })(this);
