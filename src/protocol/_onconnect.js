@@ -1,4 +1,4 @@
-
+// server side
 dop.protocol._onconnect = function(node, request_id, request, response) {
 
     var token = request[2];

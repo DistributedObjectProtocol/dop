@@ -24,7 +24,7 @@ function websocket(dop, node, options) {
     }
     function sendQueue(message) {
         while (send_queue.length>0)
-            socket.send(send_queue.shift());
+            send(send_queue.shift());
     }
 
     node.readyState = dop.CONS.CLOSE;

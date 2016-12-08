@@ -42,7 +42,7 @@ dop.protocol.instructions = {
                         // [-1234, 0, <return>]
 
                         // Owner -> Subscriptor
-    merge: 4,           // [ 1234, <instruction>, <object_id>, <object_data_to_merge>]
+    mutation: 4,        // [ 1234, <instruction>, <object_id>, <object_data_to_merge>]
                         // [-1234, 0]
 };
 
