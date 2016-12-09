@@ -23,9 +23,8 @@ var order = 0;
 test('RECONNECT TEST', function(t) {
 
     server.on('open', function(socket) {
-        if (socketServer === undefined) {
+        if (socketServer === undefined)
             socketServer = socket;
-        }
         // t.equal(dopServer.getNodeBySocket(socket).socket, socket, '❌ open');
     });
     server.on('connect', function(node) {
@@ -33,34 +32,22 @@ test('RECONNECT TEST', function(t) {
         tokenServer = node.token;
         t.equal(node.socket, socketServer, '❌ connect');
     });
-    // server.on('close', function(socket){
-    //     t.equal(socket, socketServer, '❌ close');
-    // });
     server.on('reconnect', function(node, oldSocket){
         t.equal(node===nodeServer && oldSocket===socketServer, true, '❌ reconnect');
-    });
-    server.on('disconnect', function(node){
-        t.equal(node, nodeServer, '❌ disconnect');
     });
 
 
     nodeClient.on('open', function(socket) {
         socketClient = socket;
-        // t.equal(dopClient.getNodeBySocket(socket).socket, socket, '✅ open');
     });
     nodeClient.on('connect', function() {
         tokenClient = nodeClient.token;
         t.equal(nodeClient.socket, socketClient, '✅ connect');
     });
-    // nodeClient.on('close', function(socket){
-    //     t.equal(socket, socketClient, '✅ close');
-    // });
     nodeClient.on('reconnect', function(oldSocket) {
         t.equal(oldSocket, socketClient, '✅ reconnect');
+        server.listener.close();
         t.end();
-    });
-    nodeClient.on('disconnect', function() {
-        t.equal(1, 1, '✅ disconnect');
     });
 });
 
@@ -75,4 +62,4 @@ setTimeout(function(){
 setTimeout(function(){
     console.log( 'reconnecting...' );
     nodeClient.reconnect();
-}, 3000);
+}, 1000);
