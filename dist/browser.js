@@ -207,7 +207,7 @@ function websocket(dop, node, options) {
         // Reconnecting
         if (node.readyState===dop.CONS.RECONNECT && message.data===node.tokenServer) {
             node.readyState = dop.CONS.CONNECT;
-            node.socket = socket;
+            // node.socket = socket;
             dop.core.emitReconnectClient(node, oldSocket);
             // sendQueue();
         }
@@ -220,7 +220,6 @@ function websocket(dop, node, options) {
 
     // Adding listeners
     addListeners(socket, onopen, onmessage, onclose);
-
     node.readyState = dop.CONS.CLOSE;
     node.reconnect = function() {
         oldSocket = socket;
@@ -231,8 +230,9 @@ function websocket(dop, node, options) {
     };
     node.on(dop.CONS.CONNECT, function() {
         if (node.readyState === dop.CONS.RECONNECT) {
-            node.socket = socket;
+            node.socket = oldSocket;
             dop.core.emitDisconnect(node);
+            node.socket = socket;
         }
         node.readyState = dop.CONS.CONNECT;
         dop.core.emitConnect(node);
