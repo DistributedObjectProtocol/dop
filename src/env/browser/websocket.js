@@ -45,11 +45,11 @@ function websocket(dop, node, options) {
         // Reconnecting
         if (node.readyState===dop.CONS.RECONNECT && message.data===node.tokenServer) {
             node.readyState = dop.CONS.CONNECT;
-            dop.core.emitReconnectClient(node, oldSocket);
-            // sendQueue();
+            dop.core.setSocketToNode(node, socket);
+            dop.core.emitReconnect(node, oldSocket);
         }
         else
-            dop.core.emitMessage(node, socket, message.data, message);
+            dop.core.emitMessage(node, message.data, message);
     }
     function onclose() {
         dop.core.emitClose(node, socket);
@@ -58,9 +58,8 @@ function websocket(dop, node, options) {
     // dop events
     function onconnect() {
         if (node.readyState === dop.CONS.RECONNECT) {
-            node.socket = oldSocket;
             dop.core.emitDisconnect(node);
-            node.socket = socket;
+            dop.core.setSocketToNode(node, socket);
         }
         node.readyState = dop.CONS.CONNECT;
         dop.core.emitConnect(node);
@@ -72,13 +71,14 @@ function websocket(dop, node, options) {
 
 
     // Setting up
+    dop.core.setSocketToNode(node, socket);
     node.readyState = dop.CONS.CLOSE;
     node.reconnect = function() {
         oldSocket = socket;
         socket = new api(url);
+        node.readyState = dop.CONS.RECONNECT;
         addListeners(socket, onopen, onmessage, onclose);
         removeListeners(oldSocket, onopen, onmessage, onclose);
-        node.readyState = dop.CONS.RECONNECT;
     };
     node.on(dop.CONS.CONNECT, onconnect);
     node.on(dop.CONS.SEND, send);
@@ -110,6 +110,5 @@ else {
     :
         root.dopTransportsConnectWebsocket = websocket;
 }
-
 
 })(this);

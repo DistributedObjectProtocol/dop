@@ -4,6 +4,6 @@ dop.core.connector = function(args) {
     args.unshift(dop, node);
     node.options = args[2];
     node.transport = node.options.transport;
-    node.socket = node.options.transport.apply(this, args);
+    node.options.transport.apply(this, args);
     return node;
 };

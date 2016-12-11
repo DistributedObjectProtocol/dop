@@ -38,7 +38,8 @@ test('RECONNECT TEST', function(t) {
 
 
     nodeClient.on('open', function(socket) {
-        socketClient = socket;
+        if (socketClient===undefined)
+            socketClient = socket;
     });
     nodeClient.on('connect', function() {
         tokenClient = nodeClient.token;
