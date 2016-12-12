@@ -1,5 +1,5 @@
 var test = require('tape');
-var dop = require('../dist/nodejs');
+var dop = require('../../dist/nodejs');
 var dopServer = dop.create();
 var dopClient = dop.create();
 var localtransportlisten = require('dop-transports').listen.local;
