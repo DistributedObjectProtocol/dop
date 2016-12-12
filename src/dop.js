@@ -1,8 +1,7 @@
 (function factory(root) {
 
 var dop = {
-    version: '0.3.2',
-    name: 'dop', // Useful for transport (websockets namespaces)
+    name: 'dop',
     create: factory,
 
     // Where all the internal information is stored

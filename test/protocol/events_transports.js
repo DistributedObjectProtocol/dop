@@ -1,6 +1,6 @@
 var test = require('tape');
-var dop = require('../dist/nodejs').create();
-var dopClient = require('../dist/nodejs').create();
+var dop = require('../../dist/nodejs').create();
+var dopClient = require('../../dist/nodejs').create();
 var localtransportlisten = require('dop-transports').listen.local;
 var localtransportconnect = require('dop-transports').connect.local;
 
@@ -11,11 +11,12 @@ var localtransportconnect = require('dop-transports').connect.local;
 var server = dop.listen();
 var client = dopClient.connect();
 
-
+var tend;
 test('Events', function(t) {
     var sock, msg;
     var sock2, msg2;
     var order = 1;
+    tend = t.end.bind(this);
 
     server.on('open', function(socket){
         sock = socket;
@@ -42,26 +43,31 @@ test('Events', function(t) {
     });
 
 
-    client.on('message', function(socket, message){
+
+    server.on('message', function(node, message) {
+        msg = message;
+        t.equal(order++, 7, 'server/message');
+        t.equal(sock, node.socket, 'server/message sock');
+    });
+    function onmessageserver(message) {
+        if (message != ""){
+            t.equal(order++, 8, 'serverlistener/message');
+            t.equal(msg, message, 'serverlistener/message msg');
+            (Math.round(Math.random()*100)%2) ? sock.close() : sock2.close();
+        }
+    };
+
+    client.on('message', function(message){
         msg2 = message;
         t.equal(order++, 5, 'client/message');
-        t.equal(sock2, socket, 'client/message sock');
+        t.equal(sock2, client.socket, 'client/message sock');
     });
     function onmessageclient(message){
         t.equal(order++, 6, 'clientsocket/message');
         t.equal(msg2, message, 'clientsocket/message msg');
     };
 
-    server.on('message', function(socket, message){
-        msg = message;
-        t.equal(order++, 7, 'server/message');
-        t.equal(sock, socket, 'server/message sock');
-    });
-    function onmessageserver(message){
-        t.equal(order++, 8, 'serverlistener/message');
-        t.equal(msg, message, 'serverlistener/message msg');
-        (Math.round(Math.random()*100)%2) ? sock.close() : sock2.close();
-    };
+
 
 
     client.on('close', function(){
@@ -80,25 +86,16 @@ test('Events', function(t) {
     function oncloseserver(){
         t.equal(order++, 12, 'serverlistener/close');
         t.end();
-        try {server.listener.close()} catch(e) {}
+        
+        try {
+            setTimeout(function(){
+                client.socket.close();
+                server.listener.close();
+                t.end();
+            },1000);
+        } catch(e) {}
     };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 });
-
 
 

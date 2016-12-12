@@ -9,8 +9,7 @@
 (function factory(root) {
 
 var dop = {
-    version: '0.3.2',
-    name: 'dop', // Useful for transport (websockets namespaces)
+    name: 'dop',
     create: factory,
 
     // Where all the internal information is stored
@@ -163,7 +162,6 @@ function websocket(dop, node, options) {
 
     var url = 'ws://localhost:4444/'+dop.name,
         args = arguments;
-
     if (typeof options.url == 'string')
         url = options.url.replace('http','ws');
     else if (typeof window!='undefined' && /http/.test(window.location.href)) {
@@ -177,21 +175,19 @@ function websocket(dop, node, options) {
         socket = new api(url),
         send_queue = [];
     
-
-    // We use this function as alias to store messages when connection is not CONNECT
+    // Helpers
     function send(message) {
         (socket.readyState===socket.constructor.OPEN && node.readyState===dop.CONS.CONNECT) ?
             socket.send(message)
         :
             send_queue.push(message); 
     }
-
-    // This function emit all the queue messages
     function sendQueue(message) {
         while (send_queue.length>0)
             socket.send(send_queue.shift());
     }
 
+    // Socket events
     function onopen() {
         // Reconnect
         if (node.readyState === dop.CONS.RECONNECT)
@@ -207,46 +203,49 @@ function websocket(dop, node, options) {
         // Reconnecting
         if (node.readyState===dop.CONS.RECONNECT && message.data===node.tokenServer) {
             node.readyState = dop.CONS.CONNECT;
-            // node.socket = socket;
-            dop.core.emitReconnectClient(node, oldSocket);
-            // sendQueue();
+            dop.core.setSocketToNode(node, socket);
+            dop.core.emitReconnect(node, oldSocket);
         }
         else
-            dop.core.emitMessage(node, socket, message.data, message);
+            dop.core.emitMessage(node, message.data, message);
     }
     function onclose() {
         dop.core.emitClose(node, socket);
     }
 
-    // Adding listeners
-    addListeners(socket, onopen, onmessage, onclose);
-    node.readyState = dop.CONS.CLOSE;
-    node.reconnect = function() {
-        oldSocket = socket;
-        socket = new api(url);
-        addListeners(socket, onopen, onmessage, onclose);
-        removeListeners(oldSocket, onopen, onmessage, onclose);
-        node.readyState = dop.CONS.RECONNECT;
-    };
-    node.on(dop.CONS.CONNECT, function() {
+    // dop events
+    function onconnect() {
         if (node.readyState === dop.CONS.RECONNECT) {
-            node.socket = oldSocket;
             dop.core.emitDisconnect(node);
-            node.socket = socket;
+            dop.core.setSocketToNode(node, socket);
         }
         node.readyState = dop.CONS.CONNECT;
         dop.core.emitConnect(node);
-    });
-    node.on(dop.CONS.SEND, function(message) {
-        send(message);
-    });
-    node.on(dop.CONS.DISCONNECT, function() {
+    }
+    function ondisconnect() {
         node.readyState = dop.CONS.CLOSE;
         socket.close();
-    });
+    }
 
+    function reconnect() {
+        oldSocket = socket;
+        socket = new api(url);
+        node.readyState = dop.CONS.RECONNECT;
+        addListeners(socket, onopen, onmessage, onclose);
+        removeListeners(oldSocket, onopen, onmessage, onclose);
+    }
+
+    // Setting up
+    dop.core.setSocketToNode(node, socket);
+    node.readyState = dop.CONS.CLOSE;
+    node.reconnect = reconnect;
+    node.on(dop.CONS.CONNECT, onconnect);
+    node.on(dop.CONS.SEND, send);
+    node.on(dop.CONS.DISCONNECT, ondisconnect);
+    addListeners(socket, onopen, onmessage, onclose);
+    
     return socket;
-};
+}
 
 function addListeners(socket, onopen, onmessage, onclose) {
     socket.addEventListener('open', onopen);
@@ -270,7 +269,6 @@ else {
     :
         root.dopTransportsConnectWebsocket = websocket;
 }
-
 
 })(this);
 
@@ -1054,10 +1052,11 @@ dop.core.emitConnect = function(node) {
 //////////  src/core/api_transports/emitDisconnect.js
 
 dop.core.emitDisconnect = function(node) {
-    if (node.listener)
+    if (node.listener) {
+        dop.core.unregisterNode(node);
         node.listener.emit('disconnect', node);
+    }
     node.emit('disconnect');
-    dop.core.unregisterNode(node);
 };
 
 
@@ -1065,7 +1064,7 @@ dop.core.emitDisconnect = function(node) {
 
 //////////  src/core/api_transports/emitMessage.js
 
-dop.core.emitMessage = function(node, socket, message_string, message_raw) {
+dop.core.emitMessage = function(node, message_string, message_raw) {
 
     // If server
     if (node.listener)
@@ -1191,7 +1190,6 @@ dop.core.emitOpen = function(listener_node, socket, transport) {
         node.listener = listener_node;
         node.try_connects = listener_node.options.try_connects;
     }
-    node.socket = socket;
     node.transport = transport;
     dop.core.registerNode(node);
     listener_node.emit('open', socket);
@@ -1203,19 +1201,11 @@ dop.core.emitOpen = function(listener_node, socket, transport) {
 
 //////////  src/core/api_transports/emitReconnect.js
 
-dop.core.emitReconnect = function(node, newNode) {
-    var oldSocket = node.socket;
-    node.socket = newNode.socket;
-    node.socket[CONS.socket_token] = node.token;
-    node.listener.emit('reconnect', node, oldSocket);
-    node.emit('reconnect', oldSocket);
-    dop.core.unregisterNode(newNode);
-};
-
-dop.core.emitReconnectClient = function(node, newSocket) {
-    var oldSocket = node.socket;
-    node.socket = newSocket;
-    node.socket[CONS.socket_token] = node.token;
+dop.core.emitReconnect = function(node, oldSocket, newNode) {
+    if (node.listener) {
+        dop.core.unregisterNode(newNode);
+        node.listener.emit('reconnect', node, oldSocket);
+    }
     node.emit('reconnect', oldSocket);
 };
 
@@ -2210,7 +2200,7 @@ dop.core.connector = function(args) {
     args.unshift(dop, node);
     node.options = args[2];
     node.transport = node.options.transport;
-    node.socket = node.options.transport.apply(this, args);
+    node.options.transport.apply(this, args);
     return node;
 };
 
@@ -2389,7 +2379,6 @@ dop.core.getRejectError = function(error) {
 //////////  src/core/protocol/registerNode.js
 
 dop.core.registerNode = function(node) {
-    node.socket[CONS.socket_token] = node.token;
     dop.data.node[node.token] = node;
 };
 
@@ -2431,6 +2420,16 @@ dop.core.remoteFunction = function $DOP_REMOTE_function(object, property) {
     //     "return function " + dop.core.remoteFunction.name + "() {  return that.call(path, arguments); }"
     //)();
 
+};
+
+
+
+
+//////////  src/core/protocol/setSocketToNode.js
+
+dop.core.setSocketToNode = function(node, socket) {
+    node.socket = socket;
+    socket[CONS.socket_token] = node.token;
 };
 
 

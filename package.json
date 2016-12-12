@@ -10,10 +10,11 @@
     "url": "git+https://github.com/DistributedObjectProtocol/dop.git"
   },
   "author": "Josema Gonzalez (http://josema.es/)",
-  "description": "A state management for your whole architecture. Based on Distributed Object Protocol.",
+  "description": "Distributed Object Protocol.",
   "keywords": [
-    "state management",
     "realtime",
+    "pubsub",
+    "state management",
     "data flow",
     "distributed",
     "objects",
@@ -22,10 +23,8 @@
     "sync",
     "synchronization",
     "rpc",
-    "pubsub",
     "remote",
     "connect",
-    "realtime",
     "websocket",
     "events",
     "sockets",
@@ -34,9 +33,7 @@
     "flux",
     "server",
     "client",
-    "ria",
-    "model",
-    "meteor"
+    "ria"
   ],
   "dependencies": {
     "dop-transports": "^1.0.0"

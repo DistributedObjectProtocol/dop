@@ -11,7 +11,6 @@ function websocket(dop, node, options) {
         url = protocol+'://'+domain_prefix[2].toLocaleLowerCase()+'/'+dop.name;
     }
 
-
     // Variables
     var api = options.transport.getApi(),
         socket = new api(url),
@@ -69,17 +68,18 @@ function websocket(dop, node, options) {
         socket.close();
     }
 
-
-    // Setting up
-    dop.core.setSocketToNode(node, socket);
-    node.readyState = dop.CONS.CLOSE;
-    node.reconnect = function() {
+    function reconnect() {
         oldSocket = socket;
         socket = new api(url);
         node.readyState = dop.CONS.RECONNECT;
         addListeners(socket, onopen, onmessage, onclose);
         removeListeners(oldSocket, onopen, onmessage, onclose);
-    };
+    }
+
+    // Setting up
+    dop.core.setSocketToNode(node, socket);
+    node.readyState = dop.CONS.CLOSE;
+    node.reconnect = reconnect;
     node.on(dop.CONS.CONNECT, onconnect);
     node.on(dop.CONS.SEND, send);
     node.on(dop.CONS.DISCONNECT, ondisconnect);

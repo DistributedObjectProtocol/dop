@@ -9,8 +9,7 @@
 (function factory(root) {
 
 var dop = {
-    version: '0.3.2',
-    name: 'dop', // Useful for transport (websockets namespaces)
+    name: 'dop',
     create: factory,
 
     // Where all the internal information is stored
@@ -874,10 +873,11 @@ dop.core.emitConnect = function(node) {
 //////////  src/core/api_transports/emitDisconnect.js
 
 dop.core.emitDisconnect = function(node) {
-    if (node.listener)
+    if (node.listener) {
+        dop.core.unregisterNode(node);
         node.listener.emit('disconnect', node);
+    }
     node.emit('disconnect');
-    dop.core.unregisterNode(node);
 };
 
 
@@ -1011,7 +1011,6 @@ dop.core.emitOpen = function(listener_node, socket, transport) {
         node.listener = listener_node;
         node.try_connects = listener_node.options.try_connects;
     }
-    node.socket = socket;
     node.transport = transport;
     dop.core.registerNode(node);
     listener_node.emit('open', socket);
@@ -1023,19 +1022,11 @@ dop.core.emitOpen = function(listener_node, socket, transport) {
 
 //////////  src/core/api_transports/emitReconnect.js
 
-dop.core.emitReconnect = function(node, newNode) {
-    var oldSocket = node.socket;
-    node.socket = newNode.socket;
-    node.socket[CONS.socket_token] = node.token;
-    node.listener.emit('reconnect', node, oldSocket);
-    node.emit('reconnect', oldSocket);
-    dop.core.unregisterNode(newNode);
-};
-
-dop.core.emitReconnectClient = function(node, newSocket) {
-    var oldSocket = node.socket;
-    node.socket = newSocket;
-    node.socket[CONS.socket_token] = node.token;
+dop.core.emitReconnect = function(node, oldSocket, newNode) {
+    if (node.listener) {
+        dop.core.unregisterNode(newNode);
+        node.listener.emit('reconnect', node, oldSocket);
+    }
     node.emit('reconnect', oldSocket);
 };
 
@@ -2030,7 +2021,7 @@ dop.core.connector = function(args) {
     args.unshift(dop, node);
     node.options = args[2];
     node.transport = node.options.transport;
-    node.socket = node.options.transport.apply(this, args);
+    node.options.transport.apply(this, args);
     return node;
 };
 
@@ -2209,7 +2200,6 @@ dop.core.getRejectError = function(error) {
 //////////  src/core/protocol/registerNode.js
 
 dop.core.registerNode = function(node) {
-    node.socket[CONS.socket_token] = node.token;
     dop.data.node[node.token] = node;
 };
 
@@ -2251,6 +2241,16 @@ dop.core.remoteFunction = function $DOP_REMOTE_function(object, property) {
     //     "return function " + dop.core.remoteFunction.name + "() {  return that.call(path, arguments); }"
     //)();
 
+};
+
+
+
+
+//////////  src/core/protocol/setSocketToNode.js
+
+dop.core.setSocketToNode = function(node, socket) {
+    node.socket = socket;
+    socket[CONS.socket_token] = node.token;
 };
 
 
