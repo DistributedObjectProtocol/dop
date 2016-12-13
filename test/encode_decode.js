@@ -14,7 +14,7 @@ var data = {
     null: null,
     regexp:  /molamazo/g,
     date: new Date(),
-    "~dop": "Mola",
+    "~DOP": "Mola",
     und: "~U",
     inf: '~I',
     fun: '~F',

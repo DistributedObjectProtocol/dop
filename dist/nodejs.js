@@ -29,24 +29,16 @@ var dop = {
     protocol: {},
     transports: {listen:{}, connect:{}},
 
-    CONS: {
-        CLOSE: '~CLOSE',
-        OPEN: '~OPEN',
-        CONNECTING: '~CONNECTING',
+    // Constants
+    cons: {
+        TOKEN: '~TOKEN_DOP',
+        DOP: '~DOP',
         CONNECT: '~CONNECT',
-        RECONNECT: '~RECONNECT',
-        SEND: '~SEND'
+        SEND: '~SEND',
+        DISCONNECT: '~DISCONNECT'
     }
     
 };
-
-
-// Special properties assigned to user objects
-var CONS = {
-    socket_token: '~TOKEN_DOP',
-    dop: '~dop'
-};
-
 
 
 
@@ -501,7 +493,7 @@ dop.getAction = function(mutations) {
 //////////  src/api/getNodeBySocket.js
 
 dop.getNodeBySocket = function(socket) {
-    return dop.data.node[ socket[CONS.socket_token] ];
+    return dop.data.node[ socket[dop.cons.TOKEN] ];
 };
 
 
@@ -510,7 +502,7 @@ dop.getNodeBySocket = function(socket) {
 //////////  src/api/getObject.js
 
 dop.getObjectDop = function(object) {
-    return object[CONS.dop];
+    return object[dop.cons.DOP];
 };
 
 dop.getObjectId = function(object) {
@@ -711,9 +703,9 @@ dop.core.setAction = function(destiny, prop, value, typeofValue, path) {
         var typeofDestiny = dop.util.typeof(destiny[prop]);
 
         // Array mutations
-        if (typeofValue=='object' && value.hasOwnProperty(CONS.dop)) {
+        if (typeofValue=='object' && value.hasOwnProperty(dop.cons.DOP)) {
 
-            var mutations = value[CONS.dop],
+            var mutations = value[dop.cons.DOP],
                 mutation,
                 index=0,
                 total=mutations.length;
@@ -783,7 +775,7 @@ dop.core.setAction = function(destiny, prop, value, typeofValue, path) {
     // }
 };
 // dop.core.setActionLoop = function() {
-//     if (prop === CONS.dop)
+//     if (prop === dop.cons.DOP)
 //         return true;
 // };
 
@@ -980,10 +972,10 @@ dop.core.emitMessage = function(node, message_string, message_raw) {
 
 
     // var messages, 
-    //     user = (socket[CONS.socket_token] === undefined) ?
+    //     user = (socket[dop.cons.TOKEN] === undefined) ?
     //         socket
     //     :
-    //         node.users[ socket[CONS.socket_token] ];
+    //         node.users[ socket[dop.cons.TOKEN] ];
 
 
 
@@ -1143,11 +1135,11 @@ dop.core.node = function() {
 
 
 dop.core.node.prototype.send = function(message) {
-    this.emit(dop.CONS.SEND, message);
+    this.emit(dop.cons.SEND, message);
 };
 
 dop.core.node.prototype.disconnect = function() {
-    this.emit(dop.CONS.DISCONNECT);
+    this.emit(dop.cons.DISCONNECT);
 };
 
 dop.core.node.prototype.subscribe = function() {
@@ -1623,8 +1615,8 @@ dop.core.configureObject = function(object, path, parent) {
             object[property] = dop.core.configureObject(value, path.concat(property), object);
     }
 
-    // Setting ~dop object
-    Object.defineProperty(object, CONS.dop, {value:path.slice(0)});
+    // Setting ~DOP object
+    Object.defineProperty(object, dop.cons.DOP, {value:path.slice(0)});
     object_dop = dop.getObjectDop(object);
     object_dop.m = []; // mutations
     object_dop.o = []; // observers
@@ -1826,10 +1818,10 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
         if (isMutationArray)
             action = action[prop];
 
-        if (!isObject(action[CONS.dop]))
-            action[CONS.dop] = [];
+        if (!isObject(action[dop.cons.DOP]))
+            action[dop.cons.DOP] = [];
             
-        var mutations = action[CONS.dop];
+        var mutations = action[dop.cons.DOP];
 
         // swap
         if (mutation.swaps!==undefined) {
@@ -2251,7 +2243,7 @@ dop.core.remoteFunction = function $DOP_REMOTE_function(object, property) {
 
 dop.core.setSocketToNode = function(node, socket) {
     node.socket = socket;
-    socket[CONS.socket_token] = node.token;
+    socket[dop.cons.TOKEN] = node.token;
 };
 
 
@@ -2290,7 +2282,7 @@ dop.protocol._onconnect = function(node, request_id, request, response) {
 
     // Node is connected correctly
     if (response[0]===0)
-        node.emit(dop.CONS.CONNECT, request, response);
+        node.emit(dop.cons.CONNECT, request, response);
 
 
     // We must manage the rejection
@@ -2427,7 +2419,7 @@ dop.protocol.onconnect = function(node, request_id, request) {
     var tokenServer=request[1],
         response = dop.core.createResponse(request_id, 0);
     node.tokenServer = tokenServer;
-    node.emit(dop.CONS.CONNECT, JSON.stringify(response));
+    node.emit(dop.cons.CONNECT, JSON.stringify(response));
 };
 
 

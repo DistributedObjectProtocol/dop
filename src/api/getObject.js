@@ -1,6 +1,6 @@
 
 dop.getObjectDop = function(object) {
-    return object[CONS.dop];
+    return object[dop.cons.DOP];
 };
 
 dop.getObjectId = function(object) {

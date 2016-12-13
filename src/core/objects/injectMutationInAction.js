@@ -33,10 +33,10 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
         if (isMutationArray)
             action = action[prop];
 
-        if (!isObject(action[CONS.dop]))
-            action[CONS.dop] = [];
+        if (!isObject(action[dop.cons.DOP]))
+            action[dop.cons.DOP] = [];
             
-        var mutations = action[CONS.dop];
+        var mutations = action[dop.cons.DOP];
 
         // swap
         if (mutation.swaps!==undefined) {

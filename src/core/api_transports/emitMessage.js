@@ -93,10 +93,10 @@ dop.core.emitMessage = function(node, message_string, message_raw) {
 
 
     // var messages, 
-    //     user = (socket[CONS.socket_token] === undefined) ?
+    //     user = (socket[dop.cons.TOKEN] === undefined) ?
     //         socket
     //     :
-    //         node.users[ socket[CONS.socket_token] ];
+    //         node.users[ socket[dop.cons.TOKEN] ];
 
 
 

@@ -18,8 +18,8 @@ dop.core.configureObject = function(object, path, parent) {
             object[property] = dop.core.configureObject(value, path.concat(property), object);
     }
 
-    // Setting ~dop object
-    Object.defineProperty(object, CONS.dop, {value:path.slice(0)});
+    // Setting ~DOP object
+    Object.defineProperty(object, dop.cons.DOP, {value:path.slice(0)});
     object_dop = dop.getObjectDop(object);
     object_dop.m = []; // mutations
     object_dop.o = []; // observers

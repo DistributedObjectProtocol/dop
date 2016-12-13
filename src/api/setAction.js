@@ -13,9 +13,9 @@ dop.core.setAction = function(destiny, prop, value, typeofValue, path) {
         var typeofDestiny = dop.util.typeof(destiny[prop]);
 
         // Array mutations
-        if (typeofValue=='object' && value.hasOwnProperty(CONS.dop)) {
+        if (typeofValue=='object' && value.hasOwnProperty(dop.cons.DOP)) {
 
-            var mutations = value[CONS.dop],
+            var mutations = value[dop.cons.DOP],
                 mutation,
                 index=0,
                 total=mutations.length;
@@ -85,7 +85,7 @@ dop.core.setAction = function(destiny, prop, value, typeofValue, path) {
     // }
 };
 // dop.core.setActionLoop = function() {
-//     if (prop === CONS.dop)
+//     if (prop === dop.cons.DOP)
 //         return true;
 // };
 

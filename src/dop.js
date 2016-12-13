@@ -21,18 +21,13 @@ var dop = {
     protocol: {},
     transports: {listen:{}, connect:{}},
 
-    // Const
+    // Constants
     cons: {
-        socket_token: '~TOKEN_DOP',
-        dop: '~DOP',
+        TOKEN: '~TOKEN_DOP',
+        DOP: '~DOP',
         CONNECT: '~CONNECT',
         SEND: '~SEND',
         DISCONNECT: '~DISCONNECT'
     }
     
-};
-
-var CONS = {
-    socket_token: '~TOKEN_DOP',
-    dop: '~DOP'
 };
