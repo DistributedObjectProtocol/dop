@@ -30,11 +30,12 @@ var dop = {
     transports: {listen:{}, connect:{}},
 
     CONS: {
-        CLOSE: 0,
-        OPEN: 1,
-        CONNECT: 2,
-        RECONNECT: 3,
-        SEND: 4
+        CLOSE: '~CLOSE',
+        OPEN: '~OPEN',
+        CONNECTING: '~CONNECTING',
+        CONNECT: '~CONNECT',
+        RECONNECT: '~RECONNECT',
+        SEND: '~SEND'
     }
     
 };
@@ -2426,8 +2427,7 @@ dop.protocol.onconnect = function(node, request_id, request) {
     var tokenServer=request[1],
         response = dop.core.createResponse(request_id, 0);
     node.tokenServer = tokenServer;
-    node.emit(dop.CONS.CONNECT);
-    node.send(JSON.stringify(response));
+    node.emit(dop.CONS.CONNECT, JSON.stringify(response));
 };
 
 

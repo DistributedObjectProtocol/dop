@@ -22,11 +22,12 @@ var dop = {
     transports: {listen:{}, connect:{}},
 
     CONS: {
-        CLOSE: 0,
-        OPEN: 1,
-        CONNECT: 2,
-        RECONNECT: 3,
-        SEND: 4
+        CLOSE: '~CLOSE',
+        OPEN: '~OPEN',
+        CONNECTING: '~CONNECTING',
+        CONNECT: '~CONNECT',
+        RECONNECT: '~RECONNECT',
+        SEND: '~SEND'
     }
     
 };

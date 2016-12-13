@@ -29,7 +29,7 @@ function send() {
     if (nodeServer)
         nodeServer.send(String(msg));
     if (msg++ < 25)
-        setTimeout(send, 100);
+        setTimeout(send, 200);
 }
 send();
 
@@ -43,7 +43,7 @@ test('CONNECT TEST', function(t) {
         nodeServer = node;
     });
     server.on('message', function(node, message){
-        // console.log( '❌ message `'+message+'`', node.token );
+        console.log( '❌ message `'+message+'`', node.token );
     });
 
     nodeClient.on('message', function(message){
@@ -63,4 +63,5 @@ setTimeout(function(){
         console.log( 'reconnecting...' );
         nodeClient.reconnect();
     },500);
-}, 1000)
+}, 1000);
+

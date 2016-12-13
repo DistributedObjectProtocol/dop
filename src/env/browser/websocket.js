@@ -41,6 +41,7 @@ function websocket(dop, node, options) {
         dop.core.emitOpen(node, socket, options.transport);
     }
     function onmessage(message) {
+        // console.log( 'C<<: `'+message.data+'`' );
         // Reconnecting
         if (node.readyState===dop.CONS.CONNECTING && message.data===node.tokenServer) {
             node.readyState = dop.CONS.CONNECT;
@@ -62,8 +63,7 @@ function websocket(dop, node, options) {
             dop.core.emitDisconnect(node);
             dop.core.setSocketToNode(node, socket);
         }
-        else
-            socket.send(message_response);
+        socket.send(message_response);
         node.readyState = dop.CONS.CONNECT;
         dop.core.emitConnect(node);
         sendQueue();
