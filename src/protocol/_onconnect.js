@@ -5,7 +5,7 @@ dop.protocol._onconnect = function(node, request_id, request, response) {
 
     // Node is connected correctly
     if (response[0]===0)
-        node.emit(dop.CONS.CONNECT, request, response);
+        node.emit(dop.cons.CONNECT, request, response);
 
 
     // We must manage the rejection

@@ -15,11 +15,11 @@ dop.core.node = function() {
 
 
 dop.core.node.prototype.send = function(message) {
-    this.emit(dop.CONS.SEND, message);
+    this.emit(dop.cons.SEND, message);
 };
 
 dop.core.node.prototype.disconnect = function() {
-    this.emit(dop.CONS.DISCONNECT);
+    this.emit(dop.cons.DISCONNECT);
 };
 
 dop.core.node.prototype.subscribe = function() {

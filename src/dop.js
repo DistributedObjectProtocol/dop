@@ -21,20 +21,18 @@ var dop = {
     protocol: {},
     transports: {listen:{}, connect:{}},
 
-    CONS: {
-        CLOSE: '~CLOSE',
-        OPEN: '~OPEN',
-        CONNECTING: '~CONNECTING',
+    // Const
+    cons: {
+        socket_token: '~TOKEN_DOP',
+        dop: '~DOP',
         CONNECT: '~CONNECT',
-        RECONNECT: '~RECONNECT',
-        SEND: '~SEND'
+        SEND: '~SEND',
+        DISCONNECT: '~DISCONNECT'
     }
     
 };
 
-
-// Special properties assigned to user objects
 var CONS = {
     socket_token: '~TOKEN_DOP',
-    dop: '~dop'
+    dop: '~DOP'
 };
