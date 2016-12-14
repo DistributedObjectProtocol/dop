@@ -1,15 +1,15 @@
 var test = require('tape');
 var dop = require('../../dist/nodejs').create();
 var dopClient = require('../../dist/nodejs').create();
-var localtransportlisten = require('dop-transports').listen.local;
-var localtransportconnect = require('dop-transports').connect.local;
 
-// Browsers
-// var server = dop.listen({transport:localtransportlisten});
-// var client = dopClient.connect({transport:localtransportconnect, listener:server});
-// node.js (WebSockets)
-var server = dop.listen();
-var client = dopClient.connect();
+
+var transportName = process.argv[2] || 'local';
+var transportListen = require('dop-transports').listen[transportName];
+var transportConnect = require('dop-transports').connect[transportName];
+
+var server = dop.listen({transport:transportListen, timeout:1});
+var client = dopClient.connect({transport:transportConnect});
+
 
 var tend;
 test('Events', function(t) {

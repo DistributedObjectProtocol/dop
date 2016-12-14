@@ -2,18 +2,16 @@ var test = require('tape');
 var dop = require('../../dist/nodejs');
 var dopServer = dop.create();
 var dopClient = dop.create();
-var localtransportlisten = require('dop-transports').listen.local;
-var localtransportconnect = require('dop-transports').connect.local;
-var localtransportlistensocketio = require('dop-transports').listen.socketio;
-var localtransportconnectsocketio = require('dop-transports').connect.socketio;
 
-// var server = dop.listen({transport:localtransportlisten});
-// var client = dopClient.connect({transport:localtransportconnect, listener:server});
-// server = dop.listen({transport:localtransportlistensocketio});
-// client = dopClient.connect({transport:localtransportconnectsocketio});
+var transportName = process.argv[2] || 'local';
+var transportListen = require('dop-transports').listen[transportName];
+var transportConnect = require('dop-transports').connect[transportName];
+
+
+
 var timeoutDisconnect = 2, timeoutCheck; // seconds
-var server = dopServer.listen({timeout:timeoutDisconnect});
-var nodeClient = dopClient.connect();
+var server = dopServer.listen({transport:transportListen, timeout:timeoutDisconnect});
+var nodeClient = dopClient.connect({transport:transportConnect});
 dopServer.env = 'SERVER'
 dopClient.env = 'CLIENT'
 var nodeServer, socketServer, socketClient;

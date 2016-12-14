@@ -64,7 +64,7 @@ function websocket(dop, node, options) {
             dop.core.emitDisconnect(node);
             dop.core.setSocketToNode(node, socket);
         }
-        socket.send(message_response);
+        send(message_response);
         readyState = CONNECT;
         dop.core.emitConnect(node);
         sendQueue();
@@ -75,7 +75,7 @@ function websocket(dop, node, options) {
     }
 
     function reconnect() {
-        if (readyState !== CONNECT) {
+        if (readyState === CLOSE) {
             oldSocket = socket;
             socket = new api(url);
             readyState = CONNECTING;

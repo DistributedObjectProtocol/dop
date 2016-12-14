@@ -59,6 +59,7 @@
     "test-electron": "browserify test/*.js | tape-run --render=\"faucet\"",
     "test-chrome": "browserify test/*.js | tape-run --render=\"faucet\" --browser chrome",
     "test-safari": "browserify test/*.js | tape-run --render=\"faucet\" --browser safari",
-    "test-firefox": "browserify test/*.js | tape-run --render=\"faucet\" --browser firefox"
+    "test-firefox": "browserify test/*.js | tape-run --render=\"faucet\" --browser firefox",
+    "test-websockets": "tap test/transports/**.js --test-arg=websockets"
   }
 }

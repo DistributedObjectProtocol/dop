@@ -2,18 +2,13 @@ var test = require('tape');
 var dop = require('../../dist/nodejs');
 var dopServer = dop.create();
 var dopClient = dop.create();
-var uwstransportlisten = require('dop-transports').listen.uws;
-var localtransportlisten = require('dop-transports').listen.local;
-var localtransportconnect = require('dop-transports').connect.local;
-var socketiotransportlisten = require('dop-transports').listen.socketio;
-var socketiotransportconnect = require('dop-transports').connect.socketio;
 
-// var server = dop.listen({transport:localtransportlisten});
-// var client = dopClient.connect({transport:localtransportconnect, listener:server});
-// server = dop.listen({transport:socketiotransportlisten});
-// client = dopClient.connect({transport:socketiotransportconnect});
-var server = dopServer.listen({timeout:1.5});
-var nodeClient = dopClient.connect();
+var transportName = process.argv[2] || 'local';
+var transportListen = require('dop-transports').listen[transportName];
+var transportConnect = require('dop-transports').connect[transportName];
+
+var server = dopServer.listen({transport:transportListen, timeout:1.5});
+var nodeClient = dopClient.connect({transport:transportConnect});
 dopServer.env = 'SERVER'
 dopClient.env = 'CLIENT'
 var nodeServer, socketServer, socketClient;
@@ -56,11 +51,11 @@ test('RECONNECT TEST', function(t) {
 
 // Disconnecting
 setTimeout(function(){
-    console.log( 'closing...' );
+    // console.log( 'closing...' );
     nodeClient.socket.close();
 }, 500)
 // Reconnecting
 setTimeout(function(){
-    console.log( 'reconnecting...' );
+    // console.log( 'reconnecting...' );
     nodeClient.reconnect();
 }, 1000);

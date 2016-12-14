@@ -2,23 +2,18 @@ var test = require('tape');
 var dop = require('../../dist/nodejs');
 var dopServer = dop.create();
 var dopClient = dop.create();
-var uwstransportlisten = require('dop-transports').listen.uws;
-var localtransportlisten = require('dop-transports').listen.local;
-var localtransportconnect = require('dop-transports').connect.local;
-var socketiotransportlisten = require('dop-transports').listen.socketio;
-var socketiotransportconnect = require('dop-transports').connect.socketio;
+var transportName = process.argv[2] || 'local';
+var transportListen = require('dop-transports').listen[transportName];
+var transportConnect = require('dop-transports').connect[transportName];
 
-// var server = dop.listen({transport:localtransportlisten});
-// var client = dopClient.connect({transport:localtransportconnect, listener:server});
-// server = dop.listen({transport:socketiotransportlisten});
-// client = dopClient.connect({transport:socketiotransportconnect});
-var server = dopServer.listen({timeout:1});
-var nodeClient = dopClient.connect();
+var server = dopServer.listen({transport:transportListen, timeout:1});
+var nodeClient = dopClient.connect({transport:transportConnect});
 dopServer.env = 'SERVER'
 dopClient.env = 'CLIENT'
 var nodeServer, socketServer, socketClient;
 var tokenServer, tokenClient;
 var order = 0;
+var connected2 = false;
 
 test('RECONNECT TEST', function(t) {
 
@@ -33,11 +28,17 @@ test('RECONNECT TEST', function(t) {
             tokenServer = node.token;
             t.equal(node.socket, socketServer, '❌ connect 1');
         }
-        else
+        else {
+            connected2 = true;
             t.notEqual(node.socket, socketServer, '❌ connect 2');
+            // nodeClient.disconnect();
+            server.listener.close();
+            t.end();
+        }
     });
     server.on('disconnect', function(node){
-        t.equal(node, nodeServer, '❌ disconnect');
+        if (connected2 === false)
+            t.equal(node, nodeServer, '❌ disconnect');
     });
     server.on('reconnect', function(node, oldSocket){
         t.equal(false, true, '❌ reconnect'); // this should not happen
@@ -57,8 +58,6 @@ test('RECONNECT TEST', function(t) {
         }
         else {
             t.notEqual(nodeClient.socket, socketClient, '✅ connect 2');
-            t.end();
-            // server.listener.close();
         }
     });
     nodeClient.on('disconnect', function() {
@@ -74,11 +73,11 @@ test('RECONNECT TEST', function(t) {
 
 // Disconnecting
 setTimeout(function(){
-    console.log( 'closing...' );
+    // console.log( 'closing...' );
     nodeClient.socket.close();
 }, 500)
 // Reconnecting
 setTimeout(function(){
-    console.log( 'late reconnecting...' );
+    // console.log( 'late reconnecting...' );
     nodeClient.reconnect();
 }, 3000);
