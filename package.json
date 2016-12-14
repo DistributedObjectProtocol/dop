@@ -60,6 +60,7 @@
     "test-chrome": "browserify test/*.js | tape-run --render=\"faucet\" --browser chrome",
     "test-safari": "browserify test/*.js | tape-run --render=\"faucet\" --browser safari",
     "test-firefox": "browserify test/*.js | tape-run --render=\"faucet\" --browser firefox",
-    "test-websockets": "tap test/transports/**.js --test-arg=websockets"
+    "test-websockets": "tap test/transports/**.js --test-arg=websockets",
+    "test-sockjs": "tap test/transports/**.js --test-arg=sockjs"
   }
 }

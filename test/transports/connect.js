@@ -40,7 +40,11 @@ test('CONNECT TEST', function(t) {
         var timeoutCheckEnd = Math.round( (new Date().getTime()-timeoutCheck)/1000 );
         t.equal(timeoutCheckEnd, timeoutDisconnect, '❌ disconnect');
         t.end();
-        try {server.listener.close()} catch(e) {}
+        try {
+            server.listener.close();
+        } catch(e) {
+            process.exit();
+        }
     });
 
 
@@ -70,5 +74,8 @@ test('CONNECT TEST', function(t) {
 // Sending messages before is connected
 nodeClient.send('Before');
 // Disconnecting
-setTimeout(nodeClient.disconnect.bind(nodeClient), 1000)
+setTimeout(function(){
+    // console.log( 'disconnecting...' );
+    nodeClient.disconnect();
+}, 1000);
 

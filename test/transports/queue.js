@@ -25,7 +25,7 @@ function send() {
     if (nodeServer)
         nodeServer.send(String(msg));
     if (msg++ < 15)
-        setTimeout(send, 200);
+        setTimeout(send, 300);
 }
 send();
 
@@ -52,8 +52,9 @@ test('CONNECT TEST', function(t) {
         if (message[0] !== '[') {
             t.equal(message, String(incC++), '✅ message `'+message+'`');
             if (incS===16 && incC===16) {
-                server.listener.close();
                 t.end();
+                try {server.listener.close();
+                } catch(e) {process.exit();}
             }
         }
     });

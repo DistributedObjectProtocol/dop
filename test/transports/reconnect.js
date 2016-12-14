@@ -42,8 +42,9 @@ test('RECONNECT TEST', function(t) {
     });
     nodeClient.on('reconnect', function(oldSocket) {
         t.equal(oldSocket, socketClient, '✅ reconnect');
-        server.listener.close();
         t.end();
+        try {server.listener.close();
+        } catch(e) {process.exit();}
     });
 });
 
