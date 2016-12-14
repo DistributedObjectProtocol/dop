@@ -3,7 +3,7 @@ var dop = require('../../dist/nodejs');
 var dopServer = dop.create();
 var dopClient = dop.create();
 
-var transportName = process.argv[2] || 'local';
+var transportName = process.argv[2] || 'socketio';
 var transportListen = require('dop-transports').listen[transportName];
 var transportConnect = require('dop-transports').connect[transportName];
 
@@ -53,7 +53,9 @@ test('CONNECT TEST', function(t) {
             t.equal(message, String(incC++), '✅ message `'+message+'`');
             if (incS===16 && incC===16) {
                 t.end();
-                try {server.listener.close();
+                try {
+                    server.listener.close();
+                    nodeClient.socket.close();
                 } catch(e) {process.exit();}
             }
         }

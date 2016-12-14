@@ -3,7 +3,7 @@ var dop = require('../../dist/nodejs');
 var dopServer = dop.create();
 var dopClient = dop.create();
 
-var transportName = process.argv[2] || 'sockjs';
+var transportName = process.argv[2] || 'local';
 var transportListen = require('dop-transports').listen[transportName];
 var transportConnect = require('dop-transports').connect[transportName];
 
@@ -33,7 +33,9 @@ test('RECONNECT TEST', function(t) {
             connected2 = true;
             t.notEqual(node.socket, socketServer, '❌ connect 2');
             t.end();
-            try {server.listener.close();
+            try {
+                server.listener.close();
+                nodeClient.socket.close();
             } catch(e) {process.exit();}
         }
     });

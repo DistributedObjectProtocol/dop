@@ -177,8 +177,9 @@ function websocket(dop, node, options) {
             send_queue.push(message); 
     }
     function sendQueue() {
-        while (send_queue.length>0)
-            socket.send(send_queue.shift());
+        if (socket.readyState===socket.constructor.OPEN)
+            while (send_queue.length>0)
+                socket.send(send_queue.shift());
     }
 
     // Socket events
@@ -216,7 +217,7 @@ function websocket(dop, node, options) {
             dop.core.emitDisconnect(node);
             dop.core.setSocketToNode(node, socket);
         }
-        socket.send(message_response);
+        send(message_response);
         readyState = CONNECT;
         dop.core.emitConnect(node);
         sendQueue();
@@ -227,7 +228,7 @@ function websocket(dop, node, options) {
     }
 
     function reconnect() {
-        if (readyState !== CONNECT) {
+        if (readyState === CLOSE) {
             oldSocket = socket;
             socket = new api(url);
             readyState = CONNECTING;
