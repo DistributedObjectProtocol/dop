@@ -11,7 +11,7 @@ var transportConnect = require('dop-transports').connect[transportName];
 
 var timeoutDisconnect = 2, timeoutCheck; // seconds
 var server = dopServer.listen({transport:transportListen, timeout:timeoutDisconnect});
-var nodeClient = dopClient.connect({transport:transportConnect});
+var nodeClient = dopClient.connect({transport:transportConnect, listener:server});
 dopServer.env = 'SERVER'
 dopClient.env = 'CLIENT'
 var nodeServer, socketServer, socketClient;

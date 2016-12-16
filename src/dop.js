@@ -12,7 +12,7 @@ var dop = {
         object:{},
         object_data:{},
         collectors:[[],[]],
-        lastGet:{}
+        // lastGet:{}
     },
     
     // src

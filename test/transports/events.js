@@ -8,7 +8,7 @@ var transportListen = require('dop-transports').listen[transportName];
 var transportConnect = require('dop-transports').connect[transportName];
 
 var server = dop.listen({transport:transportListen, timeout:1});
-var client = dopClient.connect({transport:transportConnect});
+var client = dopClient.connect({transport:transportConnect, listener:server});
 
 
 var tend;

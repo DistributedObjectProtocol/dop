@@ -3,13 +3,13 @@ var dop = require('../../dist/nodejs');
 var dopServer = dop.create();
 var dopClient = dop.create();
 
-var transportName = process.argv[2] || 'socketio';
+var transportName = process.argv[2] || 'local';
 var transportListen = require('dop-transports').listen[transportName];
 var transportConnect = require('dop-transports').connect[transportName];
 
 
 var server = dopServer.listen({transport:transportListen, timeout:2});
-var nodeClient = dopClient.connect({transport:transportConnect});
+var nodeClient = dopClient.connect({transport:transportConnect, listener:server});
 dopServer.env = 'SERVER'
 dopClient.env = 'CLIENT'
 var nodeServer, socketServer, socketClient;

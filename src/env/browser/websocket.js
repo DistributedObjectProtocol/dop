@@ -19,13 +19,13 @@ function websocket(dop, node, options) {
     
     // Helpers
     function send(message) {
-        (socket.readyState===socket.constructor.OPEN && readyState===CONNECT) ?
+        (socket.readyState===OPEN && readyState===CONNECT) ?
             socket.send(message)
         :
             send_queue.push(message); 
     }
     function sendQueue() {
-        if (socket.readyState===socket.constructor.OPEN)
+        if (socket.readyState===OPEN)
             while (send_queue.length>0)
                 socket.send(send_queue.shift());
     }
