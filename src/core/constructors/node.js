@@ -7,6 +7,7 @@ dop.core.node = function() {
     this.request_inc = 1;
     this.requests = {};
     this.requests_queue = [];
+    this.connected = false;
     // Generating token
     do { this.token = dop.util.uuid() }
     while (typeof dop.data.node[this.token]=='object');
@@ -23,6 +24,6 @@ dop.core.node.prototype.disconnect = function() {
 };
 
 dop.core.node.prototype.subscribe = function() {
-    dop.protocol.subscribe(this, arguments);
+    return dop.protocol.subscribe(this, arguments);
 };
 

@@ -60,12 +60,11 @@ function websocket(dop, node, options) {
     }
 
     // dop events
-    function onconnect(message_response) {
+    function onconnect() {
         if (readyState === CONNECTING) {
             dop.core.emitDisconnect(node);
             dop.core.setSocketToNode(node, socket);
         }
-        send(message_response);
         readyState = CONNECT;
         dop.core.emitConnect(node);
         sendQueue();
