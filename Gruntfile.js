@@ -27,7 +27,7 @@ module.exports = function(grunt) {
                 banner: '/*\n' +
                 ' * dop@<%= pkg.version %>\n' +
                 ' * www.distributedobjectprotocol.org\n' +
-                ' * © 2016 Josema Gonzalez\n' +
+                ' * (c) 2016 Josema Gonzalez\n' +
                 ' * MIT License.\n' +
                 ' */\n',
                 process: function(src, filepath) {
@@ -68,7 +68,7 @@ module.exports = function(grunt) {
                 dest: 'dist/browser.min.js'
             },
             options: {
-                banner: '/* dop@<%= pkg.version %> - © 2016 Josema Gonzalez - MIT Licensed */\n'
+                banner: '/* dop@<%= pkg.version %> - (c) 2016 Josema Gonzalez - MIT Licensed */\n'
             }
         },
 

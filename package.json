@@ -36,7 +36,7 @@
     "ria"
   ],
   "dependencies": {
-    "dop-transports": "^1.0.0"
+    "dop-transports": "^1.6.0"
   },
   "devDependencies": {
     "express": "^4.13.4",
