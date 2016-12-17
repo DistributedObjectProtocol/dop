@@ -25,9 +25,9 @@ function maketest(t, collectorServer, checkactions) {
     var actionServer = decode(encode(collectorServer.getAction()));
     var unaction = decode(encode(collectorServer.getUnaction()));
     collectorServer.destroy();
-    var collectorClient = dopClient.setAction(actionServer);
+    var collectorClient = dopClient.setAction(attachObjects(actionServer,objectClient));
     var actionClient = decode(encode(collectorClient.getAction()));
-    var collectorClientTwo = dopClientTwo.setAction(actionClient);
+    var collectorClientTwo = dopClientTwo.setAction(attachObjects(actionClient, objectClientTwo));
     consolelog("### Mutations length: " +  collectorServer.mutations.length, collectorClient.mutations.length, collectorClientTwo.mutations.length );
     var actionClientTwo = collectorClientTwo.getAction();
 
@@ -47,14 +47,14 @@ function maketest(t, collectorServer, checkactions) {
     t.equal(encode(actionServer), encode(actionClientTwo), 'equal encode actions');
 
     // Unaction
-    dop.setAction(unaction).destroy();
-    dopClient.setAction(unaction).destroy();
+    dop.setAction(attachObjects(unaction,objectServer)).destroy();
+    dopClient.setAction(attachObjects(unaction,objectClient)).destroy();
     consolelog("### Undo client: " + encode(objectClient));
     t.deepEqual(objectServer, objectClientCopy, 'deepEqual unaction server');
     t.deepEqual(objectClient, objectClientCopy, 'deepEqual unaction client');
     t.equal(objectClientCopy.length, objectClient.length, 'length unaction');
-    dop.setAction(actionServer).destroy();
-    dopClient.setAction(actionServer).destroy();
+    dop.setAction(attachObjects(actionServer,objectServer)).destroy();
+    dopClient.setAction(attachObjects(actionServer,objectClient)).destroy();
     t.equal(objectClient.length, objectServer.length, 'length unaction');
     consolelog("### Redo client: " + encode(objectClient));
 
@@ -62,7 +62,11 @@ function maketest(t, collectorServer, checkactions) {
     consolelog( '' );
 }
 
-
+function attachObjects(actions, obj) {
+    for (var object_id in actions)
+        actions[object_id].object = obj;
+    return actions;
+}
 
 
 

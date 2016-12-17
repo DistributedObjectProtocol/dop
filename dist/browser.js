@@ -212,12 +212,11 @@ function websocket(dop, node, options) {
     }
 
     // dop events
-    function onconnect(message_response) {
+    function onconnect() {
         if (readyState === CONNECTING) {
             dop.core.emitDisconnect(node);
             dop.core.setSocketToNode(node, socket);
         }
-        send(message_response);
         readyState = CONNECT;
         dop.core.emitConnect(node);
         sendQueue();
@@ -671,15 +670,23 @@ dop.encode = function(data) {
 
 dop.getAction = function(mutations) {
 
-    var action = {},
+    var actions = {},
         index = 0,
-        total = mutations.length;
+        total = mutations.length,
+        mutation,
+        object_id;
 
-    for (;index<total; ++index)
-        if (dop.core.objectIsStillStoredOnPath(mutations[index].object)) // Only need it for arrays but is faster than injectMutation directly
-            dop.core.injectMutationInAction(action, mutations[index]);
+    for (;index<total; ++index) {
+        mutation = mutations[index];
+        if (dop.core.objectIsStillStoredOnPath(mutation.object)) {// Only need it for arrays but is faster than injectMutation directly
+            object_id = dop.getObjectId(mutation.object);
+            if (actions[object_id] === undefined)
+                actions[object_id] = {object:dop.getObjectRoot(mutation.object), action:{}};
+            dop.core.injectMutationInAction(actions[object_id].action, mutation);
+        }
+    }
 
-    return action;
+    return actions;
 };
 
 
@@ -701,7 +708,13 @@ dop.getObjectDop = function(object) {
 };
 
 dop.getObjectId = function(object) {
-    return dop.getObjectDop(object)[0];
+    var object_dop = dop.getObjectDop(object);
+    return object_dop ? object_dop[0] : undefined;
+};
+
+dop.getObjectParent = function(object) {
+    var object_dop = dop.getObjectDop(object);
+    return object_dop ? object_dop._ : undefined;
 };
 
 dop.getObjectProperty = function(object) {
@@ -714,12 +727,18 @@ dop.getObjectProxy = function(object) {
 };
 
 dop.getObjectRoot = function(object) {
-    return dop.data.object[dop.getObjectId(object)];
+    while(dop.getObjectParent(object) !== undefined)
+        object = dop.getObjectParent(object);
+    return dop.getObjectProxy(object);
 };
 
-dop.getObjectRootById = function(object_id) {
-    return dop.data.object[object_id];
-};
+// dop.getObjectRoot = function(object) {
+//     return dop.data.object[dop.getObjectId(object)];
+// };
+
+// dop.getObjectRootById = function(object_id) {
+//     return dop.data.object[object_id];
+// };
 
 dop.getObjectTarget = function(object) {
     return dop.getObjectDop(object).t;
@@ -736,14 +755,20 @@ dop.isRegistered = function (object) {
 
 dop.getUnaction = function(mutations) {
 
-    var unaction = {},
+    var actions = {},
         index = mutations.length-1,
+        object_id,
         mutation;
 
-    for (;index>-1; --index)
-        dop.core.injectMutationInAction(unaction, mutations[index], true);
+    for (;index>-1; --index) {
+        mutation = mutations[index];
+        object_id = dop.getObjectId(mutation.object);
+        if (actions[object_id] === undefined)
+            actions[object_id] = {object:dop.getObjectRoot(mutation.object), action:{}};
+        dop.core.injectMutationInAction(actions[object_id].action, mutation, true);
+    }
 
-    return unaction;
+    return actions;
 };
 
 
@@ -851,14 +876,16 @@ dop.register = function(object, options) {
         return dop.getObjectProxy(object);    
 
     var object_id = dop.data.object_inc++;
-    // options = dop.util.merge({proxy:true}, options);
+    // options = dop.util.merge({unregister:false}, options);
     object = dop.core.configureObject(object, [object_id]);
-    dop.data.object[object_id] = object;
-    dop.data.object_data[object_id] = {
-        node: {},
-        nodes: 0,
-        options: options
-    };
+    // dop.data.object[object_id] = object;
+    // dop.data.object_data[object_id] = {
+    //     last: 0, // last mutation id
+    //     nodes: 0, // total nodes depending
+    //     options: options,
+    //     owners: {},
+    //     subscribers: {}
+    // };
 
     return object;
 
@@ -884,9 +911,10 @@ dop.set = function(object, property, value) {
 
 //////////  src/api/setAction.js
 
-dop.setAction = function(action) {
-    var collector = dop.collectFirst();
-    dop.util.path(action, null, dop.data.object, dop.core.setAction);
+dop.setAction = function(actions) {
+    var collector = dop.collectFirst(), object_id;
+    for (object_id in actions)
+        dop.util.path({a:actions[object_id].action}, null, {a:actions[object_id].object}, dop.core.setAction);
     return collector;
 };
 
@@ -963,6 +991,7 @@ dop.core.emitClose = function(node, socket) {
 //////////  src/core/api_transports/emitConnect.js
 
 dop.core.emitConnect = function(node) {
+    node.connected = true;
     if (node.listener)
         node.listener.emit('connect', node);
     node.emit('connect');
@@ -974,6 +1003,7 @@ dop.core.emitConnect = function(node) {
 //////////  src/core/api_transports/emitDisconnect.js
 
 dop.core.emitDisconnect = function(node) {
+    node.connected = false;
     if (node.listener) {
         dop.core.unregisterNode(node);
         node.listener.emit('disconnect', node);
@@ -1139,7 +1169,7 @@ dop.core.emitReconnect = function(node, oldSocket, newNode) {
 dop.core.sendConnect = function(node) {
     var request = dop.core.createRequest(node, dop.protocol.instructions.connect, node.token);
     dop.core.storeRequest(node, request);
-    dop.core.emitRequests(node, JSON.stringify);
+    dop.core.sendRequests(node, JSON.stringify);
 };
 
 
@@ -1235,6 +1265,7 @@ dop.core.node = function() {
     this.request_inc = 1;
     this.requests = {};
     this.requests_queue = [];
+    this.connected = false;
     // Generating token
     do { this.token = dop.util.uuid() }
     while (typeof dop.data.node[this.token]=='object');
@@ -1251,7 +1282,7 @@ dop.core.node.prototype.disconnect = function() {
 };
 
 dop.core.node.prototype.subscribe = function() {
-    dop.protocol.subscribe(this, arguments);
+    return dop.protocol.subscribe(this, arguments);
 };
 
 
@@ -1863,7 +1894,7 @@ dop.core.emitObservers = function(mutations) {
         subobject = mutation.object;
         object_dop = dop.getObjectDop(subobject);
 
-        if (!mutationsWithSubscribers && dop.data.object_data[object_dop[0]].nodes > 0)
+        if (!mutationsWithSubscribers /*&& dop.data.object_data[object_dop[0]].nodes > 0*/)
             mutationsWithSubscribers = true;
 
         // Emiting mutations to observerProperties
@@ -1896,11 +1927,10 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
 
     var isMutationArray = mutation.splice!==undefined || mutation.swaps!==undefined,
         path = dop.getObjectDop(mutation.object).slice(0),
-        object_data = dop.data.object,
         prop = mutation.name,
         value = (isUnaction) ? mutation.oldValue : mutation.value,
         typeofValue = dop.util.typeof(value),
-        index = 0,
+        index = 1,
         isArray = Array.isArray,
         parent;
 
@@ -1911,20 +1941,20 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
     for (;index<path.length-1; ++index) {
         parent = action;
         prop = path[index];
-        if (object_data!==undefined)
-            object_data = object_data[prop];
         action = isObject(action[prop]) ? action[prop] : action[prop]={};
     }
 
     prop = path[index];
 
-    if (isMutationArray || isArray(object_data)) {
+    if (isMutationArray || isArray(mutation.object)) {
 
-        if (isMutationArray && !isObject(action[prop])) 
-            action[prop] = {};
+        if (path.length>1) {
+            if (isMutationArray && !isObject(action[prop])) 
+                action[prop] = {};
 
-        if (isMutationArray)
-            action = action[prop];
+            if (isMutationArray)
+                action = action[prop];
+        }
 
         if (!isObject(action[dop.cons.DOP]))
             action[dop.cons.DOP] = [];
@@ -1958,7 +1988,7 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
         else
             mutations.push([prop, 1, value]);
 
-        if (isUnaction && mutation.length!==undefined && mutation.length!==object_data.length)
+        if (isUnaction && mutation.length!==undefined && mutation.length!==mutation.object.length)
             action.length = mutation.length;
     }
 
@@ -1998,10 +2028,15 @@ dop.core.objectIsStillStoredOnPath = function(object) {
         parent;
 
     for (;index>0; --index) {
-        parent = (index>1) ? dop.getObjectDop(object)._ : dop.data.object[path[0]];
-        if (parent[path[index]] !== object)
-            return false;
-        object = dop.getObjectProxy(parent);
+        // parent = (index>1) ? dop.getObjectDop(object)._ : dop.data.object[path[0]];
+        if (index>1) {
+            parent = dop.getObjectParent(object);
+            if (parent[path[index]] !== object)
+                return false;
+            object = dop.getObjectProxy(parent);
+        }
+        // else
+            // return false;
     }
 
     return true;
@@ -2293,33 +2328,15 @@ dop.core.decode = function(property, value, undefineds) {
 //////////  src/core/protocol/emitNodes.js
 
 dop.core.emitNodes = function(action) {
-    var object_id, node_token, node;
-    for (object_id in action) {
-        if (dop.data.object_data[object_id].nodes > 0) {
-            for (node_token in dop.data.object_data[object_id].node) {
-                node = dop.data.node[node_token];
-                dop.protocol.merge(node, object_id, action[object_id]);
-            }
-        }
-    }
-};
-
-
-
-
-//////////  src/core/protocol/emitRequests.js
-
-dop.core.emitRequests = function(node, wrapper) {
-    if (typeof wrapper != 'function')
-        wrapper = dop.encode;
-
-    var requests=node.requests_queue, index=0, total=requests.length;
-
-    for (;index<total; ++index)
-        node.requests[requests[index][0]] = requests[index];
-
-    node.requests_queue = [];
-    node.send(wrapper((total>1) ? requests : requests[0]));
+    // var object_id, node_token, node;
+    // for (object_id in action) {
+    //     if (dop.data.object_data[object_id].nodes > 0) {
+    //         for (node_token in dop.data.object_data[object_id].node) {
+    //             node = dop.data.node[node_token];
+    //             dop.protocol.merge(node, object_id, action[object_id]);
+    //         }
+    //     }
+    // }
 };
 
 
@@ -2431,6 +2448,41 @@ dop.core.remoteFunction = function $DOP_REMOTE_function(object, property) {
     //     "return function " + dop.core.remoteFunction.name + "() {  return that.call(path, arguments); }"
     //)();
 
+};
+
+
+
+
+//////////  src/core/protocol/sendRequests.js
+
+dop.core.sendRequests = function(node, wrapper) {
+    var requests = node.requests_queue,
+        total = requests.length;
+    
+    if (total>0) {
+        if (typeof wrapper != 'function')
+            wrapper = dop.encode;
+
+        var index = 0,
+            message = wrapper((total>1) ? requests : requests[0]);
+
+        for (;index<total; ++index)
+            node.requests[requests[index][0]] = requests[index];
+
+        node.requests_queue = [];
+        node.send(message);
+    }
+};
+
+
+
+
+//////////  src/core/protocol/sendResponse.js
+
+dop.core.sendResponse = function(node, response, wrapper) {
+    if (typeof wrapper != 'function')
+        wrapper = dop.encode;
+    node.send(wrapper(response));
 };
 
 
@@ -2613,11 +2665,15 @@ dop.protocol.merge = function(node, object_id, action) {
 //////////  src/protocol/onconnect.js
 // client side
 dop.protocol.onconnect = function(node, request_id, request) {
-    var tokenServer=request[1],
+    var tokenServer = request[1],
         response = dop.core.createResponse(request_id, 0);
     node.tokenServer = tokenServer;
-    node.emit(dop.cons.CONNECT, JSON.stringify(response));
+    dop.core.sendResponse(node, response, JSON.stringify);
+    node.emit(dop.cons.CONNECT);
+    dop.core.sendRequests(node);
 };
+
+
 
 
 
@@ -2637,7 +2693,7 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
                 response = dop.core.createResponse(request_id, 0, dop.getObjectDop(object));
                 if (dop.core.registerObjectToNode(node, object))
                     response.push(dop.getObjectRootById(object_id));
-                node.send(dop.encode(response));
+                dop.core.sendResponse(node, response);
                 return object;
             }
             else
@@ -2670,7 +2726,8 @@ dop.protocol.subscribe = function(node, args) {
     args.unshift(node, dop.protocol.instructions.subscribe);
     var request = dop.core.createRequest.apply(node, args);
     dop.core.storeRequest(node, request);
-    dop.core.emitRequests(node);
+    if (node.connected)
+        dop.core.sendRequests(node);
     return request.promise;
 };
 
