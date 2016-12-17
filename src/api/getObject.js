@@ -4,7 +4,13 @@ dop.getObjectDop = function(object) {
 };
 
 dop.getObjectId = function(object) {
-    return dop.getObjectDop(object)[0];
+    var object_dop = dop.getObjectDop(object);
+    return object_dop ? object_dop[0] : undefined;
+};
+
+dop.getObjectParent = function(object) {
+    var object_dop = dop.getObjectDop(object);
+    return object_dop ? object_dop._ : undefined;
 };
 
 dop.getObjectProperty = function(object) {
@@ -17,12 +23,18 @@ dop.getObjectProxy = function(object) {
 };
 
 dop.getObjectRoot = function(object) {
-    return dop.data.object[dop.getObjectId(object)];
+    while(dop.getObjectParent(object) !== undefined)
+        object = dop.getObjectParent(object);
+    return dop.getObjectProxy(object);
 };
 
-dop.getObjectRootById = function(object_id) {
-    return dop.data.object[object_id];
-};
+// dop.getObjectRoot = function(object) {
+//     return dop.data.object[dop.getObjectId(object)];
+// };
+
+// dop.getObjectRootById = function(object_id) {
+//     return dop.data.object[object_id];
+// };
 
 dop.getObjectTarget = function(object) {
     return dop.getObjectDop(object).t;

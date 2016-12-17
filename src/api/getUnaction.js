@@ -1,12 +1,18 @@
 
 dop.getUnaction = function(mutations) {
 
-    var unaction = {},
+    var actions = {},
         index = mutations.length-1,
+        object_id,
         mutation;
 
-    for (;index>-1; --index)
-        dop.core.injectMutationInAction(unaction, mutations[index], true);
+    for (;index>-1; --index) {
+        mutation = mutations[index];
+        object_id = dop.getObjectId(mutation.object);
+        if (actions[object_id] === undefined)
+            actions[object_id] = {object:dop.getObjectRoot(mutation.object), action:{}};
+        dop.core.injectMutationInAction(actions[object_id].action, mutation, true);
+    }
 
-    return unaction;
+    return actions;
 };

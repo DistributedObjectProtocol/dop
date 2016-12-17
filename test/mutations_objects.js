@@ -22,14 +22,15 @@ function maketest(t, collectorServer, checkactions) {
     
     var objectClientCopy = dop.util.merge({},objectClient);
 
-    var actionServer = decode(encode(collectorServer.getAction()));
-    var unaction = decode(encode(collectorServer.getUnaction()));
+
+    var actionServer = decode(encode(removeObjects(collectorServer.getAction())));
+    var unaction = decode(encode(removeObjects(collectorServer.getUnaction())));
     collectorServer.destroy();
-    var collectorClient = dopClient.setAction(actionServer);
-    var actionClient = decode(encode(collectorClient.getAction()));
-    var collectorClientTwo = dopClientTwo.setAction(actionClient);
+    var collectorClient = dopClient.setAction(attachObjects(actionServer, objectClient));
+    var actionClient = decode(encode(removeObjects(collectorClient.getAction())));
+    var collectorClientTwo = dopClientTwo.setAction(attachObjects(actionClient, objectClientTwo));
     consolelog("### Mutations length: " +  collectorServer.mutations.length, collectorClient.mutations.length, collectorClientTwo.mutations.length );
-    var actionClientTwo = collectorClientTwo.getAction();
+    var actionClientTwo = removeObjects(collectorClientTwo.getAction());
 
     consolelog("### After server: " + encode(objectServer));
     consolelog("### After client: " + encode(objectClient));
@@ -42,18 +43,30 @@ function maketest(t, collectorServer, checkactions) {
     t.deepEqual(objectClientTwo, objectServer, 'deepEqual objectClientTwo');
     t.equal(encode(objectClientTwo), encode(objectServer), 'equal objectClientTwo');
     if (checkactions!==false)
-    t.equal(encode(actionServer), encode(actionClientTwo), 'equal encode actions');
+    t.equal(encode(removeObjects(actionServer)), encode(actionClientTwo), 'equal encode actions');
 
     // Unaction
-    dopClient.setAction(unaction);
+    dopClient.setAction(attachObjects(unaction, objectClient));
     t.deepEqual(objectClientCopy, objectClient, 'deepEqual unaction');
-    var collectorClient = dopClient.setAction(actionServer);
+    var collectorClient = dopClient.setAction(attachObjects(actionServer, objectClient));
 
     consolelog( '' );
     consolelog( '' );
 }
 
 
+
+// helpers
+function removeObjects(actions) {
+    for (var object_id in actions)
+        delete actions[object_id].object;
+    return actions;
+}
+function attachObjects(actions, obj) {
+    for (var object_id in actions)
+        actions[object_id].object = obj;
+    return actions;
+}
 
 
 

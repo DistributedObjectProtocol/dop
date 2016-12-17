@@ -10,9 +10,21 @@ var arrayServer = dop.register([]);
 
 
 function applyAction(collector) {
-    var actionServer = decode(encode(collector.getAction()));
+    var action = removeObjects(collector.getAction());
+    var actionServer = decode(encode(action));
     collector.destroy();
-    return actionServer[1]||actionServer[2]||actionServer;
+    if (actionServer[1])
+        return actionServer[1].action;
+    else if (actionServer[2])
+        return actionServer[2].action;
+    else
+        return actionServer;
+}
+// helpers
+function removeObjects(actions) {
+    for (var object_id in actions)
+        delete actions[object_id].object;
+    return actions;
 }
 
 function maketest(t, actionGenerated, actionExpected, checkEncode) {
