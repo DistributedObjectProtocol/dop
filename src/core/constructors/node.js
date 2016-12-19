@@ -2,12 +2,12 @@
 dop.core.node = function() {
     // Inherit emitter
     dop.util.merge(this, new dop.util.emitter); //https://jsperf.com/inheritance-call-vs-object-assign
-    this.object_owned = {};
-    this.object_subscribed = {};
+    this.connected = false;
     this.request_inc = 1;
     this.requests = {};
     this.requests_queue = [];
-    this.connected = false;
+    this.object_subscribed = {};
+    this.object_owner = {};
     // Generating token
     do { this.token = dop.util.uuid() }
     while (typeof dop.data.node[this.token]=='object');

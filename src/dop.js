@@ -10,7 +10,6 @@ var dop = {
         node:{},
         object_inc:1,
         object:{},
-        object_data:{},
         collectors:[[],[]],
         // lastGet:{}
     },

@@ -22,8 +22,9 @@ var client = dopClient.connect({transport:transportConnect, listener:server});
         return {paco:'pil'};
     })
 
-    client.subscribe('PUBLIC').then(function(obj){
-        console.log( obj );
+    myobj = dopClient.register({mola:'mazo'})
+    client.subscribe('PUBLIC').into(myobj).then(function(obj){
+        console.log( obj===myobj );
     })
 
 

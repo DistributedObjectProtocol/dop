@@ -8,19 +8,20 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
 
         else {
             var object_path = response[1],
-                object_owned_id = object_path[0],
-                object_owned = response[2],
-                object, object_id;
+                object_owner_id = object_path[0],
+                object_owner = response[2],
+                object;
 
-            if (node.object_owned[object_owned_id] === undefined) {
-                object = dop.register(object_owned);
-                object_id = dop.getObjectId(object);
-                node.object_owned[object_owned_id] = object_id;
+            if (node.object_owner[object_owner_id] === undefined) {
+                object = dop.register((dop.isObjectRegistrable(request.into)) ? 
+                    dop.util.merge(request.into, object_owner)
+                :
+                    object_owner);
+                dop.core.registerOwner(node, object, object_owner_id);
             }
-            else {
-                object_id = node.object_owned[object_owned_id];
-                object = dop.getObjectRootById(object_id);
-            }
+            else
+                object = dop.data.object[node.object_owner[object_owner_id]].object;
+
 
             request.promise.resolve(dop.util.get(object, object_path.slice(1)));
         }
