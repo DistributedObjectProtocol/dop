@@ -20,12 +20,10 @@ dop.core.encodeUtil = function(property, value) {
 
 
 // // Extending example
-// (function() {
-//     var encode = dop.core.encodeUtil;
-//     dop.core.encodeUtil = function(property, value) {
-//         if (typeof value == 'boolean')
-//             return '~BOOL';
-//         return encode(property, value);
-//     };
-// })();
+// var encode = dop.core.encodeUtil;
+// dop.core.encodeUtil = function(property, value) {
+//     if (typeof value == 'boolean')
+//         return '~BOOL';
+//     return encode(property, value);
+// };
 

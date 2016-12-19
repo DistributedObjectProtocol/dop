@@ -1,5 +1,5 @@
 /*
- * dop@0.4.0
+ * dop@0.5.0
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
@@ -659,9 +659,17 @@ dop.emit = function(mutations, action) {
 
 //////////  src/api/encode.js
 
-dop.encode = function(data) {
-    return JSON.stringify(data, dop.core.encode);
-};
+dop.encode = (function(data, encoder) {
+    var encoderCache
+    return function(data, encoder) {
+        if (typeof encoder != 'function') {
+            if (encoderCache === undefined)
+                encoderCache = dop.core.multiEncode(dop.core.encodeSpecial, dop.core.encodeProtocol, dop.core.encodeUtil);
+            encoder = encoderCache;
+        }
+        return JSON.stringify(data, encoder);
+    }
+})();
 
 
 
@@ -2342,9 +2350,9 @@ dop.core.emitNodes = function(action) {
 
 
 
-//////////  src/core/protocol/encode.js
+//////////  src/core/protocol/encodeProtocol.js
 
-dop.core.encode = function(property, value) {
+dop.core.encodeProtocol = function(property, value) {
 
     var tof = typeof value;
 
@@ -2353,6 +2361,27 @@ dop.core.encode = function(property, value) {
 
     if (tof == 'undefined') // http://stackoverflow.com/questions/17648150/how-does-json-parse-manage-undefined
         return '~U';
+
+    return value;
+};
+
+
+
+
+//////////  src/core/protocol/encodeSpecial.js
+
+dop.core.encodeSpecial = function(property, value) {
+    return (typeof value == 'string' && value[0] == '~') ? '~'+value : value;
+};
+
+
+
+
+//////////  src/core/protocol/encodeUtil.js
+
+dop.core.encodeUtil = function(property, value) {
+
+    var tof = typeof value;
 
     if (value === Infinity)
         return '~I';
@@ -2366,24 +2395,17 @@ dop.core.encode = function(property, value) {
     if (tof == 'object' && value instanceof RegExp)
         return '~R' + value.toString();
 
-    if (tof == 'string' && value[0] === '~') // https://jsperf.com/charat-vs-index/5
-        return '~'+value;
-
     return value;
-
 };
 
 
-
 // // Extending example
-// (function() {
-//     var encode = dop.core.encode;
-//     dop.core.encode = function(property, value) {
-//         if (typeof value == 'boolean')
-//             return '~BOOL';
-//         return encode(property, value);
-//     };
-// })();
+// var encode = dop.core.encodeUtil;
+// dop.core.encodeUtil = function(property, value) {
+//     if (typeof value == 'boolean')
+//         return '~BOOL';
+//     return encode(property, value);
+// };
 
 
 
@@ -2399,6 +2421,26 @@ dop.core.getRejectError = function(error) {
         return dop.util.sprintf.apply(this, args);
     }
     return error;  
+};
+
+
+
+
+//////////  src/core/protocol/multiEncode.js
+
+dop.core.multiEncode = function() {
+    var encoders = arguments,
+        length = encoders.length, v;
+    return function recursion(property, value, index) {
+        if (index>=length)
+            return value;
+        else if (index === undefined) {
+            v = value;
+            index = 0;
+        }
+        v = encoders[index](property, value);
+        return (v!==value) ? v : recursion(property, value, index+1);
+    }
 };
 
 
