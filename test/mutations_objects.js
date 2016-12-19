@@ -23,14 +23,14 @@ function maketest(t, collectorServer, checkactions) {
     var objectClientCopy = dop.util.merge({},objectClient);
 
 
-    var actionServer = decode(encode(removeObjects(collectorServer.getAction())));
-    var unaction = decode(encode(removeObjects(collectorServer.getUnaction())));
+    var actionServer = decode(encode(collectorServer.getAction()));
+    var unaction = decode(encode(collectorServer.getUnaction()));
     collectorServer.destroy();
     var collectorClient = dopClient.setAction(attachObjects(actionServer, objectClient));
-    var actionClient = decode(encode(removeObjects(collectorClient.getAction())));
+    var actionClient = decode(encode(collectorClient.getAction()));
     var collectorClientTwo = dopClientTwo.setAction(attachObjects(actionClient, objectClientTwo));
     consolelog("### Mutations length: " +  collectorServer.mutations.length, collectorClient.mutations.length, collectorClientTwo.mutations.length );
-    var actionClientTwo = removeObjects(collectorClientTwo.getAction());
+    var actionClientTwo = collectorClientTwo.getAction();
 
     consolelog("### After server: " + encode(objectServer));
     consolelog("### After client: " + encode(objectClient));
@@ -43,7 +43,7 @@ function maketest(t, collectorServer, checkactions) {
     t.deepEqual(objectClientTwo, objectServer, 'deepEqual objectClientTwo');
     t.equal(encode(objectClientTwo), encode(objectServer), 'equal objectClientTwo');
     if (checkactions!==false)
-    t.equal(encode(removeObjects(actionServer)), encode(actionClientTwo), 'equal encode actions');
+    t.equal(encode(actionServer), encode(actionClientTwo), 'equal encode actions');
 
     // Unaction
     dopClient.setAction(attachObjects(unaction, objectClient));
@@ -55,13 +55,6 @@ function maketest(t, collectorServer, checkactions) {
 }
 
 
-
-// helpers
-function removeObjects(actions) {
-    for (var object_id in actions)
-        delete actions[object_id].object;
-    return actions;
-}
 function attachObjects(actions, obj) {
     for (var object_id in actions)
         actions[object_id].object = obj;

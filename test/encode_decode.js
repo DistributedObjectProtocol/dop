@@ -19,19 +19,20 @@ var data = {
     inf: '~I',
     fun: '~F',
     nan: '~N',
-    reg: '~R',
+    reg: '~R'
 };
 
 
 test('Multiple data', function(t) {
-    var decoded = dop.decode(dop.encode(data));
+    var encoded = dop.encode(data);
+    var decoded = dop.decode(encoded);
     t.deepEqual(decoded, data, 'deepEqual');
     data.NaN = NaN;
     data.function = function(){};
     decoded = dop.decode(dop.encode(data));
     t.equal(JSON.stringify(decoded), JSON.stringify(data), 'Stringify');
     t.equal(typeof decoded.function, 'function', 'Has function');
-    // console.log( decoded);
+    console.log( decoded);
     t.end();
 });
 
