@@ -10,6 +10,9 @@ dop.core.configureObject = function(object, path, parent) {
             parent
         );
 
+    // Removing fake dop property
+    delete object[dop.cons.DOP];
+
     // Recursion
     var property, value, object_dop;
     for (property in object) {

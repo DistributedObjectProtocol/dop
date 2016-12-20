@@ -1,4 +1,9 @@
 
 dop.isRegistered = function (object) {
-    return (isObject(object) && dop.getObjectDop(object) !== undefined);
+    if (isObject(object)){
+        var object_dop = dop.getObjectDop(object);
+        if (isArray(object_dop) && object_dop.hasOwnProperty('p'))
+            return true;
+    }
+    return false;
 };
