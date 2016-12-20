@@ -1,4 +1,4 @@
-
+// Private alias
 function isFunction(func) {
     return typeof func == 'function';
 }

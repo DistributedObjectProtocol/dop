@@ -17,8 +17,16 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
                 dop.core.sendResponse(node, response);
                 return object;
             }
-            else
-                dop.util.invariant(false, 'dop.onsubscribe callback must return or resolve a regular object');
+            else {
+                // http://www.2ality.com/2016/03/promise-rejections-vs-exceptions.html
+                try {
+                    dop.util.invariant(false, 'dop.onsubscribe callback must return or resolve a regular object');
+                } catch(err) {
+                    console.log( 123,err );
+                    return reject(err);
+                }
+                // reject()
+            }
 
 
         }, function reject(error) {
