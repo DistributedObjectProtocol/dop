@@ -16,7 +16,7 @@ dop.core.set = function(object, property, value) {
             objectTarget[property] = value;
             if (dop.isObjectRegistrable(value)) {
                 // var object_dop = dop.getObjectDop(value);
-                // if (dop.isRegistered(value) && Array.isArray(object_dop._) && object_dop._ === objectTarget)
+                // if (dop.isRegistered(value) && isArray(object_dop._) && object_dop._ === objectTarget)
                 //     object_dop[object_dop.length-1] = property;
                 // else {
                     // var shallWeProxy = dop.data.object_data[dop.getObjectId(objectTarget)].options.proxy;
@@ -28,9 +28,9 @@ dop.core.set = function(object, property, value) {
                 var mutation = {object:objectProxy, name:property, value:value};
                 if (hasOwnProperty)
                     mutation.oldValue = oldValue;
-                if (Array.isArray(objectTarget)) // if is array we must store the length in order to revert it with setUnaction
+                if (isArray(objectTarget)) // if is array we must store the length in order to revert it with setUnaction
                     mutation.length = length;
-                if (Array.isArray(value)) // We cant store the original array cuz when we inject the mutation into the action object could be different from the original
+                if (isArray(value)) // We cant store the original array cuz when we inject the mutation into the action object could be different from the original
                     mutation.valueOriginal = dop.util.merge([], value);
 
                 dop.core.storeMutation(mutation);

@@ -7,7 +7,6 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
         value = (isUnaction) ? mutation.oldValue : mutation.value,
         typeofValue = dop.util.typeof(value),
         index = 1,
-        isArray = Array.isArray,
         parent;
 
 

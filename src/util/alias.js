@@ -6,3 +6,7 @@ function isFunction(func) {
 function isObject(object) {
     return (object!==null && typeof object=='object');
 }
+
+function isArray(array) {
+    return Array.isArray(array);
+}

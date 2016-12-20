@@ -4,7 +4,7 @@ dop.util.typeof = function(value) {
     var s = typeof value;
     if (s == 'object') {
         if (value) {
-            if (Array.isArray(value))
+            if (isArray(value))
                 s = 'array';
             else if (value instanceof Date)
                 s = 'date';
