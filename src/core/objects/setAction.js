@@ -1,5 +1,10 @@
 
-dop.core.setAction = function(destiny, prop, value, typeofValue, path) {
+dop.core.setAction = function(object, action) {
+    dop.util.path({a:action}, null, {a:object}, dop.core.setActionMutator);
+    return object;
+};
+
+dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
 
     // if (path.length > 1) {
 

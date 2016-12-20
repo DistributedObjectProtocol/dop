@@ -13,11 +13,13 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
                 object;
 
             if (node.object_owner[object_owner_id] === undefined) {
+                var collector = dop.collectFirst();
                 object = dop.register((dop.isObjectRegistrable(request.into)) ? 
-                    dop.util.merge(request.into, object_owner)
+                    dop.core.setAction(request.into, object_owner)
                 :
                     object_owner);
                 dop.core.registerOwner(node, object, object_owner_id);
+                collector.emitAndDestroy();
             }
             else
                 object = dop.data.object[node.object_owner[object_owner_id]].object;
