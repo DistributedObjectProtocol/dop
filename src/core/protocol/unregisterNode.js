@@ -19,7 +19,7 @@ dop.core.unregisterNode = function(node) {
         }
     }
     // Deleting object data if not more nodes are depending
-    if (object_data.nodes_total === 0)
+    if (object_data!==undefined && object_data.nodes_total === 0)
         delete dop.data.object[object_id];
     delete dop.data.node[node.token];
 };

@@ -4,7 +4,7 @@ dop.isObjectRegistrable = function(object) {
     return (tof === 'object' || tof == 'array');
 };
 
-// dop.util.isObjectPlain = function(object) {
+// dop.isObjectRegistrable = function(object) {
 //     if (!object)
 //         return false;
 //     var prototype = Object.getPrototypeOf(object);
@@ -12,20 +12,15 @@ dop.isObjectRegistrable = function(object) {
 // };
 
 // function Test(){}
-// console.log(isObjectPlain(null));
-// console.log(isObjectPlain({}));
-// console.log(isObjectPlain(function(){}));
-// console.log(isObjectPlain([]));
-// console.log(isObjectPlain(1));
-// console.log(isObjectPlain("s"));
-// console.log(isObjectPlain(true));
-// console.log(isObjectPlain(/a/));
-// console.log(isObjectPlain(new Date()));
-// console.log(isObjectPlain(Symbol('')));
-// console.log(isObjectPlain(new Test));
-
-
-// dop.util.isObjectPlain = function(object) {
-//     var tof = dop.util.typeof(object);
-//     return (tof == 'object' || tof == 'array');
-// };
+// console.log(isObjectRegistrable({}));
+// console.log(isObjectRegistrable([]));
+// console.log(isObjectRegistrable(new Test));
+// console.log(isObjectRegistrable(new Map));
+// console.log(isObjectRegistrable(new Date()));
+// console.log(isObjectRegistrable(null));
+// console.log(isObjectRegistrable(Symbol('')));
+// console.log(isObjectRegistrable(function(){}));
+// console.log(isObjectRegistrable(1));
+// console.log(isObjectRegistrable("s"));
+// console.log(isObjectRegistrable(true));
+// console.log(isObjectRegistrable(/a/));

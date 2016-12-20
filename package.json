@@ -50,7 +50,8 @@
     "grunt-optimize-js": "^0.6.0",
     "js-combinatorics": "^0.5.2",
     "tap": "^7.1.2",
-    "tape-run": "^2.1.4"
+    "tape-run": "^2.1.4",
+    "electron": "^1.4.12"
   },
   "scripts": {
     "grunt": "grunt",

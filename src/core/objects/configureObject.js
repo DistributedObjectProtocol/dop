@@ -1,5 +1,5 @@
 
-var canWeProxy = isFunction(Proxy);
+var canWeProxy = typeof Proxy == 'function';
 dop.core.configureObject = function(object, path, parent) {
 
     // Creating a copy if is another object registered
