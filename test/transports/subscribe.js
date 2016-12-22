@@ -1,18 +1,25 @@
 var test = require('tape');
 var dopServer = require('../../dist/nodejs').create();
 var dopClient = require('../../dist/nodejs').create();
+var dopClient2 = require('../../dist/nodejs').create();
+var dopClientClient = require('../../dist/nodejs').create();
 dopServer.env = 'SERVER';
 dopClient.env = 'CLIENT';
+dopClient2.env = 'CLIENT2';
+dopClientClient.env = 'CLIENTCLIENT';
 
 var transportName = process.argv[2] || 'local';
 var transportListen = require('dop-transports').listen[transportName];
 var transportConnect = require('dop-transports').connect[transportName];
 
-var server = dopServer.listen({transport:transportListen});
-var client = dopClient.connect({transport:transportConnect, listener:server});
+var server = dopServer.listen({transport:transportListen})
+var client = dopClient.connect({transport:transportConnect, listener:server})
+var client2 = dopClient2.connect({transport:transportConnect, listener:server})
 server.on('connect', function(node) {
-    nodeClient = node;
+    if (typeof serverClient == 'undefined')
+        serverClient = node;
 })
+
 
 
 test('Client subscribe synchronously', function(t) {
@@ -38,10 +45,10 @@ test('Client subscribe synchronously', function(t) {
             deeper:{the:'end'}
         }
     };
-    var nodeClient;
+    var serverClient;
     dopServer.onsubscribe(function(name, req) {
         if (name === 'DATA') {
-            nodeClient = req.node;
+            serverClient = req.node;
             t.equal(dopServer.isTarget(DATA), false, 'Is not registered yet');
             return DATA;
         }
@@ -79,8 +86,8 @@ test('Client subscribe synchronously', function(t) {
         objectDataClient = dopClient.data.object[1];
         t.deepEqual(obj, DATA, 'deepEqual data received from server');
         t.deepEqual(objectDataServer.object, dopServer.getObjectProxy(DATA), 'Same object stored in server');
-        t.equal(objectDataServer.node[nodeClient.token].subscribed, true, 'Client subscribed');
-        t.equal(objectDataServer.node[nodeClient.token].owner, false, 'Client is not owner');
+        t.equal(objectDataServer.node[serverClient.token].subscribed, true, 'Client subscribed');
+        t.equal(objectDataServer.node[serverClient.token].owner, false, 'Client is not owner');
         t.equal(objectDataClient.node[client.token].subscribed, false, 'Server is not subscribed');
         t.equal(objectDataClient.node[client.token].owner, true, 'Server is owner');
         return client.subscribe('DATA_DEEP');
@@ -107,8 +114,8 @@ test('Client subscribe synchronously', function(t) {
         t.deepEqual(objectDataServer.object, objectDataServer2.object[1], 'deepEqual to DATA');
         t.deepEqual(dopClient.getObjectId(obj), 2, 'Correct objectId');
         t.deepEqual(obj[1], DATA, 'deepEqual data received from server');
-        t.deepEqual(objectDataServer2.node[nodeClient.token].subscribed, true, 'Client subscribed');
-        t.deepEqual(objectDataServer2.node[nodeClient.token].owner, false, 'Client is not owner');
+        t.deepEqual(objectDataServer2.node[serverClient.token].subscribed, true, 'Client subscribed');
+        t.deepEqual(objectDataServer2.node[serverClient.token].owner, false, 'Client is not owner');
         t.deepEqual(objectDataClient2.node[client.token].subscribed, false, 'Server is not subscribed');
         t.deepEqual(objectDataClient2.node[client.token].owner, true, 'Server is owner');
         return client.subscribe('REJECT');
@@ -122,40 +129,40 @@ test('Client subscribe synchronously', function(t) {
     //     t.end();        
     // })
 
-});
+})
 
 
 test('Client subscribe asynchronously same object', function(t) {
-    var objectServer = {test:1234};
+    var objectServer = {test:Math.random()};
     dopServer.onsubscribe(function() {
         return objectServer;
-    });
+    })
 
     var objectClient;
     client.subscribe().then(function(obj){
         objectClient = obj;
-    });
+    })
     client.subscribe().then(function(obj){
         t.equal(obj, objectClient, 'Same object');
         t.deepEqual(objectServer, objectClient, 'deepEqual to objectServer');
         t.end();
-    });
-});
+    })
+})
 
 
 test('Client subscribe asynchronously different objects', function(t) {
 
     dopServer.onsubscribe(function() {
         return {test:Math.random()};
-    });
+    })
 
     var objectClient1, objectClient2;
     client.subscribe().then(function(obj){
         objectClient1 = obj;
-    });
+    })
     client.subscribe().then(function(obj){
         objectClient2 = obj;
-    });
+    })
     client.subscribe().then(function(obj){
         var objectClient3 = obj;
         var objectId1 = dopClient.getObjectId(objectClient1);
@@ -170,39 +177,39 @@ test('Client subscribe asynchronously different objects', function(t) {
         t.notDeepEqual(objectClient2, objectClient3);
         t.notDeepEqual(objectClient1, objectClient3);
         t.end();
-    });
-});
+    })
+})
 
 test('Server subscribe client object', function(t) {
     var objClient = {test:Math.random()};
     dopClient.onsubscribe(function() {
         return objClient;
-    });
-    nodeClient.subscribe().then(function(objServer){
+    })
+    serverClient.subscribe().then(function(objServer){
         var objectDataServer = dopServer.data.object[dopServer.getObjectId(objServer)];
         var objectDataClient = dopClient.data.object[dopServer.getObjectId(objClient)];
         t.equal(objServer.hasOwnProperty('test'), true, 'obj hasOwnProperty test');
         t.deepEqual(objServer, objClient);
         t.equal(objectDataClient.node[client.token].subscribed, true, 'Server is subscribed');
         t.equal(objectDataClient.node[client.token].owner, false, 'Server is not owner');
-        t.equal(objectDataServer.node[nodeClient.token].subscribed, false, 'Client is not subscribed');
-        t.equal(objectDataServer.node[nodeClient.token].owner, true, 'Client is owner');
+        t.equal(objectDataServer.node[serverClient.token].subscribed, false, 'Client is not subscribed');
+        t.equal(objectDataServer.node[serverClient.token].owner, true, 'Client is owner');
         t.end();
     })
-});
+})
 
 test('Server subscribe client object that is from server', function(t) {
     var objServer = {test:Math.random()},
         objClient;
     dopServer.onsubscribe(function() {
         return objServer;
-    });
+    })
     dopClient.onsubscribe(function() {
         return objClient;
-    });
+    })
     client.subscribe().then(function(obj){
         objClient = obj;
-        nodeClient.subscribe().then(function(objServer2){
+        serverClient.subscribe().then(function(objServer2){
             t.notEqual(objServer2, dopServer.getObjectProxy(objServer));
             t.equal(dopServer.getObjectId(objServer2), dopServer.getObjectId(objServer)+1, 'Different ids');
             t.equal(objServer2.hasOwnProperty('test'), true, 'obj hasOwnProperty test');
@@ -213,17 +220,17 @@ test('Server subscribe client object that is from server', function(t) {
             var objectDataServer = dopServer.data.object[dopServer.getObjectId(objServer)];
             var objectDataServer2 = dopServer.data.object[dopServer.getObjectId(objServer2)];
             var objectDataClient = dopClient.data.object[dopServer.getObjectId(objClient)];
-            t.equal(objectDataServer.node[nodeClient.token].subscribed, true, 'Client is subscribed');
-            t.equal(objectDataServer.node[nodeClient.token].owner, false, 'Client is not owner');
-            t.equal(objectDataServer2.node[nodeClient.token].subscribed, false, 'Client is not subscribed');
-            t.equal(objectDataServer2.node[nodeClient.token].owner, true, 'Client is owner');
+            t.equal(objectDataServer.node[serverClient.token].subscribed, true, 'Client is subscribed');
+            t.equal(objectDataServer.node[serverClient.token].owner, false, 'Client is not owner');
+            t.equal(objectDataServer2.node[serverClient.token].subscribed, false, 'Client is not subscribed');
+            t.equal(objectDataServer2.node[serverClient.token].owner, true, 'Client is owner');
             t.equal(objectDataClient.node[client.token].subscribed, true, 'Server is subscribed');
             t.equal(objectDataClient.node[client.token].owner, true, 'Server is not owner');
 
             t.end();
-        });
+        })
     })
-});
+})
 
 
 
@@ -237,15 +244,15 @@ test('Client subscribe into object that is not register yet', function(t) {
     
     dopServer.onsubscribe(function() {
         return objServer;
-    });
+    })
     client.subscribe().into(objClient).then(function(obj){
         t.equal(dopClient.isRegistered(objClient), true, 'Is registered');
         t.notDeepEqual(objClient, objClientSnap, 'Are not equivalent before subcribe');
         t.deepEqual(objClient, objServer, 'Are equivalent with server objetc');
         t.equal(obj, dopClient.getObjectProxy(objClient), 'objClient and obj are the same object');
         t.end();
-    });
-});
+    })
+})
 
 
 
@@ -259,40 +266,40 @@ test('Client subscribe into object that is already registered', function(t) {
     
     dopServer.onsubscribe(function() {
         return objServer;
-    });
+    })
     client.subscribe().into(objClient).then(function(obj){
         t.equal(dopClient.isRegistered(obj), true, 'Is registered');
         t.notDeepEqual(objClient, objClientSnap, 'Are not equivalent before subcribe');
         t.deepEqual(objClient, objServer, 'Are equivalent with server objetc');
         t.equal(obj, objClient, 'objClient and obj are the same object');
         t.end();
-    });
+    })
 })
 
 
 
-test('Server and client subscribe into the same object', function(t) {
+test('Server <-> Client subscribe into the same object', function(t) {
     var objServer = {test:Math.random()},
         objClient = {test:Math.random()};
 
     dopServer.onsubscribe(function() {
         return objServer;
-    });
+    })
     dopClient.onsubscribe(function() {
         return objClient;
-    });
+    })
 
     client.subscribe().into(objClient).then(function(obj) {
         t.equal(obj, dopClient.getObjectProxy(objClient), 'Same object client');
-        nodeClient.subscribe().into(objServer).then(function(obj2) {
+        serverClient.subscribe().into(objServer).then(function(obj2) {
             t.equal(obj2, dopServer.getObjectProxy(objServer), 'Same object server');
             t.deepEqual(objClient, objServer);
             var objectDataServer = dopServer.data.object[dopServer.getObjectId(objServer)];
             var objectDataClient = dopClient.data.object[dopServer.getObjectId(objClient)];
-            t.equal(objectDataServer.node[nodeClient.token].subscribed, true, 'Client is subscribed');
-            t.equal(objectDataServer.node[nodeClient.token].owner, true, 'Client is owner');
+            t.equal(objectDataServer.node[serverClient.token].subscribed, true, 'Client is subscribed');
+            t.equal(objectDataServer.node[serverClient.token].owner, true, 'Client is owner');
             t.equal(objectDataClient.node[client.token].subscribed, true, 'Server is subscribed');
-            t.equal(objectDataClient.node[client.token].owner, true, 'Server is not owner');
+            t.equal(objectDataClient.node[client.token].owner, true, 'Server is owner');
             t.end();
         })
     })
@@ -301,24 +308,130 @@ test('Server and client subscribe into the same object', function(t) {
 
 
 
+test('Multiple Clients subscribe Same object', function(t) {
+    var objectServer = {test:Math.random()};
+    dopServer.onsubscribe(function() {
+        return objectServer;
+    })
+
+    var objectClient;
+    client.subscribe().then(function(obj){
+        objectClient = obj;
+        t.deepEqual(objectClient, objectServer, 'deepEqual to objectServer');
+    })
+    client2.subscribe().then(function(obj){
+        t.deepEqual(obj, objectClient, 'deepEqual to objectClient1');
+        t.deepEqual(obj, objectServer, 'deepEqual to objectServer');
+        t.end();
+    })
+})
 
 
 
+test('Multiple Clients subscribe different objects', function(t) {
+    dopServer.onsubscribe(function() {
+        return {test:Math.random()};
+    })
+    var objectClient;
+    client.subscribe().then(function(obj){
+        objectClient = obj;
+    })
+    client2.subscribe().then(function(obj){
+        t.notDeepEqual(obj, objectClient, 'notDeepEqual to objectClient1');
+        t.end();
+    })
+})
+
+
+var clientlistening = dopClient.listen({transport:transportListen})
+var clientclient = dopClientClient.connect({transport:transportConnect, listener:clientlistening})
+clientlistening.on('connect', function(node) {
+    if (typeof clientClient == 'undefined')
+        clientClient = node;
+})
+test('Server -> Client -> ClientClient', function(t) {
+    var objServer = {test:Math.random()},
+        objClient;
+    dopServer.onsubscribe(function() {
+        return objServer;
+    })
+    dopClient.onsubscribe(function() {
+        return objClient;
+    })
+    client.subscribe().then(function(obj){
+        objClient = obj;
+        clientclient.subscribe().then(function(obj2) {
+            t.deepEqual(obj2, objServer, 'deepEqual to objServer');
+
+            var objectDataServer = dopServer.data.object[dopServer.getObjectId(objServer)];
+            var objectDataClient = dopClient.data.object[dopClient.getObjectId(objClient)];
+            var objectDataClientClient = dopClientClient.data.object[dopClient.getObjectId(obj2)];
+            t.equal(objectDataServer.node[serverClient.token].subscribed, true, 'Client is subscribed');
+            t.equal(objectDataServer.node[serverClient.token].owner, false, 'Client is not owner');
+            t.equal(objectDataClient.node[client.token].subscribed, false, 'Server is not subscribed');
+            t.equal(objectDataClient.node[client.token].owner, true, 'Server is owner');
+
+
+            t.equal(objectDataClient.node[clientClient.token].subscribed, true, 'ClientClient is subscribed');
+            t.equal(objectDataClient.node[clientClient.token].owner, false, 'ClientClient is not owner');
+            t.equal(objectDataClientClient.node[clientclient.token].subscribed, false, 'Client is not subscribed');
+            t.equal(objectDataClientClient.node[clientclient.token].owner, true, 'Client is owner');
+
+            t.end();
+        })
+    })
+})
 
 
 
-// test('Multiple Clients subscribe Same object', function(t) {});
-// test('Multiple Clients subscribe different objects', function(t) {});
-// test('Client2 subscribe Client1 and this subscribe Server', function(t) {});
-// test('Circle object subscription', function(t) {});
-// 
-// test('observeProperty', function(t) {
+test('Server <-> Client <-> ClientClient into the same object', function(t) {
+        var objServer = {test:Math.random()},
+            objClient = {test:Math.random()},
+            objClientClient = {test:Math.random()};
 
-    // dopClient.observeProperty(o, 'paco', function(mutation){
-    //     console.log( mutation );
-    // })
+    dopServer.onsubscribe(function() {
+        return objServer;
+    })
+    dopClient.onsubscribe(function() {
+        return objClient;
+    })
+    dopClientClient.onsubscribe(function() {
+        return objClientClient;
+    })
 
-    // dopClient.observe(o, function(mutations){
-    //     console.log( mutations );
-    // })
+
+    clientclient.subscribe().into(objClientClient).then(function(obj) {
+        t.equal(obj, dopClientClient.getObjectProxy(objClientClient), 'Same object clientclient');
+        client.subscribe().into(objClient).then(function(obj) {
+            t.equal(obj, dopClient.getObjectProxy(objClient), 'Same object client');
+            serverClient.subscribe().into(objServer).then(function(obj) {
+                t.equal(obj, dopServer.getObjectProxy(objServer), 'Same object server');
+                clientClient.subscribe().into(objClient).then(function(obj) {
+                    t.equal(obj, dopClient.getObjectProxy(objClient), 'Same object client');
+                    t.notDeepEqual(objServer, objClient, 'deepEqual to objServer objClient');
+                    t.deepEqual(objClient, objClientClient, 'deepEqual to objServer objClientClient');
+                    
+                    var objectDataServer = dopServer.data.object[dopServer.getObjectId(objServer)];
+                    var objectDataClient = dopClient.data.object[dopServer.getObjectId(objClient)];
+                    var objectDataClientClient = dopClientClient.data.object[dopServer.getObjectId(objClientClient)];
+                    t.equal(objectDataServer.node[serverClient.token].subscribed, true, 'Client is subscribed');
+                    t.equal(objectDataServer.node[serverClient.token].owner, true, 'Client is owner');
+                    t.equal(objectDataClient.node[client.token].subscribed, true, 'Server is subscribed');
+                    t.equal(objectDataClient.node[client.token].owner, true, 'Server is owner');
+                    t.equal(objectDataClient.node[clientClient.token].subscribed, true, 'ClientClient is subscribed');
+                    t.equal(objectDataClient.node[clientClient.token].owner, true, 'ClientClient is owner');
+                    t.equal(objectDataClientClient.node[clientclient.token].subscribed, true, 'Client is subscribed');
+                    t.equal(objectDataClientClient.node[clientclient.token].owner, true, 'Client is owner');
+                    t.end()
+                })
+            })
+        })
+    })
+
+
+})
+
+
+// test("Server -> Client -> ClientClient -> Server", function(t) {
+    // to do...
 // })
