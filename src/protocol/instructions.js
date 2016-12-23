@@ -5,7 +5,7 @@ dop.protocol.instructions = {
     // [<request_id>, <instruction>, <params...>]
     // If <request_id> it's greater than 0 is a request, if is less than 0 then is the response of the request.
 
-    // Is possible send multiple requests in one message, just wrapping it in an Array. But the order of the responses is not in order. Which means the response of request_idTwo could be resolved before request_idOne
+    // Is possible send multiple requests in one message, just wrapping it in an Array. But the order of the responses is not determined. Which means the response of request_idTwo could be resolved before request_idOne
     // [[<request_id1>, <instruction>, <params...>], [<request_id2>, <instruction>, <params...>]]
 
     // Is possible send one request with multiple instructions. The response will be recieved when all the requests are resolved. The response could be only one. But if the response is multiple has to respect the order
@@ -25,24 +25,26 @@ dop.protocol.instructions = {
 
 
                         // Server -> Client
-    connect: 0,         // [ 1234, <instruction>, <user_token>, <options>]
+    connect: 0,         // [ 1234, <instruction>, <user_token>]
                         // [-1234, 0]
 
                         // Subscriptor -> Owner
     subscribe: 1,       // [ 1234, <instruction>, <params...>]
-                        // [-1234, 0, [<object_id>], <data_object>]
+                        // [-1234, 0, <object_id>, <data_object>]
                         // [-1234, 0, [<object_id>, 'path']]
 
                         // Subscriptor -> Owner
     unsubscribe: 2,     // [ 1234, <instruction>, <object_id>]
+                        // Owner -> Subscriptor
+                        // [ 1234, <instruction>, -<object_id>]
                         // [-1234, 0]
 
                         // Subscriptor -> Owner
-    call: 3,            // [ 1234, <instruction>, [<object_id>,'path','path'], [<params...>]]
+    call: 3,            // [ 1234, <instruction>, <object_id>, ['path','path'], [<params...>]]
                         // [-1234, 0, <return>]
 
                         // Owner -> Subscriptor
-    mutation: 4,        // [ 1234, <instruction>, <object_id>, <object_data_to_merge>]
+    mutation: 4,        // [ 1234, <instruction>, <object_id>, <version>, <mutation>]
                         // [-1234, 0]
 };
 

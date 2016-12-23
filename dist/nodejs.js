@@ -1,5 +1,5 @@
 /*
- * dop@0.5.0
+ * dop@0.6.0
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
@@ -18,7 +18,6 @@ var dop = {
         node:{},
         object_inc:1,
         object:{},
-        object_data:{},
         collectors:[[],[]],
         // lastGet:{}
     },
@@ -90,13 +89,17 @@ dop.listen = function(options) {
 
 
 //////////  src/util/alias.js
-
+// Private alias
 function isFunction(func) {
     return typeof func == 'function';
 }
 
 function isObject(object) {
     return (object!==null && typeof object=='object');
+}
+
+function isArray(array) {
+    return Array.isArray(array);
 }
 
 
@@ -272,7 +275,7 @@ dop.util.typeof = function(value) {
     var s = typeof value;
     if (s == 'object') {
         if (value) {
-            if (Array.isArray(value))
+            if (isArray(value))
                 s = 'array';
             else if (value instanceof Date)
                 s = 'date';
@@ -518,7 +521,8 @@ dop.getNodeBySocket = function(socket) {
 //////////  src/api/getObject.js
 
 dop.getObjectDop = function(object) {
-    return object[dop.cons.DOP];
+    if (isObject(object))
+        return object[dop.cons.DOP];
 };
 
 dop.getObjectId = function(object) {
@@ -558,10 +562,6 @@ dop.getObjectTarget = function(object) {
     return dop.getObjectDop(object).t;
 };
 
-dop.isRegistered = function (object) {
-    return (isObject(object) && dop.getObjectDop(object) !== undefined);
-};
-
 
 
 
@@ -595,7 +595,7 @@ dop.isObjectRegistrable = function(object) {
     return (tof === 'object' || tof == 'array');
 };
 
-// dop.util.isObjectPlain = function(object) {
+// dop.isObjectRegistrable = function(object) {
 //     if (!object)
 //         return false;
 //     var prototype = Object.getPrototypeOf(object);
@@ -603,24 +603,50 @@ dop.isObjectRegistrable = function(object) {
 // };
 
 // function Test(){}
-// console.log(isObjectPlain(null));
-// console.log(isObjectPlain({}));
-// console.log(isObjectPlain(function(){}));
-// console.log(isObjectPlain([]));
-// console.log(isObjectPlain(1));
-// console.log(isObjectPlain("s"));
-// console.log(isObjectPlain(true));
-// console.log(isObjectPlain(/a/));
-// console.log(isObjectPlain(new Date()));
-// console.log(isObjectPlain(Symbol('')));
-// console.log(isObjectPlain(new Test));
+// console.log(isObjectRegistrable({}));
+// console.log(isObjectRegistrable([]));
+// console.log(isObjectRegistrable(new Test));
+// console.log(isObjectRegistrable(new Map));
+// console.log(isObjectRegistrable(new Date()));
+// console.log(isObjectRegistrable(null));
+// console.log(isObjectRegistrable(Symbol('')));
+// console.log(isObjectRegistrable(function(){}));
+// console.log(isObjectRegistrable(1));
+// console.log(isObjectRegistrable("s"));
+// console.log(isObjectRegistrable(true));
+// console.log(isObjectRegistrable(/a/));
 
 
-// dop.util.isObjectPlain = function(object) {
-//     var tof = dop.util.typeof(object);
-//     return (tof == 'object' || tof == 'array');
-// };
 
+
+//////////  src/api/isProxy.js
+
+dop.isProxy = function (object) {
+    return (dop.isRegistered(object) && dop.getObjectProxy(object)===object);
+};
+
+
+
+
+//////////  src/api/isRegistered.js
+
+dop.isRegistered = function (object) {
+    if (isObject(object)){
+        var object_dop = dop.getObjectDop(object);
+        if (isArray(object_dop) && object_dop.hasOwnProperty('p'))
+            return true;
+    }
+    return false;
+};
+
+
+
+
+//////////  src/api/isTarget.js
+
+dop.isTarget = function (object) {
+    return (dop.isRegistered(object) && dop.getObjectTarget(object)===object);
+};
 
 
 
@@ -728,7 +754,7 @@ dop.set = function(object, property, value) {
 dop.setAction = function(actions) {
     var collector = dop.collectFirst(), object_id;
     for (object_id in actions)
-        dop.util.path({a:actions[object_id].action}, null, {a:actions[object_id].object}, dop.core.setAction);
+        dop.core.setAction(actions[object_id].object, actions[object_id].action);
     return collector;
 };
 
@@ -1074,12 +1100,12 @@ dop.core.listener = function(args) {
 dop.core.node = function() {
     // Inherit emitter
     dop.util.merge(this, new dop.util.emitter); //https://jsperf.com/inheritance-call-vs-object-assign
-    this.object_owned = {};
-    this.object_subscribed = {};
+    this.connected = false;
     this.request_inc = 1;
     this.requests = {};
     this.requests_queue = [];
-    this.connected = false;
+    this.object_subscribed = {};
+    this.object_owner = {};
     // Generating token
     do { this.token = dop.util.uuid() }
     while (typeof dop.data.node[this.token]=='object');
@@ -1113,10 +1139,8 @@ dop.core.error = {
     },
 
     reject: {
-        // OBJECT_NAME_NOT_FOUND: 1,
-        // 1: 'Object "%s" not found to be subscribed',
-        // OBJECT_ALREADY_SUBSCRIBED: 2,
-        // 2: 'The object "%s" is already subscribed',
+        OBJECT_NOT_FOUND: 'Object not found to be subscribed',
+        // OBJECT_ALREADY_SUBSCRIBED: 'The object "%s" is already subscribed',
     }
 
 };
@@ -1283,7 +1307,7 @@ dop.core.set = function(object, property, value) {
             objectTarget[property] = value;
             if (dop.isObjectRegistrable(value)) {
                 // var object_dop = dop.getObjectDop(value);
-                // if (dop.isRegistered(value) && Array.isArray(object_dop._) && object_dop._ === objectTarget)
+                // if (dop.isRegistered(value) && isArray(object_dop._) && object_dop._ === objectTarget)
                 //     object_dop[object_dop.length-1] = property;
                 // else {
                     // var shallWeProxy = dop.data.object_data[dop.getObjectId(objectTarget)].options.proxy;
@@ -1295,9 +1319,9 @@ dop.core.set = function(object, property, value) {
                 var mutation = {object:objectProxy, name:property, value:value};
                 if (hasOwnProperty)
                     mutation.oldValue = oldValue;
-                if (Array.isArray(objectTarget)) // if is array we must store the length in order to revert it with setUnaction
+                if (isArray(objectTarget)) // if is array we must store the length in order to revert it with setUnaction
                     mutation.length = length;
-                if (Array.isArray(value)) // We cant store the original array cuz when we inject the mutation into the action object could be different from the original
+                if (isArray(value)) // We cant store the original array cuz when we inject the mutation into the action object could be different from the original
                     mutation.valueOriginal = dop.util.merge([], value);
 
                 dop.core.storeMutation(mutation);
@@ -1549,16 +1573,19 @@ dop.core.unshift = function(array, items) {
 
 //////////  src/core/objects/configureObject.js
 
-var canWeProxy = isFunction(Proxy);
+var canWeProxy = typeof Proxy == 'function';
 dop.core.configureObject = function(object, path, parent) {
 
     // Creating a copy if is another object registered
     if (dop.isRegistered(object))
         return dop.core.configureObject(
-            dop.util.merge( Array.isArray(object)?[]:{}, object),
+            dop.util.merge(isArray(object)?[]:{}, object),
             path,
             parent
         );
+
+    // Removing fake dop property
+    delete object[dop.cons.DOP];
 
     // Recursion
     var property, value, object_dop;
@@ -1599,79 +1626,6 @@ dop.core.configureObject = function(object, path, parent) {
 
     return object;
 };
-
-
-
-
-//////////  src/core/objects/createAsync.js
-
-dop.core.createAsync = function(node, request_id) {
-    var resolve, reject,
-    promise = new Promise(function(res, rej) {
-        resolve = res;
-        reject = rej;
-    });
-    promise.resolve = resolve;
-    promise.reject = reject;
-    return promise;
-};
-
-
-
-// mypromise = dop.createAsync();
-// mypromise.then(function(v) {
-//     console.log('yeah',v)
-// });
-// setTimeout(function() {
-//     mypromise.resolve(1234567890)
-// },1000);
-
-
-// dop.core.createAsync = function() {
-//     var observable = Rx.Observable.create(function(observer) {
-//         observable.resolve = function(value) {
-//             observer.onNext(value);
-//             observer.onCompleted();
-//         };
-//         observable.reject = observer.onError;
-//     });
-//     return observable;
-//     // return {stream:observable,resolve:observer.onNext,reject:observer.onError,cancel:cancel};
-// };
-// mypromise = dop.createAsync();
-// mypromise.subscribe(function(v) {
-//     console.log('yeah',v);
-// });
-// setTimeout(function() {
-//     mypromise.resolve(1234567890);
-// },1000);
-
-
-
-
-// https://github.com/ReactiveX/rxjs/issues/556
-// function getData(num) {
-//   return new Promise((resolve, reject) => {
-//     resolve(num + 1);
-//   });
-// }
-
-// async function create() {
-//   var list = await Rx.Observable.range(1, 5)
-//     .flatMap(num => getData(num))
-//     .toArray().toPromise();
-
-//   return list;
-// }
-
-// console.clear();
-
-// Rx.Observable.fromPromise(create()).subscribe(list => {
-//   console.log(list);
-// }, err => {
-//   console.log(err);
-// });
-
 
 
 
@@ -1745,7 +1699,6 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
         value = (isUnaction) ? mutation.oldValue : mutation.value,
         typeofValue = dop.util.typeof(value),
         index = 1,
-        isArray = Array.isArray,
         parent;
 
 
@@ -1809,25 +1762,6 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
     // set
     else
         action[prop] = (typeofValue=='object' || typeofValue=='array') ? dop.util.merge(typeofValue=='array'?[]:{},value) : value;
-};
-
-
-
-
-//////////  src/core/objects/localProcedureCall.js
-
-dop.core.localProcedureCall = function(f, args, resolve, reject, compose) {
-    var req = dop.core.createAsync(), output;
-    if (isFunction(compose))
-        req = compose(req);
-
-    args.push(req);
-    req.then(resolve).catch(reject);
-    output = f.apply(req, args);
-
-    // Is sync
-    if (output !== req)
-        req.resolve(output);
 };
 
 
@@ -1916,7 +1850,12 @@ dop.core.proxyObjectHandler = {
 
 //////////  src/core/objects/setAction.js
 
-dop.core.setAction = function(destiny, prop, value, typeofValue, path) {
+dop.core.setAction = function(object, action) {
+    dop.util.path({a:action}, null, {a:object}, dop.core.setActionMutator);
+    return object;
+};
+
+dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
 
     // if (path.length > 1) {
 
@@ -1978,13 +1917,13 @@ dop.core.setAction = function(destiny, prop, value, typeofValue, path) {
             // Set array and skip path deep
             else if (typeofValue=='array') {
                 dop.set(destiny, prop, dop.util.merge([], value));
-                return true;
+                return true; // Skiping to dont go inside
             }
 
             // Set array and skip path deep
             else if (typeofValue=='object' && typeofDestiny!='object' && typeofDestiny!='array') {
                 dop.set(destiny, prop, dop.util.merge({}, value));
-                return true;
+                return true; // Skiping to dont go inside
             }
 
             // Set value
@@ -2063,6 +2002,79 @@ dop.core.connector = function(args) {
     node.options.transport.apply(this, args);
     return node;
 };
+
+
+
+
+
+//////////  src/core/protocol/createAsync.js
+
+dop.core.createAsync = function() {
+    var resolve, reject,
+    promise = new Promise(function(res, rej) {
+        resolve = res;
+        reject = rej;
+    });
+    promise.resolve = resolve;
+    promise.reject = reject;
+    return promise;
+};
+
+
+
+// mypromise = dop.createAsync();
+// mypromise.then(function(v) {
+//     console.log('yeah',v)
+// });
+// setTimeout(function() {
+//     mypromise.resolve(1234567890)
+// },1000);
+
+
+// dop.core.createAsync = function() {
+//     var observable = Rx.Observable.create(function(observer) {
+//         observable.resolve = function(value) {
+//             observer.onNext(value);
+//             observer.onCompleted();
+//         };
+//         observable.reject = observer.onError;
+//     });
+//     return observable;
+//     // return {stream:observable,resolve:observer.onNext,reject:observer.onError,cancel:cancel};
+// };
+// mypromise = dop.createAsync();
+// mypromise.subscribe(function(v) {
+//     console.log('yeah',v);
+// });
+// setTimeout(function() {
+//     mypromise.resolve(1234567890);
+// },1000);
+
+
+
+
+// https://github.com/ReactiveX/rxjs/issues/556
+// function getData(num) {
+//   return new Promise((resolve, reject) => {
+//     resolve(num + 1);
+//   });
+// }
+
+// async function create() {
+//   var list = await Rx.Observable.range(1, 5)
+//     .flatMap(num => getData(num))
+//     .toArray().toPromise();
+
+//   return list;
+// }
+
+// console.clear();
+
+// Rx.Observable.fromPromise(create()).subscribe(list => {
+//   console.log(list);
+// }, err => {
+//   console.log(err);
+// });
 
 
 
@@ -2232,6 +2244,25 @@ dop.core.getRejectError = function(error) {
 
 
 
+//////////  src/core/protocol/localProcedureCall.js
+
+dop.core.localProcedureCall = function(f, args, resolve, reject, compose) {
+    var req = dop.core.createAsync(), output;
+    if (isFunction(compose))
+        req = compose(req);
+
+    args.push(req);
+    req.then(resolve).catch(reject);
+    output = f.apply(req, args);
+
+    // Is sync
+    if (output !== req)
+        req.resolve(output);
+};
+
+
+
+
 //////////  src/core/protocol/multiEncode.js
 
 dop.core.multiEncode = function() {
@@ -2264,17 +2295,56 @@ dop.core.registerNode = function(node) {
 //////////  src/core/protocol/registerObjectToNode.js
 
 dop.core.registerObjectToNode = function(node, object) {
-    var object_id = dop.getObjectId(object),
-        object_data = dop.data.object_data[object_id];
+
+    var object_id = dop.getObjectId(object), object_data;
+
+    if (dop.data.object[object_id] === undefined)
+        dop.data.object[object_id] = {
+            object: object,
+            nodes_total: 0,
+            node: {}
+        };
+    
+    object_data = dop.data.object[object_id];
 
     if (object_data.node[node.token] === undefined) {
-        object_data.node[node.token] = true;
-        object_data.nodes += 1;
-        node.object_subscribed[object_id] = true;
+        object_data.nodes_total += 1;
+        object_data.node[node.token] = {
+            subscribed: false, 
+            owner: false
+        };
+    }
+
+    return object_data;
+};
+
+
+
+
+//////////  src/core/protocol/registerOwner.js
+
+dop.core.registerOwner = function(node, object, object_owner_id) {
+    var object_data = dop.core.registerObjectToNode(node, object),
+        object_id = dop.getObjectId(object_data.object);
+    object_data.node[node.token].owner = true;
+    node.object_owner[object_owner_id] = object_id;
+};
+
+
+
+
+//////////  src/core/protocol/registerSubscriber.js
+
+dop.core.registerSubscriber = function(node, object) {
+    var object_data = dop.core.registerObjectToNode(node, object),
+        object_id = dop.getObjectId(object_data.object);
+    node.object_subscribed[object_id] = true;
+    if (object_data.node[node.token].subscribed)
+        return false;
+    else {
+        object_data.node[node.token].subscribed = true;
         return true;
     }
-    else
-        return false;
 };
 
 
@@ -2358,14 +2428,28 @@ dop.core.storeRequest = function(node, request) {
 //////////  src/core/protocol/unregisterNode.js
 
 dop.core.unregisterNode = function(node) {
-    var object_id, object_data;
+    var object_id, object_owner_id, object_data;
+    // Removing subscribed objects
     for (object_id in node.object_subscribed) {
-        object_data = dop.data.object_data[object_id];
-        // Deleting instance inside of dop.data.object_data
-        object_data.nodes -= 1;
-        delete object_data.node[node.token];
+        object_data = dop.data.object[object_id];
+        if (object_data.node[node.token] !== undefined) {
+            object_data.nodes_total -= 1;
+            delete object_data.node[node.token];
+        }
     }
-    delete dop.data.node[ node.token ];
+    // Removing owner objects
+    for (object_owner_id in node.object_owner) {
+        object_id = node.object_owner[object_owner_id];
+        object_data = dop.data.object[object_id];
+        if (object_data.node[node.token] !== undefined) {
+            object_data.nodes_total -= 1;
+            delete object_data.node[node.token];
+        }
+    }
+    // Deleting object data if not more nodes are depending
+    if (object_data!==undefined && object_data.nodes_total === 0)
+        delete dop.data.object[object_id];
+    delete dop.data.node[node.token];
 };
 
 
@@ -2416,22 +2500,34 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
             request.promise.reject(dop.core.getRejectError(response[0], request[2]));
 
         else {
-            var object_path = response[1],
-                object_owned_id = object_path[0],
-                object_owned = response[2],
-                object, object_id;
+            var object_path = typeof response[1]=='number' ? [response[1]] : response[1],
+                object_owner_id = object_path[0],
+                object_owner = response[2],
+                object;
+            
+            if (!isArray(object_path) || typeof object_owner_id!='number')
+                request.promise.reject(dop.core.error.reject.OBJECT_NOT_FOUND);
 
-            if (node.object_owned[object_owned_id] === undefined) {
-                object = dop.register(object_owned);
-                object_id = dop.getObjectId(object);
-                node.object_owned[object_owned_id] = object_id;
-            }
             else {
-                object_id = node.object_owned[object_owned_id];
-                object = dop.getObjectRootById(object_id);
-            }
+                if (node.object_owner[object_owner_id] === undefined) {
+                    var collector = dop.collectFirst();
+                    object = dop.register((dop.isObjectRegistrable(request.into)) ? 
+                        dop.core.setAction(request.into, object_owner)
+                    :
+                        object_owner);
+                    dop.core.registerOwner(node, object, object_owner_id);
+                    collector.emitAndDestroy();
+                }
+                else
+                    object = dop.data.object[node.object_owner[object_owner_id]].object;
 
-            request.promise.resolve(dop.util.get(object, object_path.slice(1)));
+                object = dop.util.get(object, object_path.slice(1));
+
+                (!isObject(object)) ?
+                    request.promise.reject(dop.core.error.reject.OBJECT_NOT_FOUND)
+                :
+                    request.promise.resolve(object);
+            }
         }
     }
 
@@ -2448,7 +2544,7 @@ dop.protocol.instructions = {
     // [<request_id>, <instruction>, <params...>]
     // If <request_id> it's greater than 0 is a request, if is less than 0 then is the response of the request.
 
-    // Is possible send multiple requests in one message, just wrapping it in an Array. But the order of the responses is not in order. Which means the response of request_idTwo could be resolved before request_idOne
+    // Is possible send multiple requests in one message, just wrapping it in an Array. But the order of the responses is not determined. Which means the response of request_idTwo could be resolved before request_idOne
     // [[<request_id1>, <instruction>, <params...>], [<request_id2>, <instruction>, <params...>]]
 
     // Is possible send one request with multiple instructions. The response will be recieved when all the requests are resolved. The response could be only one. But if the response is multiple has to respect the order
@@ -2468,24 +2564,26 @@ dop.protocol.instructions = {
 
 
                         // Server -> Client
-    connect: 0,         // [ 1234, <instruction>, <user_token>, <options>]
+    connect: 0,         // [ 1234, <instruction>, <user_token>]
                         // [-1234, 0]
 
                         // Subscriptor -> Owner
     subscribe: 1,       // [ 1234, <instruction>, <params...>]
-                        // [-1234, 0, [<object_id>], <data_object>]
+                        // [-1234, 0, <object_id>, <data_object>]
                         // [-1234, 0, [<object_id>, 'path']]
 
                         // Subscriptor -> Owner
     unsubscribe: 2,     // [ 1234, <instruction>, <object_id>]
+                        // Owner -> Subscriptor
+                        // [ 1234, <instruction>, -<object_id>]
                         // [-1234, 0]
 
                         // Subscriptor -> Owner
-    call: 3,            // [ 1234, <instruction>, [<object_id>,'path','path'], [<params...>]]
+    call: 3,            // [ 1234, <instruction>, <object_id>, ['path','path'], [<params...>]]
                         // [-1234, 0, <return>]
 
                         // Owner -> Subscriptor
-    mutation: 4,        // [ 1234, <instruction>, <object_id>, <object_data_to_merge>]
+    mutation: 4,        // [ 1234, <instruction>, <object_id>, <version>, <mutation>]
                         // [-1234, 0]
 };
 
@@ -2532,19 +2630,24 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
 
     if (isFunction(dop.data.onsubscribe)) {
 
-        var args = Array.prototype.slice.call(request, 1), object, response;
+        var args = Array.prototype.slice.call(request, 1);
 
         dop.core.localProcedureCall(dop.data.onsubscribe, args, function resolve(value) {
             if (isObject(value)) {
-                object = dop.register(value);
-                var object_id = dop.getObjectId(object);
-                response = dop.core.createResponse(request_id, 0, dop.getObjectDop(object));
-                if (dop.core.registerObjectToNode(node, object))
-                    response.push(dop.getObjectRootById(object_id));
+                var object = dop.register(value),
+                    object_id = dop.getObjectId(object),
+                    object_root = dop.getObjectRoot(object),
+                    object_dop = dop.getObjectDop(object),
+                    response = dop.core.createResponse(request_id, 0, object_dop.length==1 ? object_dop[0] : object_dop);
+
+                if (dop.core.registerSubscriber(node, object_root))
+                    response.push(object_root);
                 dop.core.sendResponse(node, response);
                 return object;
             }
             else
+                // http://www.2ality.com/2016/03/promise-rejections-vs-exceptions.html
+                // http://stackoverflow.com/questions/41254636/catch-an-error-inside-of-promise-resolver
                 dop.util.invariant(false, 'dop.onsubscribe callback must return or resolve a regular object');
 
 
@@ -2573,6 +2676,11 @@ dop.protocol.subscribe = function(node, args) {
     args = Array.prototype.slice.call(args, 0);
     args.unshift(node, dop.protocol.instructions.subscribe);
     var request = dop.core.createRequest.apply(node, args);
+    request.promise.into = function(object) {
+        if (dop.isObjectRegistrable(object))
+            request.into = object;
+        return request.promise;
+    };
     dop.core.storeRequest(node, request);
     if (node.connected)
         dop.core.sendRequests(node);

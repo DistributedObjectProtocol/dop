@@ -6,10 +6,8 @@ dop.core.error = {
     },
 
     reject: {
-        // OBJECT_NAME_NOT_FOUND: 1,
-        // 1: 'Object "%s" not found to be subscribed',
-        // OBJECT_ALREADY_SUBSCRIBED: 2,
-        // 2: 'The object "%s" is already subscribed',
+        OBJECT_NOT_FOUND: 'Object not found to be subscribed',
+        // OBJECT_ALREADY_SUBSCRIBED: 'The object "%s" is already subscribed',
     }
 
 };
