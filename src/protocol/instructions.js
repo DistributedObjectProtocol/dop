@@ -35,8 +35,6 @@ dop.protocol.instructions = {
 
                         // Subscriptor -> Owner
     unsubscribe: 2,     // [ 1234, <instruction>, <object_id>]
-                        // Owner -> Subscriptor
-                        // [ 1234, <instruction>, -<object_id>]
                         // [-1234, 0]
 
                         // Subscriptor -> Owner
