@@ -1,5 +1,5 @@
 
-dop.protocol.merge = function(node, object_id, action) {
+dop.protocol.mutation = function(node, object_id, action) {
     
     console.log(node.token, object_id, action);
     // node.send(JSON.stringify(

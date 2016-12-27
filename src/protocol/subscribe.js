@@ -8,8 +8,6 @@ dop.protocol.subscribe = function(node, args) {
             request.into = object;
         return request.promise;
     };
-    dop.core.storeRequest(node, request);
-    if (node.connected)
-        dop.core.sendRequests(node);
+    dop.core.storeSendMessages(node, request);
     return request.promise;
 };

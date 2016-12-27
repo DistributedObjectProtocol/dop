@@ -19,7 +19,7 @@ dop.core.emitMessage = function(node, message_string, message_raw) {
 
 
     // Managing protocol
-    if (dop.util.typeof(messages) == 'array') {
+    if (isArray(messages)) {
 
         // Detecting if is multimessage
         if (typeof messages[0] == 'number')

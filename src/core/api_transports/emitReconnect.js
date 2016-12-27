@@ -5,4 +5,5 @@ dop.core.emitReconnect = function(node, oldSocket, newNode) {
         node.listener.emit('reconnect', node, oldSocket);
     }
     node.emit('reconnect', oldSocket);
+    dop.core.sendMessages(node);
 };

@@ -23,11 +23,6 @@ dop.protocol.instructions = {
     // Sending the same request without parameters means a cancel/abort of the request
     // [1234]
 
-
-                        // Server -> Client
-    connect: 0,         // [ 1234, <instruction>, <user_token>]
-                        // [-1234, 0]
-
                         // Subscriptor -> Owner
     subscribe: 1,       // [ 1234, <instruction>, <params...>]
                         // [-1234, 0, <object_id>, <data_object>]

@@ -5,7 +5,7 @@ dop.core.node = function() {
     this.connected = false;
     this.request_inc = 1;
     this.requests = {};
-    this.requests_queue = [];
+    this.message_queue = []; // Response / Request / instrunctions queue
     this.object_subscribed = {};
     this.object_owner = {};
     // Generating token
@@ -39,14 +39,13 @@ dop.protocol.unsubscribe = function(node, object) {
 
     if (isObject(object_data) && isObject(object_data.node[node.token]) && object_data.node[node.token].owner) {
         var request = dop.core.createRequest(node, dop.protocol.instructions.unsubscribe, object_id);
-        dop.core.storeRequest(node, request);
-        if (node.connected)
-            dop.core.sendRequests(node);
+        dop.core.storeSendMessages(node, request);
         return request.promise;
     }
     else
         return Promise.reject(dop.core.error.reject.SUBSCRIPTION_NOT_FOUND);
 };
+
 
 
 dop.protocol.onunsubscribe = function(node, request_id, request) {
@@ -70,5 +69,5 @@ dop.protocol.onunsubscribe = function(node, request_id, request) {
     else
         response.push(dop.core.error.reject.SUBSCRIPTION_NOT_FOUND);
 
-    dop.core.sendResponse(node, response);
+    dop.core.storeSendMessages(node, response);
 };

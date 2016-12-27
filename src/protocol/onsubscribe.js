@@ -15,7 +15,7 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
 
                 if (dop.core.registerSubscriber(node, object_root))
                     response.push(object_root);
-                dop.core.sendResponse(node, response);
+                dop.core.storeSendMessages(node, response);
                 return object;
             }
             else
@@ -25,12 +25,9 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
 
 
         }, function reject(error) {
-            response = dop.core.createResponse(request_id);
-            if (error instanceof Error)
-                console.log(error.stack);
-            else
-                response.push(error);
-            node.send(JSON.stringify(response));
+            var response = dop.core.createResponse(request_id);
+            (error instanceof Error) ? console.log(error.stack) : response.push(error);
+            dop.core.storeSendMessages(node, response, JSON.stringify);
         }, function(req) {
             req.node = node;
             return req;
