@@ -4,7 +4,7 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
     if (response[0] !== undefined) {
 
         if (response[0] !== 0)
-            request.promise.reject(dop.core.getRejectError(response[0], request[2]));
+            request.promise.reject(response[0]);
 
         else {
             var object_path = typeof response[1]=='number' ? [response[1]] : response[1],

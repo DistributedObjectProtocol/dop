@@ -18,21 +18,26 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
                 dop.core.storeSendMessages(node, response);
                 return object;
             }
+            else if (value === undefined)
+                return Promise.reject(dop.core.error.reject.OBJECT_NOT_FOUND);
             else
                 // http://www.2ality.com/2016/03/promise-rejections-vs-exceptions.html
                 // http://stackoverflow.com/questions/41254636/catch-an-error-inside-of-promise-resolver
                 dop.util.invariant(false, 'dop.onsubscribe callback must return or resolve a regular object');
 
 
-        }, function reject(error) {
-            var response = dop.core.createResponse(request_id);
-            (error instanceof Error) ? console.log(error.stack) : response.push(error);
-            dop.core.storeSendMessages(node, response, JSON.stringify);
-        }, function(req) {
+        }, reject, function(req) {
             req.node = node;
             return req;
         });
 
     }
+    else
+        reject(dop.core.error.reject.OBJECT_NOT_FOUND);
 
+    function reject(error) {
+        var response = dop.core.createResponse(request_id);
+        (error instanceof Error) ? console.log(error.stack) : response.push(error);
+        dop.core.storeSendMessages(node, response, JSON.stringify);
+    }
 };

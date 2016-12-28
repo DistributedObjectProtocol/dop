@@ -20,6 +20,12 @@ server.on('connect', function(node) {
         serverClient = node;
 })
 
+test('Before onsubscribe is defined', function(t) {
+    client.subscribe('DATA').catch(function(err){
+        t.equal(err, dopClient.core.error.reject.OBJECT_NOT_FOUND, 'Object not found');
+        t.end()
+    })
+})
 
 
 test('Client subscribe synchronously', function(t) {
@@ -73,8 +79,8 @@ test('Client subscribe synchronously', function(t) {
         else if (name === 'REJECT') {
             req.reject({message:'Subscription rejected'})
         }
-        else if (name === 'NOOBJECT') {
-            req.resolve('NOOBJECT');
+        else if (name === 'RESOLVESTRING') {
+            req.resolve('RESOLVESTRING');
             setTimeout(t.end.bind(t), 10);
         }
     })
@@ -122,7 +128,11 @@ test('Client subscribe synchronously', function(t) {
     })
     .catch(function(err){
         t.equal(err.message, 'Subscription rejected', 'Subscription rejected');
-        return client.subscribe('NOOBJECT');
+        return client.subscribe();
+    })
+    .catch(function(err){
+        t.equal(err, dopClient.core.error.reject.OBJECT_NOT_FOUND, 'Object not found');
+        return client.subscribe('RESOLVESTRING');
     })
     // .catch(function(err){
     //     console.log( 123131, typeof err );
