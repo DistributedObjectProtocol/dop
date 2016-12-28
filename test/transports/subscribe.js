@@ -92,10 +92,10 @@ test('Client subscribe synchronously', function(t) {
         objectDataClient = dopClient.data.object[1];
         t.deepEqual(obj, DATA, 'deepEqual data received from server');
         t.deepEqual(objectDataServer.object, dopServer.getObjectProxy(DATA), 'Same object stored in server');
-        t.equal(objectDataServer.node[serverClient.token].subscribed, true, 'Client subscribed');
-        t.equal(objectDataServer.node[serverClient.token].owner, false, 'Client is not owner');
-        t.equal(objectDataClient.node[client.token].subscribed, false, 'Server is not subscribed');
-        t.equal(objectDataClient.node[client.token].owner, true, 'Server is owner');
+        t.equal(objectDataServer.node[serverClient.token].subscriber, 1, 'Client subscriber');
+        t.equal(objectDataServer.node[serverClient.token].owner, 0, 'Client is not owner');
+        t.equal(objectDataClient.node[client.token].subscriber, 0, 'Server is not subscriber');
+        t.equal(objectDataClient.node[client.token].owner, 1, 'Server is owner');
         return client.subscribe('DATA_DEEP');
     })
     .then(function(obj_deep){
@@ -120,10 +120,10 @@ test('Client subscribe synchronously', function(t) {
         t.deepEqual(objectDataServer.object, objectDataServer2.object[1], 'deepEqual to DATA');
         t.deepEqual(dopClient.getObjectId(obj), 2, 'Correct objectId');
         t.deepEqual(obj[1], DATA, 'deepEqual data received from server');
-        t.deepEqual(objectDataServer2.node[serverClient.token].subscribed, true, 'Client subscribed');
-        t.deepEqual(objectDataServer2.node[serverClient.token].owner, false, 'Client is not owner');
-        t.deepEqual(objectDataClient2.node[client.token].subscribed, false, 'Server is not subscribed');
-        t.deepEqual(objectDataClient2.node[client.token].owner, true, 'Server is owner');
+        t.deepEqual(objectDataServer2.node[serverClient.token].subscriber, 1, 'Client subscriber');
+        t.deepEqual(objectDataServer2.node[serverClient.token].owner, 0, 'Client is not owner');
+        t.deepEqual(objectDataClient2.node[client.token].subscriber, 0, 'Server is not subscriber');
+        t.deepEqual(objectDataClient2.node[client.token].owner, 2, 'Server is owner');
         return client.subscribe('REJECT');
     })
     .catch(function(err){
@@ -200,10 +200,10 @@ test('Server subscribe client object', function(t) {
         var objectDataClient = dopClient.data.object[dopServer.getObjectId(objClient)];
         t.equal(objServer.hasOwnProperty('test'), true, 'obj hasOwnProperty test');
         t.deepEqual(objServer, objClient);
-        t.equal(objectDataClient.node[client.token].subscribed, true, 'Server is subscribed');
-        t.equal(objectDataClient.node[client.token].owner, false, 'Server is not owner');
-        t.equal(objectDataServer.node[serverClient.token].subscribed, false, 'Client is not subscribed');
-        t.equal(objectDataServer.node[serverClient.token].owner, true, 'Client is owner');
+        t.equal(objectDataClient.node[client.token].subscriber, 1, 'Server is subscriber');
+        t.equal(objectDataClient.node[client.token].owner, 0, 'Server is not owner');
+        t.equal(objectDataServer.node[serverClient.token].subscriber, 0, 'Client is not subscriber');
+        t.equal(objectDataServer.node[serverClient.token].owner>0, true, 'Client is owner');
         t.end();
     })
 })
@@ -230,12 +230,12 @@ test('Server subscribe client object that is from server', function(t) {
             var objectDataServer = dopServer.data.object[dopServer.getObjectId(objServer)];
             var objectDataServer2 = dopServer.data.object[dopServer.getObjectId(objServer2)];
             var objectDataClient = dopClient.data.object[dopServer.getObjectId(objClient)];
-            t.equal(objectDataServer.node[serverClient.token].subscribed, true, 'Client is subscribed');
-            t.equal(objectDataServer.node[serverClient.token].owner, false, 'Client is not owner');
-            t.equal(objectDataServer2.node[serverClient.token].subscribed, false, 'Client is not subscribed');
-            t.equal(objectDataServer2.node[serverClient.token].owner, true, 'Client is owner');
-            t.equal(objectDataClient.node[client.token].subscribed, true, 'Server is subscribed');
-            t.equal(objectDataClient.node[client.token].owner, true, 'Server is not owner');
+            t.equal(objectDataServer.node[serverClient.token].subscriber, 1, 'Client is subscriber');
+            t.equal(objectDataServer.node[serverClient.token].owner, 0, 'Client is not owner');
+            t.equal(objectDataServer2.node[serverClient.token].subscriber, 0, 'Client is not subscriber');
+            t.equal(objectDataServer2.node[serverClient.token].owner>0, true, 'Client is owner');
+            t.equal(objectDataClient.node[client.token].subscriber, 1, 'Server is subscriber');
+            t.equal(objectDataClient.node[client.token].owner>0, true, 'Server is not owner');
 
             t.end();
         })
@@ -306,10 +306,10 @@ test('Server <-> Client subscribe into the same object', function(t) {
             t.deepEqual(objClient, objServer);
             var objectDataServer = dopServer.data.object[dopServer.getObjectId(objServer)];
             var objectDataClient = dopClient.data.object[dopServer.getObjectId(objClient)];
-            t.equal(objectDataServer.node[serverClient.token].subscribed, true, 'Client is subscribed');
-            t.equal(objectDataServer.node[serverClient.token].owner, true, 'Client is owner');
-            t.equal(objectDataClient.node[client.token].subscribed, true, 'Server is subscribed');
-            t.equal(objectDataClient.node[client.token].owner, true, 'Server is owner');
+            t.equal(objectDataServer.node[serverClient.token].subscriber, 1, 'Client is subscriber');
+            t.equal(objectDataServer.node[serverClient.token].owner>0, true, 'Client is owner');
+            t.equal(objectDataClient.node[client.token].subscriber, 1, 'Server is subscriber');
+            t.equal(objectDataClient.node[client.token].owner>0, true, 'Server is owner');
             t.end();
         })
     })
@@ -376,16 +376,16 @@ test('Server -> Client -> ClientClient', function(t) {
             var objectDataServer = dopServer.data.object[dopServer.getObjectId(objServer)];
             var objectDataClient = dopClient.data.object[dopClient.getObjectId(objClient)];
             var objectDataClientClient = dopClientClient.data.object[dopClient.getObjectId(obj2)];
-            t.equal(objectDataServer.node[serverClient.token].subscribed, true, 'Client is subscribed');
-            t.equal(objectDataServer.node[serverClient.token].owner, false, 'Client is not owner');
-            t.equal(objectDataClient.node[client.token].subscribed, false, 'Server is not subscribed');
-            t.equal(objectDataClient.node[client.token].owner, true, 'Server is owner');
+            t.equal(objectDataServer.node[serverClient.token].subscriber, 1, 'Client is subscriber');
+            t.equal(objectDataServer.node[serverClient.token].owner, 0, 'Client is not owner');
+            t.equal(objectDataClient.node[client.token].subscriber, 0, 'Server is not subscriber');
+            t.equal(objectDataClient.node[client.token].owner>0, true, 'Server is owner');
 
 
-            t.equal(objectDataClient.node[clientClient.token].subscribed, true, 'ClientClient is subscribed');
-            t.equal(objectDataClient.node[clientClient.token].owner, false, 'ClientClient is not owner');
-            t.equal(objectDataClientClient.node[clientclient.token].subscribed, false, 'Client is not subscribed');
-            t.equal(objectDataClientClient.node[clientclient.token].owner, true, 'Client is owner');
+            t.equal(objectDataClient.node[clientClient.token].subscriber, 1, 'ClientClient is subscriber');
+            t.equal(objectDataClient.node[clientClient.token].owner, 0, 'ClientClient is not owner');
+            t.equal(objectDataClientClient.node[clientclient.token].subscriber, 0, 'Client is not subscriber');
+            t.equal(objectDataClientClient.node[clientclient.token].owner>0, true, 'Client is owner');
 
             t.end();
         })
@@ -424,14 +424,14 @@ test('Server <-> Client <-> ClientClient into the same object', function(t) {
                     var objectDataServer = dopServer.data.object[dopServer.getObjectId(objServer)];
                     var objectDataClient = dopClient.data.object[dopServer.getObjectId(objClient)];
                     var objectDataClientClient = dopClientClient.data.object[dopServer.getObjectId(objClientClient)];
-                    t.equal(objectDataServer.node[serverClient.token].subscribed, true, 'Client is subscribed');
-                    t.equal(objectDataServer.node[serverClient.token].owner, true, 'Client is owner');
-                    t.equal(objectDataClient.node[client.token].subscribed, true, 'Server is subscribed');
-                    t.equal(objectDataClient.node[client.token].owner, true, 'Server is owner');
-                    t.equal(objectDataClient.node[clientClient.token].subscribed, true, 'ClientClient is subscribed');
-                    t.equal(objectDataClient.node[clientClient.token].owner, true, 'ClientClient is owner');
-                    t.equal(objectDataClientClient.node[clientclient.token].subscribed, true, 'Client is subscribed');
-                    t.equal(objectDataClientClient.node[clientclient.token].owner, true, 'Client is owner');
+                    t.equal(objectDataServer.node[serverClient.token].subscriber, 1, 'Client is subscriber');
+                    t.equal(objectDataServer.node[serverClient.token].owner>0, true, 'Client is owner');
+                    t.equal(objectDataClient.node[client.token].subscriber, 1, 'Server is subscriber');
+                    t.equal(objectDataClient.node[client.token].owner>0, true, 'Server is owner');
+                    t.equal(objectDataClient.node[clientClient.token].subscriber, 1, 'ClientClient is subscriber');
+                    t.equal(objectDataClient.node[clientClient.token].owner>0, true, 'ClientClient is owner');
+                    t.equal(objectDataClientClient.node[clientclient.token].subscriber, 1, 'Client is subscriber');
+                    t.equal(objectDataClientClient.node[clientclient.token].owner>0, true, 'Client is owner');
                     t.end()
                 })
             })

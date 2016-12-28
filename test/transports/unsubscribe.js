@@ -3,7 +3,7 @@ var dopServer = require('../../dist/nodejs').create();
 var dopClient = require('../../dist/nodejs').create();
 dopServer.env = 'SERVER';
 dopClient.env = 'CLIENT';
-
+dopClient.data.object_inc = 7;
 
 var transportName = process.argv[2] || 'local';
 var transportListen = require('dop-transports').listen[transportName];
@@ -30,19 +30,19 @@ test('Client unsubscribe Server', function(t) {
     t.equal(dopClient.data.object[1], undefined, 'Object data not stored on client yet');
     client.subscribe().into(objectClient).then(function(obj){
         var objectDataServer = dopServer.data.object[1];
-        var objectDataClient = dopClient.data.object[1];
-        t.deepEqual(objectDataServer.node[serverClient.token].subscribed, true, 'Client subscribed');
-        t.deepEqual(objectDataServer.node[serverClient.token].owner, false, 'Client is not owner');
-        t.deepEqual(objectDataClient.node[client.token].subscribed, false, 'Server is not subscribed');
-        t.deepEqual(objectDataClient.node[client.token].owner, true, 'Server is owner');
+        var objectDataClient = dopClient.data.object[7];
+        t.deepEqual(objectDataServer.node[serverClient.token].subscriber, 1, 'Client subscriber');
+        t.deepEqual(objectDataServer.node[serverClient.token].owner, 0, 'Client is not owner');
+        t.deepEqual(objectDataClient.node[client.token].subscriber, 0, 'Server is not subscriber');
+        t.deepEqual(objectDataClient.node[client.token].owner, 1, 'Server is owner');
 
 
         client.unsubscribe(objectClient)
         .then(function(){
-            t.deepEqual(objectDataServer.node[serverClient.token].subscribed, false, 'Client subscribed');
-            t.deepEqual(objectDataServer.node[serverClient.token].owner, false, 'Client is not owner');
-            t.deepEqual(objectDataClient.node[client.token].subscribed, false, 'Server is not subscribed');
-            t.deepEqual(objectDataClient.node[client.token].owner, true, 'Server is owner');
+            t.deepEqual(objectDataServer.node[serverClient.token].subscriber, 0, 'Client is not subscriber');
+            t.deepEqual(objectDataServer.node[serverClient.token].owner, 0, 'Client is not owner');
+            t.deepEqual(objectDataClient.node[client.token].subscriber, 0, 'Server is not subscriber');
+            t.deepEqual(objectDataClient.node[client.token].owner, 0, 'Server not is owner');
         })
         .catch(function(err){
             console.log( err );

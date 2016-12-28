@@ -1,8 +1,8 @@
 
 dop.core.unregisterNode = function(node) {
     var object_id, object_owner_id, object_data;
-    // Removing subscribed objects
-    for (object_id in node.object_subscribed) {
+    // Removing subscriber objects
+    for (object_id in node.subscriber) {
         object_data = dop.data.object[object_id];
         if (object_data.node[node.token] !== undefined) {
             object_data.nodes_total -= 1;
@@ -10,8 +10,8 @@ dop.core.unregisterNode = function(node) {
         }
     }
     // Removing owner objects
-    for (object_owner_id in node.object_owner) {
-        object_id = node.object_owner[object_owner_id];
+    for (object_owner_id in node.owner) {
+        object_id = node.owner[object_owner_id];
         object_data = dop.data.object[object_id];
         if (object_data.node[node.token] !== undefined) {
             object_data.nodes_total -= 1;

@@ -6,8 +6,8 @@ dop.core.node = function() {
     this.request_inc = 1;
     this.requests = {};
     this.message_queue = []; // Response / Request / instrunctions queue
-    this.object_subscribed = {};
-    this.object_owner = {};
+    this.subscriber = {};
+    this.owner = {};
     // Generating token
     do { this.token = dop.util.uuid() }
     while (typeof dop.data.node[this.token]=='object');
@@ -29,45 +29,4 @@ dop.core.node.prototype.subscribe = function() {
 
 dop.core.node.prototype.unsubscribe = function(object) {
     return dop.protocol.unsubscribe(this, object);
-};
-
-
-
-dop.protocol.unsubscribe = function(node, object) {
-    var object_id = dop.getObjectId(object),
-        object_data = dop.data.object[object_id];
-
-    if (isObject(object_data) && isObject(object_data.node[node.token]) && object_data.node[node.token].owner) {
-        var request = dop.core.createRequest(node, dop.protocol.instructions.unsubscribe, object_id);
-        dop.core.storeSendMessages(node, request);
-        return request.promise;
-    }
-    else
-        return Promise.reject(dop.core.error.reject.SUBSCRIPTION_NOT_FOUND);
-};
-
-
-
-dop.protocol.onunsubscribe = function(node, request_id, request) {
-    var object_id = request[1],
-        object_data = dop.data.object[object_id],
-        response = dop.core.createResponse(request_id);
-
-    if (isObject(object_data) && isObject(object_data.node[node.token]) && object_data.node[node.token].subscribed) {
-        
-        var roles = object_data.node[node.token];
-        roles.subscribed = false;
-
-        if (roles.owner === false)
-            object_data.nodes_total -= 1;
-
-        if (object_data.nodes_total === 0)
-            delete dop.data.object[object_id];
-
-        response.push(0);
-    }
-    else
-        response.push(dop.core.error.reject.SUBSCRIPTION_NOT_FOUND);
-
-    dop.core.storeSendMessages(node, response);
 };

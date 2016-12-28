@@ -24,7 +24,7 @@ var dop = {
     cons: {
         TOKEN: '~TOKEN_DOP',
         DOP: '~DOP',
-        CONNECT: '~CONNECT',
+        // CONNECT: '~CONNECT',
         SEND: '~SEND',
         DISCONNECT: '~DISCONNECT'
     }

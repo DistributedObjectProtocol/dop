@@ -16,7 +16,7 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
                 request.promise.reject(dop.core.error.reject.OBJECT_NOT_FOUND);
 
             else {
-                if (node.object_owner[object_owner_id] === undefined) {
+                if (node.owner[object_owner_id] === undefined) {
                     var collector = dop.collectFirst();
                     object = dop.register((dop.isObjectRegistrable(request.into)) ? 
                         dop.core.setAction(request.into, object_owner)
@@ -26,7 +26,7 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
                     collector.emitAndDestroy();
                 }
                 else
-                    object = dop.data.object[node.object_owner[object_owner_id]].object;
+                    object = dop.data.object[node.owner[object_owner_id]].object;
 
                 object = dop.util.get(object, object_path.slice(1));
 

@@ -1,5 +1,5 @@
 /*
- * dop@0.6.0
+ * dop@0.7.0
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
@@ -32,7 +32,7 @@ var dop = {
     cons: {
         TOKEN: '~TOKEN_DOP',
         DOP: '~DOP',
-        CONNECT: '~CONNECT',
+        // CONNECT: '~CONNECT',
         SEND: '~SEND',
         DISCONNECT: '~DISCONNECT'
     }
@@ -245,25 +245,25 @@ dop.util.pathRecursive = function (source, callback, destiny, mutator, circular,
 
 //////////  src/util/sprintf.js
 
-dop.util.sprintf = function() {
+// dop.util.sprintf = function() {
 
-    var s = -1, result, str=arguments[0], array = Array.prototype.slice.call(arguments, 1);
-    return str.replace(/"/g, "'").replace(/%([0-9]+)|%s/g , function() {
+//     var s = -1, result, str=arguments[0], array = Array.prototype.slice.call(arguments, 1);
+//     return str.replace(/"/g, "'").replace(/%([0-9]+)|%s/g , function() {
 
-        result = array[ 
-            (arguments[1] === undefined || arguments[1] === '') ? ++s : arguments[1]
-        ];
+//         result = array[ 
+//             (arguments[1] === undefined || arguments[1] === '') ? ++s : arguments[1]
+//         ];
 
-        if (result === undefined)
-            result = arguments[0];
+//         if (result === undefined)
+//             result = arguments[0];
 
-        return result;
+//         return result;
 
-    });
+//     });
 
-};
-// Usage: sprintf('Code error %s for %s', 25, 'Hi') -> "Code error 25 for Hi"
-// Usage2: sprintf('Code error %1 for %0', 25, 'Hi') -> "Code error Hi for 25"
+// };
+// // Usage: sprintf('Code error %s for %s', 25, 'Hi') -> "Code error 25 for Hi"
+// // Usage2: sprintf('Code error %1 for %0', 25, 'Hi') -> "Code error Hi for 25"
 
 
 
@@ -835,6 +835,7 @@ dop.core.emitConnect = function(node) {
     if (node.listener)
         node.listener.emit('connect', node);
     node.emit('connect');
+    dop.core.sendMessages(node);
 };
 
 
@@ -876,7 +877,7 @@ dop.core.emitMessage = function(node, message_string, message_raw) {
 
 
     // Managing protocol
-    if (dop.util.typeof(messages) == 'array') {
+    if (isArray(messages)) {
 
         // Detecting if is multimessage
         if (typeof messages[0] == 'number')
@@ -999,17 +1000,7 @@ dop.core.emitReconnect = function(node, oldSocket, newNode) {
         node.listener.emit('reconnect', node, oldSocket);
     }
     node.emit('reconnect', oldSocket);
-};
-
-
-
-
-//////////  src/core/api_transports/sendConnect.js
-
-dop.core.sendConnect = function(node) {
-    var request = dop.core.createRequest(node, dop.protocol.instructions.connect, node.token);
-    dop.core.storeRequest(node, request);
-    dop.core.sendRequests(node, JSON.stringify);
+    dop.core.sendMessages(node);
 };
 
 
@@ -1103,9 +1094,9 @@ dop.core.node = function() {
     this.connected = false;
     this.request_inc = 1;
     this.requests = {};
-    this.requests_queue = [];
-    this.object_subscribed = {};
-    this.object_owner = {};
+    this.message_queue = []; // Response / Request / instrunctions queue
+    this.subscriber = {};
+    this.owner = {};
     // Generating token
     do { this.token = dop.util.uuid() }
     while (typeof dop.data.node[this.token]=='object');
@@ -1125,7 +1116,9 @@ dop.core.node.prototype.subscribe = function() {
     return dop.protocol.subscribe(this, arguments);
 };
 
-
+dop.core.node.prototype.unsubscribe = function(object) {
+    return dop.protocol.unsubscribe(this, object);
+};
 
 
 
@@ -1134,13 +1127,13 @@ dop.core.node.prototype.subscribe = function() {
 
 dop.core.error = {
 
-    warning: {
-        TOKEN_REJECTED: 'User disconnected because is rejecting too many times the token assigned'
-    },
+    // warning: {
+    //     TOKEN_REJECTED: 'User disconnected because is rejecting too many times the token assigned'
+    // },
 
     reject: {
-        OBJECT_NOT_FOUND: 'Object not found to be subscribed',
-        // OBJECT_ALREADY_SUBSCRIBED: 'The object "%s" is already subscribed',
+        OBJECT_NOT_FOUND: 'Object not found',
+        SUBSCRIPTION_NOT_FOUND: 'Not subscription found to unsubscribe this object',
     }
 
 };
@@ -2085,6 +2078,7 @@ dop.core.createAsync = function() {
 dop.core.createRequest = function(node, instruction) {
     var request_id = node.request_inc++,
         request = Array.prototype.slice.call(arguments, 1);
+    node.requests[request_id] = request;
     request.unshift(request_id);
     request.promise = dop.core.createAsync();
     return request;
@@ -2232,14 +2226,14 @@ dop.core.encodeUtil = function(property, value) {
 
 //////////  src/core/protocol/getRejectError.js
 
-dop.core.getRejectError = function(error) {
-    if (typeof error == 'number' && dop.core.error.reject[error] !== undefined) {
-        var args = Array.prototype.slice.call(arguments, 1);
-        args.unshift(dop.core.error.reject[error]);
-        return dop.util.sprintf.apply(this, args);
-    }
-    return error;  
-};
+// dop.core.getRejectError = function(error) {
+//     if (typeof error == 'number' && dop.core.error.reject[error] !== undefined) {
+//         var args = Array.prototype.slice.call(arguments, 1);
+//         args.unshift(dop.core.error.reject[error]);
+//         return dop.util.sprintf.apply(this, args);
+//     }
+//     return error;  
+// };
 
 
 
@@ -2310,8 +2304,10 @@ dop.core.registerObjectToNode = function(node, object) {
     if (object_data.node[node.token] === undefined) {
         object_data.nodes_total += 1;
         object_data.node[node.token] = {
-            subscribed: false, 
-            owner: false
+            subscriber: 0, // 0 or 1 || false true 
+            owner: 0, // object_id_owner
+            subscriber_version: 0, 
+            owner_version: 0
         };
     }
 
@@ -2326,8 +2322,8 @@ dop.core.registerObjectToNode = function(node, object) {
 dop.core.registerOwner = function(node, object, object_owner_id) {
     var object_data = dop.core.registerObjectToNode(node, object),
         object_id = dop.getObjectId(object_data.object);
-    object_data.node[node.token].owner = true;
-    node.object_owner[object_owner_id] = object_id;
+    object_data.node[node.token].owner = object_owner_id;
+    node.owner[object_owner_id] = object_id;
 };
 
 
@@ -2338,11 +2334,11 @@ dop.core.registerOwner = function(node, object, object_owner_id) {
 dop.core.registerSubscriber = function(node, object) {
     var object_data = dop.core.registerObjectToNode(node, object),
         object_id = dop.getObjectId(object_data.object);
-    node.object_subscribed[object_id] = true;
-    if (object_data.node[node.token].subscribed)
+    node.subscriber[object_id] = true;
+    if (object_data.node[node.token].subscriber)
         return false;
     else {
-        object_data.node[node.token].subscribed = true;
+        object_data.node[node.token].subscriber = 1;
         return true;
     }
 };
@@ -2371,37 +2367,36 @@ dop.core.remoteFunction = function $DOP_REMOTE_function(object, property) {
 
 
 
-//////////  src/core/protocol/sendRequests.js
+//////////  src/core/protocol/sendMessages.js
 
-dop.core.sendRequests = function(node, wrapper) {
-    var requests = node.requests_queue,
-        total = requests.length;
-    
-    if (total>0) {
-        if (typeof wrapper != 'function')
-            wrapper = dop.encode;
-
+dop.core.sendMessages = function(node) {
+    var total = node.message_queue.length;
+    if (total>0 && node.connected) {
         var index = 0,
-            message = wrapper((total>1) ? requests : requests[0]);
-
+            messages_wrapped = [],
+            message_string;
+        
         for (;index<total; ++index)
-            node.requests[requests[index][0]] = requests[index];
+            messages_wrapped.push( node.message_queue[index][1](node.message_queue[index][0]) );
 
-        node.requests_queue = [];
-        node.send(message);
+        
+        message_string = (index>1) ? '['+messages_wrapped.join(',')+']' : messages_wrapped[0];
+
+        node.message_queue = [];
+        node.send(message_string);
     }
 };
 
 
 
+        // var index = 0,
+        //     message = wrapper((total>1) ? requests : requests[0]);
 
-//////////  src/core/protocol/sendResponse.js
+        // for (;index<total; ++index)
+        //     node.requests[requests[index][0]] = requests[index];
 
-dop.core.sendResponse = function(node, response, wrapper) {
-    if (typeof wrapper != 'function')
-        wrapper = dop.encode;
-    node.send(wrapper(response));
-};
+        // node.requests_queue = [];
+        // node.send(message);
 
 
 
@@ -2416,10 +2411,22 @@ dop.core.setSocketToNode = function(node, socket) {
 
 
 
-//////////  src/core/protocol/storeRequest.js
+//////////  src/core/protocol/storeMessage.js
 
-dop.core.storeRequest = function(node, request) {
-    node.requests_queue.push(request);
+dop.core.storeMessage = function(node, message, wrapper) {
+    if (typeof wrapper != 'function')
+        wrapper = dop.encode;
+    node.message_queue.push([message, wrapper]);
+};
+
+
+
+
+//////////  src/core/protocol/storeSendMessages.js
+
+dop.core.storeSendMessages = function(node, message, wrapper) {
+    dop.core.storeMessage(node, message, wrapper);
+    dop.core.sendMessages(node);
 };
 
 
@@ -2429,8 +2436,8 @@ dop.core.storeRequest = function(node, request) {
 
 dop.core.unregisterNode = function(node) {
     var object_id, object_owner_id, object_data;
-    // Removing subscribed objects
-    for (object_id in node.object_subscribed) {
+    // Removing subscriber objects
+    for (object_id in node.subscriber) {
         object_data = dop.data.object[object_id];
         if (object_data.node[node.token] !== undefined) {
             object_data.nodes_total -= 1;
@@ -2438,8 +2445,8 @@ dop.core.unregisterNode = function(node) {
         }
     }
     // Removing owner objects
-    for (object_owner_id in node.object_owner) {
-        object_id = node.object_owner[object_owner_id];
+    for (object_owner_id in node.owner) {
+        object_id = node.owner[object_owner_id];
         object_data = dop.data.object[object_id];
         if (object_data.node[node.token] !== undefined) {
             object_data.nodes_total -= 1;
@@ -2455,41 +2462,6 @@ dop.core.unregisterNode = function(node) {
 
 
 
-//////////  src/protocol/_onconnect.js
-// server side
-dop.protocol._onconnect = function(node, request_id, request, response) {
-
-    var token = request[2];
-
-    // Node is connected correctly
-    if (response[0]===0)
-        node.emit(dop.cons.CONNECT, request, response);
-
-
-    // We must manage the rejection
-    // ....
-
-
-
-
-    // // Resending token
-    // else if (node.try_connects-- > 0) {
-    //     delete dop.data.node[token];
-    //     dop.protocol.connect(node);
-    // }
-
-    // // We disconnect the node because is rejecting too many times the token assigned
-    // else {
-    //     delete dop.data.node[token];
-    //     node.listener.emit('warning', dop.core.error.warning.TOKEN_REJECTED);
-    //     node.socket.close();
-    // }
-
-};
-
-
-
-
 //////////  src/protocol/_onsubscribe.js
 
 dop.protocol._onsubscribe = function(node, request_id, request, response) {
@@ -2497,7 +2469,7 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
     if (response[0] !== undefined) {
 
         if (response[0] !== 0)
-            request.promise.reject(dop.core.getRejectError(response[0], request[2]));
+            request.promise.reject(response[0]);
 
         else {
             var object_path = typeof response[1]=='number' ? [response[1]] : response[1],
@@ -2509,7 +2481,7 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
                 request.promise.reject(dop.core.error.reject.OBJECT_NOT_FOUND);
 
             else {
-                if (node.object_owner[object_owner_id] === undefined) {
+                if (node.owner[object_owner_id] === undefined) {
                     var collector = dop.collectFirst();
                     object = dop.register((dop.isObjectRegistrable(request.into)) ? 
                         dop.core.setAction(request.into, object_owner)
@@ -2519,7 +2491,7 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
                     collector.emitAndDestroy();
                 }
                 else
-                    object = dop.data.object[node.object_owner[object_owner_id]].object;
+                    object = dop.data.object[node.owner[object_owner_id]].object;
 
                 object = dop.util.get(object, object_path.slice(1));
 
@@ -2531,6 +2503,37 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
         }
     }
 
+};
+
+
+
+
+//////////  src/protocol/_onunsubscribe.js
+
+dop.protocol._onunsubscribe = function(node, request_id, request, response) {
+
+    if (response[0] !== undefined) {
+        if (response[0] !== 0)
+            request.promise.reject(response[0]);
+        else {
+            var object_owner_id = request[2],
+                object_id = node.owner[object_owner_id],
+                object_data = dop.data.object[object_id];
+
+            if (isObject(object_data) && isObject(object_data.node[node.token]) && object_data.node[node.token].owner===object_owner_id) {
+                var roles = object_data.node[node.token];
+                roles.owner = 0;
+
+                if (roles.subscriber === 0)
+                    object_data.nodes_total -= 1;
+
+                if (object_data.nodes_total === 0)
+                    delete dop.data.object[object_id];
+                
+                request.promise.resolve();
+            }
+        }
+    }
 };
 
 
@@ -2562,11 +2565,6 @@ dop.protocol.instructions = {
     // Sending the same request without parameters means a cancel/abort of the request
     // [1234]
 
-
-                        // Server -> Client
-    connect: 0,         // [ 1234, <instruction>, <user_token>]
-                        // [-1234, 0]
-
                         // Subscriptor -> Owner
     subscribe: 1,       // [ 1234, <instruction>, <params...>]
                         // [-1234, 0, <object_id>, <data_object>]
@@ -2574,8 +2572,6 @@ dop.protocol.instructions = {
 
                         // Subscriptor -> Owner
     unsubscribe: 2,     // [ 1234, <instruction>, <object_id>]
-                        // Owner -> Subscriptor
-                        // [ 1234, <instruction>, -<object_id>]
                         // [-1234, 0]
 
                         // Subscriptor -> Owner
@@ -2594,9 +2590,9 @@ for (var instruction in dop.protocol.instructions)
 
 
 
-//////////  src/protocol/merge.js
+//////////  src/protocol/mutation.js
 
-dop.protocol.merge = function(node, object_id, action) {
+dop.protocol.mutation = function(node, object_id, action) {
     
     console.log(node.token, object_id, action);
     // node.send(JSON.stringify(
@@ -2604,22 +2600,6 @@ dop.protocol.merge = function(node, object_id, action) {
     //));
 
 };
-
-
-
-
-//////////  src/protocol/onconnect.js
-// client side
-dop.protocol.onconnect = function(node, request_id, request) {
-    var tokenServer = request[1],
-        response = dop.core.createResponse(request_id, 0);
-    node.tokenServer = tokenServer;
-    dop.core.sendResponse(node, response, JSON.stringify);
-    node.emit(dop.cons.CONNECT);
-    dop.core.sendRequests(node);
-};
-
-
 
 
 
@@ -2642,29 +2622,60 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
 
                 if (dop.core.registerSubscriber(node, object_root))
                     response.push(object_root);
-                dop.core.sendResponse(node, response);
+                dop.core.storeSendMessages(node, response);
                 return object;
             }
+            else if (value === undefined)
+                return Promise.reject(dop.core.error.reject.OBJECT_NOT_FOUND);
             else
                 // http://www.2ality.com/2016/03/promise-rejections-vs-exceptions.html
                 // http://stackoverflow.com/questions/41254636/catch-an-error-inside-of-promise-resolver
                 dop.util.invariant(false, 'dop.onsubscribe callback must return or resolve a regular object');
 
 
-        }, function reject(error) {
-            response = dop.core.createResponse(request_id);
-            if (error instanceof Error)
-                console.log(error.stack);
-            else
-                response.push(error);
-            node.send(JSON.stringify(response));
-        }, function(req) {
+        }, reject, function(req) {
             req.node = node;
             return req;
         });
 
     }
+    else
+        reject(dop.core.error.reject.OBJECT_NOT_FOUND);
 
+    function reject(error) {
+        var response = dop.core.createResponse(request_id);
+        (error instanceof Error) ? console.log(error.stack) : response.push(error);
+        dop.core.storeSendMessages(node, response, JSON.stringify);
+    }
+};
+
+
+
+
+//////////  src/protocol/onunsubscribe.js
+
+dop.protocol.onunsubscribe = function(node, request_id, request) {
+    var object_id = request[1],
+        object_data = dop.data.object[object_id],
+        response = dop.core.createResponse(request_id);
+
+    if (isObject(object_data) && isObject(object_data.node[node.token]) && object_data.node[node.token].subscriber) {
+        
+        var roles = object_data.node[node.token];
+        roles.subscriber = 0;
+
+        if (roles.owner === 0)
+            object_data.nodes_total -= 1;
+
+        if (object_data.nodes_total === 0)
+            delete dop.data.object[object_id];
+
+        response.push(0);
+    }
+    else
+        response.push(dop.core.error.reject.SUBSCRIPTION_NOT_FOUND);
+
+    dop.core.storeSendMessages(node, response);
 };
 
 
@@ -2681,11 +2692,32 @@ dop.protocol.subscribe = function(node, args) {
             request.into = object;
         return request.promise;
     };
-    dop.core.storeRequest(node, request);
-    if (node.connected)
-        dop.core.sendRequests(node);
+    dop.core.storeSendMessages(node, request);
     return request.promise;
 };
+
+
+
+
+//////////  src/protocol/unsubscribe.js
+
+dop.protocol.unsubscribe = function(node, object) {
+    var object_id = dop.getObjectId(object),
+        object_data = dop.data.object[object_id];
+
+    if (isObject(object_data) && isObject(object_data.node[node.token]) && object_data.node[node.token].owner) {
+        var request = dop.core.createRequest(
+            node,
+            dop.protocol.instructions.unsubscribe,
+            object_data.node[node.token].owner
+        );
+        dop.core.storeSendMessages(node, request);
+        return request.promise;
+    }
+    else
+        return Promise.reject(dop.core.error.reject.SUBSCRIPTION_NOT_FOUND);
+};
+
 
 
 

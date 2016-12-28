@@ -15,9 +15,9 @@ dop.core.registerObjectToNode = function(node, object) {
     if (object_data.node[node.token] === undefined) {
         object_data.nodes_total += 1;
         object_data.node[node.token] = {
-            subscribed: false, 
-            owner: false,
-            subscribed_version: 0, 
+            subscriber: 0, // 0 or 1 || false true 
+            owner: 0, // object_id_owner
+            subscriber_version: 0, 
             owner_version: 0
         };
     }
