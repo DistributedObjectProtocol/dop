@@ -1,12 +1,14 @@
 var regexpdate = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/,
     regexpsplit = /\/(.+)\/([gimuy]{0,5})/;
 
-dop.core.decode = function(property, value, undefineds) {
+dop.core.decode = function(property, value, functions, undefineds) {
 
     if (typeof value == 'string') {
 
-        if (value === '~F')
-            return dop.core.remoteFunction(this, property);
+        if (value === '~F') {
+            functions.push([this, property]);
+            return undefined;
+        }
 
         if (value == '~U' && isObject(undefineds)) {
             undefineds.push([this, property]); // http://stackoverflow.com/questions/17648150/how-does-json-parse-manage-undefined

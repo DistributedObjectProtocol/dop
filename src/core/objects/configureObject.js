@@ -17,7 +17,9 @@ dop.core.configureObject = function(object, path, parent) {
     var property, value, object_dop;
     for (property in object) {
         value = object[property];
-        if (dop.isObjectRegistrable(value))
+        if (isFunction(value) && value.name==dop.core.createRemoteFunction.name)
+            object[property] = value(path[0], path.slice(1).concat(property));
+        else if (dop.isObjectRegistrable(value))
             object[property] = dop.core.configureObject(value, path.concat(property), object);
     }
 

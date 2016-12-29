@@ -1,9 +1,4 @@
 
-dop.core.setAction = function(object, action) {
-    dop.util.path({a:action}, null, {a:object}, dop.core.setActionMutator);
-    return object;
-};
-
 dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
 
     // if (path.length > 1) {
@@ -36,7 +31,7 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
                     // set
                     if (mutation.length===3 && mutation[1]===1) {
                         (mutation[2] === undefined) ?
-                           dop.del(destiny[prop], mutation[0])
+                            dop.del(destiny[prop], mutation[0])
                         :
                             dop.set(destiny[prop], mutation[0], mutation[2]);
                     }

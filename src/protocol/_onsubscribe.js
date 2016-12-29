@@ -19,7 +19,7 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
                 if (node.owner[object_owner_id] === undefined) {
                     var collector = dop.collectFirst();
                     object = dop.register((dop.isObjectRegistrable(request.into)) ? 
-                        dop.core.setAction(request.into, object_owner)
+                        dop.core.setActionRemote(request.into, object_owner)
                     :
                         object_owner);
                     dop.core.registerOwner(node, object, object_owner_id);

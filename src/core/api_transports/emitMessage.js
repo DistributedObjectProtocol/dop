@@ -11,7 +11,7 @@ dop.core.emitMessage = function(node, message_string, message_raw) {
 
     // Parsing messages
     if (typeof message_string == 'string' && message_string.substr(0,1) == '[') {
-        try { messages = dop.decode(message_string); } 
+        try { messages = dop.decode(message_string, node); } 
         catch(e) { /*console.log(e);*/ }
     }
     else 

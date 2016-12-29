@@ -1,8 +1,8 @@
 
-dop.protocol.subscribe = function(node, args) {
-    args = Array.prototype.slice.call(args, 0);
-    args.unshift(node, dop.protocol.instructions.subscribe);
-    var request = dop.core.createRequest.apply(node, args);
+dop.protocol.subscribe = function(node, params) {
+    params = Array.prototype.slice.call(params, 0);
+    params.unshift(node, dop.protocol.instructions.subscribe);
+    var request = dop.core.createRequest.apply(node, params);
     request.promise.into = function(object) {
         if (dop.isObjectRegistrable(object))
             request.into = object;
