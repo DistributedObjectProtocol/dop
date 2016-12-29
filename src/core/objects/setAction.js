@@ -11,15 +11,15 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
         var typeofDestiny = dop.util.typeof(destiny[prop]);
 
         // Array mutations
-        if (typeofValue=='object' && value.hasOwnProperty(dop.cons.DOP)) {
+        if (typeofValue=='object' && typeofDestiny=='array' && value.hasOwnProperty(dop.cons.DOP)) {
 
             var mutations = value[dop.cons.DOP],
                 mutation,
                 index=0,
                 total=mutations.length;
 
-            if (typeofDestiny!='array')
-                dop.set(destiny, prop, []);
+            // if (typeofDestiny!='array')
+            //     dop.set(destiny, prop, []);
 
             for (;index<total; ++index) {
                 mutation = mutations[index];

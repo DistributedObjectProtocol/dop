@@ -39,6 +39,8 @@ test('Client unsubscribe Server', function(t) {
 
         client.unsubscribe(objectClient)
         .then(function(){
+            t.deepEqual(dopServer.data.object[1], undefined, 'Object in server removed from data.object');
+            t.deepEqual(dopServer.data.object[7], undefined, 'Object in client removed from data.object');
             t.deepEqual(objectDataServer.node[serverClient.token].subscriber, 0, 'Client is not subscriber');
             t.deepEqual(objectDataServer.node[serverClient.token].owner, 0, 'Client is not owner');
             t.deepEqual(objectDataClient.node[client.token].subscriber, 0, 'Server is not subscriber');
