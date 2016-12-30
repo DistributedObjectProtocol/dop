@@ -10,9 +10,3 @@ dop.core.createRemoteFunction = function $DOP_REMOTE_FUNCTION_UNSETUP(node) {
         }
     }
 };
-dop.protocol.call = function(node, object_id, path, params) {
-
-    var params = Array.prototype.slice.call(params, 0);
-
-    console.log(node.token, dop.data.object[object_id].node[node.token].owner, path, params);
-};

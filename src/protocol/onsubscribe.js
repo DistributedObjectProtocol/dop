@@ -3,9 +3,9 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
 
     if (isFunction(dop.data.onsubscribe)) {
 
-        var args = Array.prototype.slice.call(request, 1);
+        var params = Array.prototype.slice.call(request, 1);
 
-        dop.core.localProcedureCall(dop.data.onsubscribe, args, function resolve(value) {
+        dop.core.localProcedureCall(dop.data.onsubscribe, params, function resolve(value) {
             if (isObject(value)) {
                 var object = dop.register(value),
                     object_id = dop.getObjectId(object),

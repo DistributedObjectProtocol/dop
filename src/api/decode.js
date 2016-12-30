@@ -1,16 +1,11 @@
 
 dop.decode = function(data, node) {
-    var functions = [],
-        undefineds = [],
+    var undefineds = [],
         index = 0,
         total,
         output = JSON.parse(data, function(property, value) {
-            return dop.core.decode.call(this, property, value, functions, undefineds);
+            return dop.core.decode.call(this, property, value, node, undefineds);
         });
-
-
-    for (total=functions.length; index<total; ++index)
-        functions[index][0][functions[index][1]] = dop.core.createRemoteFunction(node);
 
     for (total=undefineds.length,index=0; index<total; ++index)
         undefineds[index][0][undefineds[index][1]] = undefined;

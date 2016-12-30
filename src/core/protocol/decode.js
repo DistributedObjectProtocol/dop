@@ -1,18 +1,17 @@
 var regexpdate = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/,
     regexpsplit = /\/(.+)\/([gimuy]{0,5})/;
 
-dop.core.decode = function(property, value, functions, undefineds) {
+dop.core.decode = function(property, value, node, undefineds) {
 
     if (typeof value == 'string') {
 
-        if (value === '~F') {
-            functions.push([this, property]);
-            return undefined;
-        }
+        if (value === '~F')
+            return dop.core.createRemoteFunction(node);
 
         if (value == '~U' && isObject(undefineds)) {
-            undefineds.push([this, property]); // http://stackoverflow.com/questions/17648150/how-does-json-parse-manage-undefined
-            return undefined;
+            this[property] = undefined;
+            // undefineds.push([this, property]); // http://stackoverflow.com/questions/17648150/how-does-json-parse-manage-undefined
+            // return undefined;
         }
 
         if (value === '~I')
