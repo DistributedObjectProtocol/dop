@@ -9,9 +9,8 @@ dop.core.decode = function(property, value, node, undefineds) {
             return dop.core.createRemoteFunction(node);
 
         if (value == '~U' && isObject(undefineds)) {
-            this[property] = undefined;
-            // undefineds.push([this, property]); // http://stackoverflow.com/questions/17648150/how-does-json-parse-manage-undefined
-            // return undefined;
+            undefineds.push([this, property]); // http://stackoverflow.com/questions/17648150/how-does-json-parse-manage-undefined
+            return undefined;
         }
 
         if (value === '~I')

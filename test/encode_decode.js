@@ -27,9 +27,9 @@ test('Multiple data', function(t) {
     var encoded = dop.encode(data);
     var decoded = dop.decode(encoded);
     t.deepEqual(decoded, data, 'deepEqual');
-    data.NaN = NaN;
+    // data.NaN = NaN;
     data.function = function(){};
-    decoded = dop.decode(dop.encode(data));
+    decoded = dop.decode(dop.encode(data, dop.core.encodeFunction));
     t.equal(JSON.stringify(decoded), JSON.stringify(data), 'Stringify');
     t.equal(typeof decoded.function, 'function', 'Has function');
     // console.log( decoded);
