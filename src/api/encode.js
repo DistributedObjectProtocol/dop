@@ -4,3 +4,6 @@ dop.encode = function(data, encoder) {
         encoder = dop.core.encode;
     return JSON.stringify(data, encoder);
 };
+dop.encodeFunction = function(data) {
+    return JSON.stringify(data, dop.core.encodeFunction);
+};

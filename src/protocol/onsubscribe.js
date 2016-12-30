@@ -15,7 +15,7 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
 
                 if (dop.core.registerSubscriber(node, object_root))
                     response.push(object_root);
-                dop.core.storeSendMessages(node, response);
+                dop.core.storeSendMessages(node, response, dop.encodeFunction);
                 return object;
             }
             else if (value === undefined)
