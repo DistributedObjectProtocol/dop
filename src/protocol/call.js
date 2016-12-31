@@ -29,18 +29,23 @@ dop.protocol.oncall = function(node, request_id, request) {
     if (isObject(object_data) && isObject(object_data.node[node.token]) && object_data.node[node.token].subscriber) {
         var f = dop.util.get(object_data.object, path);
         if (isFunction(f)) {
-            dop.core.localProcedureCall(f, params, function(value) {
+            function resolve(value) {
                 var response = dop.core.createResponse(request_id, 0);
                 if (value !== undefined)
                     response.push(value);
                 dop.core.storeSendMessages(node, response);
                 return value;
-            }, function(err){
+            }
+            function reject(err){
                 dop.core.storeSendMessages(node, dop.core.createResponse(request_id, err));
-            }, function(req) {
-                req.node = node;
-                return req;
-            });
+            }
+            (dop.isRemoteFunction(f)) ?
+                f.apply(null, params).then(resolve).catch(reject)
+            :
+                dop.core.localProcedureCall(f, params, resolve, reject, function(req) {
+                    req.node = node;
+                    return req;
+                });
         }
     }
 };

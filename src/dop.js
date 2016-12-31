@@ -26,7 +26,8 @@ var dop = {
         DOP: '~DOP',
         // CONNECT: '~CONNECT',
         SEND: '~SEND',
-        DISCONNECT: '~DISCONNECT'
+        DISCONNECT: '~DISCONNECT',
+        REMOTE_FUNCTION: '$DOP_REMOTE_FUNCTION',
     }
     
 };
