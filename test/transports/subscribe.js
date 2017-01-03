@@ -131,7 +131,7 @@ test('Client subscribe synchronously', function(t) {
         return client.subscribe();
     })
     .catch(function(err){
-        t.equal(err, dopClient.core.error.reject.OBJECT_NOT_FOUND, 'Object not found');
+        t.equal(err, dopClient.core.error.reject.OBJECT_NOT_FOUND, 'Object not found subscription rejected');
         return client.subscribe('RESOLVESTRING');
     })
     // .catch(function(err){

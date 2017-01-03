@@ -87,6 +87,7 @@ client.subscribe().then(function(obj) {
     .then(function(value){
         console.log( 'then' );
         // return obj.sum(2, 2);
+        t.end();
     })
     .catch(function(value){
         console.log( 'catch' );

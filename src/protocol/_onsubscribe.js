@@ -37,7 +37,7 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
                 if (!isObject(object))
                     request.promise.reject(dop.core.error.reject.OBJECT_NOT_FOUND);
                 else
-                    request.promise.resolve(object);
+                    request.promise.resolve(dop.getObjectProxy(object));
             }
         }
     }
