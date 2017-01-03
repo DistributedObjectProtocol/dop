@@ -92,6 +92,10 @@ client.subscribe().into(objClient).then(function(obj) {
     })
     .then(function(value){
         t.equal(value, 'resolveAsync', 'Resolved async');
+        return objServer.resolveAsync(dopClient.createAsync())
+    })
+    .then(function(value){
+        t.equal(value, 'resolveAsync', 'Resolved async local');
         return obj.reject();
     })
     .catch(function(value){
@@ -131,10 +135,10 @@ clientclient.subscribe().then(function(obj){
     })
     .then(function(value){
         t.equal(value.hola, 'mundo', 'Returning an object');
-        return obj.sum(2, 2);
+        return obj.sum(1, 1);
     })
     .then(function(value){
-        t.equal(value, 8, 'Passing two parameters');
+        t.equal(value, 4, 'Passing two parameters');
         return obj.resolve();
     })
     .then(function(value){

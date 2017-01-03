@@ -1,5 +1,5 @@
 
-dop.core.createAsync = function() {
+dop.createAsync = function() {
     var resolve, reject,
     promise = new Promise(function(res, rej) {
         resolve = res;
