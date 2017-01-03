@@ -22,7 +22,7 @@ server.on('connect', function(node) {
 
 test('Before onsubscribe is defined', function(t) {
     client.subscribe('DATA').catch(function(err){
-        t.equal(err, dopClient.core.error.reject.OBJECT_NOT_FOUND, 'Object not found');
+        t.equal(err, dopClient.core.error.reject_remote[1], 'Object not found');
         t.end()
     })
 })
@@ -131,7 +131,7 @@ test('Client subscribe synchronously', function(t) {
         return client.subscribe();
     })
     .catch(function(err){
-        t.equal(err, dopClient.core.error.reject.OBJECT_NOT_FOUND, 'Object not found subscription rejected');
+        t.equal(err, dopClient.core.error.reject_remote[1], 'Object not found subscription rejected');
         return client.subscribe('RESOLVESTRING');
     })
     // .catch(function(err){

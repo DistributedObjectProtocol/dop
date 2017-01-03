@@ -13,5 +13,5 @@ dop.protocol.unsubscribe = function(node, object) {
         return request.promise;
     }
     else
-        return Promise.reject(dop.core.error.reject.SUBSCRIPTION_NOT_FOUND);
+        return Promise.reject(dop.core.error.reject_remote[2]);
 };

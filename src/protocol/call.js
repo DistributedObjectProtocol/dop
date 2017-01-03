@@ -16,7 +16,7 @@ dop.protocol.call = function(node, object_id, path, params) {
         return request.promise;
     }
     else
-        return Promise.reject(dop.core.error.reject.OBJECT_NOT_FOUND);
+        return Promise.reject(dop.core.error.reject_local.NODE_NOT_FOUND);
 };
 
 
@@ -39,27 +39,35 @@ dop.protocol.oncall = function(node, request_id, request) {
                 return value;
             }
             function reject(err){
-                dop.core.storeSendMessages(node, dop.core.createResponse(request_id, err));
+                dop.core.storeSendMessages(node, dop.core.createResponse(request_id, dop.core.error.reject_remote.CUSTOM_REJECTION, err));
             }
-            (dop.isRemoteFunction(f)) ?
-                f.apply(null, params).then(resolve).catch(reject)
-            :
+
+            if (dop.isRemoteFunction(f))
+                f.apply(null, params).then(resolve).catch(reject);
+            else
                 dop.core.localProcedureCall(f, params, resolve, reject, function(req) {
                     req.node = node;
                     return req;
                 }, object);
+
+            return;
         }
     }
+    
+    dop.core.storeSendMessages(node, dop.core.createResponse(request_id, dop.core.error.reject_remote.FUNCTION_NOT_FOUND));
 };
 
 
 dop.protocol._oncall = function(node, request_id, request, response) {
-    var rejection = response[0];
+    var rejection = response[0],
+        promise = request.promise;
     if (rejection !== undefined) {
-        (rejection !== 0) ?
-            request.promise.reject(rejection)
-        :
-            request.promise.resolve(response[1]);
+        if (rejection === 0)
+            promise.resolve(response[1]);
+        else if (rejection===dop.core.error.reject_remote.CUSTOM_REJECTION)
+            promise.reject(response[1]);
+        else
+            promise.reject(dop.core.getRejectError(rejection));
     }
 };
 

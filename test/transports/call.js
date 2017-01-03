@@ -17,8 +17,9 @@ server.on('connect', function(node) {
         serverClient = node;
 })
 
-var obj = {
+var objServer = dopServer.register({
     string: function(){
+        tglobal.equal(objServer, this, 'Scope when calling remote is the same that calling locally')
         return 'Hello world';
     },
     undefined: function(){
@@ -45,16 +46,17 @@ var obj = {
     reject0: function(req) {
         req.reject(0);
     }
-};
+});
 
 
 dopServer.onsubscribe(function() {
-    return obj;
+    return objServer;
 })
 
 test('TESTING RESOLVE AN REJECTS', function(t) {
 
 client.subscribe().then(function(obj) {
+    tglobal=t;
     obj.string()
     .then(function(value){
         t.equal('Hello world', value, 'Returning a string');
@@ -84,14 +86,14 @@ client.subscribe().then(function(obj) {
         t.equal(value, 'rejected', 'req.reject');
         return obj.reject0();
     })
-    .then(function(value){
-        console.log( 'then' );
-        // return obj.sum(2, 2);
-        t.end();
+    .catch(function(value){
+        t.equal(value, 0, 'Rejecting cero value');
+        delete objServer.sum;
+        return obj.sum();
     })
     .catch(function(value){
-        console.log( 'catch' );
-        // return obj.sum(2, 2);
+        t.equal(value, dopClient.core.error.reject_remote[3], dopClient.core.error.reject_remote.FUNCTION_NOT_FOUND);
+        t.end()
     })
 })
 

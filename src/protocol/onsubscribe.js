@@ -19,7 +19,7 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
                 return object;
             }
             else if (value === undefined)
-                return Promise.reject(dop.core.error.reject.OBJECT_NOT_FOUND);
+                return Promise.reject(dop.core.error.reject_remote.OBJECT_NOT_FOUND);
             else
                 // http://www.2ality.com/2016/03/promise-rejections-vs-exceptions.html
                 // http://stackoverflow.com/questions/41254636/catch-an-error-inside-of-promise-resolver
@@ -33,7 +33,7 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
 
     }
     else
-        reject(dop.core.error.reject.OBJECT_NOT_FOUND);
+        reject(dop.core.error.reject_remote.OBJECT_NOT_FOUND);
 
     function reject(error) {
         var response = dop.core.createResponse(request_id);

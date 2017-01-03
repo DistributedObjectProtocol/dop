@@ -4,7 +4,7 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
     if (response[0] !== undefined) {
 
         if (response[0] !== 0)
-            request.promise.reject(response[0]);
+            request.promise.reject(dop.core.getRejectError(response[0]));
 
         else {
             var object_path = typeof response[1]=='number' ? [response[1]] : response[1],
@@ -13,7 +13,7 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
                 object, collector;
             
             if (!isArray(object_path) || typeof object_owner_id!='number')
-                request.promise.reject(dop.core.error.reject.OBJECT_NOT_FOUND);
+                request.promise.reject(dop.core.error.reject_local.OBJECT_NOT_FOUND);
 
             else {
                 if (node.owner[object_owner_id] === undefined) {
@@ -35,7 +35,7 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
                 object = dop.util.get(object, object_path.slice(1));
 
                 if (!isObject(object))
-                    request.promise.reject(dop.core.error.reject.OBJECT_NOT_FOUND);
+                    request.promise.reject(dop.core.error.reject_local.OBJECT_NOT_FOUND);
                 else
                     request.promise.resolve(dop.getObjectProxy(object));
             }
