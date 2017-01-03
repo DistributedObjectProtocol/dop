@@ -27,7 +27,9 @@ dop.protocol.oncall = function(node, request_id, request) {
         object_data = dop.data.object[object_id];
 
     if (isObject(object_data) && isObject(object_data.node[node.token]) && object_data.node[node.token].subscriber) {
-        var f = dop.util.get(object_data.object, path);
+        var functionName = path.pop(),
+            object = dop.util.get(object_data.object, path),
+            f = object[functionName];
         if (isFunction(f)) {
             function resolve(value) {
                 var response = dop.core.createResponse(request_id, 0);
@@ -45,7 +47,7 @@ dop.protocol.oncall = function(node, request_id, request) {
                 dop.core.localProcedureCall(f, params, resolve, reject, function(req) {
                     req.node = node;
                     return req;
-                });
+                }, object);
         }
     }
 };
