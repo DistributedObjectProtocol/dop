@@ -1,8 +1,10 @@
 var test = require('tape');
 var dopServer = require('../../dist/nodejs').create();
 var dopClient = require('../../dist/nodejs').create();
+var dopClientClient = require('../../dist/nodejs').create();
 dopServer.env = 'SERVER';
 dopClient.env = 'CLIENT';
+dopClientClient.env = 'CLIENTCLIENT';
 dopServer.data.object_inc = 7;
 
 
@@ -12,14 +14,12 @@ var transportConnect = require('dop-transports').connect[transportName];
 
 var server = dopServer.listen({transport:transportListen})
 var client = dopClient.connect({transport:transportConnect, listener:server})
-server.on('connect', function(node) {
-    if (typeof serverClient == 'undefined')
-        serverClient = node;
-})
+var clientlisten = dopClient.listen({transport:transportListen})
+var clientclient = dopClientClient.connect({transport:transportConnect, listener:clientlisten})
+
 
 var objServer = dopServer.register({
     string: function(){
-        tglobal.equal(objServer, this, 'Scope when calling remote is the same that calling locally')
         return 'Hello world';
     },
     undefined: function(){
@@ -29,6 +29,7 @@ var objServer = dopServer.register({
         return {hola:"mundo"}
     },
     sum: function(a, b) {
+        tglobal.equal(objServer, this, 'Scope when calling remote is the same that calling locally')
         return a+b;
     },
     resolve: function(req) {
@@ -53,9 +54,20 @@ dopServer.onsubscribe(function() {
     return objServer;
 })
 
+
+var objClient = dopClient.register({});
+dopClient.onsubscribe(function() {
+    return objClient;
+})
+
+
+
+
+
+
 test('TESTING RESOLVE AN REJECTS', function(t) {
 
-client.subscribe().then(function(obj) {
+client.subscribe().into(objClient).then(function(obj) {
     tglobal=t;
     obj.string()
     .then(function(value){
@@ -100,3 +112,52 @@ client.subscribe().then(function(obj) {
 })
 
 
+test('CALLING A FUNCTIONS BY TWO LEVELS', function(t) {
+
+objClient.sum = function(a,b){
+    return a+a+b+b;
+};
+
+clientclient.subscribe().then(function(obj){
+    tglobal=t;
+    obj.string()
+    .then(function(value){
+        t.equal('Hello world', value, 'Returning a string');
+        return obj.undefined();
+    })
+    .then(function(value){
+        t.equal(undefined, value, 'Returning nothing');
+        return obj.object();
+    })
+    .then(function(value){
+        t.equal(value.hola, 'mundo', 'Returning an object');
+        return obj.sum(2, 2);
+    })
+    .then(function(value){
+        t.equal(value, 8, 'Passing two parameters');
+        return obj.resolve();
+    })
+    .then(function(value){
+        t.equal(value, 'resolved', 'req.resolve instead of return');
+        return obj.resolveAsync();
+    })
+    .then(function(value){
+        t.equal(value, 'resolveAsync', 'Resolved async');
+        return obj.reject();
+    })
+    .catch(function(value){
+        t.equal(value, 'rejected', 'req.reject');
+        return obj.reject0();
+    })
+    .catch(function(value){
+        t.equal(value, 0, 'Rejecting cero value');
+        delete objClient.sum;
+        return obj.sum();
+    })
+    .catch(function(value){
+        t.equal(value, dopClient.core.error.reject_remote[3], dopClient.core.error.reject_remote.FUNCTION_NOT_FOUND);
+        t.end()
+    })
+})
+
+})

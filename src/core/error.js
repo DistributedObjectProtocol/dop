@@ -19,7 +19,7 @@ dop.core.error = {
         FUNCTION_NOT_FOUND: 3,
         3: 'Remote function not found to be called',
         CUSTOM_REJECTION: 4,
-        // 3: 'Remote function not found to be called'
+        // 4: ''
     }
 
 };
