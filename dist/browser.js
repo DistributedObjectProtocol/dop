@@ -1,5 +1,5 @@
 /*
- * dop@0.7.0
+ * dop@0.8.0
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
@@ -34,7 +34,8 @@ var dop = {
         DOP: '~DOP',
         // CONNECT: '~CONNECT',
         SEND: '~SEND',
-        DISCONNECT: '~DISCONNECT'
+        DISCONNECT: '~DISCONNECT',
+        REMOTE_FUNCTION: '$DOP_REMOTE_FUNCTION',
     }
     
 };
@@ -460,25 +461,25 @@ dop.util.pathRecursive = function (source, callback, destiny, mutator, circular,
 
 //////////  src/util/sprintf.js
 
-// dop.util.sprintf = function() {
+dop.util.sprintf = function() {
 
-//     var s = -1, result, str=arguments[0], array = Array.prototype.slice.call(arguments, 1);
-//     return str.replace(/"/g, "'").replace(/%([0-9]+)|%s/g , function() {
+    var s = -1, result, str=arguments[0], array = Array.prototype.slice.call(arguments, 1);
+    return str.replace(/"/g, "'").replace(/%([0-9]+)|%s/g , function() {
 
-//         result = array[ 
-//             (arguments[1] === undefined || arguments[1] === '') ? ++s : arguments[1]
-//         ];
+        result = array[ 
+            (arguments[1] === undefined || arguments[1] === '') ? ++s : arguments[1]
+        ];
 
-//         if (result === undefined)
-//             result = arguments[0];
+        if (result === undefined)
+            result = arguments[0];
 
-//         return result;
+        return result;
 
-//     });
+    });
 
-// };
-// // Usage: sprintf('Code error %s for %s', 25, 'Hi') -> "Code error 25 for Hi"
-// // Usage2: sprintf('Code error %1 for %0', 25, 'Hi') -> "Code error Hi for 25"
+};
+// Usage: sprintf('Code error %s for %s', 25, 'Hi') -> "Code error 25 for Hi"
+// Usage2: sprintf('Code error %1 for %0', 25, 'Hi') -> "Code error Hi for 25"
 
 
 
@@ -635,15 +636,15 @@ dop.collectFirst = function(filter) {
 
 //////////  src/api/decode.js
 
-dop.decode = function(data) {
+dop.decode = function(data, node) {
     var undefineds = [],
         index = 0,
         total,
         output = JSON.parse(data, function(property, value) {
-            return dop.core.decode.call(this, property, value, undefineds);
+            return dop.core.decode.call(this, property, value, node, undefineds);
         });
 
-    for (total=undefineds.length; index<total; ++index)
+    for (total=undefineds.length,index=0; index<total; ++index)
         undefineds[index][0][undefineds[index][1]] = undefined;
 
     return output;
@@ -683,17 +684,14 @@ dop.emit = function(mutations, action) {
 
 //////////  src/api/encode.js
 
-dop.encode = (function(data, encoder) {
-    var encoderCache
-    return function(data, encoder) {
-        if (typeof encoder != 'function') {
-            if (encoderCache === undefined)
-                encoderCache = dop.core.multiEncode(dop.core.encodeSpecial, dop.core.encodeProtocol, dop.core.encodeUtil);
-            encoder = encoderCache;
-        }
-        return JSON.stringify(data, encoder);
-    }
-})();
+dop.encode = function(data, encoder) {
+    if (typeof encoder != 'function')
+        encoder = dop.core.encode;
+    return JSON.stringify(data, encoder);
+};
+dop.encodeFunction = function(data) {
+    return JSON.stringify(data, dop.core.encodeFunction);
+};
 
 
 
@@ -852,6 +850,15 @@ dop.isRegistered = function (object) {
             return true;
     }
     return false;
+};
+
+
+
+
+//////////  src/api/isRemoteFunction.js
+
+dop.isRemoteFunction = function(fun) {
+    return (isFunction(fun) && fun.name===dop.cons.REMOTE_FUNCTION);
 };
 
 
@@ -1084,7 +1091,7 @@ dop.core.emitMessage = function(node, message_string, message_raw) {
 
     // Parsing messages
     if (typeof message_string == 'string' && message_string.substr(0,1) == '[') {
-        try { messages = dop.decode(message_string); } 
+        try { messages = dop.decode(message_string, node); } 
         catch(e) { /*console.log(e);*/ }
     }
     else 
@@ -1346,9 +1353,21 @@ dop.core.error = {
     //     TOKEN_REJECTED: 'User disconnected because is rejecting too many times the token assigned'
     // },
 
-    reject: {
+    reject_local: {
         OBJECT_NOT_FOUND: 'Object not found',
-        SUBSCRIPTION_NOT_FOUND: 'Not subscription found to unsubscribe this object',
+        NODE_NOT_FOUND: 'Node not found'
+    },
+
+    // Remote rejects
+    reject_remote: {
+        OBJECT_NOT_FOUND: 1,
+        1: 'Remote object not found or not permissions to be subscribed',
+        SUBSCRIPTION_NOT_FOUND: 2,
+        2: 'Subscription not found to unsubscribe this object',
+        FUNCTION_NOT_FOUND: 3,
+        3: 'Remote function not found to be called',
+        CUSTOM_REJECTION: 4,
+        // 4: ''
     }
 
 };
@@ -1799,7 +1818,9 @@ dop.core.configureObject = function(object, path, parent) {
     var property, value, object_dop;
     for (property in object) {
         value = object[property];
-        if (dop.isObjectRegistrable(value))
+        if (isFunction(value) && value.name==dop.core.createRemoteFunction.name)
+            object[property] = value(path[0], path.slice(1).concat(property));
+        else if (dop.isObjectRegistrable(value))
             object[property] = dop.core.configureObject(value, path.concat(property), object);
     }
 
@@ -2063,6 +2084,26 @@ dop.core.setAction = function(object, action) {
     return object;
 };
 
+
+
+
+//////////  src/core/objects/setActionFunction.js
+
+dop.core.setActionFunction = function(object, action) {
+    dop.util.path({a:action}, null, {a:object}, function(destiny, prop, value, typeofValue, path){
+        if (isFunction(value) && value.name==dop.core.createRemoteFunction.name)
+            dop.set(destiny, prop, value(dop.getObjectDop(object)[0], path.slice(1)));
+        else
+            return dop.core.setActionMutator(destiny, prop, value, typeofValue, path);
+    });
+    return object;
+};
+
+
+
+
+//////////  src/core/objects/setActionMutator.js
+
 dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
 
     // if (path.length > 1) {
@@ -2070,15 +2111,15 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
         var typeofDestiny = dop.util.typeof(destiny[prop]);
 
         // Array mutations
-        if (typeofValue=='object' && value.hasOwnProperty(dop.cons.DOP)) {
+        if (typeofValue=='object' && typeofDestiny=='array' && value.hasOwnProperty(dop.cons.DOP)) {
 
             var mutations = value[dop.cons.DOP],
                 mutation,
                 index=0,
                 total=mutations.length;
 
-            if (typeofDestiny!='array')
-                dop.set(destiny, prop, []);
+            // if (typeofDestiny!='array')
+            //     dop.set(destiny, prop, []);
 
             for (;index<total; ++index) {
                 mutation = mutations[index];
@@ -2095,7 +2136,7 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
                     // set
                     if (mutation.length===3 && mutation[1]===1) {
                         (mutation[2] === undefined) ?
-                           dop.del(destiny[prop], mutation[0])
+                            dop.del(destiny[prop], mutation[0])
                         :
                             dop.set(destiny[prop], mutation[0], mutation[2]);
                     }
@@ -2288,6 +2329,24 @@ dop.core.createAsync = function() {
 
 
 
+//////////  src/core/protocol/createRemoteFunction.js
+
+dop.core.createRemoteFunction = function $DOP_REMOTE_FUNCTION_UNSETUP(node) {
+    return function $DOP_REMOTE_FUNCTION_UNSETUP(object_id, path) {
+        // // http://jsperf.com/dynamic-name-of-functions
+        // return new Function(
+        //     "var a=arguments;return function " + path[path.length-1] + "(){return a[0](a[1], a[2], a[3], arguments)}"
+        // )(dop.protocol.call, node, object_id, path)
+        return function $DOP_REMOTE_FUNCTION() {
+            return dop.protocol.call(node, object_id, path, arguments);
+        }
+    }
+};
+
+
+
+
+
 //////////  src/core/protocol/createRequest.js
 
 dop.core.createRequest = function(node, instruction) {
@@ -2316,12 +2375,12 @@ dop.core.createResponse = function() {
 var regexpdate = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/,
     regexpsplit = /\/(.+)\/([gimuy]{0,5})/;
 
-dop.core.decode = function(property, value, undefineds) {
+dop.core.decode = function(property, value, node, undefineds) {
 
     if (typeof value == 'string') {
 
         if (value === '~F')
-            return dop.core.remoteFunction(this, property);
+            return dop.core.createRemoteFunction(node);
 
         if (value == '~U' && isObject(undefineds)) {
             undefineds.push([this, property]); // http://stackoverflow.com/questions/17648150/how-does-json-parse-manage-undefined
@@ -2377,50 +2436,29 @@ dop.core.emitNodes = function(action) {
 
 
 
-//////////  src/core/protocol/encodeProtocol.js
+//////////  src/core/protocol/encode.js
 
-dop.core.encodeProtocol = function(property, value) {
+dop.core.encode = function(property, value) {
 
     var tof = typeof value;
-
-    if (tof == 'function')
-        return '~F';
 
     if (tof == 'undefined') // http://stackoverflow.com/questions/17648150/how-does-json-parse-manage-undefined
         return '~U';
 
-    return value;
-};
-
-
-
-
-//////////  src/core/protocol/encodeSpecial.js
-
-dop.core.encodeSpecial = function(property, value) {
-    return (typeof value == 'string' && value[0] == '~') ? '~'+value : value;
-};
-
-
-
-
-//////////  src/core/protocol/encodeUtil.js
-
-dop.core.encodeUtil = function(property, value) {
-
-    var tof = typeof value;
-
-    if (value === Infinity)
-        return '~I';
-
-    if (value === -Infinity)
-        return '~i';
+    if (tof == 'string' && value[0] == '~')
+        return '~'+value;
     
     if (tof == 'number' && isNaN(value))
         return '~N';
 
     if (tof == 'object' && value instanceof RegExp)
         return '~R' + value.toString();
+
+    if (value === Infinity)
+        return '~I';
+
+    if (value === -Infinity)
+        return '~i';
 
     return value;
 };
@@ -2439,30 +2477,39 @@ dop.core.encodeUtil = function(property, value) {
 
 
 
+//////////  src/core/protocol/encodeFunction.js
+
+dop.core.encodeFunction = function(property, value) {
+    return (isFunction(value)) ? '~F' : dop.core.encode(property, value);
+};
+
+
+
+
 //////////  src/core/protocol/getRejectError.js
 
-// dop.core.getRejectError = function(error) {
-//     if (typeof error == 'number' && dop.core.error.reject[error] !== undefined) {
-//         var args = Array.prototype.slice.call(arguments, 1);
-//         args.unshift(dop.core.error.reject[error]);
-//         return dop.util.sprintf.apply(this, args);
-//     }
-//     return error;  
-// };
+dop.core.getRejectError = function(error) {
+    if (typeof error == 'number' && dop.core.error.reject_remote[error] !== undefined) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        args.unshift(dop.core.error.reject_remote[error]);
+        return dop.util.sprintf.apply(this, args);
+    }
+    return error;  
+};
 
 
 
 
 //////////  src/core/protocol/localProcedureCall.js
 
-dop.core.localProcedureCall = function(f, args, resolve, reject, compose) {
+dop.core.localProcedureCall = function(f, args, resolve, reject, configureReq, scope) {
     var req = dop.core.createAsync(), output;
-    if (isFunction(compose))
-        req = compose(req);
+    if (isFunction(configureReq))
+        req = configureReq(req);
 
     args.push(req);
     req.then(resolve).catch(reject);
-    output = f.apply(req, args);
+    output = f.apply(scope||req, args);
 
     // Is sync
     if (output !== req)
@@ -2474,20 +2521,20 @@ dop.core.localProcedureCall = function(f, args, resolve, reject, compose) {
 
 //////////  src/core/protocol/multiEncode.js
 
-dop.core.multiEncode = function() {
-    var encoders = arguments,
-        length = encoders.length, v;
-    return function recursion(property, value, index) {
-        if (index>=length)
-            return value;
-        else if (index === undefined) {
-            v = value;
-            index = 0;
-        }
-        v = encoders[index](property, value);
-        return (v!==value) ? v : recursion(property, value, index+1);
-    }
-};
+// dop.core.multiEncode = function() {
+//     var encoders = arguments,
+//         length = encoders.length, v;
+//     return function recursion(property, value, index) {
+//         if (index>=length)
+//             return value;
+//         else if (index === undefined) {
+//             v = value;
+//             index = 0;
+//         }
+//         v = encoders[index](property, value);
+//         return (v!==value) ? v : recursion(property, value, index+1);
+//     }
+// };
 
 
 
@@ -2556,27 +2603,6 @@ dop.core.registerSubscriber = function(node, object) {
         object_data.node[node.token].subscriber = 1;
         return true;
     }
-};
-
-
-
-
-//////////  src/core/protocol/remoteFunction.js
-
-dop.core.remoteFunction = function $DOP_REMOTE_function(object, property) {
-
-    return function $DOP_REMOTE_FUNCTION() {
-
-        // return that.call(path, Array.prototype.slice.call(arguments));
-        console.log(dop.getObjectDop(object), property, Array.prototype.slice.call(arguments,0));
-
-    };
-
-    // // http://jsperf.com/dynamic-name-of-functions
-    // return new function(
-    //     "return function " + dop.core.remoteFunction.name + "() {  return that.call(path, arguments); }"
-    //)();
-
 };
 
 
@@ -2684,24 +2710,28 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
     if (response[0] !== undefined) {
 
         if (response[0] !== 0)
-            request.promise.reject(response[0]);
+            request.promise.reject(dop.core.getRejectError(response[0]));
 
         else {
             var object_path = typeof response[1]=='number' ? [response[1]] : response[1],
                 object_owner_id = object_path[0],
                 object_owner = response[2],
-                object;
+                object, collector;
             
             if (!isArray(object_path) || typeof object_owner_id!='number')
-                request.promise.reject(dop.core.error.reject.OBJECT_NOT_FOUND);
+                request.promise.reject(dop.core.error.reject_local.OBJECT_NOT_FOUND);
 
             else {
                 if (node.owner[object_owner_id] === undefined) {
-                    var collector = dop.collectFirst();
-                    object = dop.register((dop.isObjectRegistrable(request.into)) ? 
-                        dop.core.setAction(request.into, object_owner)
-                    :
-                        object_owner);
+                    collector = dop.collectFirst();
+                    if (dop.isRegistered(request.into))
+                        object = dop.core.setActionFunction(request.into, object_owner);
+                    else
+                        object = dop.register((request.into===undefined) ? 
+                            object_owner
+                        :
+                            dop.core.setAction(request.into, object_owner)
+                        );
                     dop.core.registerOwner(node, object, object_owner_id);
                     collector.emitAndDestroy();
                 }
@@ -2710,14 +2740,13 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
 
                 object = dop.util.get(object, object_path.slice(1));
 
-                (!isObject(object)) ?
-                    request.promise.reject(dop.core.error.reject.OBJECT_NOT_FOUND)
-                :
-                    request.promise.resolve(object);
+                if (!isObject(object))
+                    request.promise.reject(dop.core.error.reject_local.OBJECT_NOT_FOUND);
+                else
+                    request.promise.resolve(dop.getObjectProxy(object));
             }
         }
     }
-
 };
 
 
@@ -2750,6 +2779,85 @@ dop.protocol._onunsubscribe = function(node, request_id, request, response) {
         }
     }
 };
+
+
+
+
+//////////  src/protocol/call.js
+
+dop.protocol.call = function(node, object_id, path, params) {
+
+    var object_data = dop.data.object[object_id];
+
+    if (isObject(object_data) && isObject(object_data.node[node.token]) && object_data.node[node.token].owner>0) {
+        params = Array.prototype.slice.call(params, 0);
+        var request = dop.core.createRequest(
+            node,
+            dop.protocol.instructions.call,
+            object_data.node[node.token].owner,
+            path,
+            params
+        );
+        dop.core.storeSendMessages(node, request);
+        return request.promise;
+    }
+    else
+        return Promise.reject(dop.core.error.reject_local.NODE_NOT_FOUND);
+};
+
+
+dop.protocol.oncall = function(node, request_id, request) {
+    var object_id = request[1],
+        path = request[2],
+        params = request[3],
+        object_data = dop.data.object[object_id];
+
+    if (isObject(object_data) && isObject(object_data.node[node.token]) && object_data.node[node.token].subscriber) {
+        var functionName = path.pop(),
+            object = dop.util.get(object_data.object, path),
+            f = object[functionName];
+        if (isFunction(f)) {
+            function resolve(value) {
+                var response = dop.core.createResponse(request_id, 0);
+                if (value !== undefined)
+                    response.push(value);
+                dop.core.storeSendMessages(node, response);
+                return value;
+            }
+            function reject(err){
+                dop.core.storeSendMessages(node, dop.core.createResponse(request_id, dop.core.error.reject_remote.CUSTOM_REJECTION, err));
+            }
+
+            if (dop.isRemoteFunction(f))
+                f.apply(null, params).then(resolve).catch(reject);
+            else
+                dop.core.localProcedureCall(f, params, resolve, reject, function(req) {
+                    req.node = node;
+                    return req;
+                }, object);
+
+            return;
+        }
+    }
+    
+    dop.core.storeSendMessages(node, dop.core.createResponse(request_id, dop.core.error.reject_remote.FUNCTION_NOT_FOUND));
+};
+
+
+dop.protocol._oncall = function(node, request_id, request, response) {
+    var rejection = response[0],
+        promise = request.promise;
+    if (rejection !== undefined) {
+        if (rejection === 0)
+            promise.resolve(response[1]);
+        else if (rejection===dop.core.error.reject_remote.CUSTOM_REJECTION)
+            promise.reject(response[1]);
+        else
+            promise.reject(dop.core.getRejectError(rejection));
+    }
+};
+
+
 
 
 
@@ -2825,9 +2933,9 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
 
     if (isFunction(dop.data.onsubscribe)) {
 
-        var args = Array.prototype.slice.call(request, 1);
+        var params = Array.prototype.slice.call(request, 1);
 
-        dop.core.localProcedureCall(dop.data.onsubscribe, args, function resolve(value) {
+        dop.core.localProcedureCall(dop.data.onsubscribe, params, function resolve(value) {
             if (isObject(value)) {
                 var object = dop.register(value),
                     object_id = dop.getObjectId(object),
@@ -2837,11 +2945,11 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
 
                 if (dop.core.registerSubscriber(node, object_root))
                     response.push(object_root);
-                dop.core.storeSendMessages(node, response);
+                dop.core.storeSendMessages(node, response, dop.encodeFunction);
                 return object;
             }
             else if (value === undefined)
-                return Promise.reject(dop.core.error.reject.OBJECT_NOT_FOUND);
+                return Promise.reject(dop.core.error.reject_remote.OBJECT_NOT_FOUND);
             else
                 // http://www.2ality.com/2016/03/promise-rejections-vs-exceptions.html
                 // http://stackoverflow.com/questions/41254636/catch-an-error-inside-of-promise-resolver
@@ -2855,7 +2963,7 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
 
     }
     else
-        reject(dop.core.error.reject.OBJECT_NOT_FOUND);
+        reject(dop.core.error.reject_remote.OBJECT_NOT_FOUND);
 
     function reject(error) {
         var response = dop.core.createResponse(request_id);
@@ -2888,7 +2996,7 @@ dop.protocol.onunsubscribe = function(node, request_id, request) {
         response.push(0);
     }
     else
-        response.push(dop.core.error.reject.SUBSCRIPTION_NOT_FOUND);
+        response.push(dop.core.error.reject_remote.SUBSCRIPTION_NOT_FOUND);
 
     dop.core.storeSendMessages(node, response);
 };
@@ -2898,10 +3006,10 @@ dop.protocol.onunsubscribe = function(node, request_id, request) {
 
 //////////  src/protocol/subscribe.js
 
-dop.protocol.subscribe = function(node, args) {
-    args = Array.prototype.slice.call(args, 0);
-    args.unshift(node, dop.protocol.instructions.subscribe);
-    var request = dop.core.createRequest.apply(node, args);
+dop.protocol.subscribe = function(node, params) {
+    params = Array.prototype.slice.call(params, 0);
+    params.unshift(node, dop.protocol.instructions.subscribe);
+    var request = dop.core.createRequest.apply(node, params);
     request.promise.into = function(object) {
         if (dop.isObjectRegistrable(object))
             request.into = object;
@@ -2920,7 +3028,7 @@ dop.protocol.unsubscribe = function(node, object) {
     var object_id = dop.getObjectId(object),
         object_data = dop.data.object[object_id];
 
-    if (isObject(object_data) && isObject(object_data.node[node.token]) && object_data.node[node.token].owner) {
+    if (isObject(object_data) && isObject(object_data.node[node.token]) && object_data.node[node.token].owner>0) {
         var request = dop.core.createRequest(
             node,
             dop.protocol.instructions.unsubscribe,
@@ -2930,7 +3038,7 @@ dop.protocol.unsubscribe = function(node, object) {
         return request.promise;
     }
     else
-        return Promise.reject(dop.core.error.reject.SUBSCRIPTION_NOT_FOUND);
+        return Promise.reject(dop.core.error.reject_remote[2]);
 };
 
 
