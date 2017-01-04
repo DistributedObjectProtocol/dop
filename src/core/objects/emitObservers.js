@@ -18,7 +18,7 @@ dop.core.emitObservers = function(mutations) {
         subobject = mutation.object;
         object_dop = dop.getObjectDop(subobject);
 
-        if (!mutationsWithSubscribers /*&& dop.data.object_data[object_dop[0]].nodes > 0*/)
+        if (!mutationsWithSubscribers && isObject(dop.data.object[object_dop[0]]))
             mutationsWithSubscribers = true;
 
         // Emiting mutations to observerProperties
