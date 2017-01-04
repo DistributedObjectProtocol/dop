@@ -37,7 +37,11 @@ dop.protocol.instructions = {
                         // [-1234, 0, <return>]
 
                         // Owner -> Subscriptor
-    mutation: 4,        // [ 1234, <instruction>, <object_id>, <version>, <mutation>]
+    broadcast: 4,       // [ 1234, <instruction>, <object_id>, ['path','path'], [<params...>]]
+                        // [-1234, 0, <return>]
+
+                        // Owner -> Subscriptor
+    mutation: 5,        // [ 1234, <instruction>, <object_id>, <version>, <mutation>]
                         // [-1234, 0]
 };
 

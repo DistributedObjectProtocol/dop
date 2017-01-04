@@ -11,7 +11,7 @@ else if (typeof module == 'object' && module.exports)
     module.exports = dop;
 
 // Browser
-else if (window && typeof window == 'object')
+else if (typeof window == 'object' && window)
     window.dop = dop;
 
 else

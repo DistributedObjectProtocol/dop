@@ -1,5 +1,5 @@
 /*
- * dop@0.8.0
+ * dop@0.9.0
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
@@ -36,8 +36,9 @@ var dop = {
         SEND: '~SEND',
         DISCONNECT: '~DISCONNECT',
         REMOTE_FUNCTION: '$DOP_REMOTE_FUNCTION',
+        BROADCAST_FUNCTION: '$DOP_BROADCAST_FUNCTION',
     }
-    
+
 };
 
 
@@ -419,6 +420,79 @@ dop.collectFirst = function(filter) {
 
 
 
+//////////  src/api/createAsync.js
+
+dop.createAsync = function() {
+    var resolve, reject,
+    promise = new Promise(function(res, rej) {
+        resolve = res;
+        reject = rej;
+    });
+    promise.resolve = resolve;
+    promise.reject = reject;
+    return promise;
+};
+
+
+
+// mypromise = dop.createAsync();
+// mypromise.then(function(v) {
+//     console.log('yeah',v)
+// });
+// setTimeout(function() {
+//     mypromise.resolve(1234567890)
+// },1000);
+
+
+// dop.core.createAsync = function() {
+//     var observable = Rx.Observable.create(function(observer) {
+//         observable.resolve = function(value) {
+//             observer.onNext(value);
+//             observer.onCompleted();
+//         };
+//         observable.reject = observer.onError;
+//     });
+//     return observable;
+//     // return {stream:observable,resolve:observer.onNext,reject:observer.onError,cancel:cancel};
+// };
+// mypromise = dop.createAsync();
+// mypromise.subscribe(function(v) {
+//     console.log('yeah',v);
+// });
+// setTimeout(function() {
+//     mypromise.resolve(1234567890);
+// },1000);
+
+
+
+
+// https://github.com/ReactiveX/rxjs/issues/556
+// function getData(num) {
+//   return new Promise((resolve, reject) => {
+//     resolve(num + 1);
+//   });
+// }
+
+// async function create() {
+//   var list = await Rx.Observable.range(1, 5)
+//     .flatMap(num => getData(num))
+//     .toArray().toPromise();
+
+//   return list;
+// }
+
+// console.clear();
+
+// Rx.Observable.fromPromise(create()).subscribe(list => {
+//   console.log(list);
+// }, err => {
+//   console.log(err);
+// });
+
+
+
+
+
 //////////  src/api/decode.js
 
 dop.decode = function(data, node) {
@@ -581,6 +655,15 @@ dop.getUnaction = function(mutations) {
     }
 
     return actions;
+};
+
+
+
+
+//////////  src/api/isBroadcastFunction.js
+
+dop.isBroadcastFunction = function(fun) {
+    return (isFunction(fun) && fun.name===dop.cons.BROADCAST_FUNCTION);
 };
 
 
@@ -763,6 +846,21 @@ dop.setAction = function(actions) {
     for (object_id in actions)
         dop.core.setAction(actions[object_id].object, actions[object_id].action);
     return collector;
+};
+
+
+
+
+//////////  src/api/setBroadcastFunction.js
+
+dop.setBroadcastFunction = function (object, namefunction) {
+    dop.util.invariant(dop.isRegistered(object), 'Object passed to dop.setBroadcastFunction must be a registered object');
+    var path = dop.getObjectDop(object).slice(0),
+        object_id = path.shift();
+    path.push(namefunction);
+    dop.getObjectTarget(object)[namefunction] = function $DOP_BROADCAST_FUNCTION() {
+        return dop.protocol.broadcast(object_id, path, arguments);
+    }
 };
 
 
@@ -2041,79 +2139,6 @@ dop.core.connector = function(args) {
 
 
 
-//////////  src/core/protocol/createAsync.js
-
-dop.core.createAsync = function() {
-    var resolve, reject,
-    promise = new Promise(function(res, rej) {
-        resolve = res;
-        reject = rej;
-    });
-    promise.resolve = resolve;
-    promise.reject = reject;
-    return promise;
-};
-
-
-
-// mypromise = dop.createAsync();
-// mypromise.then(function(v) {
-//     console.log('yeah',v)
-// });
-// setTimeout(function() {
-//     mypromise.resolve(1234567890)
-// },1000);
-
-
-// dop.core.createAsync = function() {
-//     var observable = Rx.Observable.create(function(observer) {
-//         observable.resolve = function(value) {
-//             observer.onNext(value);
-//             observer.onCompleted();
-//         };
-//         observable.reject = observer.onError;
-//     });
-//     return observable;
-//     // return {stream:observable,resolve:observer.onNext,reject:observer.onError,cancel:cancel};
-// };
-// mypromise = dop.createAsync();
-// mypromise.subscribe(function(v) {
-//     console.log('yeah',v);
-// });
-// setTimeout(function() {
-//     mypromise.resolve(1234567890);
-// },1000);
-
-
-
-
-// https://github.com/ReactiveX/rxjs/issues/556
-// function getData(num) {
-//   return new Promise((resolve, reject) => {
-//     resolve(num + 1);
-//   });
-// }
-
-// async function create() {
-//   var list = await Rx.Observable.range(1, 5)
-//     .flatMap(num => getData(num))
-//     .toArray().toPromise();
-
-//   return list;
-// }
-
-// console.clear();
-
-// Rx.Observable.fromPromise(create()).subscribe(list => {
-//   console.log(list);
-// }, err => {
-//   console.log(err);
-// });
-
-
-
-
-
 //////////  src/core/protocol/createRemoteFunction.js
 
 dop.core.createRemoteFunction = function $DOP_REMOTE_FUNCTION_UNSETUP(node) {
@@ -2139,7 +2164,7 @@ dop.core.createRequest = function(node, instruction) {
         request = Array.prototype.slice.call(arguments, 1);
     node.requests[request_id] = request;
     request.unshift(request_id);
-    request.promise = dop.core.createAsync();
+    request.promise = dop.createAsync();
     return request;
 };
 
@@ -2265,7 +2290,7 @@ dop.core.encode = function(property, value) {
 //////////  src/core/protocol/encodeFunction.js
 
 dop.core.encodeFunction = function(property, value) {
-    return (isFunction(value)) ? '~F' : dop.core.encode(property, value);
+    return (isFunction(value) && !dop.isBroadcastFunction(value)) ? '~F' : dop.core.encode(property, value);
 };
 
 
@@ -2288,7 +2313,7 @@ dop.core.getRejectError = function(error) {
 //////////  src/core/protocol/localProcedureCall.js
 
 dop.core.localProcedureCall = function(f, args, resolve, reject, configureReq, scope) {
-    var req = dop.core.createAsync(), output;
+    var req = dop.createAsync(), output;
     if (isFunction(configureReq))
         req = configureReq(req);
 
@@ -2488,6 +2513,33 @@ dop.core.unregisterNode = function(node) {
 
 
 
+//////////  src/protocol/_onbroadcast.js
+
+dop.protocol._onbroadcast = function(node, request_id, request, response) {
+    dop.protocol._oncall(node, request_id, request, response);
+};
+
+
+
+
+//////////  src/protocol/_oncall.js
+
+dop.protocol._oncall = function(node, request_id, request, response) {
+    var rejection = response[0],
+        promise = request.promise;
+    if (rejection !== undefined) {
+        if (rejection === 0)
+            promise.resolve(response[1]);
+        else if (rejection===dop.core.error.reject_remote.CUSTOM_REJECTION)
+            promise.reject(response[1]);
+        else
+            promise.reject(dop.core.getRejectError(rejection));
+    }
+};
+
+
+
+
 //////////  src/protocol/_onsubscribe.js
 
 dop.protocol._onsubscribe = function(node, request_id, request, response) {
@@ -2568,6 +2620,40 @@ dop.protocol._onunsubscribe = function(node, request_id, request, response) {
 
 
 
+//////////  src/protocol/broadcast.js
+
+dop.protocol.broadcast = function(object_id, path, params) {
+
+    var object_data = dop.data.object[object_id],
+        promises = [];
+
+    if (isObject(object_data) && isObject(object_data.node)) {
+        var token, node, request, 
+            nodes = object_data.node;
+        params = Array.prototype.slice.call(params, 0);
+        for (token in nodes) {
+            if (nodes[token].subscriber === 1) {
+                node = dop.data.node[token];
+                request = dop.core.createRequest(
+                    node,
+                    dop.protocol.instructions.broadcast,
+                    object_id,
+                    path,
+                    params
+                );
+                request.promise.node = node;
+                dop.core.storeSendMessages(node, request);
+                promises.push(request.promise);
+            }
+        }
+    }
+    
+    return promises;
+};
+
+
+
+
 //////////  src/protocol/call.js
 
 dop.protocol.call = function(node, object_id, path, params) {
@@ -2589,60 +2675,6 @@ dop.protocol.call = function(node, object_id, path, params) {
     else
         return Promise.reject(dop.core.error.reject_local.NODE_NOT_FOUND);
 };
-
-
-dop.protocol.oncall = function(node, request_id, request) {
-    var object_id = request[1],
-        path = request[2],
-        params = request[3],
-        object_data = dop.data.object[object_id];
-
-    if (isObject(object_data) && isObject(object_data.node[node.token]) && object_data.node[node.token].subscriber) {
-        var functionName = path.pop(),
-            object = dop.util.get(object_data.object, path),
-            f = object[functionName];
-        if (isFunction(f)) {
-            function resolve(value) {
-                var response = dop.core.createResponse(request_id, 0);
-                if (value !== undefined)
-                    response.push(value);
-                dop.core.storeSendMessages(node, response);
-                return value;
-            }
-            function reject(err){
-                dop.core.storeSendMessages(node, dop.core.createResponse(request_id, dop.core.error.reject_remote.CUSTOM_REJECTION, err));
-            }
-
-            if (dop.isRemoteFunction(f))
-                f.apply(null, params).then(resolve).catch(reject);
-            else
-                dop.core.localProcedureCall(f, params, resolve, reject, function(req) {
-                    req.node = node;
-                    return req;
-                }, object);
-
-            return;
-        }
-    }
-    
-    dop.core.storeSendMessages(node, dop.core.createResponse(request_id, dop.core.error.reject_remote.FUNCTION_NOT_FOUND));
-};
-
-
-dop.protocol._oncall = function(node, request_id, request, response) {
-    var rejection = response[0],
-        promise = request.promise;
-    if (rejection !== undefined) {
-        if (rejection === 0)
-            promise.resolve(response[1]);
-        else if (rejection===dop.core.error.reject_remote.CUSTOM_REJECTION)
-            promise.reject(response[1]);
-        else
-            promise.reject(dop.core.getRejectError(rejection));
-    }
-};
-
-
 
 
 
@@ -2687,7 +2719,11 @@ dop.protocol.instructions = {
                         // [-1234, 0, <return>]
 
                         // Owner -> Subscriptor
-    mutation: 4,        // [ 1234, <instruction>, <object_id>, <version>, <mutation>]
+    broadcast: 4,       // [ 1234, <instruction>, <object_id>, ['path','path'], [<params...>]]
+                        // [-1234, 0, <return>]
+
+                        // Owner -> Subscriptor
+    mutation: 5,        // [ 1234, <instruction>, <object_id>, <version>, <mutation>]
                         // [-1234, 0]
 };
 
@@ -2707,6 +2743,70 @@ dop.protocol.mutation = function(node, object_id, action) {
     //     dop.core.createRequest(node, dop.protocol.instructions.connect, token)
     //));
 
+};
+
+
+
+
+//////////  src/protocol/onbroadcast.js
+
+dop.protocol.onbroadcast = function(node, request_id, request) {
+    dop.protocol.onfunction(node, request_id, request, function(permission, object_id) {
+        return permission.owner===object_id;
+    });
+};
+
+
+
+
+//////////  src/protocol/oncall.js
+
+dop.protocol.oncall = function(node, request_id, request) {
+    dop.protocol.onfunction(node, request_id, request, function(permission) {
+        return permission.subscriber===1;
+    });
+}
+
+
+
+
+//////////  src/protocol/onfunction.js
+// Used by dop.protocol.oncall && dop.protocol.onbroadcast
+dop.protocol.onfunction = function(node, request_id, request, validator) {
+    var object_id = request[1],
+        path = request[2],
+        params = request[3],
+        object_data = dop.data.object[object_id];
+
+    if (isObject(object_data) && isObject(object_data.node[node.token]) && validator(object_data.node[node.token], object_id)) {
+        var functionName = path.pop(),
+            object = dop.util.get(object_data.object, path),
+            f = object[functionName];
+        if (isFunction(f) && !dop.isBroadcastFunction(f)) {
+            function resolve(value) {
+                var response = dop.core.createResponse(request_id, 0);
+                if (value !== undefined)
+                    response.push(value);
+                dop.core.storeSendMessages(node, response);
+                return value;
+            }
+            function reject(err){
+                dop.core.storeSendMessages(node, dop.core.createResponse(request_id, dop.core.error.reject_remote.CUSTOM_REJECTION, err));
+            }
+
+            if (dop.isRemoteFunction(f))
+                f.apply(null, params).then(resolve).catch(reject);
+            else
+                dop.core.localProcedureCall(f, params, resolve, reject, function(req) {
+                    req.node = node;
+                    return req;
+                }, object);
+
+            return;
+        }
+    }
+    
+    dop.core.storeSendMessages(node, dop.core.createResponse(request_id, dop.core.error.reject_remote.FUNCTION_NOT_FOUND));
 };
 
 
@@ -2844,7 +2944,7 @@ else if (typeof module == 'object' && module.exports)
     module.exports = dop;
 
 // Browser
-else if (window && typeof window == 'object')
+else if (typeof window == 'object' && window)
     window.dop = dop;
 
 else

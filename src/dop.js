@@ -28,6 +28,7 @@ var dop = {
         SEND: '~SEND',
         DISCONNECT: '~DISCONNECT',
         REMOTE_FUNCTION: '$DOP_REMOTE_FUNCTION',
+        BROADCAST_FUNCTION: '$DOP_BROADCAST_FUNCTION',
     }
-    
+
 };
