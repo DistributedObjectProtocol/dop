@@ -41,8 +41,9 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
             var swaps = mutation.swaps.slice(0);
             if (isUnaction)
                 swaps.reverse();
-            var tochange = (swaps[0]>0) ? 0 : 1;
-            swaps[tochange] = swaps[tochange]*-1;
+            // var tochange = (swaps[0]>0) ? 0 : 1;
+            // swaps[tochange] = swaps[tochange]*-1;
+            swaps.unshift(0); // 0 mean swap
             mutations.push(swaps);
         }
 
@@ -55,14 +56,16 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
             }
             else
                 splice = mutation.splice.slice(0);
-                
+            
+            splice.unshift(1); // 1 mean splice
             mutations.push(splice);
         }
 
         // set
         else
-            mutations.push([prop, 1, value]);
+            mutations.push([1, prop, 1, value]);
 
+        // We have to update the length of the array in case that is lower than before
         if (isUnaction && mutation.length!==undefined && mutation.length!==mutation.object.length)
             action.length = mutation.length;
     }

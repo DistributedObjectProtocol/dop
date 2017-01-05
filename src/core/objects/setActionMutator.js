@@ -11,21 +11,24 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
             var mutations = value[dop.cons.DOP],
                 mutation,
                 index=0,
-                total=mutations.length;
+                total=mutations.length,
+                typeArrayMutation;
 
             // if (typeofDestiny!='array')
             //     dop.set(destiny, prop, []);
 
             for (;index<total; ++index) {
-                mutation = mutations[index];
-                // swaps
-                if (mutation[0]<0 || mutation[1]<0) {
-                    mutation = mutation.slice(0);
-                    (mutation[0]<0) ? mutation[0] = mutation[0]*-1 : mutation[1] = mutation[1]*-1;
+                typeArrayMutation = mutations[index][0]; // 0=swaps 1=splices
+                mutation = mutations[index].slice(1);
+                // swap
+                if (typeArrayMutation===0) {
+                    // mutation = mutation.slice(0);
+                    // (mutation[0]<0) ? mutation[0] = mutation[0]*-1 : mutation[1] = mutation[1]*-1;
                     dop.core.swap(destiny[prop], mutation);
                 }
                 // set
                 else {
+                    // We have to update the length of the array in case that is lower than before
                     if (destiny[prop].length<mutation[0])
                         dop.getObjectTarget(destiny[prop]).length = mutation[0];
                     // set
