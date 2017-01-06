@@ -41,7 +41,7 @@ dop.protocol.instructions = {
                         // [-1234, 0, <return>]
 
                         // Owner -> Subscriptor
-    mutation: 5,        // [ 1234, <instruction>, <object_id>, <version>, <mutation>]
+    patch: 5,           // [ 1234, <instruction>, <object_id>, <version>, <patch>]
                         // [-1234, 0]
 };
 

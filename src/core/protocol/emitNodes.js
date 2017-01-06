@@ -7,7 +7,7 @@ dop.core.emitNodes = function(action) {
             for (node_token in object_data.node) {
                 if (object_data.node[node_token].subscriber===1) {
                     node = dop.data.node[node_token];
-                    dop.protocol.mutation(node, object_id, action[object_id].action);
+                    dop.protocol.patch(node, Number(object_id), action[object_id].action);
                 }
             }
         }

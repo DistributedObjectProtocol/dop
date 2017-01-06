@@ -13,7 +13,7 @@ dop.core.error = {
     // Remote rejects
     reject_remote: {
         OBJECT_NOT_FOUND: 1,
-        1: 'Remote object not found or not permissions to be subscribed',
+        1: 'Remote object not found or not permissions to use it',
         SUBSCRIPTION_NOT_FOUND: 2,
         2: 'Subscription not found to unsubscribe this object',
         FUNCTION_NOT_FOUND: 3,
