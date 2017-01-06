@@ -1,11 +1,10 @@
 // Used by dop.protocol.oncall && dop.protocol.onbroadcast
-dop.protocol.onfunction = function(node, request_id, request, validator) {
-    var object_id = request[1],
-        path = request[2],
+dop.protocol.onfunction = function(node, request_id, request, object_id, validator) {
+    var path = request[2],
         params = request[3],
         object_data = dop.data.object[object_id];
 
-    if (isObject(object_data) && isObject(object_data.node[node.token]) && validator(object_data.node[node.token], object_id)) {
+    if (isObject(object_data) && isObject(object_data.node[node.token]) && validator(object_data.node[node.token])) {
         var functionName = path.pop(),
             object = dop.util.get(object_data.object, path),
             f = object[functionName];

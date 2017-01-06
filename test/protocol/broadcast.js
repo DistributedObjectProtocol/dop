@@ -7,6 +7,7 @@ var transportListen = require('dop-transports').listen[transportName];
 var transportConnect = require('dop-transports').connect[transportName];
 
 dop.env = 'SERVER';
+dop.data.object_inc = 25;
 dopClient1.env = 'CLIENT1';
 dopClient2.env = 'CLIENT2';
 
