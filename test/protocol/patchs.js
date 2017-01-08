@@ -7,6 +7,7 @@ var transportListen = require('dop-transports').listen[transportName];
 var transportConnect = require('dop-transports').connect[transportName];
 
 dop.env = 'SERVER';
+dop.data.object_inc = 25;
 dopClient1.env = 'CLIENT1';
 dopClient2.env = 'CLIENT2';
 
@@ -36,15 +37,17 @@ dop.onsubscribe(function(){
 // test('BROADCASTING TO CLIENTS', function(t) {
 
 client1.subscribe().into({subobject:{broadcast:function(a,b){return a+b}}})
+// .then(function(obj) {
+//     return client2.subscribe().into({subobject:{broadcast:function(a,b){return a*b}}})
+// })
 .then(function(obj) {
-    return client2.subscribe().into({subobject:{broadcast:function(a,b){return a*b}}})
-})
-.then(function(obj) {
+            console.log(dopClient1.data.object[1].object)
     
-    // var collector = dop.collect();
     objServer.number = 25;
     objServer.arr = [1,2,3];
-    // collector.emitAndDestroy();
+    objServer.tres = 3;
+    objServer.cuatro = 4444;
+    objServer.cinco = 'elcinco';
 
 //     var promises = objServer.subobject.broadcast(2,5);
 //     t.equal(Array.isArray(promises), true, 'Promises is array');
@@ -64,3 +67,30 @@ client1.subscribe().into({subobject:{broadcast:function(a,b){return a+b}}})
 
 
 // // More test todo
+dopClient1.protocol.onpatchOri = dopClient1.protocol.onpatch; 
+dopClient1.protocol.onpatch = function(node, request_id, request) {
+    var version = request[2];
+    if (request[2] === 2) {
+        setTimeout(function() {
+            dopClient1.protocol.onpatchOri(node, request_id, request);
+        }, 100);
+        setTimeout(function() {
+            dopClient1.protocol.onpatchOri(node, request_id, request);
+            console.log(dopClient1.data.object[1].object)
+        }, 300);
+    }
+    else if (request[2] === 4) {
+        setTimeout(function() {
+            dopClient1.protocol.onpatchOri(node, request_id, request);
+        }, 150);
+        setTimeout(function() {
+            dopClient1.protocol.onpatchOri(node, request_id, request);
+        }, 200);
+    }
+    else if (request[2] === 3) {
+        dopClient1.protocol.onpatchOri(node, request_id, request);
+        dopClient1.protocol.onpatchOri(node, request_id, request);
+    }
+    else
+        dopClient1.protocol.onpatchOri(node, request_id, request);
+}

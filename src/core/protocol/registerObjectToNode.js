@@ -17,10 +17,11 @@ dop.core.registerObjectToNode = function(node, object) {
         object_data.node[node.token] = {
             subscriber: 0, // 0 or 1 || false true 
             owner: 0, // object_id_owner || 0 === false
-            subscriber_version: 0, 
-            owner_version: 0,
-            pending_version: 0,
-            pending: {}
+            version: 0, // incremental integer for new patches
+            received_version: 0, // last patch version received correctly
+            received: {},
+            applied_version:0, // last patch version applied correctly
+            applied:{}
         };
     }
 
