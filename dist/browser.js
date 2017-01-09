@@ -1459,7 +1459,7 @@ dop.core.error = {
     // Remote rejects
     reject_remote: {
         OBJECT_NOT_FOUND: 1,
-        1: 'Remote object not found or not permissions to be subscribed',
+        1: 'Remote object not found or not permissions to use it',
         SUBSCRIPTION_NOT_FOUND: 2,
         2: 'Subscription not found to unsubscribe this object',
         FUNCTION_NOT_FOUND: 3,
@@ -1989,7 +1989,7 @@ dop.core.emitObservers = function(mutations) {
         subobject = mutation.object;
         object_dop = dop.getObjectDop(subobject);
 
-        if (!mutationsWithSubscribers /*&& dop.data.object_data[object_dop[0]].nodes > 0*/)
+        if (!mutationsWithSubscribers && isObject(dop.data.object[object_dop[0]]))
             mutationsWithSubscribers = true;
 
         // Emiting mutations to observerProperties
@@ -2060,8 +2060,9 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
             var swaps = mutation.swaps.slice(0);
             if (isUnaction)
                 swaps.reverse();
-            var tochange = (swaps[0]>0) ? 0 : 1;
-            swaps[tochange] = swaps[tochange]*-1;
+            // var tochange = (swaps[0]>0) ? 0 : 1;
+            // swaps[tochange] = swaps[tochange]*-1;
+            swaps.unshift(0); // 0 mean swap
             mutations.push(swaps);
         }
 
@@ -2074,14 +2075,16 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
             }
             else
                 splice = mutation.splice.slice(0);
-                
+            
+            splice.unshift(1); // 1 mean splice
             mutations.push(splice);
         }
 
         // set
         else
-            mutations.push([prop, 1, value]);
+            mutations.push([1, prop, 1, value]);
 
+        // We have to update the length of the array in case that is lower than before
         if (isUnaction && mutation.length!==undefined && mutation.length!==mutation.object.length)
             action.length = mutation.length;
     }
@@ -2214,21 +2217,24 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
             var mutations = value[dop.cons.DOP],
                 mutation,
                 index=0,
-                total=mutations.length;
+                total=mutations.length,
+                typeArrayMutation;
 
             // if (typeofDestiny!='array')
             //     dop.set(destiny, prop, []);
 
             for (;index<total; ++index) {
-                mutation = mutations[index];
-                // swaps
-                if (mutation[0]<0 || mutation[1]<0) {
-                    mutation = mutation.slice(0);
-                    (mutation[0]<0) ? mutation[0] = mutation[0]*-1 : mutation[1] = mutation[1]*-1;
+                typeArrayMutation = mutations[index][0]; // 0=swaps 1=splices
+                mutation = mutations[index].slice(1);
+                // swap
+                if (typeArrayMutation===0) {
+                    // mutation = mutation.slice(0);
+                    // (mutation[0]<0) ? mutation[0] = mutation[0]*-1 : mutation[1] = mutation[1]*-1;
                     dop.core.swap(destiny[prop], mutation);
                 }
                 // set
                 else {
+                    // We have to update the length of the array in case that is lower than before
                     if (destiny[prop].length<mutation[0])
                         dop.getObjectTarget(destiny[prop]).length = mutation[0];
                     // set
@@ -2447,15 +2453,18 @@ dop.core.decode = function(property, value, node, undefineds) {
 //////////  src/core/protocol/emitNodes.js
 
 dop.core.emitNodes = function(action) {
-    // var object_id, node_token, node;
-    // for (object_id in action) {
-    //     if (dop.data.object_data[object_id].nodes > 0) {
-    //         for (node_token in dop.data.object_data[object_id].node) {
-    //             node = dop.data.node[node_token];
-    //             dop.protocol.merge(node, object_id, action[object_id]);
-    //         }
-    //     }
-    // }
+    var object_id, node_token, node, object_data;
+    for (object_id in action) {
+        if (isObject(dop.data.object[object_id])) {
+            object_data = dop.data.object[object_id];
+            for (node_token in object_data.node) {
+                if (object_data.node[node_token].subscriber===1) {
+                    node = dop.data.node[node_token];
+                    dop.protocol.patch(node, Number(object_id), action[object_id].action);
+                }
+            }
+        }
+    }
 };
 
 
@@ -2592,9 +2601,11 @@ dop.core.registerObjectToNode = function(node, object) {
         object_data.nodes_total += 1;
         object_data.node[node.token] = {
             subscriber: 0, // 0 or 1 || false true 
-            owner: 0, // object_id_owner
-            subscriber_version: 0, 
-            owner_version: 0
+            owner: 0, // object_id_owner || 0 === false
+            version: 0, // incremental integer for new patches
+            pending: [],
+            applied_version: 0, // last patch version applied correctly
+            applied: {}
         };
     }
 
@@ -2747,6 +2758,44 @@ dop.protocol._oncall = function(node, request_id, request, response) {
             promise.resolve(response[1]);
         else if (rejection===dop.core.error.reject_remote.CUSTOM_REJECTION)
             promise.reject(response[1]);
+        else
+            promise.reject(dop.core.getRejectError(rejection));
+    }
+};
+
+
+
+
+//////////  src/protocol/_onpatch.js
+
+dop.protocol._onpatch = function(node, request_id, request, response) {
+    var rejection = response[0],
+        object_id = request[2],
+        object_node = dop.data.object[object_id].node[node.token],
+        version = request[3],
+        pending_list = object_node.pending,
+        promise = request.promise,
+        index = 0,
+        total = pending_list.length,
+        version_item;
+
+
+    if (rejection !== undefined) {
+        if (rejection === 0) {
+            for (;index<total; index++) {
+                version_item = pending_list[index][0];
+                // Removing from pending because its been received correctly
+                if (version_item >= version) {
+                    if (version_item === version)
+                        pending_list.splice(index, 1);
+                    break;
+                }
+                // Resending
+                else
+                    dop.protocol.patchSend(node, object_id, object_node, version_item, pending_list[index][1]);
+            }
+            promise.resolve(response[1]);
+        }
         else
             promise.reject(dop.core.getRejectError(rejection));
     }
@@ -2938,7 +2987,7 @@ dop.protocol.instructions = {
                         // [-1234, 0, <return>]
 
                         // Owner -> Subscriptor
-    mutation: 5,        // [ 1234, <instruction>, <object_id>, <version>, <mutation>]
+    patch: 5,           // [ 1234, <instruction>, <object_id>, <version>, <patch>]
                         // [-1234, 0]
 };
 
@@ -2949,25 +2998,11 @@ for (var instruction in dop.protocol.instructions)
 
 
 
-//////////  src/protocol/mutation.js
-
-dop.protocol.mutation = function(node, object_id, action) {
-    
-    console.log(node.token, object_id, action);
-    // node.send(JSON.stringify(
-    //     dop.core.createRequest(node, dop.protocol.instructions.connect, token)
-    //));
-
-};
-
-
-
-
 //////////  src/protocol/onbroadcast.js
 
 dop.protocol.onbroadcast = function(node, request_id, request) {
-    dop.protocol.onfunction(node, request_id, request, function(permission, object_id) {
-        return permission.owner===object_id;
+    dop.protocol.onfunction(node, request_id, request, node.owner[request[1]], function(permission) {
+        return permission.owner===request[1];
     });
 };
 
@@ -2977,7 +3012,7 @@ dop.protocol.onbroadcast = function(node, request_id, request) {
 //////////  src/protocol/oncall.js
 
 dop.protocol.oncall = function(node, request_id, request) {
-    dop.protocol.onfunction(node, request_id, request, function(permission) {
+    dop.protocol.onfunction(node, request_id, request, request[1], function(permission) {
         return permission.subscriber===1;
     });
 }
@@ -2987,13 +3022,12 @@ dop.protocol.oncall = function(node, request_id, request) {
 
 //////////  src/protocol/onfunction.js
 // Used by dop.protocol.oncall && dop.protocol.onbroadcast
-dop.protocol.onfunction = function(node, request_id, request, validator) {
-    var object_id = request[1],
-        path = request[2],
+dop.protocol.onfunction = function(node, request_id, request, object_id, validator) {
+    var path = request[2],
         params = request[3],
         object_data = dop.data.object[object_id];
 
-    if (isObject(object_data) && isObject(object_data.node[node.token]) && validator(object_data.node[node.token], object_id)) {
+    if (isObject(object_data) && isObject(object_data.node[node.token]) && validator(object_data.node[node.token])) {
         var functionName = path.pop(),
             object = dop.util.get(object_data.object, path),
             f = object[functionName];
@@ -3022,6 +3056,44 @@ dop.protocol.onfunction = function(node, request_id, request, validator) {
     }
     
     dop.core.storeSendMessages(node, dop.core.createResponse(request_id, dop.core.error.reject_remote.FUNCTION_NOT_FOUND));
+};
+
+
+
+
+//////////  src/protocol/onpatch.js
+
+dop.protocol.onpatch = function(node, request_id, request) {
+    var object_id_owner = request[1],
+        object_id = node.owner[object_id_owner],
+        version = request[2],
+        patch = request[3],
+        response = dop.core.createResponse(request_id),
+        object_data = dop.data.object[object_id],
+        object_node,
+        collector;
+    
+    if (isObject(object_data) && isObject(object_data.node[node.token]) && object_data.node[node.token].owner===object_id_owner) {
+        object_node = object_data.node[node.token];
+        // Storing patch
+        if (object_node.applied_version < version && object_node.applied[version]===undefined) {
+            // Storing patch
+            object_node.applied[version] = patch;
+            // Applying
+            collector = dop.collectFirst();
+            while (object_node.applied[object_node.applied_version+1]) {
+                object_node.applied_version += 1;
+                dop.core.setActionFunction(object_data.object, object_node.applied[object_node.applied_version]);
+                delete object_node.applied[object_node.applied_version];
+            }
+            collector.emitAndDestroy();
+        }
+        response.push(0);
+    }
+    else
+        response.push(dop.core.error.reject_remote.OBJECT_NOT_FOUND);
+    
+    dop.core.storeSendMessages(node, response);
 };
 
 
@@ -3099,6 +3171,25 @@ dop.protocol.onunsubscribe = function(node, request_id, request) {
         response.push(dop.core.error.reject_remote.SUBSCRIPTION_NOT_FOUND);
 
     dop.core.storeSendMessages(node, response);
+};
+
+
+
+
+//////////  src/protocol/patch.js
+
+dop.protocol.patch = function(node, object_id, patch) {
+    var object_node = dop.data.object[object_id].node[node.token],
+        version = ++object_node.version;
+    object_node.pending.push([version, dop.util.merge({}, patch)]); // Making a copy because this object is exposed to the api users and can be mutated
+    return dop.protocol.patchSend(node, object_id, object_node, version, patch);
+};
+
+// Also used by dop.protocol._onpatch
+dop.protocol.patchSend = function(node, object_id, object_node, version, patch) {
+    var request = dop.core.createRequest( node, dop.protocol.instructions.patch, object_id, version, patch);
+    dop.core.storeSendMessages(node, request, dop.encodeFunction);
+    return request.promise;
 };
 
 
