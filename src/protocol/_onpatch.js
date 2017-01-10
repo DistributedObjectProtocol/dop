@@ -23,7 +23,7 @@ dop.protocol._onpatch = function(node, request_id, request, response) {
                 }
                 // Resending
                 else
-                    dop.protocol.patchSend(node, object_id, object_node, version_item, pending_list[index][1]);
+                    dop.protocol.patchSend(node, object_id, version_item, pending_list[index][1]);
             }
             promise.resolve(response[1]);
         }

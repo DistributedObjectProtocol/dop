@@ -33,16 +33,16 @@ dop.onsubscribe(function(){
 
 
 // HACKING dopCLient1 onpatch to lose one message
-var lost = false;
+var lost2 = false;
+var lost5 = false;
 dopClient1.protocol.onpatchOri = dopClient1.protocol.onpatch; 
 dopClient1.protocol.onpatch = function(node, request_id, request) {
     var version = request[2];
     if (request[2] === 2) {
-        if (lost===false) lost = true;
+        if (lost2===false)
+            lost2 = true;
         else
-        // setTimeout(function() {
             dopClient1.protocol.onpatchOri(node, request_id, request);
-        // }, 600);
     }
     else if (request[2] === 3) {
         setTimeout(function() {
@@ -55,9 +55,10 @@ dopClient1.protocol.onpatch = function(node, request_id, request) {
         }, 400);
     }
     else if (request[2] === 5) {
-        setTimeout(function() {
+        if (lost5===false)
+            lost5 = true;
+        else
             dopClient1.protocol.onpatchOri(node, request_id, request);
-        }, 500);
     }
     else
         dopClient1.protocol.onpatchOri(node, request_id, request);
@@ -84,7 +85,7 @@ test('TWO CLIENTS SUBCRIBED AND ONE LOSE PATCH VERSION 2', function(t) {
                 t.deepEqual(objServer, obj, 'Obj1 deepEqual objServer after mutations');
                 t.deepEqual(objServer, obj2, 'Obj2 deepEqual objServer after mutations');
                 t.end()
-            },1000)
+            },2000)
 
 
         })

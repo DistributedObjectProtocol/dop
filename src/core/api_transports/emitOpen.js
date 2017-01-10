@@ -8,7 +8,6 @@ dop.core.emitOpen = function(listener_node, socket, transport) {
     else {
         node = new dop.core.node();
         node.listener = listener_node;
-        node.try_connects = listener_node.options.try_connects;
     }
     node.transport = transport;
     dop.core.registerNode(node);
