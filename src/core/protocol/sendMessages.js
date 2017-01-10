@@ -4,10 +4,25 @@ dop.core.sendMessages = function(node) {
     if (total>0 && node.connected) {
         var index = 0,
             messages_wrapped = [],
-            message_string;
+            message_string,
+            message,
+            request_id;
         
-        for (;index<total; ++index)
-            messages_wrapped.push( node.message_queue[index][1](node.message_queue[index][0]) );
+        for (;index<total; ++index) {
+            message = node.message_queue[index][0];
+            messages_wrapped.push( node.message_queue[index][1](message) );
+            request_id = message[0]
+            // If is a request (not a response) we set a timeout
+            if (request_id>0) {
+                var nameinstruction = dop.protocol.instructions[message[1]];
+                setTimeout(function() {
+                    if (node.requests[request_id] !== undefined) {
+                        dop.protocol['on'+nameinstruction+'timeout'](node, request_id, message);
+                        delete node.requests[request_id];
+                    }
+                }, dop.protocol.timeouts[nameinstruction]);
+            }
+        }
 
         
         message_string = (index>1) ? '['+messages_wrapped.join(',')+']' : messages_wrapped[0];
@@ -16,14 +31,3 @@ dop.core.sendMessages = function(node) {
         node.send(message_string);
     }
 };
-
-
-
-        // var index = 0,
-        //     message = wrapper((total>1) ? requests : requests[0]);
-
-        // for (;index<total; ++index)
-        //     node.requests[requests[index][0]] = requests[index];
-
-        // node.requests_queue = [];
-        // node.send(message);
