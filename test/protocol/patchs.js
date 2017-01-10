@@ -20,9 +20,9 @@ var client2 = dopClient2.connect({transport:transportConnect, listener:server})
 
 
 var objServer = dop.register({
-    number:1,
+    primero:1,
     subobject:{},
-    arr:[]
+    dos:[]
 })
 dop.onsubscribe(function(){
     return objServer;
@@ -32,65 +32,66 @@ dop.onsubscribe(function(){
 
 
 
-// // setBroadcastFunction(object, 'namefunction')
-
-// test('BROADCASTING TO CLIENTS', function(t) {
-
-client1.subscribe().into({subobject:{broadcast:function(a,b){return a+b}}})
-// .then(function(obj) {
-//     return client2.subscribe().into({subobject:{broadcast:function(a,b){return a*b}}})
-// })
-.then(function(obj) {
-            console.log(dopClient1.data.object[1].object)
-    
-    objServer.number = 25;
-    objServer.arr = [1,2,3];
-    objServer.tres = 3;
-    objServer.cuatro = 4444;
-    objServer.cinco = 'elcinco';
-
-//     var promises = objServer.subobject.broadcast(2,5);
-//     t.equal(Array.isArray(promises), true, 'Promises is array');
-//     t.equal(promises.length, 2, 'Promises are two promises');
-//     t.equal(promises[0] instanceof Promise, true, 'First promise is instanceof Promise');
-//     Promise.all(promises)
-//     .then(function(values){
-//         t.equal(values[0], 7, 'First value must be 2+5=7');
-//         t.equal(values[0], 7, 'Second value must be 2*5=10');
-//         t.end()
-//     })
-//     // .catch(function(err){
-//     //     console.log( err );
-//     // })
-})
-// })
-
-
-// // More test todo
+// HACKING dopCLient1 onpatch to lose one message
+var lost = false;
 dopClient1.protocol.onpatchOri = dopClient1.protocol.onpatch; 
 dopClient1.protocol.onpatch = function(node, request_id, request) {
     var version = request[2];
     if (request[2] === 2) {
+        if (lost===false) lost = true;
+        else
+        // setTimeout(function() {
+            dopClient1.protocol.onpatchOri(node, request_id, request);
+        // }, 600);
+    }
+    else if (request[2] === 3) {
         setTimeout(function() {
             dopClient1.protocol.onpatchOri(node, request_id, request);
-        }, 100);
-        setTimeout(function() {
-            dopClient1.protocol.onpatchOri(node, request_id, request);
-            console.log(dopClient1.data.object[1].object)
         }, 300);
     }
     else if (request[2] === 4) {
         setTimeout(function() {
             dopClient1.protocol.onpatchOri(node, request_id, request);
-        }, 150);
+        }, 400);
+    }
+    else if (request[2] === 5) {
         setTimeout(function() {
             dopClient1.protocol.onpatchOri(node, request_id, request);
-        }, 200);
-    }
-    else if (request[2] === 3) {
-        dopClient1.protocol.onpatchOri(node, request_id, request);
-        dopClient1.protocol.onpatchOri(node, request_id, request);
+        }, 500);
     }
     else
         dopClient1.protocol.onpatchOri(node, request_id, request);
 }
+
+
+
+
+test('TWO CLIENTS SUBCRIBED AND ONE LOSE PATCH VERSION 2', function(t) {
+
+    client1.subscribe().then(function(obj) {
+        client2.subscribe().then(function(obj2) {
+
+            t.deepEqual(objServer, obj, 'Obj1 deepEqual objServer before mutations');
+            t.deepEqual(objServer, obj2, 'Obj2 deepEqual objServer before mutations');
+
+            dop.set(objServer, 'primero', 'first');
+            dop.set(objServer, 'dos', [2,2,2]);
+            dop.set(objServer, 'tres', 3);
+            dop.set(objServer, 'cuatro', 4444);
+            dop.set(objServer, 'cinco', 'elcinco');
+
+            setTimeout(function(){
+                t.deepEqual(objServer, obj, 'Obj1 deepEqual objServer after mutations');
+                t.deepEqual(objServer, obj2, 'Obj2 deepEqual objServer after mutations');
+                t.end()
+            },1000)
+
+
+        })
+    })
+})
+
+
+
+
+// // More test todo...

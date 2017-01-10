@@ -1,5 +1,5 @@
 /*
- * dop@0.9.0
+ * dop@0.10.0
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
