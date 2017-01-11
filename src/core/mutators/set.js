@@ -24,7 +24,7 @@ dop.core.set = function(object, property, value) {
                 // }
             }
 
-            if (objectTarget===objectProxy || object===objectProxy) {
+            if ((objectTarget===objectProxy || object===objectProxy) && !(isFunction(object[property]) && isFunction(value))) {
                 var mutation = {object:objectProxy, name:property, value:value};
                 if (hasOwnProperty)
                     mutation.oldValue = oldValue;
