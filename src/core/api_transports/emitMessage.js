@@ -72,8 +72,7 @@ dop.core.emitMessage = function(node, message_string, message_raw) {
                                 if (isFunction(dop.protocol[instruction_function]))
                                     dop.protocol[instruction_function](node, request_id, request, response);
                                 
-                                delete node.requests[request_id];
-
+                                dop.core.deleteRequest(node, request_id);
                             }
 
                         }

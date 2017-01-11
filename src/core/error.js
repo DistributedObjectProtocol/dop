@@ -7,7 +7,8 @@ dop.core.error = {
 
     reject_local: {
         OBJECT_NOT_FOUND: 'Object not found',
-        NODE_NOT_FOUND: 'Node not found'
+        NODE_NOT_FOUND: 'Node not found',
+        TIMEOUT_REQUEST: 'Timeout waiting for response'
     },
 
     // Remote rejects

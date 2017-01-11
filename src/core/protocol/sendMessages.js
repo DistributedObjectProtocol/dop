@@ -15,11 +15,11 @@ dop.core.sendMessages = function(node) {
             // If is a request (not a response) we set a timeout
             if (request_id>0) {
                 var nameinstruction = dop.protocol.instructions[message[1]];
-                setTimeout(function() {
-                    if (node.requests[request_id] !== undefined) {
+                message.timeout = setTimeout(function() {
+                    // if (node.requests[request_id] !== undefined) {
                         dop.protocol['on'+nameinstruction+'timeout'](node, request_id, message);
                         delete node.requests[request_id];
-                    }
+                    // }
                 }, dop.protocol.timeouts[nameinstruction]);
             }
         }
