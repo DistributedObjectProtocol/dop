@@ -9,16 +9,16 @@ var transportConnect = require('dop-transports').connect[transportName];
 
 
 
-var timeoutDisconnect = 2, timeoutCheck; // seconds
-var server = dopServer.listen({transport:transportListen, timeout:timeoutDisconnect});
-var nodeClient = dopClient.connect({transport:transportConnect, listener:server});
-dopServer.env = 'SERVER'
-dopClient.env = 'CLIENT'
-var nodeServer, socketServer, socketClient;
-var tokenServer, tokenClient;
-var order = 0;
-
 test('CONNECT TEST', function(t) {
+
+    var timeoutDisconnect = 2, timeoutCheck; // seconds
+    var server = dopServer.listen({transport:transportListen, timeout:timeoutDisconnect});
+    var nodeClient = dopClient.connect({transport:transportConnect, listener:server});
+    dopServer.env = 'SERVER'
+    dopClient.env = 'CLIENT'
+    var nodeServer, socketServer, socketClient;
+    var tokenServer, tokenClient;
+    var order = 0;
 
     server.on('open', function(socket) {
         socketServer = socket;
@@ -41,9 +41,9 @@ test('CONNECT TEST', function(t) {
         t.equal(timeoutCheckEnd, timeoutDisconnect, '❌ disconnect');
         t.end();
         try {
-            server.listener.close();
+            // server.listener.close();
         } catch(e) {
-            process.exit();
+            // process.exit();
         }
     });
 
@@ -68,7 +68,6 @@ test('CONNECT TEST', function(t) {
         // We dont emit this one in case the client wants to reconnect
         t.equal(1, 2, '✅ disconnect');
     });
-});
 
 
 // Sending messages before is connected
@@ -79,3 +78,6 @@ setTimeout(function(){
     nodeClient.disconnect();
 }, 1000);
 
+
+
+});

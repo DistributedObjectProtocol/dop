@@ -11,6 +11,13 @@ dop.data.object_inc = 25;
 dopClient1.env = 'CLIENT1';
 dopClient2.env = 'CLIENT2';
 
+
+test('BROADCAST TESTS', function(tt) {
+
+    var test = function(name, cb){
+        tt.test(name, {}, cb);
+    };
+
 var server = dop.listen({transport:transportListen})
 var client1 = dopClient1.connect({transport:transportConnect, listener:server})
 var client2 = dopClient2.connect({transport:transportConnect, listener:server})
@@ -60,3 +67,7 @@ client1.subscribe().into({subobject:{broadcast:function(a,b){return a+b}}})
 
 
 // More test todo
+
+
+
+})

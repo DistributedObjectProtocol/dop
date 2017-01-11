@@ -1,5 +1,5 @@
 /*
- * dop@0.10.0
+ * dop@0.10.1
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
@@ -80,9 +80,6 @@ dop.listen = function(options) {
 
     if (typeof options.transport != 'function')
         options.transport = require('dop-transports').listen.ws;
-
-    if (typeof options.try_connects != 'number' || options.try_connects<0)
-        options.try_connects = 99;
 
     return new dop.core.listener(args);
 };
@@ -1035,8 +1032,7 @@ dop.core.emitMessage = function(node, message_string, message_raw) {
                                 if (isFunction(dop.protocol[instruction_function]))
                                     dop.protocol[instruction_function](node, request_id, request, response);
                                 
-                                delete node.requests[request_id];
-
+                                dop.core.deleteRequest(node, request_id);
                             }
 
                         }
@@ -1086,7 +1082,6 @@ dop.core.emitOpen = function(listener_node, socket, transport) {
     else {
         node = new dop.core.node();
         node.listener = listener_node;
-        node.try_connects = listener_node.options.try_connects;
     }
     node.transport = transport;
     dop.core.registerNode(node);
@@ -1238,7 +1233,8 @@ dop.core.error = {
 
     reject_local: {
         OBJECT_NOT_FOUND: 'Object not found',
-        NODE_NOT_FOUND: 'Node not found'
+        NODE_NOT_FOUND: 'Node not found',
+        TIMEOUT_REQUEST: 'Timeout waiting for response'
     },
 
     // Remote rejects
@@ -2168,9 +2164,11 @@ dop.core.createRemoteFunction = function $DOP_REMOTE_FUNCTION_UNSETUP(node) {
 dop.core.createRequest = function(node, instruction) {
     var request_id = node.request_inc++,
         request = Array.prototype.slice.call(arguments, 1);
+
     node.requests[request_id] = request;
     request.unshift(request_id);
     request.promise = dop.createAsync();
+
     return request;
 };
 
@@ -2230,6 +2228,17 @@ dop.core.decode = function(property, value, node, undefineds) {
 
 };
 
+
+
+
+
+
+//////////  src/core/protocol/deleteRequest.js
+
+dop.core.deleteRequest = function(node, request_id) {
+    clearTimeout(node.requests[request_id].timeout);
+    delete node.requests[request_id];
+};
 
 
 
@@ -2436,10 +2445,25 @@ dop.core.sendMessages = function(node) {
     if (total>0 && node.connected) {
         var index = 0,
             messages_wrapped = [],
-            message_string;
+            message_string,
+            message,
+            request_id;
         
-        for (;index<total; ++index)
-            messages_wrapped.push( node.message_queue[index][1](node.message_queue[index][0]) );
+        for (;index<total; ++index) {
+            message = node.message_queue[index][0];
+            messages_wrapped.push( node.message_queue[index][1](message) );
+            request_id = message[0]
+            // If is a request (not a response) we set a timeout
+            if (request_id>0) {
+                var nameinstruction = dop.protocol.instructions[message[1]];
+                message.timeout = setTimeout(function() {
+                    // if (node.requests[request_id] !== undefined) {
+                        dop.protocol['on'+nameinstruction+'timeout'](node, request_id, message);
+                        delete node.requests[request_id];
+                    // }
+                }, dop.protocol.timeouts[nameinstruction]);
+            }
+        }
 
         
         message_string = (index>1) ? '['+messages_wrapped.join(',')+']' : messages_wrapped[0];
@@ -2448,17 +2472,6 @@ dop.core.sendMessages = function(node) {
         node.send(message_string);
     }
 };
-
-
-
-        // var index = 0,
-        //     message = wrapper((total>1) ? requests : requests[0]);
-
-        // for (;index<total; ++index)
-        //     node.requests[requests[index][0]] = requests[index];
-
-        // node.requests_queue = [];
-        // node.send(message);
 
 
 
@@ -2577,7 +2590,7 @@ dop.protocol._onpatch = function(node, request_id, request, response) {
                 }
                 // Resending
                 else
-                    dop.protocol.patchSend(node, object_id, object_node, version_item, pending_list[index][1]);
+                    dop.protocol.patchSend(node, object_id, version_item, pending_list[index][1]);
             }
             promise.resolve(response[1]);
         }
@@ -2884,6 +2897,15 @@ dop.protocol.onpatch = function(node, request_id, request) {
 
 
 
+//////////  src/protocol/onpatchtimeout.js
+
+dop.protocol.onpatchtimeout = function(node, request_id, request) {
+    dop.protocol.patchSend(node, request[2], request[3], request[4]);
+};
+
+
+
+
 //////////  src/protocol/onsubscribe.js
 
 dop.protocol.onsubscribe = function(node, request_id, request) {
@@ -2932,6 +2954,17 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
 
 
 
+//////////  src/protocol/ontimeout.js
+dop.protocol.onsubscribetimeout = 
+dop.protocol.onunsubscribetimeout = 
+dop.protocol.oncalltimeout = 
+dop.protocol.onbroadcasttimeout = function(node, request_id, request) {
+    request.promise.reject(dop.core.error.reject_local.TIMEOUT_REQUEST);
+};
+
+
+
+
 //////////  src/protocol/onunsubscribe.js
 
 dop.protocol.onunsubscribe = function(node, request_id, request) {
@@ -2967,11 +3000,11 @@ dop.protocol.patch = function(node, object_id, patch) {
     var object_node = dop.data.object[object_id].node[node.token],
         version = ++object_node.version;
     object_node.pending.push([version, dop.util.merge({}, patch)]); // Making a copy because this object is exposed to the api users and can be mutated
-    return dop.protocol.patchSend(node, object_id, object_node, version, patch);
+    return dop.protocol.patchSend(node, object_id, version, patch);
 };
 
 // Also used by dop.protocol._onpatch
-dop.protocol.patchSend = function(node, object_id, object_node, version, patch) {
+dop.protocol.patchSend = function(node, object_id, version, patch) {
     var request = dop.core.createRequest( node, dop.protocol.instructions.patch, object_id, version, patch);
     dop.core.storeSendMessages(node, request, dop.encodeFunction);
     return request.promise;
@@ -2988,11 +3021,24 @@ dop.protocol.subscribe = function(node, params) {
     var request = dop.core.createRequest.apply(node, params);
     request.promise.into = function(object) {
         if (dop.isObjectRegistrable(object))
-            request.into = object;
+            request.into = (dop.isRegistered(object)) ? dop.getObjectProxy(object) : object;
         return request.promise;
     };
     dop.core.storeSendMessages(node, request);
     return request.promise;
+};
+
+
+
+
+//////////  src/protocol/timeouts.js
+// Default timeouts
+dop.protocol.timeouts = {
+    subscribe: 5000,
+    unsubscribe: 5000,
+    call: 10000,  
+    broadcast: 10000,
+    patch: 1000    
 };
 
 

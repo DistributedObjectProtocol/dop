@@ -8,16 +8,28 @@ dopClient.env = 'CLIENT';
 dopClient2.env = 'CLIENT2';
 dopClientClient.env = 'CLIENTCLIENT';
 
+test('SUBSCRIBE TESTS', function(tt) {
+
+    var test = function(name, cb){
+        tt.test(name, {}, cb);
+    };
+
 var transportName = process.argv[2] || 'local';
 var transportListen = require('dop-transports').listen[transportName];
 var transportConnect = require('dop-transports').connect[transportName];
-
+var serverClient;
 var server = dopServer.listen({transport:transportListen})
 var client = dopClient.connect({transport:transportConnect, listener:server})
 var client2 = dopClient2.connect({transport:transportConnect, listener:server})
 server.on('connect', function(node) {
     if (typeof serverClient == 'undefined')
         serverClient = node;
+})
+var clientlistening = dopClient.listen({transport:transportListen})
+var clientclient = dopClientClient.connect({transport:transportConnect, listener:clientlistening})
+clientlistening.on('connect', function(node) {
+    if (typeof clientClient == 'undefined')
+        clientClient = node;
 })
 
 test('Before onsubscribe is defined', function(t) {
@@ -353,12 +365,7 @@ test('Multiple Clients subscribe different objects', function(t) {
 })
 
 
-var clientlistening = dopClient.listen({transport:transportListen})
-var clientclient = dopClientClient.connect({transport:transportConnect, listener:clientlistening})
-clientlistening.on('connect', function(node) {
-    if (typeof clientClient == 'undefined')
-        clientClient = node;
-})
+
 test('Server -> Client -> ClientClient', function(t) {
     var objServer = {test:Math.random()},
         objClient;
@@ -418,7 +425,7 @@ test('Server <-> Client <-> ClientClient into the same object', function(t) {
                 t.equal(obj, dopServer.getObjectProxy(objServer), 'Same object server');
                 clientClient.subscribe().into(objClient).then(function(obj) {
                     t.equal(obj, dopClient.getObjectProxy(objClient), 'Same object client');
-                    t.notDeepEqual(objServer, objClient, 'deepEqual to objServer objClient');
+                    t.deepEqual(objServer, objClient, 'deepEqual to objServer objClient');
                     t.deepEqual(objClient, objClientClient, 'deepEqual to objServer objClientClient');
                     
                     var objectDataServer = dopServer.data.object[dopServer.getObjectId(objServer)];
@@ -445,3 +452,8 @@ test('Server <-> Client <-> ClientClient into the same object', function(t) {
 // test("Server -> Client -> ClientClient -> Server", function(t) {
     // to do...
 // })
+
+
+
+
+})

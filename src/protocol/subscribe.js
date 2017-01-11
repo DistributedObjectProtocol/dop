@@ -5,7 +5,7 @@ dop.protocol.subscribe = function(node, params) {
     var request = dop.core.createRequest.apply(node, params);
     request.promise.into = function(object) {
         if (dop.isObjectRegistrable(object))
-            request.into = object;
+            request.into = (dop.isRegistered(object)) ? dop.getObjectProxy(object) : object;
         return request.promise;
     };
     dop.core.storeSendMessages(node, request);

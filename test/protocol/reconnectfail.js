@@ -7,16 +7,18 @@ var transportName = process.argv[2] || 'local';
 var transportListen = require('dop-transports').listen[transportName];
 var transportConnect = require('dop-transports').connect[transportName];
 
-var server = dopServer.listen({transport:transportListen, timeout:1});
-var nodeClient = dopClient.connect({transport:transportConnect, listener:server});
-dopServer.env = 'SERVER'
-dopClient.env = 'CLIENT'
-var nodeServer, socketServer, socketClient;
-var tokenServer, tokenClient;
-var order = 0;
-var connected2 = false;
+test('RECONNECTFAIL TEST', function(t) {
 
-test('RECONNECT TEST', function(t) {
+
+    var server = dopServer.listen({transport:transportListen, timeout:1});
+    var nodeClient = dopClient.connect({transport:transportConnect, listener:server});
+    dopServer.env = 'SERVER'
+    dopClient.env = 'CLIENT'
+    var nodeServer, socketServer, socketClient;
+    var tokenServer, tokenClient;
+    var order = 0;
+    var connected2 = false;
+
 
     server.on('open', function(socket) {
         if (socketServer === undefined)
@@ -36,7 +38,9 @@ test('RECONNECT TEST', function(t) {
             try {
                 server.listener.close();
                 nodeClient.socket.close();
-            } catch(e) {process.exit();}
+            } catch(e) {
+                // process.exit();
+            }
         }
     });
     server.on('disconnect', function(node){
@@ -70,17 +74,17 @@ test('RECONNECT TEST', function(t) {
         t.equal(true, false, '✅ reconnect'); // this should not happen
     });
 
+
+    // Disconnecting
+    setTimeout(function(){
+        // console.log( 'closing...' );
+        nodeClient.socket.close();
+    }, 500)
+    // Reconnecting
+    setTimeout(function(){
+        // console.log( 'late reconnecting...' );
+        nodeClient.reconnect();
+    }, 3000);
+
+
 });
-
-
-
-// Disconnecting
-setTimeout(function(){
-    // console.log( 'closing...' );
-    nodeClient.socket.close();
-}, 500)
-// Reconnecting
-setTimeout(function(){
-    // console.log( 'late reconnecting...' );
-    nodeClient.reconnect();
-}, 3000);
