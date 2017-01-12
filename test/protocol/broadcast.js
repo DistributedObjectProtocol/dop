@@ -2,7 +2,7 @@ var test = require('tape');
 var dop = require('../../dist/nodejs').create();
 var dopClient1 = require('../../dist/nodejs').create();
 var dopClient2 = require('../../dist/nodejs').create();
-var transportName = process.argv[2] || 'local';
+var transportName = process.argv[2] || 'sockjs';
 var transportListen = require('dop-transports').listen[transportName];
 var transportConnect = require('dop-transports').connect[transportName];
 
@@ -57,6 +57,14 @@ client1.subscribe().into({subobject:{broadcast:function(a,b){return a+b}}})
     .then(function(values){
         t.equal(values[0], 7, 'First value must be 2+5=7');
         t.equal(values[0], 7, 'Second value must be 2*5=10');
+        // try {
+            server.listener.close();
+            // client1.socket.close();
+            // client2.socket.close();
+        // } catch(e) {
+            // console.log( e );
+            // process.exit();
+        // }
         t.end()
     })
     // .catch(function(err){

@@ -3,7 +3,7 @@ var dop = require('../../dist/nodejs');
 var dopServer = dop.create();
 var dopClient = dop.create();
 
-var transportName = process.argv[2] || 'local';
+var transportName = process.argv[2]|| 'local';
 var transportListen = require('dop-transports').listen[transportName];
 var transportConnect = require('dop-transports').connect[transportName];
 
@@ -40,11 +40,11 @@ test('CONNECT TEST', function(t) {
         var timeoutCheckEnd = Math.round( (new Date().getTime()-timeoutCheck)/1000 );
         t.equal(timeoutCheckEnd, timeoutDisconnect, '❌ disconnect');
         t.end();
-        try {
-            // server.listener.close();
-        } catch(e) {
+        // try {
+            server.listener.close();
+        // } catch(e) {
             // process.exit();
-        }
+        // }
     });
 
 

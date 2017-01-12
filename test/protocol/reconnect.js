@@ -3,7 +3,7 @@ var dop = require('../../dist/nodejs');
 var dopServer = dop.create();
 var dopClient = dop.create();
 
-var transportName = process.argv[2] || 'local';
+var transportName = process.argv[2]|| 'local';
 var transportListen = require('dop-transports').listen[transportName];
 var transportConnect = require('dop-transports').connect[transportName];
 

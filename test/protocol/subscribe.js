@@ -25,8 +25,8 @@ server.on('connect', function(node) {
     if (typeof serverClient == 'undefined')
         serverClient = node;
 })
-var clientlistening = dopClient.listen({transport:transportListen})
-var clientclient = dopClientClient.connect({transport:transportConnect, listener:clientlistening})
+var clientlistening = dopClient.listen({transport:transportListen, port:5555})
+var clientclient = dopClientClient.connect({transport:transportConnect, url:'ws://localhost:5555/dop', listener:clientlistening})
 clientlistening.on('connect', function(node) {
     if (typeof clientClient == 'undefined')
         clientClient = node;
@@ -440,6 +440,8 @@ test('Server <-> Client <-> ClientClient into the same object', function(t) {
                     t.equal(objectDataClientClient.node[clientclient.token].subscriber, 1, 'Client is subscriber');
                     t.equal(objectDataClientClient.node[clientclient.token].owner>0, true, 'Client is owner');
                     t.end()
+                    server.listener.close()
+                    clientlistening.listener.close()
                 })
             })
         })

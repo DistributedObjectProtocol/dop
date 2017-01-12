@@ -5,7 +5,7 @@ dopServer.env = 'SERVER';
 dopClient.env = 'CLIENT';
 dopClient.data.object_inc = 7;
 
-var transportName = process.argv[2] || 'local';
+var transportName = process.argv[2]|| 'local';
 var transportListen = require('dop-transports').listen[transportName];
 var transportConnect = require('dop-transports').connect[transportName];
 var serverClient;
@@ -50,6 +50,7 @@ test('Client unsubscribe Server', function(t) {
             t.deepEqual(objectDataClient.node[client.token].subscriber, 0, 'Server is not subscriber');
             t.deepEqual(objectDataClient.node[client.token].owner, 0, 'Server not is owner');
             t.end();
+            server.listener.close();
         })
 
 

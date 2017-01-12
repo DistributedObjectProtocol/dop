@@ -2,7 +2,7 @@ var test = require('tape');
 var dop = require('../../dist/nodejs').create();
 var dopClient1 = require('../../dist/nodejs').create();
 var dopClient2 = require('../../dist/nodejs').create();
-var transportName = process.argv[2] || 'local';
+var transportName = process.argv[2]|| 'local';
 var transportListen = require('dop-transports').listen[transportName];
 var transportConnect = require('dop-transports').connect[transportName];
 
@@ -85,6 +85,7 @@ test('TWO CLIENTS SUBCRIBED AND ONE LOSE PATCH VERSION 2', function(t) {
                 t.deepEqual(objServer, obj, 'Obj1 deepEqual objServer after mutations');
                 t.deepEqual(objServer, obj2, 'Obj2 deepEqual objServer after mutations');
                 t.end()
+                server.listener.close();
             },2000)
 
 

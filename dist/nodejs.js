@@ -1,5 +1,5 @@
 /*
- * dop@0.10.1
+ * dop@0.10.2
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
@@ -1421,7 +1421,7 @@ dop.core.set = function(object, property, value) {
                 // }
             }
 
-            if (objectTarget===objectProxy || object===objectProxy) {
+            if ((objectTarget===objectProxy || object===objectProxy) && !(isFunction(object[property]) && isFunction(value))) {
                 var mutation = {object:objectProxy, name:property, value:value};
                 if (hasOwnProperty)
                     mutation.oldValue = oldValue;
@@ -2514,7 +2514,7 @@ dop.core.unregisterNode = function(node) {
     // Removing subscriber objects
     for (object_id in node.subscriber) {
         object_data = dop.data.object[object_id];
-        if (object_data.node[node.token] !== undefined) {
+        if (object_data !== undefined && object_data.node[node.token] !== undefined) {
             object_data.nodes_total -= 1;
             delete object_data.node[node.token];
         }
@@ -2523,7 +2523,7 @@ dop.core.unregisterNode = function(node) {
     for (object_owner_id in node.owner) {
         object_id = node.owner[object_owner_id];
         object_data = dop.data.object[object_id];
-        if (object_data.node[node.token] !== undefined) {
+        if (object_data !== undefined && object_data.node[node.token] !== undefined) {
             object_data.nodes_total -= 1;
             delete object_data.node[node.token];
         }

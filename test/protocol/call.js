@@ -14,8 +14,8 @@ var transportConnect = require('dop-transports').connect[transportName];
 
 var server = dopServer.listen({transport:transportListen})
 var client = dopClient.connect({transport:transportConnect, listener:server})
-var clientlisten = dopClient.listen({transport:transportListen})
-var clientclient = dopClientClient.connect({transport:transportConnect, listener:clientlisten})
+var clientlisten = dopClient.listen({transport:transportListen, port:5555})
+var clientclient = dopClientClient.connect({transport:transportConnect, url:'ws://localhost:5555/dop', listener:clientlisten})
 
 
 var objServer = dopServer.register({
@@ -160,7 +160,9 @@ clientclient.subscribe().then(function(obj){
     })
     .catch(function(value){
         t.equal(value, dopClient.core.error.reject_remote[3], dopClient.core.error.reject_remote.FUNCTION_NOT_FOUND);
-        t.end()
+        t.end();
+        server.listener.close()
+        clientlisten.listener.close()
     })
 })
 
