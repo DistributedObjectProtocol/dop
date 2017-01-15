@@ -11,7 +11,8 @@ var dop = {
         object_inc:1,
         object:{},
         collectors:[[],[]],
-        // lastGet:{}
+        observers:{},
+        observers_inc:0
     },
     
     // src

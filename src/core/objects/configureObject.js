@@ -29,6 +29,8 @@ dop.core.configureObject = function(object, path, parent) {
     object_dop.m = []; // mutations
     object_dop.o = []; // observers
     object_dop.op = {}; // observers by property
+    object_dop.om = {}; // observers multiple
+    object_dop.omp = {}; // observers multiple
 
 
     if (isObject(parent))

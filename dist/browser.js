@@ -19,7 +19,8 @@ var dop = {
         object_inc:1,
         object:{},
         collectors:[[],[]],
-        // lastGet:{}
+        observers:{},
+        observers_inc:0
     },
     
     // src
@@ -710,6 +711,23 @@ dop.createAsync = function() {
 //   console.log(err);
 // });
 
+
+
+
+
+//////////  src/api/createObserverMultiple.js
+
+dop.createObserverMultiple = function(callback) {
+    dop.util.invariant(isFunction(callback), 'dop.createObserverMultiple only accept one argument as function');
+    var observers=dop.data.observers, index, observer_id, observer;
+    for (index in observers)
+        if (observers[index].callback === callback)
+            return observers[index];
+
+    observer_id = dop.data.observers_inc++;
+    observer = new dop.core.observer(callback, observer_id);
+    return observers[observer_id] = observer;
+};
 
 
 
@@ -1447,6 +1465,94 @@ dop.core.node.prototype.unsubscribe = function(object) {
 
 
 
+//////////  src/core/constructors/observer.js
+
+dop.core.observer = function(callback, id) {
+    this.callback = callback;
+    this.id = id;
+    this.objects = [];
+    this.properties = {};
+};
+
+
+dop.core.observer.prototype.observe = function(object) {
+    dop.util.invariant(dop.isRegistered(object), 'observer.observe needs a registered object as first parameter');
+    var object_dop = dop.getObjectDop(object);
+    if (object_dop.om[this.id] === undefined) {
+        // Storing in object
+        object_dop.om[this.id] = true;
+        // Storing in observer
+        this.objects.push(object); // using for .destroy()
+    }
+};
+dop.core.observer.prototype.unobserve = function(object) {
+    dop.util.invariant(dop.isRegistered(object), 'observer.unobserve needs a registered object as first parameter');
+    // Removing from object
+    delete dop.getObjectDop(object).om[this.id];
+    // Removing from observer
+    var index = this.objects.indexOf(object);  // using for .destroy()
+    if (index > -1)
+        this.objects.splice(index,1); // using for .destroy()
+};
+
+
+
+dop.core.observer.prototype.observeProperty = function(object, property) {
+    dop.util.invariant(dop.isRegistered(object), 'observer.observeProperty needs a registered object as first parameter');
+    // Storing in object
+    var object_dop = dop.getObjectDop(object);
+    if (object_dop.omp[property] === undefined)
+        object_dop.omp[property] = {};
+    if (object_dop.omp[property][this.id] === undefined) {
+        object_dop.omp[property][this.id] = true;
+        // Storing in observer
+        if (this.properties[property] === undefined)
+            this.properties[property] = [];
+        this.properties[property].push(object); // using for .destroy()
+    }
+};
+dop.core.observer.prototype.unobserveProperty = function(object, property) {
+    dop.util.invariant(dop.isRegistered(object), 'observer.unobserveProperty needs a registered object as first parameter');
+    var object_dop = dop.getObjectDop(object),
+        properties = this.properties[property],
+        index;
+    // Removing from object
+    if (object_dop.omp[property] !== undefined)
+        delete object_dop.omp[property][this.id];
+    // Removing from observer
+    if (properties !== undefined) {
+        index = properties.indexOf(object);  // using for .destroy()
+        if (index > -1)
+            properties.splice(index,1); // using for .destroy()
+    }
+};
+
+
+dop.core.observer.prototype.destroy = function() {
+    var index=0,
+        objectsandproperties = this.objects,
+        total=objectsandproperties.length,
+        property;
+    
+    // Deleting objects
+    for (;index<total; ++index)
+        delete dop.getObjectDop(objectsandproperties[index]).om[this.id];
+
+    // Deleting properties
+    objectsandproperties = this.properties;
+    for (property in objectsandproperties)
+        for (index=0,total=objectsandproperties[property].length; index<total; ++index)
+            delete dop.getObjectDop(objectsandproperties[property][index]).omp[property][this.id];
+
+    // Deleting from dop.data
+    delete dop.data.observers[this.id];
+};
+
+
+
+
+
+
 //////////  src/core/error.js
 
 dop.core.error = {
@@ -1933,6 +2039,8 @@ dop.core.configureObject = function(object, path, parent) {
     object_dop.m = []; // mutations
     object_dop.o = []; // observers
     object_dop.op = {}; // observers by property
+    object_dop.om = {}; // observers multiple
+    object_dop.omp = {}; // observers multiple
 
 
     if (isObject(parent))
@@ -1978,24 +2086,43 @@ dop.core.createCollector = function(queue, index, filter) {
 dop.core.emitObservers = function(mutations) {
 
     var mutation,
-        subobjects = [],
-        subobject,
+        objects = [],
+        object,
         index = 0,
         index2,
         total = mutations.length,
         total2,
         object_dop,
+        observersMultiples = {}, // from dop.core.observer() && dop.createObserverMultiple()
         observersProperties,
         observers,
+        observer_id,
         mutationsWithSubscribers = false;
 
     for (;index<total; ++index) {
         mutation = mutations[index];
-        subobject = mutation.object;
-        object_dop = dop.getObjectDop(subobject);
+        object = mutation.object;
+        object_dop = dop.getObjectDop(object);
 
         if (!mutationsWithSubscribers && isObject(dop.data.object[object_dop[0]]))
             mutationsWithSubscribers = true;
+
+        // Storing mutations that will be emited to observeMultiples aka observers
+        for (observer_id in object_dop.om) {
+            if (observersMultiples[observer_id] === undefined)
+                observersMultiples[observer_id] = [];
+            observersMultiples[observer_id].push(mutation); 
+        }
+        if (object_dop.omp[mutation.name] !== undefined) {
+            for (observer_id in object_dop.omp[mutation.name]) {
+                // If it hasn't been stored yet
+                if (object_dop.om[observer_id] === undefined) { 
+                    if (observersMultiples[observer_id] === undefined)
+                        observersMultiples[observer_id] = [];
+                    observersMultiples[observer_id].push(mutation); 
+                }
+            }  
+        }
 
         // Emiting mutations to observerProperties
         observersProperties = object_dop.op[mutation.name];
@@ -2003,8 +2130,8 @@ dop.core.emitObservers = function(mutations) {
             for (index2=0,total2=observersProperties.length; index2<total2; ++index2)
                 observersProperties[index2](mutation);
 
-        if (subobjects.indexOf(subobject) === -1) {
-            subobjects.push(subobject);
+        if (objects.indexOf(object) === -1) {
+            objects.push(object);
 
             // Emiting mutations to observers
             observers = object_dop.o;
@@ -2014,6 +2141,10 @@ dop.core.emitObservers = function(mutations) {
             object_dop.m = [];
         }
     }
+
+    // Emiting to observeMultiples
+    for (observer_id in observersMultiples)
+        dop.data.observers[observer_id].callback(observersMultiples[observer_id]);
 
     return mutationsWithSubscribers;
 };
