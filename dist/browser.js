@@ -1,5 +1,5 @@
 /*
- * dop@0.10.2
+ * dop@0.11.1
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
@@ -2298,7 +2298,8 @@ dop.core.proxyArrayHandler = {
 
 dop.core.proxyObjectHandler = {
     set: function(object, property, value) {
-        return dop.core.set(dop.getObjectProxy(object), property, value) !== undefined;
+        dop.core.set(dop.getObjectProxy(object), property, value);
+        return true;
     },
     deleteProperty: function(object, property) {
         return dop.core.delete(dop.getObjectProxy(object), property) !== undefined;

@@ -1,7 +1,8 @@
 
 dop.core.proxyObjectHandler = {
     set: function(object, property, value) {
-        return dop.core.set(dop.getObjectProxy(object), property, value) !== undefined;
+        dop.core.set(dop.getObjectProxy(object), property, value);
+        return true;
     },
     deleteProperty: function(object, property) {
         return dop.core.delete(dop.getObjectProxy(object), property) !== undefined;
