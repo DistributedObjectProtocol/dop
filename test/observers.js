@@ -122,4 +122,14 @@ test('mutations with createObserverMultiple', function(t) {
 
 // todo
 // test('dop.observe', function(t) {})
-// test('dop.observeProperty', function(t) {})
+test('dop.observeProperty', function(t) {
+    var object = dop.register({
+        todos: []
+    });
+    dop.observe(object.todos, function(mutations){
+        console.log( mutations );
+    })
+    // object.todos.push(1);
+    object.todos[1]=25;
+    t.end();
+})

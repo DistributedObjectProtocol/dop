@@ -21,7 +21,7 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
 
     prop = path[index];
 
-    if (isMutationArray || isArray(mutation.object)) {
+    if ((isMutationArray || isArray(mutation.object)) && prop !== 'length') {
 
         if (path.length>1) {
             if (isMutationArray && !isObject(action[prop])) 

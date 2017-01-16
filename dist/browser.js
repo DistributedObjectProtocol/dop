@@ -1,5 +1,5 @@
 /*
- * dop@0.11.1
+ * dop@0.11.2
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
@@ -1755,12 +1755,18 @@ dop.core.set = function(object, property, value) {
                 var mutation = {object:objectProxy, name:property, value:value};
                 if (hasOwnProperty)
                     mutation.oldValue = oldValue;
-                if (isArray(objectTarget)) // if is array we must store the length in order to revert it with setUnaction
-                    mutation.length = length;
                 if (isArray(value)) // We cant store the original array cuz when we inject the mutation into the action object could be different from the original
                     mutation.valueOriginal = dop.util.merge([], value);
 
                 dop.core.storeMutation(mutation);
+
+                if (isArray(objectTarget) && objectTarget.length !== length) // if is array we must store the length in order to revert it with setUnaction
+                    dop.core.storeMutation({
+                        object:objectProxy,
+                        name:'length',
+                        value:objectTarget.length,
+                        oldValue:length
+                    });
 
                 return mutation;
             }
@@ -1944,6 +1950,13 @@ dop.core.splice = function(array, args) {
             if (spliced.length > 0)
                 mutation.spliced = spliced;
             dop.core.storeMutation(mutation);
+            if (originallength!==length)
+                dop.core.storeMutation({
+                    object:objectProxy,
+                    name:'length',
+                    value:length,
+                    oldValue:originallength
+                });
         }
 
     }
@@ -2176,7 +2189,7 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
 
     prop = path[index];
 
-    if (isMutationArray || isArray(mutation.object)) {
+    if ((isMutationArray || isArray(mutation.object)) && prop !== 'length') {
 
         if (path.length>1) {
             if (isMutationArray && !isObject(action[prop])) 
