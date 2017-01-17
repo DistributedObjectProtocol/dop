@@ -16,16 +16,16 @@ var object2 = dop.register({uno:1, cuatro:4});
 
 
 
-test('createObserverMultiple.observe', function(t) {
+test('createObserver.observe', function(t) {
 
     function first(mutations) {
         console.log( mutations );
     }
     function second(){}
 
-    var observer = dop.createObserverMultiple(first);
-    var observer2 = dop.createObserverMultiple(first);
-    var observer3 = dop.createObserverMultiple(second);
+    var observer = dop.createObserver(first);
+    var observer2 = dop.createObserver(first);
+    var observer3 = dop.createObserver(second);
     t.equal(dop.data.observers[observer.id], observer2, 'Must be same object');
     t.equal(observer, observer2, 'observe and observe2 must be same observers');
     t.notEqual(observer, observer3, 'observe and observe3 must be note same observers');
@@ -54,10 +54,10 @@ test('createObserverMultiple.observe', function(t) {
 })
 
 
-test('createObserverMultiple.observeProperty', function(t) {
+test('createObserver.observeProperty', function(t) {
 
     function first(mutations) {}
-    var observer = dop.createObserverMultiple(first);
+    var observer = dop.createObserver(first);
     observer.observeProperty(object, 'uno');
     t.equal(observer.properties.uno[0], object, 'Object stored correctly inside of the observer')
     t.equal(dop.getObjectDop(object).omp['uno'][observer.id], true, 'Observer id stored correctly inside of object_dop')
@@ -96,14 +96,14 @@ test('createObserverMultiple.observeProperty', function(t) {
 })
 
 
-test('mutations with createObserverMultiple', function(t) {
+test('mutations with createObserver', function(t) {
     
     var muta;
-    var observer = dop.createObserverMultiple(function first(mutations) {
+    var observer = dop.createObserver(function first(mutations) {
         t.equal(mutations.length, 2, 'Two mutations received for the first observer')
         muta = mutations;
     });
-    var observer2 = dop.createObserverMultiple(function second(mutations) {
+    var observer2 = dop.createObserver(function second(mutations) {
         t.equal(mutations.length, 1, 'One mutations received for the second observer');
         t.equal(mutations[0], muta[0], 'The first mutation is the same object than the first observer');
         t.end()

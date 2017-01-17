@@ -9,7 +9,7 @@ dop.core.emitObservers = function(mutations) {
         total = mutations.length,
         total2,
         object_dop,
-        observersMultiples = {}, // from dop.core.observer() && dop.createObserverMultiple()
+        observersMultiples = {}, // from dop.core.observer() && dop.createObserver()
         observersProperties,
         observers,
         observer_id,

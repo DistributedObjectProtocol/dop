@@ -1,6 +1,6 @@
 
-dop.createObserverMultiple = function(callback) {
-    dop.util.invariant(isFunction(callback), 'dop.createObserverMultiple only accept one argument as function');
+dop.createObserver = function(callback) {
+    dop.util.invariant(isFunction(callback), 'dop.createObserver only accept one argument as function');
     var observers=dop.data.observers, index, observer_id, observer;
     for (index in observers)
         if (observers[index].callback === callback)
