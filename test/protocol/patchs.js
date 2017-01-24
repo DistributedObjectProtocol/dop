@@ -24,7 +24,7 @@ var objServer = dop.register({
     subobject:{},
     dos:[]
 })
-dop.onsubscribe(function(){
+dop.onSubscribe(function(){
     return objServer;
 })
 

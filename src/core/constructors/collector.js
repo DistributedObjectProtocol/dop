@@ -29,6 +29,20 @@ dop.core.collector.prototype.emit = function() {
 };
 
 
+dop.core.collector.prototype.emitAndPause = function() {
+    this.pause();
+    return this.emit();
+};
+
+dop.core.collector.prototype.pause = function() {
+    this.active = false;
+};
+
+dop.core.collector.prototype.resume = function() {
+    this.active = true;
+};
+
+
 dop.core.collector.prototype.destroy = function() {
     this.active = false;
     this.queue.splice(this.queue.indexOf(this), 1);

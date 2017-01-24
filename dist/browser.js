@@ -715,10 +715,10 @@ dop.createAsync = function() {
 
 
 
-//////////  src/api/createObserverMultiple.js
+//////////  src/api/createObserver.js
 
-dop.createObserverMultiple = function(callback) {
-    dop.util.invariant(isFunction(callback), 'dop.createObserverMultiple only accept one argument as function');
+dop.createObserver = function(callback) {
+    dop.util.invariant(isFunction(callback), 'dop.createObserver only accept one argument as function');
     var observers=dop.data.observers, index, observer_id, observer;
     for (index in observers)
         if (observers[index].callback === callback)
@@ -1027,8 +1027,8 @@ dop.observeProperty = function(object, property, callback) {
 
 //////////  src/api/onsubscribe.js
 
-dop.onsubscribe = function(callback) {
-    dop.util.invariant(isFunction(callback), 'dop.onsubscribe only accept a function as parameter');
+dop.onSubscribe = function(callback) {
+    dop.util.invariant(isFunction(callback), 'dop.onSubscribe only accept a function as parameter');
     dop.data.onsubscribe = callback;
 };
 
@@ -1378,6 +1378,20 @@ dop.core.collector.prototype.emit = function() {
     dop.emit(mutations, this.action);
     this.mutations = [];
     return mutations;
+};
+
+
+dop.core.collector.prototype.emitAndPause = function() {
+    this.pause();
+    return this.emit();
+};
+
+dop.core.collector.prototype.pause = function() {
+    this.active = false;
+};
+
+dop.core.collector.prototype.resume = function() {
+    this.active = true;
 };
 
 
@@ -2106,7 +2120,7 @@ dop.core.emitObservers = function(mutations) {
         total = mutations.length,
         total2,
         object_dop,
-        observersMultiples = {}, // from dop.core.observer() && dop.createObserverMultiple()
+        observersMultiples = {}, // from dop.core.observer() && dop.createObserver()
         observersProperties,
         observers,
         observer_id,

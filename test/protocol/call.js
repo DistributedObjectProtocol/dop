@@ -50,13 +50,13 @@ var objServer = dopServer.register({
 });
 
 
-dopServer.onsubscribe(function() {
+dopServer.onSubscribe(function() {
     return objServer;
 })
 
 
 var objClient = dopClient.register({});
-dopClient.onsubscribe(function() {
+dopClient.onSubscribe(function() {
     return objClient;
 })
 

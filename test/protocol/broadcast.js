@@ -32,7 +32,7 @@ var objServer = {
 }
 dop.register(objServer);
 dop.setBroadcastFunction(objServer.subobject,'broadcast');
-dop.onsubscribe(function(){
+dop.onSubscribe(function(){
     return objServer;
 })
 

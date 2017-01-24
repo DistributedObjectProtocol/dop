@@ -23,7 +23,7 @@ test('Client unsubscribe Server', function(t) {
 
     t.equal(dopServer.data.object[1], undefined, 'Object data not stored on server yet');
 
-    dopServer.onsubscribe(function() {
+    dopServer.onSubscribe(function() {
         return objectServer;
     })
 

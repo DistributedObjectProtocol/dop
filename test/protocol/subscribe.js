@@ -32,7 +32,7 @@ clientlistening.on('connect', function(node) {
         clientClient = node;
 })
 
-test('Before onsubscribe is defined', function(t) {
+test('Before onSubscribe is defined', function(t) {
     client.subscribe('DATA').catch(function(err){
         t.equal(err, dopClient.core.error.reject_remote[1], 'Object not found');
         t.end()
@@ -64,7 +64,7 @@ test('Client subscribe synchronously', function(t) {
         }
     };
     var serverClient;
-    dopServer.onsubscribe(function(name, req) {
+    dopServer.onSubscribe(function(name, req) {
         if (name === 'DATA') {
             serverClient = req.node;
             t.equal(dopServer.isTarget(DATA), false, 'Is not registered yet');
@@ -156,7 +156,7 @@ test('Client subscribe synchronously', function(t) {
 
 test('Client subscribe asynchronously same object', function(t) {
     var objectServer = {test:Math.random()};
-    dopServer.onsubscribe(function() {
+    dopServer.onSubscribe(function() {
         return objectServer;
     })
 
@@ -174,7 +174,7 @@ test('Client subscribe asynchronously same object', function(t) {
 
 test('Client subscribe asynchronously different objects', function(t) {
 
-    dopServer.onsubscribe(function() {
+    dopServer.onSubscribe(function() {
         return {test:Math.random()};
     })
 
@@ -204,7 +204,7 @@ test('Client subscribe asynchronously different objects', function(t) {
 
 test('Server subscribe client object', function(t) {
     var objClient = {test:Math.random()};
-    dopClient.onsubscribe(function() {
+    dopClient.onSubscribe(function() {
         return objClient;
     })
     serverClient.subscribe().then(function(objServer){
@@ -223,10 +223,10 @@ test('Server subscribe client object', function(t) {
 test('Server subscribe client object that is from server', function(t) {
     var objServer = {test:Math.random()},
         objClient;
-    dopServer.onsubscribe(function() {
+    dopServer.onSubscribe(function() {
         return objServer;
     })
-    dopClient.onsubscribe(function() {
+    dopClient.onSubscribe(function() {
         return objClient;
     })
     client.subscribe().then(function(obj){
@@ -264,7 +264,7 @@ test('Client subscribe into object that is not register yet', function(t) {
     t.deepEqual(objClient, objClientSnap, 'Are equivalent before subcribe');
     t.equal(dopClient.isRegistered(objClient), false, 'Is not registered');
     
-    dopServer.onsubscribe(function() {
+    dopServer.onSubscribe(function() {
         return objServer;
     })
     client.subscribe().into(objClient).then(function(obj){
@@ -286,7 +286,7 @@ test('Client subscribe into object that is already registered', function(t) {
     t.deepEqual(objClient, objClientSnap, 'Are equivalent before subcribe');
     t.equal(dopClient.isRegistered(objClient), true, 'Is registered');
     
-    dopServer.onsubscribe(function() {
+    dopServer.onSubscribe(function() {
         return objServer;
     })
     client.subscribe().into(objClient).then(function(obj){
@@ -304,10 +304,10 @@ test('Server <-> Client subscribe into the same object', function(t) {
     var objServer = {test:Math.random()},
         objClient = {test:Math.random()};
 
-    dopServer.onsubscribe(function() {
+    dopServer.onSubscribe(function() {
         return objServer;
     })
-    dopClient.onsubscribe(function() {
+    dopClient.onSubscribe(function() {
         return objClient;
     })
 
@@ -332,7 +332,7 @@ test('Server <-> Client subscribe into the same object', function(t) {
 
 test('Multiple Clients subscribe Same object', function(t) {
     var objectServer = {test:Math.random()};
-    dopServer.onsubscribe(function() {
+    dopServer.onSubscribe(function() {
         return objectServer;
     })
 
@@ -351,7 +351,7 @@ test('Multiple Clients subscribe Same object', function(t) {
 
 
 test('Multiple Clients subscribe different objects', function(t) {
-    dopServer.onsubscribe(function() {
+    dopServer.onSubscribe(function() {
         return {test:Math.random()};
     })
     var objectClient;
@@ -369,10 +369,10 @@ test('Multiple Clients subscribe different objects', function(t) {
 test('Server -> Client -> ClientClient', function(t) {
     var objServer = {test:Math.random()},
         objClient;
-    dopServer.onsubscribe(function() {
+    dopServer.onSubscribe(function() {
         return objServer;
     })
-    dopClient.onsubscribe(function() {
+    dopClient.onSubscribe(function() {
         return objClient;
     })
     client.subscribe().then(function(obj){
@@ -406,13 +406,13 @@ test('Server <-> Client <-> ClientClient into the same object', function(t) {
             objClient = {test:Math.random()},
             objClientClient = {test:Math.random()};
 
-    dopServer.onsubscribe(function() {
+    dopServer.onSubscribe(function() {
         return objServer;
     })
-    dopClient.onsubscribe(function() {
+    dopClient.onSubscribe(function() {
         return objClient;
     })
-    dopClientClient.onsubscribe(function() {
+    dopClientClient.onSubscribe(function() {
         return objClientClient;
     })
 
