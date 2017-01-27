@@ -1,5 +1,5 @@
 /*
- * dop@0.11.2
+ * dop@0.11.3
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
@@ -766,14 +766,11 @@ dop.del = function(object, property) {
 
 //////////  src/api/emit.js
 
-dop.emit = function(mutations, action) {
+dop.emit = function(mutations) {
     if (mutations.length>0) {
         // This is true if we have nodes subscribed to those object/mutations
-        if (dop.core.emitObservers(mutations)) {
-            if (action === undefined)
-                action = dop.getAction(mutations);
-            dop.core.emitNodes(action);
-        }
+        if (dop.core.emitObservers(mutations))
+            dop.core.emitNodes(dop.getAction(mutations));
     }
 };
 
@@ -1025,7 +1022,7 @@ dop.observeProperty = function(object, property, callback) {
 
 
 
-//////////  src/api/onsubscribe.js
+//////////  src/api/onSubscribe.js
 
 dop.onSubscribe = function(callback) {
     dop.util.invariant(isFunction(callback), 'dop.onSubscribe only accept a function as parameter');
@@ -1353,8 +1350,6 @@ dop.core.emitReconnect = function(node, oldSocket, newNode) {
 
 dop.core.collector = function(queue, index) {
     this.active = true;
-    this.shallWeGenerateAction = true;
-    this.shallWeGenerateUnaction = true;
     this.mutations = [];
     this.queue = queue;
     queue.splice(index, 0, this);
@@ -1364,8 +1359,6 @@ dop.core.collector = function(queue, index) {
 
 dop.core.collector.prototype.add = function(mutation) {
     if (this.active && (this.filter===undefined || this.filter(mutation)===true)) {
-        this.shallWeGenerateAction = true;
-        this.shallWeGenerateUnaction = true;
         this.mutations.push(mutation);
         return true;
     }
@@ -1375,7 +1368,7 @@ dop.core.collector.prototype.add = function(mutation) {
 
 dop.core.collector.prototype.emit = function() {
     var mutations = this.mutations;
-    dop.emit(mutations, this.action);
+    dop.emit(mutations);
     this.mutations = [];
     return mutations;
 };
@@ -1408,20 +1401,12 @@ dop.core.collector.prototype.emitAndDestroy = function() {
 
 
 dop.core.collector.prototype.getAction = function() {
-    if (this.shallWeGenerateAction) {
-        this.shallWeGenerateAction = false;
-        this.action = dop.getAction(this.mutations);
-    }
-    return this.action;
+    return dop.getAction(this.mutations);
 };
 
 
 dop.core.collector.prototype.getUnaction = function() {
-    if (this.shallWeGenerateUnaction) {
-        this.shallWeGenerateUnaction = false;
-        this.unaction = dop.getUnaction(this.mutations);
-    }
-    return this.unaction;
+    return dop.getUnaction(this.mutations);
 };
 
 

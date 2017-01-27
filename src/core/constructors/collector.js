@@ -1,8 +1,6 @@
 
 dop.core.collector = function(queue, index) {
     this.active = true;
-    this.shallWeGenerateAction = true;
-    this.shallWeGenerateUnaction = true;
     this.mutations = [];
     this.queue = queue;
     queue.splice(index, 0, this);
@@ -12,8 +10,6 @@ dop.core.collector = function(queue, index) {
 
 dop.core.collector.prototype.add = function(mutation) {
     if (this.active && (this.filter===undefined || this.filter(mutation)===true)) {
-        this.shallWeGenerateAction = true;
-        this.shallWeGenerateUnaction = true;
         this.mutations.push(mutation);
         return true;
     }
@@ -23,7 +19,7 @@ dop.core.collector.prototype.add = function(mutation) {
 
 dop.core.collector.prototype.emit = function() {
     var mutations = this.mutations;
-    dop.emit(mutations, this.action);
+    dop.emit(mutations);
     this.mutations = [];
     return mutations;
 };
@@ -56,18 +52,10 @@ dop.core.collector.prototype.emitAndDestroy = function() {
 
 
 dop.core.collector.prototype.getAction = function() {
-    if (this.shallWeGenerateAction) {
-        this.shallWeGenerateAction = false;
-        this.action = dop.getAction(this.mutations);
-    }
-    return this.action;
+    return dop.getAction(this.mutations);
 };
 
 
 dop.core.collector.prototype.getUnaction = function() {
-    if (this.shallWeGenerateUnaction) {
-        this.shallWeGenerateUnaction = false;
-        this.unaction = dop.getUnaction(this.mutations);
-    }
-    return this.unaction;
+    return dop.getUnaction(this.mutations);
 };
