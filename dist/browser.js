@@ -1,5 +1,5 @@
 /*
- * dop@0.11.3
+ * dop@0.11.4
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
@@ -290,7 +290,7 @@ function removeListeners(socket, onopen, onmessage, onclose) {
 
 
 // UMD
-if (typeof dop=='undefined' && typeof module == 'object' && module.exports)
+if (typeof module == 'object' && module.exports)
     module.exports = websocket;
 else {
     websocket.getApi = function() { return window.WebSocket };
@@ -3283,7 +3283,7 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
         var params = Array.prototype.slice.call(request, 1);
 
         dop.core.localProcedureCall(dop.data.onsubscribe, params, function resolve(value) {
-            if (isObject(value)) {
+            if (dop.isObjectRegistrable(value)) {
                 var object = dop.register(value),
                     object_id = dop.getObjectId(object),
                     object_root = dop.getObjectRoot(object),

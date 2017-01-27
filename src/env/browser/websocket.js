@@ -118,7 +118,7 @@ function removeListeners(socket, onopen, onmessage, onclose) {
 
 
 // UMD
-if (typeof dop=='undefined' && typeof module == 'object' && module.exports)
+if (typeof module == 'object' && module.exports)
     module.exports = websocket;
 else {
     websocket.getApi = function() { return window.WebSocket };
