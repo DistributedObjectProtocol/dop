@@ -1,5 +1,5 @@
 /*
- * dop@0.11.5
+ * dop@0.11.6
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
@@ -2138,7 +2138,7 @@ dop.core.emitObservers = function(mutations) {
 
         // Emiting mutations to observerProperties
         observersProperties = object_dop.op[mutation.name];
-        if (isArray(observersProperties) == 'array' &&  observersProperties.length>0)
+        if (isArray(observersProperties) &&  observersProperties.length>0)
             for (index2=0,total2=observersProperties.length; index2<total2; ++index2)
                 observersProperties[index2](mutation);
 
@@ -2147,7 +2147,7 @@ dop.core.emitObservers = function(mutations) {
 
             // Emiting mutations to observers
             observers = object_dop.o;
-            if (isArray(observers) == 'array')
+            if (isArray(observers))
                 for (index2 = 0, total2 = observers.length;index2<total2; ++index2)
                     observers[index2](object_dop.m.slice(0));
 
