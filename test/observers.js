@@ -113,8 +113,8 @@ test('mutations with createObserver', function(t) {
     observer2.observeProperty(object, 'uno');
 
     collector = dop.collect()
-    object.uno = 123;
-    object.new = 123;
+    dop.set(object, 'uno', 123);
+    dop.set(object, 'new', 123);
     collector.emitAndDestroy()
 
 })
@@ -130,6 +130,6 @@ test('dop.observeProperty', function(t) {
         console.log( mutations );
     })
     // object.todos.push(1);
-    object.todos[1]=25;
+    dop.set(object.todos, 1, 25);
     t.end();
 })
