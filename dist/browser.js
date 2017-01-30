@@ -1,5 +1,5 @@
 /*
- * dop@0.11.7
+ * dop@0.11.8
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
@@ -238,6 +238,7 @@ function websocket(dop, node, options) {
     function onclose() {
         readyState = CLOSE;
         dop.core.emitClose(node, socket);
+        dop.core.emitDisconnect(node);
     }
 
     // dop events
@@ -2048,11 +2049,11 @@ dop.core.configureObject = function(object, path, parent) {
     // Setting ~DOP object
     Object.defineProperty(object, dop.cons.DOP, {value:path.slice(0)});
     object_dop = dop.getObjectDop(object);
-    object_dop.m = []; // mutations
     object_dop.o = []; // observers
     object_dop.op = {}; // observers by property
     object_dop.om = {}; // observers multiple
     object_dop.omp = {}; // observers multiple
+    object_dop.m = []; // temporal mutations before will be emitted
 
 
     if (isObject(parent))

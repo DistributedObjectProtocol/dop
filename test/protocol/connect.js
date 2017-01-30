@@ -65,8 +65,7 @@ test('CONNECT TEST', function(t) {
         t.equal(socket, socketClient, '✅ close');
     });
     nodeClient.on('disconnect', function() {
-        // We dont emit this one in case the client wants to reconnect
-        t.equal(1, 2, '✅ disconnect');
+        t.equal(true, true, '✅ disconnect');
     });
 
 

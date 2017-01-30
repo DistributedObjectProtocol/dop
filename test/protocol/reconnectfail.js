@@ -67,8 +67,15 @@ test('RECONNECTFAIL TEST', function(t) {
             t.notEqual(nodeClient.socket, socketClient, '✅ connect 2');
         }
     });
+    var sameSocketFirstTime = false;
     nodeClient.on('disconnect', function() {
-        t.equal(nodeClient.socket, socketClient, '✅ disconnect');
+        if (!sameSocketFirstTime) {
+            t.equal(nodeClient.socket, socketClient, '✅ disconnect');
+            sameSocketFirstTime = true
+        }
+        else
+            t.notEqual(nodeClient.socket, socketClient, '✅ disconnect');
+        
     });
     nodeClient.on('reconnect', function(oldSocket) {
         t.equal(true, false, '✅ reconnect'); // this should not happen
