@@ -2,13 +2,14 @@
 dop.core.emitObservers = function(mutations) {
 
     var mutation,
-        objects = [],
+        // objects = [],
         object,
         index = 0,
         index2,
         total = mutations.length,
         total2,
         object_dop,
+        object_dops = [],
         observersMultiples = {}, // from dop.core.observer() && dop.createObserver()
         observersProperties,
         observers,
@@ -46,18 +47,26 @@ dop.core.emitObservers = function(mutations) {
             for (index2=0,total2=observersProperties.length; index2<total2; ++index2)
                 observersProperties[index2](mutation);
 
-        if (objects.indexOf(object) === -1) {
-            objects.push(object);
 
-            // Emiting mutations to observers
-            observers = object_dop.o;
-            if (isArray(observers))
-                for (index2 = 0, total2 = observers.length;index2<total2; ++index2)
-                    observers[index2](object_dop.m.slice(0));
-
-            object_dop.m = [];
+        // Saving temporal mutation to emit all at the same time
+        observers = object_dop.o;
+        if (isArray(observers) && observers.length > 0) {
+            object_dop.m.push(mutation)
+            if (object_dops.indexOf(object_dop) === -1)
+                object_dops.push(object_dop);
         }
     }
+
+    // Emiting mutations to observers
+    for (index=0, total=object_dops.length; index<total; ++index) {
+        object_dop = object_dops[index];
+        observers = object_dop.o;
+        for (index2=0, total2=observers.length; index2<total2; ++index2)
+            observers[index2](object_dop.m.slice(0));
+        
+        object_dop.m = [];
+    }
+        
 
     // Emiting to observeMultiples
     for (observer_id in observersMultiples)
