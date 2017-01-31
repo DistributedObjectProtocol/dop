@@ -2,9 +2,9 @@
 <p align="center"><a href="https://distributedobjectprotocol.org"><img width="200"src="https://distributedobjectprotocol.org/img/logo.svg"></a></p>
 
 <p align="center">
-    <a href="https://www.npmjs.com/package/dop"><img alt="npm version" src="https://img.shields.io/npm/v/dop.svg?style=flat-square"></a>
+    <a href="https://www.npmjs.com/package/dop"><img alt="npm version" src="https://img.shields.io/npm/v/dop.svg"></a>
     <a href="https://travis-ci.org/DistributedObjectProtocol/dop"><img alt="Build Status" src="https://travis-ci.org/DistributedObjectProtocol/dop.svg?branch=master"></a>
-    <a href="https://www.npmjs.com/package/dop"><img alt="license" src="https://img.shields.io/npm/l/vue.svg"></a>
+    <a href="https://www.npmjs.com/package/dop"><img alt="license" src="https://img.shields.io/npm/l/dop.svg"></a>
     <a href="https://gitter.im/DistributedObjectProtocol/dop?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"><img alt="Join the chat at" src="https://badges.gitter.im/DistributedObjectProtocol/dop.svg"></a>
 </p>
 
@@ -23,10 +23,10 @@ This repository is the JavaScript implementation of the protocol that runs on no
 // Server (node.js)
 const dop = require('dop')
 const listener = dop.listen() // WebSockets on port 4444 (https://github.com/websockets/ws)
-let myObject = dop.register({
+const myObject = {
     Hello: 'World',
-    square: (number) => number * number
-})
+    square: number => number * number
+}
 dop.onSubscribe(() => myObject)
 ```
 
@@ -34,8 +34,8 @@ dop.onSubscribe(() => myObject)
 // Client (browser)
 import dop from 'dop'
 const server = dop.connect() // Native WebSockets 'ws://localhost:4444'
-let serverObject = await server.subscribe()
-let squareOfFive = await serverObject.square(5)
+const serverObject = await server.subscribe()
+const squareOfFive = await serverObject.square(5)
 console.log(squareOfFive) // > 25
 ```
 
