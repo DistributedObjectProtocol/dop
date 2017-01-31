@@ -1,5 +1,5 @@
 
-<p align="center"><a href="https://distributedobjectprotocol.org"><img width="250"src="https://distributedobjectprotocol.org/img/logo.svg"></a></p>
+<p align="center"><a href="https://distributedobjectprotocol.org"><img width="200"src="https://distributedobjectprotocol.org/img/logo.svg"></a></p>
 
 <p align="center">
     <a href="https://www.npmjs.com/package/dop"><img alt="npm version" src="https://img.shields.io/npm/v/dop.svg?style=flat-square"></a>
@@ -12,6 +12,37 @@
 
 Distributed Object Protocol is for Data-sync, Pub/Sub, Remote procedure calls, Reactive programming,
 Optimistic updates, Time-travel debugging, State management,
-Unidirectional data flow, Real time apps.
+Unidirectional data flow, Real time apps and more.
 
 This repository is the JavaScript implementation of the protocol that runs on node.js and Browsers.
+
+
+## Basic example
+
+```js
+// Server (node.js)
+const dop = require('dop')
+const listener = dop.listen() // WebSockets on port 4444 (https://github.com/websockets/ws)
+let myObject = dop.register({
+    Hello: 'World',
+    square: (number) => number * number
+})
+dop.onSubscribe(() => myObject)
+```
+
+```js
+// Client (browser)
+import dop from 'dop'
+const server = dop.connect() // Native WebSockets 'ws://localhost:4444'
+let serverObject = await server.subscribe()
+let squareOfFive = await serverObject.square(5)
+console.log(squareOfFive) // > 25
+```
+
+Check the website for more detailed documentation [https://distributedobjectprotocol.org/](https://distributedobjectprotocol.org/)
+
+
+
+## License
+
+[MIT](http://opensource.org/licenses/MIT)
