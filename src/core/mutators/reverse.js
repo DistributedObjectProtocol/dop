@@ -5,6 +5,7 @@ dop.core.reverse = function(array) {
         total = objectTarget.length/2,
         index = 0,
         indexr,
+        tempItem,
         swaps = [],
         shallWeStore = (objectTarget===objectProxy || array===objectProxy);
 

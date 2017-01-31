@@ -1,5 +1,5 @@
 /*
- * dop@0.11.8
+ * dop@0.11.9
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
@@ -174,7 +174,8 @@ dop.listen = function(options) {
 function websocket(dop, node, options) {
 
     var url = 'ws://localhost:4444/'+dop.name,
-        args = arguments;
+        oldSocket;
+
     if (typeof options.url == 'string')
         url = options.url.replace('http','ws');
     else if (typeof window!='undefined' && /http/.test(window.location.href)) {
@@ -1035,7 +1036,7 @@ dop.onSubscribe = function(callback) {
 
 //////////  src/api/register.js
 
-dop.register = function(object, options) {
+dop.register = function(object) {
 
     dop.util.invariant(dop.isObjectRegistrable(object), 'dop.register needs a regular object as first parameter');
 
@@ -1628,7 +1629,7 @@ dop.core.push = function(array, items) {
     if (items.length === 0)
         return array.length;
     items.unshift(array.length, 0);
-    var spliced = dop.core.splice(array, items);
+    dop.core.splice(array, items);
     return array.length;
 };
 
@@ -1643,6 +1644,7 @@ dop.core.reverse = function(array) {
         total = objectTarget.length/2,
         index = 0,
         indexr,
+        tempItem,
         swaps = [],
         shallWeStore = (objectTarget===objectProxy || array===objectProxy);
 
@@ -2012,7 +2014,7 @@ dop.core.unshift = function(array, items) {
     if (items.length === 0)
         return array.length;
     items.unshift(0, 0);
-    var spliced = dop.core.splice(array, items);
+    dop.core.splice(array, items);
     return array.length;
 };
 
@@ -2184,15 +2186,13 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
         prop = mutation.name,
         value = (isUnaction) ? mutation.oldValue : mutation.value,
         typeofValue = dop.util.typeof(value),
-        index = 1,
-        parent;
+        index = 1;
 
 
     if (!isMutationArray)
         path.push(prop);
 
     for (;index<path.length-1; ++index) {
-        parent = action;
         prop = path[index];
         action = isObject(action[prop]) ? action[prop] : action[prop]={};
     }
@@ -2365,7 +2365,7 @@ dop.core.setActionFunction = function(object, action) {
 
 //////////  src/core/objects/setActionMutator.js
 
-dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
+dop.core.setActionMutator = function(destiny, prop, value, typeofValue) {
 
     // if (path.length > 1) {
 
@@ -2537,7 +2537,7 @@ dop.core.createRemoteFunction = function $DOP_REMOTE_FUNCTION_UNSETUP(node) {
 
 //////////  src/core/protocol/createRequest.js
 
-dop.core.createRequest = function(node, instruction) {
+dop.core.createRequest = function(node) {
     var request_id = node.request_inc++,
         request = Array.prototype.slice.call(arguments, 1);
 
@@ -3293,7 +3293,7 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
         dop.core.localProcedureCall(dop.data.onsubscribe, params, function resolve(value) {
             if (dop.isObjectRegistrable(value)) {
                 var object = dop.register(value),
-                    object_id = dop.getObjectId(object),
+                    // object_id = dop.getObjectId(object),
                     object_root = dop.getObjectRoot(object),
                     object_dop = dop.getObjectDop(object),
                     response = dop.core.createResponse(request_id, 0, object_dop.length==1 ? object_dop[0] : object_dop);

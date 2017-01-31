@@ -3,6 +3,6 @@ dop.core.push = function(array, items) {
     if (items.length === 0)
         return array.length;
     items.unshift(array.length, 0);
-    var spliced = dop.core.splice(array, items);
+    dop.core.splice(array, items);
     return array.length;
 };

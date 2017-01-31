@@ -6,15 +6,13 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
         prop = mutation.name,
         value = (isUnaction) ? mutation.oldValue : mutation.value,
         typeofValue = dop.util.typeof(value),
-        index = 1,
-        parent;
+        index = 1;
 
 
     if (!isMutationArray)
         path.push(prop);
 
     for (;index<path.length-1; ++index) {
-        parent = action;
         prop = path[index];
         action = isObject(action[prop]) ? action[prop] : action[prop]={};
     }

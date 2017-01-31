@@ -1,5 +1,5 @@
 
-dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
+dop.core.setActionMutator = function(destiny, prop, value, typeofValue) {
 
     // if (path.length > 1) {
 

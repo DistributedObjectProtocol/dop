@@ -2,7 +2,8 @@
 function websocket(dop, node, options) {
 
     var url = 'ws://localhost:4444/'+dop.name,
-        args = arguments;
+        oldSocket;
+
     if (typeof options.url == 'string')
         url = options.url.replace('http','ws');
     else if (typeof window!='undefined' && /http/.test(window.location.href)) {
