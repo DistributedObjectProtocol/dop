@@ -9,6 +9,8 @@ script:
   - npm run build
   - npm run test
   - npm run test-local
+after_success:
+  - cat ./coverage/lcov.info|./node_modules/coveralls/bin/coveralls.js
 branches:
   only:
     - master

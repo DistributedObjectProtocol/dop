@@ -1,6 +1,6 @@
 {
   "name": "dop",
-  "version": "0.11.10",
+  "version": "0.11.11",
   "main": "./dist/nodejs.js",
   "browser": "./dist/browser.js",
   "unpkg": "./dist/browser.min.js",
@@ -16,7 +16,7 @@
     "realtime",
     "pubsub",
     "state management",
-    "data flow",
+    "data-flow",
     "distributed",
     "objects",
     "protocol",
@@ -29,17 +29,15 @@
     "websocket",
     "events",
     "sockets",
-    "io",
     "xhr",
-    "flux",
     "server",
-    "client",
-    "ria"
+    "client"
   ],
   "dependencies": {
     "dop-transports": "^2.0.0"
   },
   "devDependencies": {
+    "coveralls": "^2.11.4",
     "express": "^4.13.4",
     "faucet": "^0.0.1",
     "grunt": "^0.4.5",
