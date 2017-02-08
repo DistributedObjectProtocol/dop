@@ -1,5 +1,5 @@
 /*
- * dop@0.11.10
+ * dop@0.11.11
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
@@ -770,10 +770,12 @@ dop.del = function(object, property) {
 
 dop.emit = function(mutations) {
     if (mutations.length>0) {
+        mutations = mutations.slice(0);
         // This is true if we have nodes subscribed to those object/mutations
         if (dop.core.emitObservers(mutations))
             dop.core.emitNodes(dop.getAction(mutations));
     }
+    return new dop.core.snapshot(mutations);
 };
 
 
@@ -1369,10 +1371,9 @@ dop.core.collector.prototype.add = function(mutation) {
 
 
 dop.core.collector.prototype.emit = function() {
-    var mutations = this.mutations;
-    dop.emit(mutations);
+    var snapshot = dop.emit(this.mutations);
     this.mutations = [];
-    return mutations;
+    return snapshot;
 };
 
 
@@ -1400,17 +1401,6 @@ dop.core.collector.prototype.emitAndDestroy = function() {
     this.destroy();
     return this.emit();
 };
-
-
-dop.core.collector.prototype.getAction = function() {
-    return dop.getAction(this.mutations);
-};
-
-
-dop.core.collector.prototype.getUnaction = function() {
-    return dop.getUnaction(this.mutations);
-};
-
 
 
 
@@ -1550,6 +1540,46 @@ dop.core.observer.prototype.destroy = function() {
 };
 
 
+
+
+
+
+//////////  src/core/constructors/snapshot.js
+
+dop.core.snapshot = function(mutations) {
+    this.mutations = mutations;
+};
+
+
+dop.core.snapshot.prototype.getAction = function() {
+    if (this.action === undefined)
+        this.action = dop.getAction(this.mutations);
+    return this.action;
+};
+
+
+dop.core.snapshot.prototype.getUnaction = function() {
+    if (this.unaction === undefined)
+        this.unaction = dop.getUnaction(this.mutations);
+    return this.unaction;
+};
+
+
+dop.core.snapshot.prototype.setAction = function() {
+    // for (var index=0,total=this.mutations.length, mutation; index<total; ++index) {
+    //     mutation = this.mutations[index];
+    //     console.log('mutation')
+    // }
+    dop.setAction(this.getAction())
+};
+
+
+dop.core.snapshot.prototype.setUnaction = function() {
+    // for (var index=0,total=this.mutations.length; index<total; ++index) {
+    //     console.log(this.mutations[index])
+    // }
+    dop.setUnaction(this.getUnaction())
+};
 
 
 

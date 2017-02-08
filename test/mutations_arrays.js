@@ -22,14 +22,14 @@ function maketest(t, collectorServer, checkactions) {
     
     var objectClientCopy = dop.util.merge([],objectClient);
 
-    var actionServer = decode(encode(collectorServer.getAction()));
-    var unaction = decode(encode(collectorServer.getUnaction()));
+    var actionServer = decode(encode(dop.getAction(collectorServer.mutations)));
+    var unaction = decode(encode(dop.getUnaction(collectorServer.mutations)));
     collectorServer.destroy();
     var collectorClient = dopClient.setAction(attachObjects(actionServer,objectClient));
-    var actionClient = decode(encode(collectorClient.getAction()));
+    var actionClient = decode(encode(dop.getAction(collectorClient.mutations)));
     var collectorClientTwo = dopClientTwo.setAction(attachObjects(actionClient, objectClientTwo));
     consolelog("### Mutations length: " +  collectorServer.mutations.length, collectorClient.mutations.length, collectorClientTwo.mutations.length );
-    var actionClientTwo = collectorClientTwo.getAction();
+    var actionClientTwo = dop.getAction(collectorClientTwo.mutations);
 
     consolelog("### After server: " + encode(objectServer));
     consolelog("### After client: " + encode(objectClient));

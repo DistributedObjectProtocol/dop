@@ -3,7 +3,7 @@ var server = dop.connect()
 var circleServer = dop.register({});
 server.subscribe().into(circleServer)
 dop.observe(circleServer, function() {
-    // We shouldn't update position from others if we are alredy moving it on localy
+    // We shouldn't update position from others if we are alredy moving it localy
     if (!circle.mover) { 
         circle.el.style.left = circleServer.x + 'px'
         circle.el.style.top = circleServer.y + 'px'
@@ -13,19 +13,19 @@ dop.observe(circleServer, function() {
 
 
 
-var circle = makeDraggable('circle', function(x,y){
+var circle = onDrag('circle', function(x,y){
     this.style.left = x + 'px'
     this.style.top = y + 'px'
     // sending to server
     circleServer.move(x, y) 
 })
-var square = makeDraggable('square', function(x,y){
+var square = onDrag('square', function(x,y){
     this.style.left = x + 'px'
     this.style.top = y + 'px'
 })
 
 
-function makeDraggable(elementId, callback) {
+function onDrag(elementId, callback) {
     var shape ={}
     shape.el = document.getElementById(elementId)
     shape.mover = false

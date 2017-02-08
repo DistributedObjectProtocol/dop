@@ -23,14 +23,14 @@ function maketest(t, collectorServer, checkactions) {
     var objectClientCopy = dop.util.merge({},objectClient);
 
 
-    var actionServer = decode(encode(collectorServer.getAction()));
-    var unaction = decode(encode(collectorServer.getUnaction()));
-    collectorServer.destroy();
+    var actionServer = decode(encode(dop.getAction(collectorServer.mutations)));
+    var unaction = decode(encode(dop.getUnaction(collectorServer.mutations)));
+    var snapshotServer = collectorServer.emitAndDestroy();
     var collectorClient = dopClient.setAction(attachObjects(actionServer, objectClient));
-    var actionClient = decode(encode(collectorClient.getAction()));
+    var actionClient = decode(encode(dop.getAction(collectorClient.mutations)));
     var collectorClientTwo = dopClientTwo.setAction(attachObjects(actionClient, objectClientTwo));
     consolelog("### Mutations length: " +  collectorServer.mutations.length, collectorClient.mutations.length, collectorClientTwo.mutations.length );
-    var actionClientTwo = collectorClientTwo.getAction();
+    var actionClientTwo = dop.getAction(collectorClientTwo.mutations);
 
     consolelog("### After server: " + encode(objectServer));
     consolelog("### After client: " + encode(objectClient));
@@ -46,9 +46,9 @@ function maketest(t, collectorServer, checkactions) {
     t.equal(encode(actionServer), encode(actionClientTwo), 'equal encode actions');
 
     // Unaction
-    dopClient.setAction(attachObjects(unaction, objectClient));
+    dopClient.setAction(attachObjects(snapshotServer.getUnaction(), objectClient));
     t.deepEqual(objectClientCopy, objectClient, 'deepEqual unaction');
-    var collectorClient = dopClient.setAction(attachObjects(actionServer, objectClient));
+    dopClient.setAction(attachObjects(snapshotServer.getAction(), objectClient));
 
     consolelog( '' );
     consolelog( '' );

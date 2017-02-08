@@ -18,10 +18,9 @@ dop.core.collector.prototype.add = function(mutation) {
 
 
 dop.core.collector.prototype.emit = function() {
-    var mutations = this.mutations;
-    dop.emit(mutations);
+    var snapshot = dop.emit(this.mutations);
     this.mutations = [];
-    return mutations;
+    return snapshot;
 };
 
 
@@ -48,14 +47,4 @@ dop.core.collector.prototype.destroy = function() {
 dop.core.collector.prototype.emitAndDestroy = function() {
     this.destroy();
     return this.emit();
-};
-
-
-dop.core.collector.prototype.getAction = function() {
-    return dop.getAction(this.mutations);
-};
-
-
-dop.core.collector.prototype.getUnaction = function() {
-    return dop.getUnaction(this.mutations);
 };
