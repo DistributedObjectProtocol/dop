@@ -1,0 +1,16 @@
+{
+  "name": "drag",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dop": "^0.11.11",
+    "ejs": "^2.5.5",
+    "express": "^4.14.1"
+  }
+}
