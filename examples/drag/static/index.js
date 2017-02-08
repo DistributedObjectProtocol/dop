@@ -14,14 +14,14 @@ dop.observe(circleServer, function() {
 
 
 var circle = makeDraggable('circle', function(x,y){
-    circle.el.style.left = x + 'px'
-    circle.el.style.top = y + 'px'
+    this.style.left = x + 'px'
+    this.style.top = y + 'px'
     // sending to server
     circleServer.move(x, y) 
 })
 var square = makeDraggable('square', function(x,y){
-    square.el.style.left = x + 'px'
-    square.el.style.top = y + 'px'
+    this.style.left = x + 'px'
+    this.style.top = y + 'px'
 })
 
 
