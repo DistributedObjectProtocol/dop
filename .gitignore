@@ -1,6 +1,19 @@
+# Dependency directories
 node_modules/
-npm-debug.log
-.vscode
-test*.js
+
+# Logs
 log
+logs
+*.log
+npm-debug.log*
+
+# IDE
+.idea
+.vscode
+
+# Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
+.grunt
+
+# Files
+test*.js
 examples/todomvc
