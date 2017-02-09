@@ -3,7 +3,7 @@ var express = require('express')
 var path = require('path')
 var app = express()
 app.set('view engine', 'ejs') // set up ejs for templating
-app.use('/', express.static(path.join(__dirname, 'static'))) // statics
+app.use('/', express.static(path.join(__dirname, './'))) // statics
 app.get('/',(req, res) => { res.render('index')})
 var port = 4444
 var expressServer = http.createServer(app)

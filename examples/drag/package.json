@@ -2,9 +2,9 @@
   "name": "drag",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node index"
+    "start": "node server"
   },
   "author": "",
   "license": "ISC",

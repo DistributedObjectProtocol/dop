@@ -1,3 +1,6 @@
+<img src="animation.gif" alt="logo" width="100%" />
+
+
 ```
 npm install
 npm start
