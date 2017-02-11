@@ -53,29 +53,42 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue) {
 
         else {
 
-            // Deeply
-            if (typeofValue=='object' && !destiny.hasOwnProperty(prop))
+            // // Set object and skip path deep
+            // if (typeofValue=='object' && typeofDestiny=='array' && !destiny.hasOwnProperty(prop)) {
+            //     dop.set(destiny, prop, dop.util.merge({}, value));
+            //     return true; // Skiping to dont go inside
+            // }
+
+            // // Set array and skip path deep
+            // else if (typeofValue=='array' && typeofDestiny=='object' && !destiny.hasOwnProperty(prop)) {
+            //     dop.set(destiny, prop, dop.util.merge([], value));
+            //     return true; // Skiping to dont go inside
+            // }
+
+
+            // else if (typeofValue=='object' && typeofDestiny!=typeofValue)
+            //     dop.set(destiny, prop, {});
+
+            // else if (typeofValue=='array' && typeofDestiny!=typeofValue)
+            //     dop.set(destiny, prop, []);
+
+
+            if (typeofValue=='object' && typeofDestiny!='object')
                 dop.set(destiny, prop, {});
+
+            else if (typeofValue=='array' && typeofDestiny!='array')
+                dop.set(destiny, prop, []);
+
 
             // Delete
             else if (typeofValue=='undefined')
                 dop.del(destiny, prop);
 
-            // Set array and skip path deep
-            else if (typeofValue=='array') {
-                dop.set(destiny, prop, dop.util.merge([], value));
-                return true; // Skiping to dont go inside
-            }
-
-            // Set array and skip path deep
-            else if (typeofValue=='object' && typeofDestiny!='object' && typeofDestiny!='array') {
-                dop.set(destiny, prop, dop.util.merge({}, value));
-                return true; // Skiping to dont go inside
-            }
-
             // Set value
             else if (typeofValue!='object')
                 dop.set(destiny, prop, value);
+
+
 
         }
     // }
