@@ -19,7 +19,13 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
 
     prop = path[index];
 
-    if ((isMutationArray || isArray(mutation.object)) && prop !== 'length') {
+    /*if (isMutationArray && isArray(action[prop])) {
+        if (mutation.swaps!==undefined) {
+            var swaps = mutation.swaps.slice(0);
+            action[prop].reverse()
+        }
+    }
+    else*/ if ((isMutationArray || isArray(mutation.object)) && prop !== 'length') {
 
         if (path.length>1) {
             if (isMutationArray && !isObject(action[prop])) 

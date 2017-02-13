@@ -1,5 +1,6 @@
 
 dop.core.snapshot = function(mutations) {
+    this.done = true;
     this.mutations = mutations;
 };
 
@@ -18,18 +19,21 @@ dop.core.snapshot.prototype.getUnaction = function() {
 };
 
 
-dop.core.snapshot.prototype.setAction = function() {
-    // for (var index=0,total=this.mutations.length, mutation; index<total; ++index) {
-    //     mutation = this.mutations[index];
-    //     console.log('mutation')
-    // }
-    dop.setAction(this.getAction())
+dop.core.snapshot.prototype.redo = function() {
+    return this.redoWithoutEmit();
 };
 
 
-dop.core.snapshot.prototype.setUnaction = function() {
-    // for (var index=0,total=this.mutations.length; index<total; ++index) {
-    //     console.log(this.mutations[index])
-    // }
-    dop.setUnaction(this.getUnaction())
+dop.core.snapshot.prototype.undo = function() {
+    return this.undoWithoutEmit();
+};
+
+
+dop.core.snapshot.prototype.redoWithoutEmit = function() {
+    return dop.setAction(this.getAction());
+};
+
+
+dop.core.snapshot.prototype.undoWithoutEmit = function() {
+    return dop.setAction(this.getUnaction());
 };

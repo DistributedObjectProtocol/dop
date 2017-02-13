@@ -5,7 +5,7 @@ dop.core.decode = function(property, value, node, undefineds) {
 
     if (typeof value == 'string') {
 
-        if (value === '~F')
+        if (value == '~F')
             return dop.core.createRemoteFunction(node);
 
         if (value == '~U' && isObject(undefineds)) {
@@ -13,13 +13,13 @@ dop.core.decode = function(property, value, node, undefineds) {
             return undefined;
         }
 
-        if (value === '~I')
+        if (value == '~I')
             return Infinity;
 
-        if (value === '~i')
+        if (value == '~i')
             return -Infinity;
 
-        if (value === '~N')
+        if (value == '~N')
             return NaN;
 
         if (regexpdate.exec(value))
@@ -30,7 +30,7 @@ dop.core.decode = function(property, value, node, undefineds) {
             return new RegExp(split[1], split[2]);
         }
 
-        if (value[0] === '~') // https://jsperf.com/charat-vs-index/5
+        if (value[0] == '~') // https://jsperf.com/charat-vs-index/5
             return value.substring(1);
 
 

@@ -46,18 +46,18 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
         if (typeof value.length == 'number' && value.length>-1)
             destiny[prop].length = value.length;
 
-
         return true; // Skiping to dont go inside of {~dop:...}
     }
 
     else if (path.length > 1) {
 
+        // Objects
         if (typeofValue=='object' && typeofDestiny!='object') //!destiny.hasOwnProperty(prop)
             dop.set(destiny, prop, {});
 
+        // Arrays
         else if (typeofValue=='array' && typeofDestiny!='array')
             dop.set(destiny, prop, []);
-
 
         // Delete
         else if (typeofValue=='undefined')
@@ -66,10 +66,5 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
         // Set value
         else if (typeofValue!='object')
             dop.set(destiny, prop, value);
-
     }
 };
-// dop.core.setActionLoop = function() {
-//     if (prop === dop.cons.DOP)
-//         return true;
-// };
