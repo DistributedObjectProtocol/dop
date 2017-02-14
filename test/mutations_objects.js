@@ -19,18 +19,18 @@ var objectClientTwo = dopClientTwo.register({});
 
 function MyClass(){this.classProperty=123;}
 function maketest(t, collectorServer, checkactions) {
-    
+    if (collectorServer.mutations.length>0) {
     var objectClientCopy = dop.util.merge({},objectClient);
 
 
-    var actionServer = decode(encode(dop.getAction(collectorServer.mutations)));
-    var unaction = decode(encode(dop.getUnaction(collectorServer.mutations)));
+    var actionServer = decode(encode(dop.core.getAction(collectorServer.mutations)));
+    var unaction = decode(encode(dop.core.getUnaction(collectorServer.mutations)));
     var snapshotServer = collectorServer.emitAndDestroy();
-    var collectorClient = dopClient.setAction(attachObjects(actionServer, objectClient));
-    var actionClient = decode(encode(dop.getAction(collectorClient.mutations)));
-    var collectorClientTwo = dopClientTwo.setAction(attachObjects(actionClient, objectClientTwo));
+    var collectorClient = dopClient.core.setAction(attachObjects(actionServer, objectClient));
+    var actionClient = decode(encode(dop.core.getAction(collectorClient.mutations)));
+    var collectorClientTwo = dopClientTwo.core.setAction(attachObjects(actionClient, objectClientTwo));
     consolelog("### Mutations length: " +  collectorServer.mutations.length, collectorClient.mutations.length, collectorClientTwo.mutations.length );
-    var actionClientTwo = dop.getAction(collectorClientTwo.mutations);
+    var actionClientTwo = dop.core.getAction(collectorClientTwo.mutations);
 
     consolelog("### After server: " + encode(objectServer));
     consolelog("### After client: " + encode(objectClient));
@@ -46,12 +46,13 @@ function maketest(t, collectorServer, checkactions) {
     t.equal(encode(actionServer), encode(actionClientTwo), 'equal encode actions');
 
     // Unaction
-    dopClient.setAction(attachObjects(snapshotServer.getUnaction(), objectClient));
+    dopClient.core.setAction(attachObjects(snapshotServer.getUnaction(), objectClient));
     t.deepEqual(objectClientCopy, objectClient, 'deepEqual unaction');
-    dopClient.setAction(attachObjects(snapshotServer.getAction(), objectClient));
+    dopClient.core.setAction(attachObjects(snapshotServer.getAction(), objectClient));
 
     consolelog( '' );
     consolelog( '' );
+    }
 }
 
 

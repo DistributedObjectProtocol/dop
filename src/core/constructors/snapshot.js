@@ -7,14 +7,14 @@ dop.core.snapshot = function(mutations) {
 
 dop.core.snapshot.prototype.getAction = function() {
     if (this.action === undefined)
-        this.action = dop.getAction(this.mutations);
+        this.action = dop.core.getAction(this.mutations);
     return this.action;
 };
 
 
 dop.core.snapshot.prototype.getUnaction = function() {
     if (this.unaction === undefined)
-        this.unaction = dop.getUnaction(this.mutations);
+        this.unaction = dop.core.getUnaction(this.mutations);
     return this.unaction;
 };
 
@@ -30,10 +30,10 @@ dop.core.snapshot.prototype.undo = function() {
 
 
 dop.core.snapshot.prototype.redoWithoutEmit = function() {
-    return dop.setAction(this.getAction());
+    return dop.core.setAction(this.getAction());
 };
 
 
 dop.core.snapshot.prototype.undoWithoutEmit = function() {
-    return dop.setAction(this.getUnaction());
+    return dop.core.setAction(this.getUnaction());
 };

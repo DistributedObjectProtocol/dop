@@ -22,14 +22,14 @@ function maketest(t, collectorServer, checkactions) {
     
     var objectClientCopy = dop.util.merge([],objectClient);
 
-    var actionServer = decode(encode(dop.getAction(collectorServer.mutations)));
-    var unaction = decode(encode(dop.getUnaction(collectorServer.mutations)));
+    var actionServer = decode(encode(dop.core.getAction(collectorServer.mutations)));
+    var unaction = decode(encode(dop.core.getUnaction(collectorServer.mutations)));
     collectorServer.destroy();
-    var collectorClient = dopClient.setAction(attachObjects(actionServer,objectClient));
-    var actionClient = decode(encode(dop.getAction(collectorClient.mutations)));
-    var collectorClientTwo = dopClientTwo.setAction(attachObjects(actionClient, objectClientTwo));
+    var collectorClient = dopClient.core.setAction(attachObjects(actionServer,objectClient));
+    var actionClient = decode(encode(dop.core.getAction(collectorClient.mutations)));
+    var collectorClientTwo = dopClientTwo.core.setAction(attachObjects(actionClient, objectClientTwo));
     consolelog("### Mutations length: " +  collectorServer.mutations.length, collectorClient.mutations.length, collectorClientTwo.mutations.length );
-    var actionClientTwo = dop.getAction(collectorClientTwo.mutations);
+    var actionClientTwo = dop.core.getAction(collectorClientTwo.mutations);
 
     consolelog("### After server: " + encode(objectServer));
     consolelog("### After client: " + encode(objectClient));
@@ -47,14 +47,14 @@ function maketest(t, collectorServer, checkactions) {
     t.equal(encode(actionServer), encode(actionClientTwo), 'equal encode actions');
 
     // Unaction
-    dop.setAction(attachObjects(unaction,objectServer)).destroy();
-    dopClient.setAction(attachObjects(unaction,objectClient)).destroy();
+    dop.core.setAction(attachObjects(unaction,objectServer)).destroy();
+    dopClient.core.setAction(attachObjects(unaction,objectClient)).destroy();
     consolelog("### Undo client: " + encode(objectClient));
     t.deepEqual(objectServer, objectClientCopy, 'deepEqual unaction server');
     t.deepEqual(objectClient, objectClientCopy, 'deepEqual unaction client');
     t.equal(objectClientCopy.length, objectClient.length, 'length unaction');
-    dop.setAction(attachObjects(actionServer,objectServer)).destroy();
-    dopClient.setAction(attachObjects(actionServer,objectClient)).destroy();
+    dop.core.setAction(attachObjects(actionServer,objectServer)).destroy();
+    dopClient.core.setAction(attachObjects(actionServer,objectClient)).destroy();
     t.equal(objectClient.length, objectServer.length, 'length unaction');
     consolelog("### Redo client: " + encode(objectClient));
 

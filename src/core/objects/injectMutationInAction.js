@@ -19,13 +19,25 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
 
     prop = path[index];
 
-    /*if (isMutationArray && isArray(action[prop])) {
+    // Its a new array like {myarray:[1,2,3]} we must apply mutations
+    if (isMutationArray && isArray(action[prop])) {
         if (mutation.swaps!==undefined) {
             var swaps = mutation.swaps.slice(0);
             action[prop].reverse()
         }
+        else if (mutation.splice!==undefined) {
+            var splice;
+            if (isUnaction) {
+                splice = (mutation.spliced) ? mutation.spliced.slice(0) : [];
+                splice.unshift(mutation.splice[0], mutation.splice.length-2);
+            }
+            else
+                splice = mutation.splice.slice(0);
+        }
     }
-    else*/ if ((isMutationArray || isArray(mutation.object)) && prop !== 'length') {
+
+    // Its an array and we must apply mutations
+    else if ((isMutationArray || isArray(mutation.object)) && prop !== 'length') {
 
         if (path.length>1) {
             if (isMutationArray && !isObject(action[prop])) 
@@ -76,5 +88,7 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
 
     // set
     else
-        action[prop] = (typeofValue=='object' || typeofValue=='array') ? dop.util.merge(typeofValue=='array'?[]:{},value) : value;
+        action[prop] = typeofValue == "object" || typeofValue == "array"
+            ? dop.util.merge(typeofValue == "array" ? [] : {}, value)
+            : value;
 };

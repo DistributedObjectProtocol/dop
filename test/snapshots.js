@@ -8,8 +8,8 @@ var del = dop.del;
 
 function makeTest(t, snapshot, original, object, mutated) {
     
-    var unaction = snapshot.getUnaction()
     var action = snapshot.getAction()
+    var unaction = snapshot.getUnaction()
     var unactionRemote = {}
     var actionRemote = {}
     for (var i in unaction) {
@@ -24,17 +24,17 @@ function makeTest(t, snapshot, original, object, mutated) {
     // }
 
     // Undo
-    dop.setAction(unaction).destroy() // snapshot.undo().destroy()
+    dop.core.setAction(unaction).destroy() // snapshot.undo().destroy()
     t.deepEqual(object, original, 'undo local')
     // Redo
-    dop.setAction(action).destroy() // snapshot.redo().destroy()
+    dop.core.setAction(action).destroy() // snapshot.redo().destroy()
     t.deepEqual(object, mutated, 'redo local')
 
     // Undo
-    dop.setAction(unactionRemote).destroy() // snapshot.undo().destroy()
+    dop.core.setAction(unactionRemote).destroy() // snapshot.undo().destroy()
     t.deepEqual(object, original, 'undo remote')
     // Redo
-    dop.setAction(actionRemote).destroy() // snapshot.redo().destroy()
+    dop.core.setAction(actionRemote).destroy() // snapshot.redo().destroy()
     t.deepEqual(object, mutated, 'redo remote')
 
 
@@ -47,16 +47,18 @@ test('From string to array and mutations', function(t) {
     var object = dop.register({dos:[1,2,3]})
     var original = dop.util.merge({}, object)
     var collector = dop.collect()
-    object.dos.splice(1,1)
+    object.dos.splice(1,1) // {"dos":{"~DOP":[[1,1,1]],"length":2}}
+    object.dos.reverse() // {"dos":{"~DOP":[[1,1,1],[0,0,1]],"length":2}}
+    set(object, 'dos', [4,5,7]) // {"dos":[4,5,7]}
     object.dos.reverse()
-    set(object, 'dos', [4,5,7])
-    // object.dos.reverse()
-    set(object, 'dos', '')
+    set(object, 'dos', '') //{"dos":""}
     var snapshot = collector.emitAndDestroy()
     var mutated = dop.util.merge({}, object)
     
     makeTest(t, snapshot, original, object, mutated) 
 });
+
+//        console.log(JSON.stringify(actions[object_id].action))
 
 
 

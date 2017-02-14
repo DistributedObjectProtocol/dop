@@ -18,9 +18,12 @@ dop.core.collector.prototype.add = function(mutation) {
 
 
 dop.core.collector.prototype.emit = function() {
-    var snapshot = dop.emit(this.mutations);
-    this.mutations = [];
-    return snapshot;
+    if (this.mutations.length > 0) {
+        var snapshot = new dop.core.snapshot(this.mutations);
+        dop.core.emit(snapshot);
+        this.mutations = [];
+        return snapshot;
+    }
 };
 
 

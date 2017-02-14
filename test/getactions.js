@@ -10,7 +10,7 @@ var arrayServer = dop.register([]);
 
 
 function applyAction(collector) {
-    var action = removeObjects(dop.getAction(collector.mutations));
+    var action = removeObjects(dop.core.getAction(collector.mutations));
     var actionServer = decode(encode(action));
     collector.destroy();
     if (actionServer[1])
