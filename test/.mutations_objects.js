@@ -19,39 +19,39 @@ var objectClientTwo = dopClientTwo.register({});
 
 function MyClass(){this.classProperty=123;}
 function maketest(t, collectorServer, checkactions) {
+
     if (collectorServer.mutations.length>0) {
-    var objectClientCopy = dop.util.merge({},objectClient);
 
+        var objectClientCopy = dop.util.merge({},objectClient);
+        var actionServer = decode(encode(dop.core.getAction(collectorServer.mutations)));
+        var unaction = decode(encode(dop.core.getUnaction(collectorServer.mutations)));
+        var snapshotServer = collectorServer.emitAndDestroy();
+        var collectorClient = dopClient.core.setActions(attachObjects(actionServer, objectClient));
+        var actionClient = decode(encode(dop.core.getAction(collectorClient.mutations)));
+        var collectorClientTwo = dopClientTwo.core.setActions(attachObjects(actionClient, objectClientTwo));
+        consolelog("### Mutations length: " +  collectorServer.mutations.length, collectorClient.mutations.length, collectorClientTwo.mutations.length );
+        var actionClientTwo = dop.core.getAction(collectorClientTwo.mutations);
 
-    var actionServer = decode(encode(dop.core.getAction(collectorServer.mutations)));
-    var unaction = decode(encode(dop.core.getUnaction(collectorServer.mutations)));
-    var snapshotServer = collectorServer.emitAndDestroy();
-    var collectorClient = dopClient.core.setAction(attachObjects(actionServer, objectClient));
-    var actionClient = decode(encode(dop.core.getAction(collectorClient.mutations)));
-    var collectorClientTwo = dopClientTwo.core.setAction(attachObjects(actionClient, objectClientTwo));
-    consolelog("### Mutations length: " +  collectorServer.mutations.length, collectorClient.mutations.length, collectorClientTwo.mutations.length );
-    var actionClientTwo = dop.core.getAction(collectorClientTwo.mutations);
+        consolelog("### After server: " + encode(objectServer));
+        consolelog("### After client: " + encode(objectClient));
+        consolelog("### Action1: " + encode(actionServer[1]));
+        consolelog("### Action2: " + encode(actionClient[1]));
+        consolelog("### Action3: " + encode(actionClientTwo[1]));
+        consolelog("### Unaction: " + encode(unaction[1]));
+        t.deepEqual(objectClient, objectServer, 'deepEqual');
+        t.equal(encode(objectClient), encode(objectServer), 'equal');
+        t.deepEqual(objectClientTwo, objectServer, 'deepEqual objectClientTwo');
+        t.equal(encode(objectClientTwo), encode(objectServer), 'equal objectClientTwo');
+        if (checkactions!==false)
+        t.equal(encode(actionServer), encode(actionClientTwo), 'equal encode actions');
 
-    consolelog("### After server: " + encode(objectServer));
-    consolelog("### After client: " + encode(objectClient));
-    consolelog("### Action1: " + encode(actionServer[1]));
-    consolelog("### Action2: " + encode(actionClient[1]));
-    consolelog("### Action3: " + encode(actionClientTwo[1]));
-    consolelog("### Unaction: " + encode(unaction[1]));
-    t.deepEqual(objectClient, objectServer, 'deepEqual');
-    t.equal(encode(objectClient), encode(objectServer), 'equal');
-    t.deepEqual(objectClientTwo, objectServer, 'deepEqual objectClientTwo');
-    t.equal(encode(objectClientTwo), encode(objectServer), 'equal objectClientTwo');
-    if (checkactions!==false)
-    t.equal(encode(actionServer), encode(actionClientTwo), 'equal encode actions');
+        // Unaction
+        dopClient.core.setActions(attachObjects(snapshotServer.getUnaction(), objectClient));
+        t.deepEqual(objectClientCopy, objectClient, 'deepEqual unaction');
+        dopClient.core.setActions(attachObjects(snapshotServer.getAction(), objectClient));
 
-    // Unaction
-    dopClient.core.setAction(attachObjects(snapshotServer.getUnaction(), objectClient));
-    t.deepEqual(objectClientCopy, objectClient, 'deepEqual unaction');
-    dopClient.core.setAction(attachObjects(snapshotServer.getAction(), objectClient));
-
-    consolelog( '' );
-    consolelog( '' );
+        consolelog( '' );
+        consolelog( '' );
     }
 }
 

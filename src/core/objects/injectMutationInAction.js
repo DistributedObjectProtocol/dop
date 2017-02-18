@@ -8,10 +8,17 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
         typeofValue = dop.util.typeof(value),
         index = 1;
 
+    // If is an array or an object we must make a copy
+    if (typeofValue == "object")
+        value = dop.util.merge({}, value);
+    else if (typeofValue == "array")
+        value = dop.util.merge([], value);
+
 
     if (!isMutationArray)
         path.push(prop);
 
+    // Going deep
     for (;index<path.length-1; ++index) {
         prop = path[index];
         action = isObject(action[prop]) ? action[prop] : action[prop]={};
@@ -21,10 +28,11 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
 
     // Its a new array like {myarray:[1,2,3]} we must apply mutations
     if (isMutationArray && isArray(action[prop])) {
+        // Swaps
         if (mutation.swaps!==undefined) {
-            var swaps = mutation.swaps.slice(0);
-            action[prop].reverse()
+            dop.util.swap(action[prop], mutation.swaps.slice(0))
         }
+        // Splice
         else if (mutation.splice!==undefined) {
             var splice;
             if (isUnaction) {
@@ -33,11 +41,17 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
             }
             else
                 splice = mutation.splice.slice(0);
+
+            Array.prototype.splice.apply(action[prop], splice);
         }
     }
 
+    else if (isArray(action)) {
+        action[prop] = value;
+    }
+
     // Its an array and we must apply mutations
-    else if ((isMutationArray || isArray(mutation.object)) && prop !== 'length') {
+    else if (isMutationArray || isArray(mutation.object)) {
 
         if (path.length>1) {
             if (isMutationArray && !isObject(action[prop])) 
@@ -77,18 +91,16 @@ dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
             mutations.push(splice);
         }
 
+        // length
+        else if (isArray(mutation.object) && mutation.name==='length')
+            mutations.push([2, value]); // 2 means length
+
         // set
         else
             mutations.push([1, prop, 1, value]);
-
-        // We have to update the length of the array in case that is lower than before
-        if (isUnaction && mutation.length!==undefined && mutation.length!==mutation.object.length)
-            action.length = mutation.length;
     }
 
     // set
     else
-        action[prop] = typeofValue == "object" || typeofValue == "array"
-            ? dop.util.merge(typeofValue == "array" ? [] : {}, value)
-            : value;
+        action[prop] = value;
 };

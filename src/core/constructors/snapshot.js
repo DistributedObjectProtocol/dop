@@ -19,21 +19,21 @@ dop.core.snapshot.prototype.getUnaction = function() {
 };
 
 
-dop.core.snapshot.prototype.redo = function() {
-    return this.redoWithoutEmit();
-};
+// dop.core.snapshot.prototype.redo = function() {
+//     return this.redoWithoutEmit();
+// };
 
 
-dop.core.snapshot.prototype.undo = function() {
-    return this.undoWithoutEmit();
-};
+// dop.core.snapshot.prototype.undo = function() {
+//     return this.undoWithoutEmit();
+// };
 
 
-dop.core.snapshot.prototype.redoWithoutEmit = function() {
-    return dop.core.setAction(this.getAction());
-};
+// dop.core.snapshot.prototype.redoWithoutEmit = function() {
+//     return dop.core.setActions(this.getAction());
+// };
 
 
-dop.core.snapshot.prototype.undoWithoutEmit = function() {
-    return dop.core.setAction(this.getUnaction());
-};
+// dop.core.snapshot.prototype.undoWithoutEmit = function() {
+//     return dop.core.setActions(this.getUnaction());
+// };

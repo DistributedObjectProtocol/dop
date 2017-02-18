@@ -251,7 +251,7 @@ test('Setting an object after array', function(t) {
 
 test('Setting an array and pushing changes', function(t) {
     var actionExpected = {one:[0,2,[3,4],5]};
-    var mutationsExpected = 4;
+    var mutationsExpected = 3;
 
     var collector = dop.collect();
     set(objectServer, 'one', [1,2,[3,4]]);
@@ -264,8 +264,8 @@ test('Setting an array and pushing changes', function(t) {
 
 
 test('Pushing an item', function(t) {
-    var actionExpected = {one:{"~DOP":[[1,4,0,7]],length:5}};
-    var mutationsExpected = 2;
+    var actionExpected = {one:{"~DOP":[[1,4,0,7]]}};
+    var mutationsExpected = 1;
 
     var collector = dop.collect();
     objectServer.one.push(7);
@@ -290,7 +290,7 @@ test('Setting an item of array', function(t) {
 
 
 test('Setting a subobject into an array', function(t) {
-    var actionExpected = {"one":{"2":{"~DOP":[[1,2,1,{}]],length:3}}};
+    var actionExpected = {"one":{"2":{"~DOP":[[1,2,1,{}],[2,3]]}}};
     var mutationsExpected = 2;
 
     var collector = dop.collect();
@@ -325,8 +325,8 @@ test('Setting a property of a subobject that is into an array', function(t) {
 
 
 test('Pushing an item of a subarray that is into an array', function(t) {
-    var actionExpected = {"one":{"2":{"2":{"array":{"~DOP":[[1,1,0,"xD"]],"length":2}}}}};
-    var mutationsExpected = 2;
+    var actionExpected = {"one":{"2":{"2":{"array":{"~DOP":[[1,1,0,"xD"]]}}}}};
+    var mutationsExpected = 1;
 
     var collector = dop.collect();
     objectServer.one[2][2].array.push('xD');
@@ -349,8 +349,8 @@ test('Setting a array internaly', function(t) {
 
 
 test('Pushing items and changing properties internaly', function(t) {
-    var actionExpected = {one:{3:{2:{array:{"~DOP":[[1,2,1,"juas"],[1,3,0,"omg"]],length:4}}},"~DOP":[[1,5,0,"omg"],[0,0,5,1,4,2,3]],length:6},two:undefined};
-    var mutationsExpected = 8;
+    var actionExpected = {one:{3:{2:{array:{"~DOP":[[1,2,1,"juas"],[2,3],[1,3,0,"omg"]]}}},"~DOP":[[1,5,0,"omg"],[0,0,5,1,4,2,3]]},two:undefined};
+    var mutationsExpected = 6;
 
     var collector = dop.collect();
     set(objectServer.one[2][2].array, 2, 'juas');
@@ -374,7 +374,7 @@ test('Pushing items and changing properties internaly', function(t) {
 
 
 test('Setting a property literaly', function(t) {
-    var actionExpected = {"~DOP":[[1,0,1,"testing"]],length:1};
+    var actionExpected = {"~DOP":[[1,0,1,"testing"],[2,1]]};
     var mutationsExpected = 2;
 
     var collector = dop.collect();
@@ -386,8 +386,8 @@ test('Setting a property literaly', function(t) {
 
 
 test('Pushing a property', function(t) {
-    var actionExpected = {"~DOP":[[1,1,0,"second"]],length:2};
-    var mutationsExpected = 2;
+    var actionExpected = {"~DOP":[[1,1,0,"second"]]};
+    var mutationsExpected = 1;
 
     var collector = dop.collect();
     arrayServer.push('second');
@@ -397,8 +397,8 @@ test('Pushing a property', function(t) {
 });
 
 test('Adding a subobject', function(t) {
-    var actionExpected = {"~DOP":[[1,2,0,{"obj":123}]],length:3};
-    var mutationsExpected = 2;
+    var actionExpected = {"~DOP":[[1,2,0,{"obj":123}]]};
+    var mutationsExpected = 1;
 
     var collector = dop.collect();
     arrayServer.push({obj:123});
@@ -409,8 +409,8 @@ test('Adding a subobject', function(t) {
 
 
 test('Shift and editing subobject', function(t) {
-    var actionExpected = {"1":{"prop":456},"~DOP":[[1,0,1]],length:2};
-    var mutationsExpected = 3;
+    var actionExpected = {"1":{"prop":456},"~DOP":[[1,0,1]]};
+    var mutationsExpected = 2;
 
     var collector = dop.collect();
     set(arrayServer[2], 'prop', 456);
@@ -423,8 +423,8 @@ test('Shift and editing subobject', function(t) {
 
 
 test('Pushing literal arrays', function(t) {
-    var actionExpected = {"1":{"prop":["my","array"]},"~DOP":[[1,2,0,[7,8,[9,10]],11],[1,0,1,"first"]],length:4};
-    var mutationsExpected = 4;
+    var actionExpected = {"1":{"prop":["my","array"]},"~DOP":[[1,2,0,[7,8,[9,10]],11],[1,0,1,"first"]]};
+    var mutationsExpected = 3;
 
     var collector = dop.collect();
     arrayServer.push([7,8,[9,10]],11);

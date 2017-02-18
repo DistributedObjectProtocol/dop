@@ -25,7 +25,11 @@ dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
                 // (mutation[0]<0) ? mutation[0] = mutation[0]*-1 : mutation[1] = mutation[1]*-1;
                 dop.core.swap(destiny[prop], mutation);
             }
-            // set
+            // length
+            else if (typeArrayMutation===2) {
+                dop.set(destiny[prop], 'length', mutation[1]);
+            }
+            // splice & set & del
             else {
                 // We have to update the length of the array in case that is lower than before
                 if (destiny[prop].length<mutation[0])
