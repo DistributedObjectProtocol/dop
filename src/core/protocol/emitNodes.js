@@ -1,13 +1,13 @@
 
-dop.core.emitNodes = function(action) {
+dop.core.emitNodes = function(patch) {
     var object_id, node_token, node, object_data;
-    for (object_id in action) {
+    for (object_id in patch) {
         if (isObject(dop.data.object[object_id])) {
             object_data = dop.data.object[object_id];
             for (node_token in object_data.node) {
                 if (object_data.node[node_token].subscriber===1) {
                     node = dop.data.node[node_token];
-                    dop.protocol.patch(node, Number(object_id), action[object_id].action);
+                    dop.protocol.patch(node, Number(object_id), patch[object_id].patch);
                 }
             }
         }

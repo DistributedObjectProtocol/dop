@@ -19,7 +19,7 @@ var object2 = dop.register({uno:1, cuatro:4});
 test('createObserver.observe', function(t) {
 
     function first(mutations) {
-        console.log( mutations );
+        // console.log( mutations );
     }
     function second(){}
 
@@ -127,7 +127,7 @@ test('dop.observeProperty', function(t) {
         todos: []
     });
     dop.observe(object.todos, function(mutations){
-        console.log( mutations );
+        // console.log( mutations );
     })
     // object.todos.push(1);
     dop.set(object.todos, 1, 25);

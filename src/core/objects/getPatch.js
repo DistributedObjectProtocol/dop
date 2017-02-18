@@ -1,7 +1,7 @@
 
-dop.core.getAction = function(mutations) {
+dop.core.getPatch = function(mutations) {
 
-    var actions = {},
+    var patchs = {},
         index = 0,
         total = mutations.length,
         mutation,
@@ -11,11 +11,11 @@ dop.core.getAction = function(mutations) {
         mutation = mutations[index];
         if (dop.core.objectIsStillStoredOnPath(mutation.object)) {// Only need it for arrays but is faster than injectMutation directly
             object_id = dop.getObjectId(mutation.object);
-            if (actions[object_id] === undefined)
-                actions[object_id] = {object:dop.getObjectRoot(mutation.object), action:{}};
-            dop.core.injectMutationInAction(actions[object_id].action, mutation);
+            if (patchs[object_id] === undefined)
+                patchs[object_id] = {object:dop.getObjectRoot(mutation.object), patch:{}};
+            dop.core.injectMutationInPatch(patchs[object_id].patch, mutation);
         }
     }
 
-    return actions;
+    return patchs;
 };

@@ -8,30 +8,30 @@ var del = dop.del;
 
 function makeTest(t, snapshot, original, object, mutated) {
     
-    var action = snapshot.getAction()
-    var unaction = snapshot.getUnaction()
+    var patch = snapshot.getPatch()
+    var unpatch = snapshot.getUnpatch()
     var object_id = dop.getObjectId(object)
-    action = action[object_id].action
-    unaction = unaction[object_id].action
-    var actionRemote = JSON.parse(JSON.stringify(action))
-    var unactionRemote = JSON.parse(JSON.stringify(unaction))
+    patch = patch[object_id].patch
+    unpatch = unpatch[object_id].patch
+    var patchRemote = JSON.parse(JSON.stringify(patch))
+    var unpatchRemote = JSON.parse(JSON.stringify(unpatch))
 
 
-    console.log('action',JSON.stringify(action))
-    console.log('unaction',JSON.stringify(unaction))
+    console.log('patch',JSON.stringify(patch))
+    console.log('unpatch',JSON.stringify(unpatch))
 
     // Undo
-    dop.core.setAction(object, unaction)
+    dop.core.setPatch(object, unpatch)
     t.deepEqual(object, original, 'undo local')
     // Redo
-    dop.core.setAction(object, action)
+    dop.core.setPatch(object, patch)
     t.deepEqual(object, mutated, 'redo local')
 
     // Undo
-    dop.core.setAction(object, unactionRemote)
+    dop.core.setPatch(object, unpatchRemote)
     t.deepEqual(object, original, 'undo remote')
     // Redo
-    dop.core.setAction(object, actionRemote)
+    dop.core.setPatch(object, patchRemote)
     t.deepEqual(object, mutated, 'redo remote')
 
 
@@ -55,7 +55,7 @@ test('From string to array and mutations', function(t) {
     makeTest(t, snapshot, original, object, mutated) 
 });
 
-//        console.log(JSON.stringify(actions[object_id].action))
+//        console.log(JSON.stringify(patchs[object_id].patch))
 
 
 
@@ -86,18 +86,20 @@ test('object to array', function(t) {
     makeTest(t, snapshot, original, object, mutated) 
 });
 
-// test('array mutation', function(t) {
+test('array mutation', function(t) {
 
-//     var object = dop.register([{},"dos","tres","cuatro"])
-//     var original = dop.util.merge([], object)
-//     var collector = dop.collect()
-//     set(object[0], 'prop', 'value')
-//     object.reverse();   
-//     var snapshot = collector.emitAndDestroy()
-//     var mutated = dop.util.merge([], object)
-    
-//     makeTest(t, snapshot, original, object, mutated) 
-// });
+    var object = dop.register([{},"dos","tres","cuatro"])
+    var original = dop.util.merge([], object)
+    var collector = dop.collect()
+    set(object[0], 'prop', 'value')
+    object.reverse();   
+    var snapshot = collector.emitAndDestroy()
+    var mutated = dop.util.merge([], object)
+    snapshot.mutations.forEach((m)=>{
+        console.log(JSON.stringify(m))
+    })
+    makeTest(t, snapshot, original, object, mutated) 
+});
 
 // test('array deep mutation', function(t) {
 

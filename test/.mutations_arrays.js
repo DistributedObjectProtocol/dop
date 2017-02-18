@@ -18,54 +18,54 @@ var objectClient = dopClient.register([]);
 var objectClientTwo = dopClientTwo.register([]);
 
 function MyClass(){this.classProperty=123;}
-function maketest(t, collectorServer, checkactions) {
+function maketest(t, collectorServer, checkpatchs) {
     
     var objectClientCopy = dop.util.merge([],objectClient);
 
-    var actionServer = decode(encode(dop.core.getAction(collectorServer.mutations)));
-    var unaction = decode(encode(dop.core.getUnaction(collectorServer.mutations)));
+    var patchServer = decode(encode(dop.core.getPatch(collectorServer.mutations)));
+    var unpatch = decode(encode(dop.core.getUnpatch(collectorServer.mutations)));
     collectorServer.destroy();
-    var collectorClient = dopClient.core.setAction(attachObjects(actionServer,objectClient));
-    var actionClient = decode(encode(dop.core.getAction(collectorClient.mutations)));
-    var collectorClientTwo = dopClientTwo.core.setAction(attachObjects(actionClient, objectClientTwo));
+    var collectorClient = dopClient.core.setPatch(attachObjects(patchServer,objectClient));
+    var patchClient = decode(encode(dop.core.getPatch(collectorClient.mutations)));
+    var collectorClientTwo = dopClientTwo.core.setPatch(attachObjects(patchClient, objectClientTwo));
     consolelog("### Mutations length: " +  collectorServer.mutations.length, collectorClient.mutations.length, collectorClientTwo.mutations.length );
-    var actionClientTwo = dop.core.getAction(collectorClientTwo.mutations);
+    var patchClientTwo = dop.core.getPatch(collectorClientTwo.mutations);
 
     consolelog("### After server: " + encode(objectServer));
     consolelog("### After client: " + encode(objectClient));
-    consolelog("### Action1: " + encode(actionServer[1]));
-    consolelog("### Action2: " + encode(actionClient[1]));
-    consolelog("### Action3: " + encode(actionClientTwo[1]));
-    consolelog("### Unaction: " + encode(unaction[1]));
+    consolelog("### Patch1: " + encode(patchServer[1]));
+    consolelog("### Patch2: " + encode(patchClient[1]));
+    consolelog("### Patch3: " + encode(patchClientTwo[1]));
+    consolelog("### Unpatch: " + encode(unpatch[1]));
     t.deepEqual(objectClient, objectServer, 'deepEqual');
     t.equal(encode(objectClient), encode(objectServer), 'equal');
     t.equal(objectClient.length, objectServer.length, 'length');
     t.deepEqual(objectClientTwo, objectServer, 'deepEqual objectClientTwo');
     t.equal(encode(objectClientTwo), encode(objectServer), 'equal objectClientTwo');
     t.equal(objectClientTwo.length, objectServer.length, 'length objectClientTwo');
-    if (checkactions!==false)
-    t.equal(encode(actionServer), encode(actionClientTwo), 'equal encode actions');
+    if (checkpatchs!==false)
+    t.equal(encode(patchServer), encode(patchClientTwo), 'equal encode patchs');
 
-    // Unaction
-    dop.core.setAction(attachObjects(unaction,objectServer)).destroy();
-    dopClient.core.setAction(attachObjects(unaction,objectClient)).destroy();
+    // Unpatch
+    dop.core.setPatch(attachObjects(unpatch,objectServer)).destroy();
+    dopClient.core.setPatch(attachObjects(unpatch,objectClient)).destroy();
     consolelog("### Undo client: " + encode(objectClient));
-    t.deepEqual(objectServer, objectClientCopy, 'deepEqual unaction server');
-    t.deepEqual(objectClient, objectClientCopy, 'deepEqual unaction client');
-    t.equal(objectClientCopy.length, objectClient.length, 'length unaction');
-    dop.core.setAction(attachObjects(actionServer,objectServer)).destroy();
-    dopClient.core.setAction(attachObjects(actionServer,objectClient)).destroy();
-    t.equal(objectClient.length, objectServer.length, 'length unaction');
+    t.deepEqual(objectServer, objectClientCopy, 'deepEqual unpatch server');
+    t.deepEqual(objectClient, objectClientCopy, 'deepEqual unpatch client');
+    t.equal(objectClientCopy.length, objectClient.length, 'length unpatch');
+    dop.core.setPatch(attachObjects(patchServer,objectServer)).destroy();
+    dopClient.core.setPatch(attachObjects(patchServer,objectClient)).destroy();
+    t.equal(objectClient.length, objectServer.length, 'length unpatch');
     consolelog("### Redo client: " + encode(objectClient));
 
     consolelog( '' );
     consolelog( '' );
 }
 
-function attachObjects(actions, obj) {
-    for (var object_id in actions)
-        actions[object_id].object = obj;
-    return actions;
+function attachObjects(patchs, obj) {
+    for (var object_id in patchs)
+        patchs[object_id].object = obj;
+    return patchs;
 }
 
 

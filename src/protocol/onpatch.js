@@ -19,7 +19,7 @@ dop.protocol.onpatch = function(node, request_id, request) {
             collector = dop.collectFirst();
             while (object_node.applied[object_node.applied_version+1]) {
                 object_node.applied_version += 1;
-                dop.core.setActionFunction(object_data.object, object_node.applied[object_node.applied_version]);
+                dop.core.setPatchFunction(object_data.object, object_node.applied[object_node.applied_version]);
                 delete object_node.applied[object_node.applied_version];
             }
             collector.emitAndDestroy();

@@ -1,5 +1,5 @@
 
-dop.core.setActionMutator = function(destiny, prop, value, typeofValue, path) {
+dop.core.setPatchMutator = function(destiny, prop, value, typeofValue, path) {
 
     var typeofDestinyParent = dop.util.typeof(destiny),
         typeofDestiny = dop.util.typeof(destiny[prop]);

@@ -19,12 +19,12 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
                 if (node.owner[object_owner_id] === undefined) {
                     collector = dop.collectFirst();
                     if (dop.isRegistered(request.into))
-                        object = dop.core.setActionFunction(request.into, object_owner);
+                        object = dop.core.setPatchFunction(request.into, object_owner);
                     else
                         object = dop.register((request.into===undefined) ? 
                             object_owner
                         :
-                            dop.core.setAction(request.into, object_owner)
+                            dop.core.setPatch(request.into, object_owner)
                         );
                     dop.core.registerOwner(node, object, object_owner_id);
                     collector.emitAndDestroy();
