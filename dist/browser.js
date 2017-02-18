@@ -1,5 +1,5 @@
 /*
- * dop@0.11.11
+ * dop@0.11.10
  * www.distributedobjectprotocol.org
  * (c) 2016 Josema Gonzalez
  * MIT License.
@@ -601,6 +601,37 @@ dop.collect = function(filter) {
 };
 
 
+// setTimeout(function() {
+// console.clear();
+
+// obj=dop.register({mola:123,array:[1,2,{obj:'lol'},4,5,6,7,8],old:"old"})
+// arr=obj.array;
+// str=dop.encode(obj);
+
+// dop.observe(obj.array, console.log);
+// console.log(obj.array.slice(0), obj.array.length);
+
+// collector = dop.collect();
+// obj.new='yeah';
+// delete obj.old;
+// obj.array.shift();
+// obj.array.splice(2,{last:9},'coca','cola');
+// obj.array.reverse();
+// obj.array.push(dop.register({registered:true}));
+// obj.array[7].obj='LOOOOOL!'
+// collector.emit();
+
+// unaction = collector.getUnaction();
+// // console.log(obj.array.slice(0), obj, unaction[3], collector.mutations.length);
+// console.log(obj.array.slice(0), obj.array.length, arr===obj.array);
+// dop.setAction(unaction);
+// console.log(str);
+// console.log(dop.encode(obj), str===dop.encode(obj));
+// console.log(obj.array.slice(0), obj.array.length, arr===obj.array);
+
+// },1000)
+
+
 
 
 //////////  src/api/collectFirst.js
@@ -735,6 +766,19 @@ dop.del = function(object, property) {
 
 
 
+//////////  src/api/emit.js
+
+dop.emit = function(mutations) {
+    if (mutations.length>0) {
+        // This is true if we have nodes subscribed to those object/mutations
+        if (dop.core.emitObservers(mutations))
+            dop.core.emitNodes(dop.getAction(mutations));
+    }
+};
+
+
+
+
 //////////  src/api/encode.js
 
 dop.encode = function(data, encoder) {
@@ -744,6 +788,32 @@ dop.encode = function(data, encoder) {
 };
 dop.encodeFunction = function(data) {
     return JSON.stringify(data, dop.core.encodeFunction);
+};
+
+
+
+
+//////////  src/api/getAction.js
+
+dop.getAction = function(mutations) {
+
+    var actions = {},
+        index = 0,
+        total = mutations.length,
+        mutation,
+        object_id;
+
+    for (;index<total; ++index) {
+        mutation = mutations[index];
+        if (dop.core.objectIsStillStoredOnPath(mutation.object)) {// Only need it for arrays but is faster than injectMutation directly
+            object_id = dop.getObjectId(mutation.object);
+            if (actions[object_id] === undefined)
+                actions[object_id] = {object:dop.getObjectRoot(mutation.object), action:{}};
+            dop.core.injectMutationInAction(actions[object_id].action, mutation);
+        }
+    }
+
+    return actions;
 };
 
 
@@ -800,6 +870,29 @@ dop.getObjectRoot = function(object) {
 
 dop.getObjectTarget = function(object) {
     return dop.getObjectDop(object).t;
+};
+
+
+
+
+//////////  src/api/getUnaction.js
+
+dop.getUnaction = function(mutations) {
+
+    var actions = {},
+        index = mutations.length-1,
+        object_id,
+        mutation;
+
+    for (;index>-1; --index) {
+        mutation = mutations[index];
+        object_id = dop.getObjectId(mutation.object);
+        if (actions[object_id] === undefined)
+            actions[object_id] = {object:dop.getObjectRoot(mutation.object), action:{}};
+        dop.core.injectMutationInAction(actions[object_id].action, mutation, true);
+    }
+
+    return actions;
 };
 
 
@@ -979,6 +1072,18 @@ dop.set = function(object, property, value) {
     :
         object[property] = value;
     return value;
+};
+
+
+
+
+//////////  src/api/setAction.js
+
+dop.setAction = function(actions) {
+    var collector = dop.collectFirst(), object_id;
+    for (object_id in actions)
+        dop.core.setAction(actions[object_id].object, actions[object_id].action);
+    return collector;
 };
 
 
@@ -1264,12 +1369,10 @@ dop.core.collector.prototype.add = function(mutation) {
 
 
 dop.core.collector.prototype.emit = function() {
-    if (this.mutations.length > 0) {
-        var snapshot = new dop.core.snapshot(this.mutations);
-        dop.core.emit(snapshot);
-        this.mutations = [];
-        return snapshot;
-    }
+    var mutations = this.mutations;
+    dop.emit(mutations);
+    this.mutations = [];
+    return mutations;
 };
 
 
@@ -1297,6 +1400,17 @@ dop.core.collector.prototype.emitAndDestroy = function() {
     this.destroy();
     return this.emit();
 };
+
+
+dop.core.collector.prototype.getAction = function() {
+    return dop.getAction(this.mutations);
+};
+
+
+dop.core.collector.prototype.getUnaction = function() {
+    return dop.getUnaction(this.mutations);
+};
+
 
 
 
@@ -1436,50 +1550,6 @@ dop.core.observer.prototype.destroy = function() {
 };
 
 
-
-
-
-
-//////////  src/core/constructors/snapshot.js
-
-dop.core.snapshot = function(mutations) {
-    this.done = true;
-    this.mutations = mutations;
-};
-
-
-dop.core.snapshot.prototype.getPatch = function() {
-    if (this.patch === undefined)
-        this.patch = dop.core.getPatch(this.mutations);
-    return this.patch;
-};
-
-
-dop.core.snapshot.prototype.getUnpatch = function() {
-    if (this.unpatch === undefined)
-        this.unpatch = dop.core.getUnpatch(this.mutations);
-    return this.unpatch;
-};
-
-
-// dop.core.snapshot.prototype.redo = function() {
-//     return this.redoWithoutEmit();
-// };
-
-
-// dop.core.snapshot.prototype.undo = function() {
-//     return this.undoWithoutEmit();
-// };
-
-
-// dop.core.snapshot.prototype.redoWithoutEmit = function() {
-//     return dop.core.setPatchs(this.getPatch());
-// };
-
-
-// dop.core.snapshot.prototype.undoWithoutEmit = function() {
-//     return dop.core.setPatchs(this.getUnpatch());
-// };
 
 
 
@@ -1684,21 +1754,15 @@ dop.core.set = function(object, property, value) {
             }
 
             if ((objectTarget===objectProxy || object===objectProxy) && !(isFunction(oldValue) && isFunction(value))) {
-                var mutation = {
-                    object: objectProxy,
-                    name: property,
-                    value: isArray(value) ? value.slice(0) : value
-                };
+                var mutation = {object:objectProxy, name:property, value:value};
                 if (hasOwnProperty)
                     mutation.oldValue = oldValue;
-                // We cant store the original array cuz when we inject the mutation into the patch object could be different from the original
-                //if (isArray(value))
-                //    mutation.valueOriginal = value.slice(0); //dop.util.merge([], value);
+                if (isArray(value)) // We cant store the original array cuz when we inject the mutation into the action object could be different from the original
+                    mutation.valueOriginal = dop.util.merge([], value);
 
                 dop.core.storeMutation(mutation);
 
-                // if is array we must store the length in order to revert it with setUnpatch
-                if (isArray(objectTarget) && objectTarget.length !== length)
+                if (isArray(objectTarget) && objectTarget.length !== length) // if is array we must store the length in order to revert it with setUnaction
                     dop.core.storeMutation({
                         object:objectProxy,
                         name:'length',
@@ -1887,15 +1951,14 @@ dop.core.splice = function(array, args) {
             };
             if (spliced.length > 0)
                 mutation.spliced = spliced;
-
             dop.core.storeMutation(mutation);
-            // if (originallength!==length)
-            //     dop.core.storeMutation({
-            //         object:objectProxy,
-            //         name:'length',
-            //         value:length,
-            //         oldValue:originallength
-            //     });
+            if (originallength!==length)
+                dop.core.storeMutation({
+                    object:objectProxy,
+                    name:'length',
+                    value:length,
+                    oldValue:originallength
+                });
         }
 
     }
@@ -1914,13 +1977,22 @@ dop.core.swap = function(array, swaps) {
     if (swaps.length>1) {
 
         var objectTarget = dop.getObjectTarget(array),
-            objectProxy = dop.getObjectProxy(array);
+            objectProxy = dop.getObjectProxy(array),
+            index = 0,
+            total = swaps.length-1,
+            tempItem, swapA, swapB;
 
-        var result = dop.util.swap(objectTarget, swaps, function(swapA, swapB){
+        for (;index<total; index+=2) {
+            swapA = swaps[index];
+            swapB = swaps[index+1];
+            tempItem = objectTarget[swapA];
+            objectTarget[swapA] = objectTarget[swapB];
+            objectTarget[swapB] = tempItem;
             // Updating path
             dop.core.updatePathArray(objectTarget, swapA);
             dop.core.updatePathArray(objectTarget, swapB);
-        })
+        }
+
 
         if (objectTarget===objectProxy || array===objectProxy)
             dop.core.storeMutation({
@@ -1928,33 +2000,9 @@ dop.core.swap = function(array, swaps) {
                 swaps:swaps
             });
 
-        return result;
-    }
-};
-
-
-
-dop.util.swap = function(array, swaps, callback) {
-
-    if (array.length>0 && swaps.length>1) {
-
-        var index = 0,
-            total = swaps.length-1,
-            tempItem, swapA, swapB,
-            isCallback = isFunction(callback);
-
-        for (;index<total; index+=2) {
-            swapA = swaps[index];
-            swapB = swaps[index+1];
-            tempItem = array[swapA];
-            array[swapA] = array[swapB];
-            array[swapB] = tempItem;
-            if (isCallback)
-                callback(swapA, swapB);
-        }
+        return array;
     }
 
-     return array;
 };
 
 
@@ -2048,18 +2096,6 @@ dop.core.createCollector = function(queue, index, filter) {
 
 
 
-//////////  src/core/objects/emit.js
-
-dop.core.emit = function(snapshot) {
-    // This is true if we have nodes subscribed to those object/mutations
-    if (dop.core.emitObservers(snapshot.mutations))
-        dop.core.emitNodes(snapshot.getPatch());
-    return snapshot;
-};
-
-
-
-
 //////////  src/core/objects/emitObservers.js
 
 dop.core.emitObservers = function(mutations) {
@@ -2141,128 +2177,47 @@ dop.core.emitObservers = function(mutations) {
 
 
 
-//////////  src/core/objects/getPatch.js
+//////////  src/core/objects/injectMutationInAction.js
 
-dop.core.getPatch = function(mutations) {
-
-    var patchs = {},
-        index = 0,
-        total = mutations.length,
-        mutation,
-        object_id;
-
-    for (;index<total; ++index) {
-        mutation = mutations[index];
-        if (dop.core.objectIsStillStoredOnPath(mutation.object)) {// Only need it for arrays but is faster than injectMutation directly
-            object_id = dop.getObjectId(mutation.object);
-            if (patchs[object_id] === undefined)
-                patchs[object_id] = {object:dop.getObjectRoot(mutation.object), patch:{}};
-            dop.core.injectMutationInPatch(patchs[object_id].patch, mutation);
-        }
-    }
-
-    return patchs;
-};
-
-
-
-
-//////////  src/core/objects/getUnpatch.js
-
-dop.core.getUnpatch = function(mutations) {
-
-    var patchs = {},
-        index = mutations.length-1,
-        object_id,
-        mutation;
-
-    for (;index>-1; --index) {
-        mutation = mutations[index];
-        object_id = dop.getObjectId(mutation.object);
-        if (patchs[object_id] === undefined)
-            patchs[object_id] = {object:dop.getObjectRoot(mutation.object), patch:{}};
-        dop.core.injectMutationInPatch(patchs[object_id].patch, mutation, true);
-    }
-
-    return patchs;
-};
-
-
-
-
-//////////  src/core/objects/injectMutationInPatch.js
-
-dop.core.injectMutationInPatch = function(patch, mutation, isUnpatch) {
+dop.core.injectMutationInAction = function(action, mutation, isUnaction) {
 
     var isMutationArray = mutation.splice!==undefined || mutation.swaps!==undefined,
         path = dop.getObjectDop(mutation.object).slice(0),
         prop = mutation.name,
-        value = (isUnpatch) ? mutation.oldValue : mutation.value,
+        value = (isUnaction) ? mutation.oldValue : mutation.value,
         typeofValue = dop.util.typeof(value),
         index = 1;
-
-    // If is an array or an object we must make a copy
-    if (typeofValue == "object")
-        value = dop.util.merge({}, value);
-    else if (typeofValue == "array")
-        value = dop.util.merge([], value);
 
 
     if (!isMutationArray)
         path.push(prop);
 
-    // Going deep
     for (;index<path.length-1; ++index) {
         prop = path[index];
-        patch = isObject(patch[prop]) ? patch[prop] : patch[prop]={};
+        action = isObject(action[prop]) ? action[prop] : action[prop]={};
     }
 
     prop = path[index];
 
-    // Its a new array like {myarray:[1,2,3]} we must apply mutations
-    if (isMutationArray && isArray(patch[prop])) {
-        // Swaps
-        if (mutation.swaps!==undefined) {
-            dop.util.swap(patch[prop], mutation.swaps.slice(0))
-        }
-        // Splice
-        else if (mutation.splice!==undefined) {
-            var splice;
-            if (isUnpatch) {
-                splice = (mutation.spliced) ? mutation.spliced.slice(0) : [];
-                splice.unshift(mutation.splice[0], mutation.splice.length-2);
-            }
-            else
-                splice = mutation.splice.slice(0);
-
-            Array.prototype.splice.apply(patch[prop], splice);
-        }
-    }
-
-    else if (isArray(patch)) {
-        patch[prop] = value;
-    }
-
-    // Its an array and we must apply mutations
-    else if (isMutationArray || isArray(mutation.object)) {
+    if ((isMutationArray || isArray(mutation.object)) && prop !== 'length') {
 
         if (path.length>1) {
-            if (isMutationArray && !isObject(patch[prop])) 
-                patch[prop] = {};
+            if (isMutationArray && !isObject(action[prop])) 
+                action[prop] = {};
 
             if (isMutationArray)
-                patch = patch[prop];
+                action = action[prop];
         }
 
-        if (!isObject(patch[dop.cons.DOP]))
-            patch[dop.cons.DOP] = [];
+        if (!isObject(action[dop.cons.DOP]))
+            action[dop.cons.DOP] = [];
             
-        var mutations = patch[dop.cons.DOP];
+        var mutations = action[dop.cons.DOP];
 
         // swap
         if (mutation.swaps!==undefined) {
             var swaps = mutation.swaps.slice(0);
-            if (isUnpatch)
+            if (isUnaction)
                 swaps.reverse();
             // var tochange = (swaps[0]>0) ? 0 : 1;
             // swaps[tochange] = swaps[tochange]*-1;
@@ -2273,7 +2228,7 @@ dop.core.injectMutationInPatch = function(patch, mutation, isUnpatch) {
         // splice
         else if (mutation.splice!==undefined) {
             var splice;
-            if (isUnpatch) {
+            if (isUnaction) {
                 splice = (mutation.spliced) ? mutation.spliced.slice(0) : [];
                 splice.unshift(mutation.splice[0], mutation.splice.length-2);
             }
@@ -2284,18 +2239,18 @@ dop.core.injectMutationInPatch = function(patch, mutation, isUnpatch) {
             mutations.push(splice);
         }
 
-        // length
-        else if (isArray(mutation.object) && mutation.name==='length')
-            mutations.push([2, value]); // 2 means length
-
         // set
         else
             mutations.push([1, prop, 1, value]);
+
+        // We have to update the length of the array in case that is lower than before
+        if (isUnaction && mutation.length!==undefined && mutation.length!==mutation.object.length)
+            action.length = mutation.length;
     }
 
     // set
     else
-        patch[prop] = value;
+        action[prop] = (typeofValue=='object' || typeofValue=='array') ? dop.util.merge(typeofValue=='array'?[]:{},value) : value;
 };
 
 
@@ -2383,31 +2338,24 @@ dop.core.proxyObjectHandler = {
 
 
 
-//////////  src/core/objects/setPatch.js
+//////////  src/core/objects/setAction.js
 
-dop.core.setPatch = function(object, patch) {
-    dop.util.path({0:patch}, null, {0:object}, dop.core.setPatchMutator);
+dop.core.setAction = function(object, action) {
+    dop.util.path({a:action}, null, {a:object}, dop.core.setActionMutator);
     return object;
 };
 
-dop.core.setPatchs = function(patchs) {
-    var collector = dop.collectFirst(), object_id;
-    for (object_id in patchs)
-        dop.core.setPatch(patchs[object_id].object, patchs[object_id].patch);
-    return collector;
-};
 
 
 
+//////////  src/core/objects/setActionFunction.js
 
-//////////  src/core/objects/setPatchFunction.js
-
-dop.core.setPatchFunction = function(object, patch) {
-    dop.util.path({a:patch}, null, {a:object}, function(destiny, prop, value, typeofValue, path){
+dop.core.setActionFunction = function(object, action) {
+    dop.util.path({a:action}, null, {a:object}, function(destiny, prop, value, typeofValue, path){
         if (isFunction(value) && value.name==dop.core.createRemoteFunction.name)
             dop.set(destiny, prop, value(dop.getObjectDop(object)[0], path.slice(1)));
         else
-            return dop.core.setPatchMutator(destiny, prop, value, typeofValue, path);
+            return dop.core.setActionMutator(destiny, prop, value, typeofValue, path);
     });
     return object;
 };
@@ -2415,81 +2363,94 @@ dop.core.setPatchFunction = function(object, patch) {
 
 
 
-//////////  src/core/objects/setPatchMutator.js
+//////////  src/core/objects/setActionMutator.js
 
-dop.core.setPatchMutator = function(destiny, prop, value, typeofValue, path) {
+dop.core.setActionMutator = function(destiny, prop, value, typeofValue) {
 
-    var typeofDestinyParent = dop.util.typeof(destiny),
-        typeofDestiny = dop.util.typeof(destiny[prop]);
+    // if (path.length > 1) {
 
-    // Array mutations
-    if (typeofValue=='object' && typeofDestiny=='array' && value.hasOwnProperty(dop.cons.DOP)) {
+        var typeofDestiny = dop.util.typeof(destiny[prop]);
 
-        var mutations = value[dop.cons.DOP],
-            mutation,
-            index=0,
-            total=mutations.length,
-            typeArrayMutation;
+        // Array mutations
+        if (typeofValue=='object' && typeofDestiny=='array' && value.hasOwnProperty(dop.cons.DOP)) {
 
-        // if (typeofDestiny!='array')
-        //     dop.set(destiny, prop, []);
+            var mutations = value[dop.cons.DOP],
+                mutation,
+                index=0,
+                total=mutations.length,
+                typeArrayMutation;
 
-        for (;index<total; ++index) {
-            typeArrayMutation = mutations[index][0]; // 0=swaps 1=splices
-            mutation = mutations[index].slice(1);
-            // swap
-            if (typeArrayMutation===0) {
-                // mutation = mutation.slice(0);
-                // (mutation[0]<0) ? mutation[0] = mutation[0]*-1 : mutation[1] = mutation[1]*-1;
-                dop.core.swap(destiny[prop], mutation);
-            }
-            // length
-            else if (typeArrayMutation===2) {
-                dop.set(destiny[prop], 'length', mutation[1]);
-            }
-            // splice & set & del
-            else {
-                // We have to update the length of the array in case that is lower than before
-                if (destiny[prop].length<mutation[0])
-                    dop.getObjectTarget(destiny[prop]).length = mutation[0];
-                // set
-                if (mutation.length===3 && mutation[1]===1) {
-                    (mutation[2] === undefined) ?
-                        dop.del(destiny[prop], mutation[0])
-                    :
-                        dop.set(destiny[prop], mutation[0], mutation[2]);
+            // if (typeofDestiny!='array')
+            //     dop.set(destiny, prop, []);
+
+            for (;index<total; ++index) {
+                typeArrayMutation = mutations[index][0]; // 0=swaps 1=splices
+                mutation = mutations[index].slice(1);
+                // swap
+                if (typeArrayMutation===0) {
+                    // mutation = mutation.slice(0);
+                    // (mutation[0]<0) ? mutation[0] = mutation[0]*-1 : mutation[1] = mutation[1]*-1;
+                    dop.core.swap(destiny[prop], mutation);
                 }
-                // splice
-                else
-                    dop.core.splice(destiny[prop], mutation);
+                // set
+                else {
+                    // We have to update the length of the array in case that is lower than before
+                    if (destiny[prop].length<mutation[0])
+                        dop.getObjectTarget(destiny[prop]).length = mutation[0];
+                    // set
+                    if (mutation.length===3 && mutation[1]===1) {
+                        (mutation[2] === undefined) ?
+                            dop.del(destiny[prop], mutation[0])
+                        :
+                            dop.set(destiny[prop], mutation[0], mutation[2]);
+                    }
+                    // splice
+                    else
+                        dop.core.splice(destiny[prop], mutation);
+                }
             }
+
+            if (typeof value.length == 'number' && value.length>-1)
+                destiny[prop].length = value.length;
+
+
+            return true; // Skiping to dont go inside of {~dop:...}
         }
 
-        if (typeof value.length == 'number' && value.length>-1)
-            destiny[prop].length = value.length;
+        else {
 
-        return true; // Skiping to dont go inside of {~dop:...}
-    }
+            // Deeply
+            if (typeofValue=='object' && !destiny.hasOwnProperty(prop))
+                dop.set(destiny, prop, {});
 
-    else if (path.length > 1) {
+            // Delete
+            else if (typeofValue=='undefined')
+                dop.del(destiny, prop);
 
-        // Objects
-        if (typeofValue=='object' && typeofDestiny!='object') //!destiny.hasOwnProperty(prop)
-            dop.set(destiny, prop, {});
+            // Set array and skip path deep
+            else if (typeofValue=='array') {
+                dop.set(destiny, prop, dop.util.merge([], value));
+                return true; // Skiping to dont go inside
+            }
 
-        // Arrays
-        else if (typeofValue=='array' && typeofDestiny!='array')
-            dop.set(destiny, prop, []);
+            // Set array and skip path deep
+            else if (typeofValue=='object' && typeofDestiny!='object' && typeofDestiny!='array') {
+                dop.set(destiny, prop, dop.util.merge({}, value));
+                return true; // Skiping to dont go inside
+            }
 
-        // Delete
-        else if (typeofValue=='undefined')
-            dop.del(destiny, prop);
+            // Set value
+            else if (typeofValue!='object')
+                dop.set(destiny, prop, value);
 
-        // Set value
-        else if (typeofValue!='object')
-            dop.set(destiny, prop, value);
-    }
+        }
+    // }
 };
+// dop.core.setActionLoop = function() {
+//     if (prop === dop.cons.DOP)
+//         return true;
+// };
+
 
 
 
@@ -2508,7 +2469,7 @@ dop.core.storeMutation = function(mutation) {
                 if (collectors[index][index2].add(mutation))
                     return;
 
-    return dop.core.emit(new dop.core.snapshot([mutation]));        
+    return dop.emit([mutation]);        
 };
 
 
@@ -2608,7 +2569,7 @@ dop.core.decode = function(property, value, node, undefineds) {
 
     if (typeof value == 'string') {
 
-        if (value == '~F')
+        if (value === '~F')
             return dop.core.createRemoteFunction(node);
 
         if (value == '~U' && isObject(undefineds)) {
@@ -2616,13 +2577,13 @@ dop.core.decode = function(property, value, node, undefineds) {
             return undefined;
         }
 
-        if (value == '~I')
+        if (value === '~I')
             return Infinity;
 
-        if (value == '~i')
+        if (value === '~i')
             return -Infinity;
 
-        if (value == '~N')
+        if (value === '~N')
             return NaN;
 
         if (regexpdate.exec(value))
@@ -2633,7 +2594,7 @@ dop.core.decode = function(property, value, node, undefineds) {
             return new RegExp(split[1], split[2]);
         }
 
-        if (value[0] == '~') // https://jsperf.com/charat-vs-index/5
+        if (value[0] === '~') // https://jsperf.com/charat-vs-index/5
             return value.substring(1);
 
 
@@ -2661,15 +2622,15 @@ dop.core.deleteRequest = function(node, request_id) {
 
 //////////  src/core/protocol/emitNodes.js
 
-dop.core.emitNodes = function(patch) {
+dop.core.emitNodes = function(action) {
     var object_id, node_token, node, object_data;
-    for (object_id in patch) {
+    for (object_id in action) {
         if (isObject(dop.data.object[object_id])) {
             object_data = dop.data.object[object_id];
             for (node_token in object_data.node) {
                 if (object_data.node[node_token].subscriber===1) {
                     node = dop.data.node[node_token];
-                    dop.protocol.patch(node, Number(object_id), patch[object_id].patch);
+                    dop.protocol.patch(node, Number(object_id), action[object_id].action);
                 }
             }
         }
@@ -3039,12 +3000,12 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
                 if (node.owner[object_owner_id] === undefined) {
                     collector = dop.collectFirst();
                     if (dop.isRegistered(request.into))
-                        object = dop.core.setPatchFunction(request.into, object_owner);
+                        object = dop.core.setActionFunction(request.into, object_owner);
                     else
                         object = dop.register((request.into===undefined) ? 
                             object_owner
                         :
-                            dop.core.setPatch(request.into, object_owner)
+                            dop.core.setAction(request.into, object_owner)
                         );
                     dop.core.registerOwner(node, object, object_owner_id);
                     collector.emitAndDestroy();
@@ -3296,7 +3257,7 @@ dop.protocol.onpatch = function(node, request_id, request) {
             collector = dop.collectFirst();
             while (object_node.applied[object_node.applied_version+1]) {
                 object_node.applied_version += 1;
-                dop.core.setPatchFunction(object_data.object, object_node.applied[object_node.applied_version]);
+                dop.core.setActionFunction(object_data.object, object_node.applied[object_node.applied_version]);
                 delete object_node.applied[object_node.applied_version];
             }
             collector.emitAndDestroy();
