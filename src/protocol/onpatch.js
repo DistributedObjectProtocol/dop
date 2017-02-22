@@ -22,7 +22,7 @@ dop.protocol.onpatch = function(node, request_id, request) {
                 dop.core.setPatchFunction(object_data.object, object_node.applied[object_node.applied_version]);
                 delete object_node.applied[object_node.applied_version];
             }
-            collector.emitAndDestroy();
+            collector.emit();
         }
         response.push(0);
     }

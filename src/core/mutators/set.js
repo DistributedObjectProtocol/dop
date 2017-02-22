@@ -38,7 +38,7 @@ dop.core.set = function(object, property, value) {
 
                 dop.core.storeMutation(mutation);
 
-                // if is array we must store the length in order to revert it with setUnpatch
+                // if is array we must store the length in order to revert
                 if (isArray(objectTarget) && objectTarget.length !== length)
                     dop.core.storeMutation({
                         object:objectProxy,

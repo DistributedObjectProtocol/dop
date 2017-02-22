@@ -19,21 +19,21 @@ dop.core.setPatchMutator = function(destiny, prop, value, typeofValue, path) {
         for (;index<total; ++index) {
             typeArrayMutation = mutations[index][0]; // 0=swaps 1=splices
             mutation = mutations[index].slice(1);
+
             // swap
-            if (typeArrayMutation===0) {
-                // mutation = mutation.slice(0);
-                // (mutation[0]<0) ? mutation[0] = mutation[0]*-1 : mutation[1] = mutation[1]*-1;
+            if (typeArrayMutation===0)
                 dop.core.swap(destiny[prop], mutation);
-            }
+
             // length
-            else if (typeArrayMutation===2) {
+            else if (typeArrayMutation===2)
                 dop.set(destiny[prop], 'length', mutation[1]);
-            }
+
             // splice & set & del
             else {
                 // We have to update the length of the array in case that is lower than before
                 if (destiny[prop].length<mutation[0])
                     dop.getObjectTarget(destiny[prop]).length = mutation[0];
+                    
                 // set
                 if (mutation.length===3 && mutation[1]===1) {
                     (mutation[2] === undefined) ?
@@ -41,14 +41,15 @@ dop.core.setPatchMutator = function(destiny, prop, value, typeofValue, path) {
                     :
                         dop.set(destiny[prop], mutation[0], mutation[2]);
                 }
+
                 // splice
                 else
                     dop.core.splice(destiny[prop], mutation);
             }
         }
 
-        if (typeof value.length == 'number' && value.length>-1)
-            destiny[prop].length = value.length;
+        // if (typeof value.length == 'number' && value.length>-1)
+            // destiny[prop].length = value.length;
 
         return true; // Skiping to dont go inside of {~dop:...}
     }

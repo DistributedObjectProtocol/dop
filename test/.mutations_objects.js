@@ -25,7 +25,7 @@ function maketest(t, collectorServer, checkpatchs) {
         var objectClientCopy = dop.util.merge({},objectClient);
         var patchServer = decode(encode(dop.core.getPatch(collectorServer.mutations)));
         var unpatch = decode(encode(dop.core.getUnpatch(collectorServer.mutations)));
-        var snapshotServer = collectorServer.emitAndDestroy();
+        var snapshotServer = collectorServer.emit();
         var collectorClient = dopClient.core.setPatchs(attachObjects(patchServer, objectClient));
         var patchClient = decode(encode(dop.core.getPatch(collectorClient.mutations)));
         var collectorClientTwo = dopClientTwo.core.setPatchs(attachObjects(patchClient, objectClientTwo));

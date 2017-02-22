@@ -107,11 +107,11 @@ test('Emit', function(t) {
     var collector = dop.collect();
     object.array.push(Math.random());
     t.equal(collector.mutations.length, 1);
-    collector.emit();
+    collector.emitWithoutDestroy();
     t.equal(collector.mutations.length, 0);
     object.array.push(Math.random());
     t.equal(collector.mutations.length, 1);
-    collector.emitAndDestroy();
+    collector.emit();
     object.array.push(Math.random());
     t.equal(collector.mutations.length, 0);
     t.end();

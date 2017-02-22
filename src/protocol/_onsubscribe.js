@@ -27,7 +27,7 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
                             dop.core.setPatch(request.into, object_owner)
                         );
                     dop.core.registerOwner(node, object, object_owner_id);
-                    collector.emitAndDestroy();
+                    collector.emit();
                 }
                 else
                     object = dop.data.object[node.owner[object_owner_id]].object;
