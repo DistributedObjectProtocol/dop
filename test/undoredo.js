@@ -8,9 +8,8 @@ var del = dop.del;
 
 function makeTest(t, snapshot, original, object, mutated) {
     
-    // var patch = snapshot.getPatch()
-    // var unpatch = snapshot.getUnpatch()
-    // var object_id = dop.getObjectId(object)
+    var patch, unpatch;
+    var object_id = dop.getObjectId(object)
     // patch = patch[object_id].patch
     // unpatch = unpatch[object_id].patch
     // var patchRemote = JSON.parse(JSON.stringify(patch))
@@ -20,17 +19,20 @@ function makeTest(t, snapshot, original, object, mutated) {
 
     // Undo
     snapshot.undo()
+    unpatch = dop.decode(dop.encode(snapshot.getPatch()[object_id].patch))
     t.deepEqual(object, original, 'undo local')
     // Redo
     snapshot.redo()
+    patch = dop.decode(dop.encode(snapshot.getPatch()[object_id].patch))
     t.deepEqual(object, mutated, 'redo local')
 
     // // Undo
-    // dop.core.setPatch(object, unpatchRemote)
-    // t.deepEqual(object, original, 'undo remote')
+    console.log(dop.encode(unpatch))
+    dop.core.setPatch(object, unpatch)
+    t.deepEqual(object, original, 'undo remote')
     // // Redo
-    // dop.core.setPatch(object, patchRemote)
-    // t.deepEqual(object, mutated, 'redo remote')
+    dop.core.setPatch(object, patch)
+    t.deepEqual(object, mutated, 'redo remote')
 
 
     t.end()
@@ -60,6 +62,18 @@ test('set length array', function(t) {
     var original = dop.util.merge({}, object)
     var collector = dop.collect()
     set(object, '10', 'text')
+    var snapshot = collector.emit()
+    var mutated = dop.util.merge({}, object)
+
+    makeTest(t, snapshot, original, object, mutated) 
+});
+
+test('set a random property in an array', function(t) {
+
+    var object = dop.register([1,2,'3',4,5])
+    var original = dop.util.merge({}, object)
+    var collector = dop.collect()
+    set(object, 'hello', 'text')
     var snapshot = collector.emit()
     var mutated = dop.util.merge({}, object)
 

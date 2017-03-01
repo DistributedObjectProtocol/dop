@@ -2,6 +2,8 @@
 dop.core.snapshot = function(mutations) {
     this.forward = true;
     this.mutations = mutations;
+    // this.patchRedo;
+    // this.patchUndo;
 };
 
 
@@ -22,7 +24,14 @@ dop.core.snapshot.prototype.redo  = function() {
 
 
 dop.core.snapshot.prototype.getPatch = function() {
-    if (this.patch === undefined)
-        this.patch = dop.core.getPatch(this.mutations);
-    return this.patch;
+    if (this.forward) {
+        if (this.redoPatch === undefined)
+            this.redoPatch = dop.core.getPatch(this.mutations);
+        return this.redoPatch;
+    }
+    else {
+        if (this.undoPatch === undefined)
+            this.undoPatch = dop.core.getPatch(this.mutations);
+        return this.undoPatch;
+    }
 };

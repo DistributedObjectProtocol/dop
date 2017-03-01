@@ -4,9 +4,9 @@ dop.core.setPatch = function(object, patch) {
     return object;
 };
 
-dop.core.setPatchs = function(patchs) {
-    var collector = dop.collectFirst(), object_id;
-    for (object_id in patchs)
-        dop.core.setPatch(patchs[object_id].object, patchs[object_id].patch);
-    return collector;
-};
+// dop.core.setPatchs = function(patchs) {
+//     var collector = dop.collectFirst(), object_id;
+//     for (object_id in patchs)
+//         dop.core.setPatch(patchs[object_id].object, patchs[object_id].patch);
+//     return collector;
+// };

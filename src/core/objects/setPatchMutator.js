@@ -26,7 +26,7 @@ dop.core.setPatchMutator = function(destiny, prop, value, typeofValue, path) {
 
             // length
             else if (typeArrayMutation===2)
-                dop.set(destiny[prop], 'length', mutation[1]);
+                dop.set(destiny[prop], 'length', mutation[0]);
 
             // splice & set & del
             else {

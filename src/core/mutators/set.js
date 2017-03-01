@@ -36,7 +36,6 @@ dop.core.set = function(object, property, value) {
                 //if (isArray(value))
                 //    mutation.valueOriginal = value.slice(0); //dop.util.merge([], value);
 
-                dop.core.storeMutation(mutation);
 
                 // if is array we must store the length in order to revert
                 if (isArray(objectTarget) && objectTarget.length !== length)
@@ -46,6 +45,8 @@ dop.core.set = function(object, property, value) {
                         value:objectTarget.length,
                         oldValue:length
                     });
+
+                dop.core.storeMutation(mutation);
 
                 return mutation;
             }

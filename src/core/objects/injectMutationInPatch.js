@@ -1,10 +1,10 @@
 
-dop.core.injectMutationInPatch = function(patch, mutation, isUnpatch) {
+dop.core.injectMutationInPatch = function(patch, mutation) {
 
     var isMutationArray = mutation.splice!==undefined || mutation.swaps!==undefined,
         path = dop.getObjectDop(mutation.object).slice(0),
         prop = mutation.name,
-        value = (isUnpatch) ? mutation.oldValue : mutation.value,
+        value = mutation.value,
         typeofValue = dop.util.typeof(value),
         index = 1;
 
@@ -29,26 +29,16 @@ dop.core.injectMutationInPatch = function(patch, mutation, isUnpatch) {
     // Its a new array like {myarray:[1,2,3]} we must apply mutations
     if (isMutationArray && isArray(patch[prop])) {
         // Swaps
-        if (mutation.swaps!==undefined) {
+        if (mutation.swaps!==undefined)
             dop.util.swap(patch[prop], mutation.swaps.slice(0))
-        }
         // Splice
-        else if (mutation.splice!==undefined) {
-            var splice;
-            if (isUnpatch) {
-                splice = (mutation.spliced) ? mutation.spliced.slice(0) : [];
-                splice.unshift(mutation.splice[0], mutation.splice.length-2);
-            }
-            else
-                splice = mutation.splice.slice(0);
-
-            Array.prototype.splice.apply(patch[prop], splice);
-        }
+        else if (mutation.splice!==undefined)
+            Array.prototype.splice.apply(patch[prop], mutation.splice.slice(0));
     }
 
-    else if (isArray(patch)) {
+    else if (isArray(patch))
         patch[prop] = value;
-    }
+
 
     // Its an array and we must apply mutations
     else if (isMutationArray || isArray(mutation.object)) {
@@ -69,8 +59,6 @@ dop.core.injectMutationInPatch = function(patch, mutation, isUnpatch) {
         // swap
         if (mutation.swaps!==undefined) {
             var swaps = mutation.swaps.slice(0);
-            if (isUnpatch)
-                swaps.reverse();
             // var tochange = (swaps[0]>0) ? 0 : 1;
             // swaps[tochange] = swaps[tochange]*-1;
             swaps.unshift(0); // 0 mean swap
@@ -79,14 +67,7 @@ dop.core.injectMutationInPatch = function(patch, mutation, isUnpatch) {
 
         // splice
         else if (mutation.splice!==undefined) {
-            var splice;
-            if (isUnpatch) {
-                splice = (mutation.spliced) ? mutation.spliced.slice(0) : [];
-                splice.unshift(mutation.splice[0], mutation.splice.length-2);
-            }
-            else
-                splice = mutation.splice.slice(0);
-            
+            var splice = mutation.splice.slice(0);
             splice.unshift(1); // 1 mean splice
             mutations.push(splice);
         }
@@ -96,8 +77,8 @@ dop.core.injectMutationInPatch = function(patch, mutation, isUnpatch) {
             mutations.push([2, value]); // 2 means length
 
         // set
-        else
-            mutations.push([1, prop, 1, value]);
+        else if (!isNaN(Number(prop)))
+            mutations.push([1, Number(prop), 1, value]);
     }
 
     // set
