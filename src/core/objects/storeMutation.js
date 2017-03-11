@@ -11,5 +11,7 @@ dop.core.storeMutation = function(mutation) {
                 if (collectors[index][index2].add(mutation))
                     return;
 
-    return dop.core.emit(new dop.core.snapshot([mutation]));        
+    var snapshot = new dop.core.snapshot([mutation]);
+    snapshot.emit();
+    return snapshot;        
 };
