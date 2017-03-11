@@ -28,10 +28,10 @@ dop.core.set = function(object, property, value) {
                 var mutation = {
                     object: objectProxy,
                     name: property,
-                    value: value //isArray(value) ? value.slice(0) : value
+                    value: dop.copy(value)
                 };
                 if (hasOwnProperty)
-                    mutation.oldValue = oldValue //isArray(oldValue) ? oldValue.slice(0) : oldValue;
+                    mutation.oldValue = dop.copy(oldValue)
 
                 // if is array we must store the length in order to revert
                 if (isArray(objectTarget) && objectTarget.length !== length)

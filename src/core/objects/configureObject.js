@@ -5,7 +5,7 @@ dop.core.configureObject = function(object, path, parent) {
     // Creating a copy if is another object registered
     if (dop.isRegistered(object))
         return dop.core.configureObject(
-            dop.util.merge(isArray(object)?[]:{}, object),
+            dop.copy(object),
             path,
             parent
         );

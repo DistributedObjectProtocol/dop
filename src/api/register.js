@@ -1,7 +1,7 @@
 
 dop.register = function(object) {
 
-    dop.util.invariant(dop.isObjectRegistrable(object), 'dop.register needs a regular object as first parameter');
+    dop.util.invariant(dop.util.typeof(object) == 'object', 'dop.register needs a regular plain object as first parameter');
 
     if (dop.isRegistered(object))
         return dop.getObjectProxy(object);    

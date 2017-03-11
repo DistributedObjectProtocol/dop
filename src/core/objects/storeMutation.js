@@ -13,5 +13,4 @@ dop.core.storeMutation = function(mutation) {
 
     var snapshot = new dop.core.snapshot([mutation]);
     snapshot.emit();
-    return snapshot;        
 };

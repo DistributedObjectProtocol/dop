@@ -67,20 +67,13 @@ dop.core.splice = function(array, args) {
                 args[0] = array.length+args[0];
             var mutation = {
                 object:objectProxy,
-                splice:args,
+                splice:dop.copy(args),
                 // length:originallength
             };
             if (spliced.length > 0)
-                mutation.spliced = spliced;
+                mutation.spliced = dop.copy(spliced);
 
             dop.core.storeMutation(mutation);
-            // if (originallength!==length)
-            //     dop.core.storeMutation({
-            //         object:objectProxy,
-            //         name:'length',
-            //         value:length,
-            //         oldValue:originallength
-            //     });
         }
 
     }

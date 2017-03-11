@@ -10,7 +10,7 @@ dop.core.delete = function(object, property) {
             var mutation = {
                 object:dop.getObjectProxy(objectTarget),
                 name:property,
-                oldValue:objectTarget[property]
+                oldValue:dop.copy(objectTarget[property])
             };
             dop.core.storeMutation(mutation);
         }

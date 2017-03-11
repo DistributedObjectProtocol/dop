@@ -1,5 +1,5 @@
 
-dop.core.snapshot = function(mutations) {
+dop.core.snapshot = function (mutations) {
     this.forward = true;
     this.mutations = mutations;
     // this.patchRedo;
@@ -7,7 +7,7 @@ dop.core.snapshot = function(mutations) {
 };
 
 
-dop.core.snapshot.prototype.undo = function() {
+dop.core.snapshot.prototype.undo = function () {
     if (this.forward) {
         this.forward = false;
         dop.core.invertMutations(this.mutations);
@@ -16,7 +16,7 @@ dop.core.snapshot.prototype.undo = function() {
 };
 
 
-dop.core.snapshot.prototype.redo  = function() {
+dop.core.snapshot.prototype.redo = function () {
     if (!this.forward) {
         this.forward = true;
         dop.core.invertMutations(this.mutations);
@@ -26,21 +26,16 @@ dop.core.snapshot.prototype.redo  = function() {
 
 
 
-dop.core.snapshot.prototype.emit = function() {
+dop.core.snapshot.prototype.emit = function () {
     // This is true if we have nodes subscribed to those object/mutations
+    // Then we have to emit to nodes
     if (dop.core.emitObservers(this.mutations)) {
-        var path;
-        if (this.forward) {
-            if (this.redoPatch === undefined)
-                this.redoPatch = dop.core.getPatch(this.mutations);
-            path = this.redoPatch;
-        }
-        else {
-            if (this.undoPatch === undefined)
-                this.undoPatch = dop.core.getPatch(this.mutations);
-            path = this.undoPatch;
-        }
-        dop.core.emitNodes(path);
+        dop.core.emitNodes(this.forward ?
+            (this.redoPatch === undefined) ?
+                this.redoPatch = dop.core.getPatch(this.mutations) : this.redoPatch
+            :
+            (this.undoPatch === undefined) ?
+                this.undoPatch = dop.core.getPatch(this.mutations) : this.undoPatch
+        );
     }
 };
-

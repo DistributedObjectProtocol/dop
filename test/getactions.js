@@ -290,7 +290,7 @@ test('Setting an item of array', function(t) {
 
 
 test('Setting a subobject into an array', function(t) {
-    var patchExpected = {"one":{"2":{"~DOP":[[1,2,1,{}],[2,3]]}}};
+    var patchExpected = {"one":{"2":{"~DOP":[[2,3],[1,2,1,{}]]}}};
     var mutationsExpected = 2;
 
     var collector = dop.collect();
@@ -349,7 +349,7 @@ test('Setting a array internaly', function(t) {
 
 
 test('Pushing items and changing properties internaly', function(t) {
-    var patchExpected = {one:{3:{2:{array:{"~DOP":[[1,2,1,"juas"],[2,3],[1,3,0,"omg"]]}}},"~DOP":[[1,5,0,"omg"],[0,0,5,1,4,2,3]]},two:undefined};
+    var patchExpected = {one:{3:{2:{array:{"~DOP":[[2,3],[1,2,1,"juas"],[1,3,0,"omg"]]}}},"~DOP":[[1,5,0,"omg"],[0,0,5,1,4,2,3]]},two:undefined};
     var mutationsExpected = 6;
 
     var collector = dop.collect();
@@ -374,7 +374,7 @@ test('Pushing items and changing properties internaly', function(t) {
 
 
 test('Setting a property literaly', function(t) {
-    var patchExpected = {"~DOP":[[1,0,1,"testing"],[2,1]]};
+    var patchExpected = {"~DOP":[[2,1],[1,0,1,"testing"]]};
     var mutationsExpected = 2;
 
     var collector = dop.collect();
