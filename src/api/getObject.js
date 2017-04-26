@@ -40,3 +40,36 @@ dop.getObjectRoot = function(object) {
 dop.getObjectTarget = function(object) {
     return dop.getObjectDop(object).t;
 };
+
+
+dop.getObjectPath = function(object) {
+
+    var path=[], 
+        prop,
+        parent, 
+        object_dop = object[dop.cons.DOP];
+
+    while (object_dop._ !== undefined) {
+        prop = object_dop.pr;
+        parent = object_dop._;
+        if (parent[prop] === object_dop.p) {
+            path.unshift(prop);
+            object_dop = parent[dop.cons.DOP];
+        }
+        else {
+            if (isArray(parent)) {
+                prop = parent.indexOf(object_dop.p);
+                if (prop === -1)
+                    return;
+                else
+                    object_dop.pr = prop;
+                    // path.unshift(prop);
+            }
+            else
+                return;
+        }
+    }
+    
+    path.unshift(object_dop.pr);
+    return path;
+}

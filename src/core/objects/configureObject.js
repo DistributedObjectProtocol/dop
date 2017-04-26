@@ -5,7 +5,7 @@ dop.core.configureObject = function(object, path, parent) {
     // Creating a copy if is another object registered
     if (dop.isRegistered(object))
         return dop.core.configureObject(
-            dop.copy(object),
+            dop.util.clone(object),
             path,
             parent
         );
@@ -14,8 +14,10 @@ dop.core.configureObject = function(object, path, parent) {
     delete object[dop.cons.DOP];
 
     // Recursion
-    var property, value, object_dop;
+    var property, value, object_dop, is_array=isArray(object);
     for (property in object) {
+        if (is_array)
+            property = Number(property);
         value = object[property];
         if (isFunction(value) && value.name==dop.core.createRemoteFunction.name)
             object[property] = value(path[0], path.slice(1).concat(property));
@@ -26,6 +28,7 @@ dop.core.configureObject = function(object, path, parent) {
     // Setting ~DOP object
     Object.defineProperty(object, dop.cons.DOP, {value:path.slice(0)});
     object_dop = dop.getObjectDop(object);
+    object_dop.pr = path[path.length-1]; // property
     object_dop.o = []; // observers
     object_dop.op = {}; // observers by property
     object_dop.om = {}; // observers multiple
