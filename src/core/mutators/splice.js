@@ -1,19 +1,18 @@
 
 dop.core.splice = function(array, args) {
 
-    var originallength = array.length,
+    var originalLength = array.length,
         objectTarget = dop.getObjectTarget(array),
         objectProxy = dop.getObjectProxy(array),
-        spliced;
-
-
+        spliced,
+        path;
 
     // Splicing!!
     spliced = Array.prototype.splice.apply(objectTarget, args);
 
     // If enviroment do not allow proxies (objectTarget and objectProxy are same object in that case) 
     // or if the array is the proxy itself
-    if (objectTarget===objectProxy || array===objectProxy) {
+    if (path = dop.getObjectPath(array)) {
 
         var argslength = args.length,
             length = objectTarget.length,
@@ -28,8 +27,8 @@ dop.core.splice = function(array, args) {
             start = 0;
         else if (start<0)
             start = (length+start < 0) ? 0 : length+start;
-        else if (start>originallength)
-            start = originallength;
+        else if (start>originalLength)
+            start = originalLength;
 
 
         // We dont need update becase no items remaining after splice
@@ -41,37 +40,29 @@ dop.core.splice = function(array, args) {
                 objectTarget.length;
 
 
-
+        // We must register new objects
         for (;start<end; ++start) {
             item = objectTarget[start];
-            if (dop.isObjectRegistrable(item)) {
-
-                object_dop = dop.getObjectDop(item);
-
-                if (object_dop!==undefined && object_dop._ === objectTarget)
-                    object_dop[object_dop.length-1] = start;
-
-                else
-                    objectTarget[start] = dop.core.configureObject(
-                        item,
-                        dop.getObjectDop(objectTarget).concat(start),
-                        // dop.data.object_data[dop.getObjectId(objectTarget)].options.proxy,
-                        objectTarget
-                    );
-            }
+            if (dop.isObjectRegistrable(item))
+                objectTarget[start] = dop.core.configureObject(
+                    item,
+                    start,
+                    objectTarget
+                );
         }
 
-
-        if (originallength!==length || itemslength>0) {
+        // Storing mutation
+        if ((objectTarget===objectProxy || array===objectProxy) && (originalLength!==length || itemslength>0)) {
             if (args[0]<0)
                 args[0] = array.length+args[0];
             var mutation = {
-                object:objectProxy,
-                splice:dop.copy(args),
-                // length:originallength
+                object: objectProxy,
+                prop: dop.getObjectProperty(array),
+                path: path,
+                splice: args
             };
             if (spliced.length > 0)
-                mutation.spliced = dop.copy(spliced);
+                mutation.spliced = dop.util.clone(spliced);
 
             dop.core.storeMutation(mutation);
         }

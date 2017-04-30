@@ -7,8 +7,12 @@ dop.util.merge = function(first, second) {
         // Recursion
         return dop.util.merge.apply(this, args);
     }
-    else 
-        return dop.util.path(second, this, first, dop.util.mergeMutator);
+    else {
+        dop.util.path(second, this, first, dop.util.mergeMutator);
+        if (isArray(second))
+            first.length = second.length;
+        return first;
+    }
 };
 
 dop.util.mergeMutator = function(destiny, prop, value, typeofValue) {

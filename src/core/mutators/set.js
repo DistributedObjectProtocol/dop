@@ -1,6 +1,7 @@
 
 dop.core.set = function(object, property, value) {
 
+    // If is a different value
     if (object[property] !== value) {
 
         var descriptor = Object.getOwnPropertyDescriptor(object, property);
@@ -10,41 +11,39 @@ dop.core.set = function(object, property, value) {
                 objectProxy = dop.getObjectProxy(object),
                 oldValue = objectTarget[property],
                 length = objectTarget.length,
-                hasOwnProperty = objectTarget.hasOwnProperty(property);
+                path;
 
             // Setting
-            objectTarget[property] = value;
-            if (dop.isObjectRegistrable(value)) {
-                // var object_dop = dop.getObjectDop(value);
-                // if (dop.isRegistered(value) && isArray(object_dop._) && object_dop._ === objectTarget)
-                //     object_dop[object_dop.length-1] = property;
-                // else {
-                    // var shallWeProxy = dop.data.object_data[dop.getObjectId(objectTarget)].options.proxy;
-                    objectTarget[property] = dop.core.configureObject(value, dop.getObjectDop(objectTarget).concat(property), objectTarget);
-                // }
-            }
+            objectTarget[property] = dop.isObjectRegistrable(value) ?
+                dop.core.configureObject(value, property, objectTarget)
+            :
+                value;
 
-            if ((objectTarget===objectProxy || object===objectProxy) && !(isFunction(oldValue) && isFunction(value))) {
+            if (
+                (objectTarget===objectProxy || object===objectProxy) &&
+                !(isFunction(oldValue) && isFunction(value)) &&
+                (path = dop.getObjectPath(object))
+            ) {
                 var mutation = {
                     object: objectProxy,
-                    name: property,
-                    value: dop.copy(value)
+                    prop: property,
+                    path: path,
+                    value: dop.util.clone(value)
                 };
-                if (hasOwnProperty)
-                    mutation.oldValue = dop.copy(oldValue)
+                if (objectTarget.hasOwnProperty(property))
+                    mutation.oldValue = dop.util.clone(oldValue)
 
-                // if is array we must store the length in order to revert
-                if (isArray(objectTarget) && objectTarget.length !== length)
+                // If is array and length is different we must store the length 
+                if (objectTarget.length !== length && isArray(objectTarget))
                     dop.core.storeMutation({
-                        object:objectProxy,
-                        name:'length',
-                        value:objectTarget.length,
-                        oldValue:length
+                        object: objectProxy,
+                        prop: 'length',
+                        path: path,
+                        value: objectTarget.length,
+                        oldValue: length
                     });
 
                 dop.core.storeMutation(mutation);
-
-                return mutation;
             }
         }
     }

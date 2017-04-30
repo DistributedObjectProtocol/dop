@@ -1,6 +1,6 @@
 
 dop.core.setPatch = function(object, patch) {
-    dop.util.path({0:patch}, null, {0:object}, dop.core.setPatchMutator);
+    dop.util.path(patch, null, object, dop.core.setPatchMutator);
     return object;
 };
 

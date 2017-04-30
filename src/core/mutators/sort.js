@@ -5,16 +5,21 @@
 dop.core.sort = function(array, compareFunction) {
     var objectTarget = dop.getObjectTarget(array),
         objectProxy = dop.getObjectProxy(array),
-        copy = objectTarget.slice(0),
-        output, swaps;
+        output, swaps, path;
 
     output = Array.prototype.sort.call(objectTarget, compareFunction);
-    swaps = dop.core.sortDiff(objectTarget, copy);
-    if (swaps.length>1 && (objectTarget===objectProxy || array===objectProxy))
-        dop.core.storeMutation({
-            object:objectProxy,
-            swaps:swaps
-        });
+
+    if ((objectTarget===objectProxy || array===objectProxy) && (path = dop.getObjectPath(array))) {
+        swaps = dop.core.sortDiff(objectTarget, objectTarget.slice(0));
+        if (swaps.length>1)
+            dop.core.storeMutation({
+                object: dop.getObjectProxy(array),
+                prop: dop.getObjectProperty(array),
+                path: path,
+                swaps: swaps
+            });
+    }
+
     return output;
 };
 
@@ -33,14 +38,11 @@ dop.core.sortDiff = function (array, copy) {
             copy[index1] = copy[index2];
             copy[index2] = tmp;
             swaps.push(index1, index2);
-            // Updating path
-            dop.core.updatePathArray(copy, index1);
-            dop.core.updatePathArray(copy, index2);
         }
     }
 
     return swaps;
-}
+};
 
 
 

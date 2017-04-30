@@ -20,12 +20,10 @@ dop.core.collector.prototype.emit = function() {
 };
 
 dop.core.collector.prototype.emitWithoutDestroy = function() {
-    if (this.mutations.length > 0) {
-        var snapshot = new dop.core.snapshot(this.mutations);
-        snapshot.emit();
-        this.mutations = [];
-        return snapshot;
-    }
+    var snapshot = new dop.core.snapshot(this.mutations);
+    snapshot.emit();
+    this.mutations = [];
+    return snapshot;
 };
 
 dop.core.collector.prototype.pause = function() {

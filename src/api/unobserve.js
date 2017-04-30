@@ -14,8 +14,5 @@ dop.unobserve = function(object, callback) {
     else
         observers.splice(indexOf, 1);
 
-    if (observers.length == 0)
-        delete dop.getObjectDop(object).o;
-
     return true;
 };

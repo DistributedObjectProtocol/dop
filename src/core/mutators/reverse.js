@@ -1,34 +1,39 @@
 // https://jsperf.com/array-reverse-algorithm
 dop.core.reverse = function(array) {
+
     var objectTarget = dop.getObjectTarget(array),
         objectProxy = dop.getObjectProxy(array),
-        total = objectTarget.length/2,
-        index = 0,
-        indexr,
-        tempItem,
-        swaps = [],
-        shallWeStore = (objectTarget===objectProxy || array===objectProxy);
+        path;
 
-    for (;index<total; ++index) {
-        indexr = objectTarget.length-index-1;
-        if (index !== indexr) {
-            tempItem = objectTarget[indexr];
-            objectTarget[indexr] = objectTarget[index];
-            objectTarget[index] = tempItem;
-            if (shallWeStore)
+    if ((objectTarget===objectProxy || array===objectProxy) && (path = dop.getObjectPath(array))) {
+
+        var total = objectTarget.length/2,
+            index = 0,
+            indexr,
+            tempItem,
+            swaps = [];
+
+        for (;index<total; ++index) {
+            indexr = objectTarget.length-index-1;
+            if (index !== indexr) {
+                tempItem = objectTarget[indexr];
+                objectTarget[indexr] = objectTarget[index];
+                objectTarget[index] = tempItem;
                 swaps.push(index, indexr);
-
-            // Updating path
-            dop.core.updatePathArray(objectTarget, index);
-            dop.core.updatePathArray(objectTarget, indexr);
+            }
         }
-    }
 
-    if (shallWeStore && swaps.length>0)
-        dop.core.storeMutation({
-            object:objectProxy,
-            swaps:swaps
-        });
+
+        if (swaps.length>0)
+            dop.core.storeMutation({
+                object: objectProxy,
+                prop: dop.getObjectProperty(array),
+                path: path,
+                swaps: swaps
+            });
+    }
+    else
+        Array.prototype.reverse.call(objectTarget);
 
     return array;
 };
