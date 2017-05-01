@@ -24,6 +24,10 @@ dop.getObjectProperty = function(object) {
     return dop.getObjectDop(object).pr;
 };
 
+dop.getObjectId = function(object) {
+    return dop.getObjectProperty(dop.getObjectRoot(object));
+};
+
 dop.getObjectPath = function(object) {
 
     var path=[], 

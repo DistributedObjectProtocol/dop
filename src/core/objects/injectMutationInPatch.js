@@ -2,8 +2,8 @@
 dop.core.injectMutationInPatch = function(patch, mutation) {
 
     var isMutationArray = mutation.splice!==undefined || mutation.swaps!==undefined,
-        prop = mutation.name,
-        path = dop.getObjectDop(mutation.object).slice(0).concat(prop),
+        prop = mutation.prop,
+        path = mutation.path,
         value = mutation.value,
         typeofValue = dop.util.typeof(value),
         index = 1;
@@ -12,19 +12,18 @@ dop.core.injectMutationInPatch = function(patch, mutation) {
 
     // Going deep
     for (;index<path.length; ++index) {
-        //If the patch has a new object or array value 
-        if (patch[dop.cons.DOP] !== undefined)
-            patch = patch[dop.cons.DOP];
-        
-        prop = path[index];
-        if (index<path.length-1)
-            patch = isObject(patch[prop]) ? patch[prop] : patch[prop]={};
+        propPath = path[index];
+
+        patch = isObject(patch[propPath]) ?
+            isObject(patch[propPath][dop.cons.DOP]) ? patch[propPath][dop.cons.DOP] : patch[propPath]
+        :
+            patch[propPath] = {};
     }
 
 
 
 
-
+/*
     // Its a new array like {myarray:[1,2,3]} we must apply mutations
     if (isMutationArray && isArray(patch[prop])) {
         // Swaps
@@ -73,14 +72,16 @@ dop.core.injectMutationInPatch = function(patch, mutation) {
 
 
     // setting a new object: miobject.prop = {new:"object"}
-    else if (typeofValue == 'object') {
+    else */if (typeofValue == 'object') {
         var newValue = {};
         newValue[dop.cons.DOP] = dop.util.merge({}, value);
         patch[prop] = newValue;
     }
-    // setting a new array miobject.prop = [1,2,3]
+    // setting a new array: miobject.prop = [1,2,3]
     else if (typeofValue == 'array')
         patch[prop] = dop.util.merge([], value);
+
+    // setting other values
     else
         patch[prop] = value;
 };
