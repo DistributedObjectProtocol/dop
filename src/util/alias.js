@@ -10,3 +10,7 @@ function isObject(object) {
 function isArray(array) {
     return Array.isArray(array);
 }
+
+function isNumber(number) {
+    return typeof number == 'number';
+}

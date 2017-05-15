@@ -22,22 +22,20 @@ This repository is the JavaScript implementation of the protocol that runs on no
 ```js
 // Server (node.js)
 const dop = require('dop')
-const listener = dop.listen() // WebSockets on port 4444 (https://github.com/websockets/ws)
-const myObject = {
+dop.listen() // WebSockets on port 4444 (https://github.com/websockets/ws)
+dop.onSubscribe(() => {
     hello: 'world',
     square: number => number * number
-}
-dop.onSubscribe(() => myObject)
+})
 ```
 
 ```js
 // Client (browser)
 import dop from 'dop'
 const server = dop.connect() // Native WebSockets 'ws://localhost:4444'
-const serverObject = await server.subscribe()
-console.log(serverObject.hello) // > "world"
-const squareOfFive = await serverObject.square(5)
-console.log(squareOfFive) // > 25
+const objectFromServer = await server.subscribe()
+console.log(objectFromServer.hello) // > "world"
+console.log(await objectFromServer.square(5)) // > 25
 ```
 
 Check the website for more detailed documentation [https://distributedobjectprotocol.org/](https://distributedobjectprotocol.org/)

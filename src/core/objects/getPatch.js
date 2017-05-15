@@ -11,8 +11,9 @@ dop.core.getPatch = function(mutations) {
         mutation = mutations[index];
         object_id = dop.getObjectId(mutation.object);
         if (patchs[object_id] === undefined)
-            patchs[object_id] = {object:dop.getObjectRoot(mutation.object), patch:{}};
-        dop.core.injectMutationInPatch(patchs[object_id].patch, mutation);
+            patchs[object_id] = {chunks:[{}], object:dop.getObjectRoot(mutation.object)};
+        dop.core.injectMutationInPatch(patchs[object_id], mutation);
+        console.log(JSON.stringify(patchs[object_id].chunks))
     }
 
     return patchs;

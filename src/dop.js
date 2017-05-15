@@ -4,7 +4,7 @@ var dop = {
     name: 'dop',
     create: factory,
 
-    // Where all the internal information is stored
+    // Internal data
     data: {
         node_inc:0,
         node:{},
