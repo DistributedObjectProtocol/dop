@@ -188,6 +188,37 @@ test(header+'Mutating array twice', function(t) {
 
 
 
-// test(header+'Mutating array and mutating array deeper', function(t) {
-// test(header+'Mutating array deeper and mutating container', function(t) {
+test(header+'Mutating array and mutating array deeper', function(t) {
+    var object = dop.register({array:[true,false,[true,false]]});
+    var collector = dop.collect();
+    
 
+    var patchExpected = [{"array":[4,[0,2]]},{"array":{"0":[4,[0,1]]}}];
+    var mutationsExpected = 2;
+    object.array.reverse();
+    object.array[0].reverse();
+
+
+    var patchGenerated = applyPatch(collector);
+    t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
+    maketest(t, patchGenerated, patchExpected);
+
+})
+
+
+
+test(header+'Mutating array deeper and mutating container', function(t) {
+    var object = dop.register({array:[true,false,[true,false]]});
+    var collector = dop.collect();
+    
+
+    var patchExpected = [{"array":{"2":[4,[0,1]]}},{"array":[4,[0,2]]}];
+    var mutationsExpected = 2;
+    object.array[2].reverse();
+    object.array.reverse();
+
+
+    var patchGenerated = applyPatch(collector);
+    t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
+    maketest(t, patchGenerated, patchExpected);
+})

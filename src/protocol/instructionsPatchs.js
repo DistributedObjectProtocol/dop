@@ -2,28 +2,23 @@
 dop.protocol.instructionsPatchs = {
 
     undefined: { // delete
-        value: 0,
-        isForNodes: true
+        value: 0
     },
 
     function: { // remote function
-        value: 1,
-        isForNodes: true
+        value: 1
     },
 
     object: { // new object or array
-        value: 2,
-        isForNodes: false
+        value: 2
     },
 
     splice: {
-        value: 3,
-        isForNodes: false
+        value: 3
     },
 
     swaps: {
-        value: 4,
-        isForNodes: false
+        value: 4
     },
 
 };

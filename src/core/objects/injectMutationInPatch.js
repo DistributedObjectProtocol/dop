@@ -6,6 +6,7 @@ dop.core.injectMutationInPatch = function(patchs, mutation) {
         value = mutation.value,
         isMutationSplice = mutation.splice!==undefined,
         isMutationSwaps = mutation.swaps!==undefined,
+        isMutationArray = isMutationSplice || isMutationSwaps,
         typeofValue = dop.util.typeof(value),
         index = 1,
         chunk = chunkParent = patchs.chunks[patchs.chunks.length-1],
@@ -14,6 +15,7 @@ dop.core.injectMutationInPatch = function(patchs, mutation) {
         specialInstruction,
         instructionsPatchs = dop.protocol.instructionsPatchs,
         isNewObject = false,
+        isNewChunk = false,
         propPath,
         valueMerged,
         newSpecialInstruction;
@@ -37,13 +39,15 @@ dop.core.injectMutationInPatch = function(patchs, mutation) {
                 isNewObject = true;
                 chunk = specialInstruction[1];
             }
-            else if (!isMutationSplice && !isMutationSwaps) {
+            else if (!isMutationArray || (isMutationArray && index+1<path.length)) {
+                isNewChunk = true;
                 chunk = chunkNext;
                 patchs.chunks.push(chunkNextRoot);
             }
         }
 
-        else if ((isMutationSplice || isMutationSwaps) && tofCurrentObject == 'object') {
+        else if (!isNewChunk && isMutationArray && tofCurrentObject == 'object') {
+            // isNewChunk = true;
             chunkParent = chunkNextParent;
             chunk = chunkNext; 
             patchs.chunks.push(chunkNextRoot);
@@ -73,7 +77,8 @@ dop.core.injectMutationInPatch = function(patchs, mutation) {
     }
 
 
-    else if (isMutationSplice || isMutationSwaps) {
+    // Mutations over arrays
+    else if (isMutationArray) {
         if (isNewObject)
             (isMutationSplice) ?
                 Array.prototype.splice.apply(chunk, mutation.splice.slice(0))
@@ -99,7 +104,7 @@ dop.core.injectMutationInPatch = function(patchs, mutation) {
     }
 
 
-    // Others
+    // Others values
     else
         chunk[prop] = value;
 };
