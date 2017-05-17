@@ -35,7 +35,7 @@ dop.core.injectMutationInPatch = function(patchs, mutation) {
         if (tofCurrentObject == 'array') {
             specialInstruction = chunk[propPath];
             // Is a new object
-            if (specialInstruction[0] === instructionsPatchs.object.value) {
+            if (specialInstruction[0] === instructionsPatchs.object) {
                 isNewObject = true;
                 chunk = specialInstruction[1];
             }
@@ -70,7 +70,7 @@ dop.core.injectMutationInPatch = function(patchs, mutation) {
             chunk[prop] = valueMerged;
         else {
             chunk[prop] = [
-                instructionsPatchs.object.value,
+                instructionsPatchs.object,
                 valueMerged
             ];
         }
@@ -87,9 +87,9 @@ dop.core.injectMutationInPatch = function(patchs, mutation) {
 
         else {
             newSpecialInstruction = (isMutationSplice) ?
-                [instructionsPatchs.splice.value,mutation.splice.slice(0)]
+                [instructionsPatchs.splice, mutation.splice.slice(0)]
             :
-                [instructionsPatchs.swaps.value,mutation.swaps.slice(0)]
+                [instructionsPatchs.swaps, mutation.swaps.slice(0)]
 
             if (!isArray(chunkParent[prop]))
                 chunkParent[prop] = newSpecialInstruction;

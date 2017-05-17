@@ -11,6 +11,7 @@ dop.core.set = function(object, property, value) {
                 objectProxy = dop.getObjectProxy(object),
                 oldValue = objectTarget[property],
                 length = objectTarget.length,
+                isNewProperty = !objectTarget.hasOwnProperty(property),
                 path;
 
             // Setting
@@ -30,7 +31,7 @@ dop.core.set = function(object, property, value) {
                     path: path,
                     value: dop.util.clone(value)
                 };
-                if (objectTarget.hasOwnProperty(property))
+                if (!isNewProperty)
                     mutation.oldValue = dop.util.clone(oldValue)
 
                 // If is array and length is different we must store the length 

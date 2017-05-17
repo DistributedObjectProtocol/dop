@@ -4,22 +4,22 @@ dop.core.encode = function(property, value) {
     var tof = typeof value;
 
     if (tof == 'undefined') // http://stackoverflow.com/questions/17648150/how-does-json-parse-manage-undefined
-        return '~U';
+        return dop.protocol.instructionsPatchs.undefined;
 
     if (tof == 'string' && value[0] == '~')
         return '~'+value;
     
     if (tof == 'number' && isNaN(value))
-        return '~N';
+        return dop.protocol.instructionsPatchs.nan;
 
     if (tof == 'object' && value instanceof RegExp)
-        return '~R' + value.toString();
+        return dop.protocol.instructionsPatchs.regex + value.toString();
 
     if (value === Infinity)
-        return '~I';
+        return dop.protocol.instructionsPatchs.infinity;
 
     if (value === -Infinity)
-        return '~i';
+        return dop.protocol.instructionsPatchs._infinity;
 
     return value;
 };

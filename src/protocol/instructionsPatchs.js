@@ -1,24 +1,54 @@
 
 dop.protocol.instructionsPatchs = {
 
-    undefined: { // delete
-        value: 0
-    },
+    undefined: '~U', // delete
 
-    function: { // remote function
-        value: 1
-    },
+    function: '~F', // remote function
 
-    object: { // new object or array
-        value: 2
-    },
+    object: 2, // new object or array
 
-    splice: {
-        value: 3
-    },
+    splice: 3,
 
-    swaps: {
-        value: 4
-    },
+    swaps: 4,
 
+
+    // No standard only for JavaScript
+    nan: '~N',
+    regex: '~R',
+    infinity: '~I',
+    _infinity: '~i'
 };
+
+
+
+
+// a={
+//     a: [0],
+//     b: undefined,
+//     c: "[0]",
+//     newarr: {a:[0],b:undefined,c:"[0]",d:[4,[0],{}]},
+// }
+
+// // --------
+
+// b={
+//     a: [2,[0]],
+//     b: [0],
+//     c: "[0]",
+//     newarr: [2,{a:[2,[0]],b:[0],c:"[0]",d:[2,[4,[2,[0]],[2,{}]]] }],
+// }
+
+// c={
+//     a: [2,[0]],
+//     b: [0],
+//     c: "[0]",
+//     newarr: [2,{a:"[0]",b:[0],c:"[[0]",d:[4,[0],{}]}],
+// }
+
+
+// c={
+//     a: [2,[0]],
+//     b: "~U",
+//     c: "[0]",
+//     newarr: [2,{a:[0],b:"~U",c:"[0]",d:[4,[0],{}]}],
+// }

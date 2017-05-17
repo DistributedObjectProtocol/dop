@@ -1,5 +1,5 @@
 
-dop.core.getPatch = function(mutations) {
+dop.core.getPatch = function(mutations, isUnpatch) {
 
     var patchs = {},
         index = 0,
@@ -8,12 +8,12 @@ dop.core.getPatch = function(mutations) {
         object_id;
 
     for (;index<total; ++index) {
-        mutation = mutations[index];
+        mutation = isUnpatch ? dop.core.getMutationInverted(mutations[index]) : mutations[index];
         object_id = dop.getObjectId(mutation.object);
         if (patchs[object_id] === undefined)
             patchs[object_id] = {chunks:[{}], object:dop.getObjectRoot(mutation.object)};
         dop.core.injectMutationInPatch(patchs[object_id], mutation);
-        console.log(JSON.stringify(patchs[object_id].chunks))
+        // console.log(JSON.stringify(patchs[object_id].chunks))
     }
 
     return patchs;

@@ -8,7 +8,7 @@ var decode = dop.decode;
 
 
 function applyPatch(collector) {
-    var patch = dop.core.getPatch(collector.mutations);
+    var patch = dop.core.getUnpatch(collector.mutations);
     var patchServer = decode(encode(patch));
     collector.destroy();
     for (var id in patchServer)
@@ -30,7 +30,7 @@ var header = '--- ';
 
 test(header+'Adding property', function(t) {
     var objectServer = dop.register({});
-    var patchExpected = [{one:1}];
+    var patchExpected = [{one:undefined}];
     var mutationsExpected = 1;
 
 
@@ -44,11 +44,11 @@ test(header+'Adding property', function(t) {
 
 test(header+'Changing property', function(t) {
     var objectServer = dop.register({one:1});
-    var patchExpected = [{one:11}];
+    var patchExpected = [{one:1}];
     var mutationsExpected = 1;
 
     var collector = dop.collect();
-    set(objectServer, 'one', 11);
+    set(objectServer, 'one', 2);
     var patchGenerated = applyPatch(collector);
     t.equal(collector.mutations.length, 1, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, patchGenerated, patchExpected);
@@ -70,11 +70,13 @@ test(header+'Changing property with the same value', function(t) {
 
 test(header+'Deleting property', function(t) {
     var objectServer = dop.register({one:11});
-    var patchExpected = [{one:undefined}];
-    var mutationsExpected = 1;
-
     var collector = dop.collect();
+
+    var mutationsExpected = 1;
+    var patchExpected = [{one:11}];
     del(objectServer, 'one');
+
+
     var patchGenerated = applyPatch(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, patchGenerated, patchExpected);
@@ -82,17 +84,22 @@ test(header+'Deleting property', function(t) {
 
 test(header+'Change and delete a removed item', function(t) {
     var objectServer = dop.register({one:11});
-    var patchExpected = [{two:2,one:undefined}];
-    var mutationsExpected = 3;
-
     var collector = dop.collect();
+
+
+    var mutationsExpected = 3;
+    var patchExpected = [{one:11,two:undefined}];
     set(objectServer, 'one', 'Changeddd');
     del(objectServer, 'one');
     set(objectServer, 'two', 2);
+
+
     var patchGenerated = applyPatch(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, patchGenerated, patchExpected);
 });
+
+
 
 
 test(header+'Setting property array', function(t) {
@@ -100,7 +107,7 @@ test(header+'Setting property array', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":{"5":"three","length":6}}];
+    var patchExpected = [{"array":{"5":undefined,"length":2}}];
     var mutationsExpected = 2;
     set(object.array, 5, "three");
 
@@ -118,20 +125,16 @@ test(header+'Setting property array', function(t) {
 
 
 
-
-
 test(header+'Setting an array and mutating it', function(t) {
     var object = dop.register({});
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":[2,["c","b",{"B1":"string"},false,true]]}];
-    var mutationsExpected = 5;
+    var patchExpected = [{"array":[4,[2,0]]},{"array":undefined}];
+    var mutationsExpected = 4;
     set(object, 'array', [true,false]);
-    object.array.push('a','b','c')
     set(object.array, 2, {B1:[true,false]});
     object.array.reverse()
-    set(object.array[2], 'B1', 'string');
 
 
     var patchGenerated = applyPatch(collector);
@@ -149,7 +152,7 @@ test(header+'Mutating array then mutating nested objects', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":[4,[0,1]]},{"array":{"2":[2,{"B1":false}],"length":3}}];
+    var patchExpected = [{"array":{"2":undefined,"length":2}},{"array":[4,[1,0]]}];
     var mutationsExpected = 3;
     object.array.reverse();
     set(object.array, 2, {B1:false});
@@ -170,7 +173,7 @@ test(header+'Mutating nested objects then mutating parent array', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":{"2":[2,{"B1":false}],"length":3}},{"array":[4,[0,2]]}];
+    var patchExpected = [{"array":[4,[2,0]]},{"array":{"2":undefined,"length":2}}];
     var mutationsExpected = 3;
     set(object.array, 2, {B1:false});
     object.array.reverse();
@@ -191,7 +194,7 @@ test(header+'Mutating array twice', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":[[3,[3,0,5,4,6]],[4,[0,1,1,2,3,4]]]}];
+    var patchExpected = [{"array":[[4,[4,3,2,1,1,0]],[3,[3,3]]]}];
     var mutationsExpected = 2;
     object.array.push(5,4,6);
     object.array.sort();
@@ -200,7 +203,6 @@ test(header+'Mutating array twice', function(t) {
     var patchGenerated = applyPatch(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, patchGenerated, patchExpected);
-
 })
 
 
@@ -211,7 +213,7 @@ test(header+'Mutating array and mutating array deeper', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":[4,[0,2]]},{"array":{"0":[4,[0,1]]}}];
+    var patchExpected = [{"array":{"0":[4,[1,0]]}},{"array":[4,[2,0]]}];
     var mutationsExpected = 2;
     object.array.reverse();
     object.array[0].reverse();
@@ -230,7 +232,7 @@ test(header+'Mutating array deeper and mutating container', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":{"2":[4,[0,1]]}},{"array":[4,[0,2]]}];
+    var patchExpected = [{"array":[4,[2,0]]},{"array":{"2":[4,[1,0]]}}];
     var mutationsExpected = 2;
     object.array[2].reverse();
     object.array.reverse();

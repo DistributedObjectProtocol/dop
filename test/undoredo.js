@@ -13,11 +13,13 @@ function makeTest(t, snapshot, original, object, mutated) {
     var target = dop.getObjectTarget(object)
 
     // Redo
-    patch = dop.decode(dop.encode(dop.core.getPatch(snapshot.mutations)[object_id].patch))
+    patch = dop.decode(dop.encode(snapshot.getPatch()[object_id].chunks))
+    unpatch = dop.decode(dop.encode(snapshot.getUnpatch()[object_id].chunks))
+    // console.log(JSON.stringify(patch))
+    // console.log(JSON.stringify(unpatch))
 
     // Undo
     snapshot.undo()
-    unpatch = dop.decode(dop.encode(dop.core.getPatch(snapshot.mutations)[object_id].patch))
     t.deepEqual(target, original, 'undo local')
     if (Array.isArray(target))
         t.equal(target.length, original.length, 'undo length local')
