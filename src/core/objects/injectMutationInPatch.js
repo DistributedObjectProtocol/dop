@@ -1,5 +1,5 @@
 
-dop.core.injectMutationInPatch = function(patchs, mutation) {
+dop.core.injectMutationInPatch = function(patch, mutation) {
 
     var prop = mutation.prop,
         path = mutation.path,
@@ -9,7 +9,7 @@ dop.core.injectMutationInPatch = function(patchs, mutation) {
         isMutationArray = isMutationSplice || isMutationSwaps,
         typeofValue = dop.util.typeof(value),
         index = 1,
-        chunk = chunkParent = patchs.chunks[patchs.chunks.length-1],
+        chunk = chunkParent = patch.chunks[patch.chunks.length-1],
         chunkNext = chunkNextParent = chunkNextRoot = {},
         tofCurrentObject,
         specialInstruction,
@@ -42,7 +42,7 @@ dop.core.injectMutationInPatch = function(patchs, mutation) {
             else if (!isMutationArray || (isMutationArray && index+1<path.length)) {
                 isNewChunk = true;
                 chunk = chunkNext;
-                patchs.chunks.push(chunkNextRoot);
+                patch.chunks.push(chunkNextRoot);
             }
         }
 
@@ -50,7 +50,7 @@ dop.core.injectMutationInPatch = function(patchs, mutation) {
             // isNewChunk = true;
             chunkParent = chunkNextParent;
             chunk = chunkNext; 
-            patchs.chunks.push(chunkNextRoot);
+            patch.chunks.push(chunkNextRoot);
         }
 
         else if (tofCurrentObject == 'object')

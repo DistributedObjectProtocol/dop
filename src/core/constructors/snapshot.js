@@ -17,6 +17,7 @@ dop.core.snapshot.prototype.undo = function () {
 dop.core.snapshot.prototype.redo = function () {
     if (!this.forward && this.mutations.length>0) {
         this.forward = true;
+        this.setPatch(this.getPatch());
         this.emit();
     }
 };

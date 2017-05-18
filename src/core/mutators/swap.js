@@ -1,24 +1,17 @@
 
-// dop.core.swap = function(array, swaps) {
+dop.core.swap = function(array, swaps) {
+    var objectTarget = dop.getObjectTarget(array),
+        objectProxy = dop.getObjectProxy(array);
 
-//     if (swaps.length>1) {
+    var result = dop.util.swap(objectTarget, swaps);
 
-//         var objectTarget = dop.getObjectTarget(array),
-//             objectProxy = dop.getObjectProxy(array);
+    if (objectTarget===objectProxy || array===objectProxy)
+        dop.core.storeMutation({
+            object: objectProxy,
+            prop: dop.getObjectProperty(array),
+            path: dop.getObjectPath(array),
+            swaps: swaps.slice(0)
+        });
 
-//         var result = dop.util.swap(objectTarget, swaps, function(swapA, swapB){
-//             // Updating path
-//             dop.core.updatePathArray(objectTarget, swapA);
-//             dop.core.updatePathArray(objectTarget, swapB);
-//         })
-
-//         if (objectTarget===objectProxy || array===objectProxy)
-//             dop.core.storeMutation({
-//                 object:dop.getObjectProxy(dop.getObjectParent(array)),
-//                 name:dop.getObjectProperty(array),
-//                 swaps:swaps
-//             });
-
-//         return result;
-//     }
-// };
+    return result;
+};
