@@ -8,13 +8,20 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
         dop.core.localProcedureCall(dop.data.onsubscribe, params, function resolve(value) {
             if (dop.isObjectRegistrable(value)) {
                 var object = dop.register(value),
-                    // object_id = dop.getObjectId(object),
                     object_root = dop.getObjectRoot(object),
-                    object_dop = dop.getObjectDop(object),
-                    response = dop.core.createResponse(request_id, 0, object_dop.length==1 ? object_dop[0] : object_dop);
+                    object_path = dop.getObjectPath(object),
+                    object_id = object_path[0],
+                    response = dop.core.createResponse(request_id, 0);
 
+                // New object
                 if (dop.core.registerSubscriber(node, object_root))
-                    response.push(object_root);
+                    response.push(object_id, object_root);
+
+                // Object already registered
+                else
+                    response.push(object_path);
+
+
                 dop.core.storeSendMessages(node, response, dop.encodeFunction);
                 return object;
             }

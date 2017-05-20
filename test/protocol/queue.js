@@ -1,5 +1,5 @@
 var test = require('tape');
-var dop = require('../../dist/nodejs');
+var dop = require('../../dist/nodejs').create()
 var dopServer = require('../../dist/nodejs').create();
 var dopClient = require('../../dist/nodejs').create();
 

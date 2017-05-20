@@ -5,7 +5,7 @@ var dopClientClient = require('../../dist/nodejs').create();
 dopServer.env = 'SERVER';
 dopClient.env = 'CLIENT';
 dopClientClient.env = 'CLIENTCLIENT';
-dopServer.data.object_inc = 7;
+dopServer.data.object_inc = 7; 
 
 
 var transportName = process.argv[2] || 'local';
@@ -16,8 +16,7 @@ var server = dopServer.listen({transport:transportListen})
 var client = dopClient.connect({transport:transportConnect, listener:server})
 var clientlisten = dopClient.listen({transport:transportListen, port:5555})
 var clientclient = dopClientClient.connect({transport:transportConnect, url:'ws://localhost:5555/dop', listener:clientlisten})
-
-
+ 
 var objServer = dopServer.register({
     string: function(){
         return 'Hello world';

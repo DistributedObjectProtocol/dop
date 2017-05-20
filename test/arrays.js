@@ -1,5 +1,5 @@
 
-var dop = require('../dist/nodejs');
+var dop = require('../dist/nodejs').create();
 var Combinatorics = require('js-combinatorics');
 var test = require('tape');
 // // require('tabe').createStream( test );
@@ -18,7 +18,8 @@ function isObjectRegistrable(object) {
 
 
 test('for (i in ...) must return only array values', function(t) {
-    var register = dop.register(array.slice(0));
+    var object = dop.register({array:array.slice(0)});
+    var register = object.array;
     t.equal(gify(Object.keys(register)), gify(Object.keys(array)));
     t.end();
 });
@@ -26,7 +27,8 @@ test('for (i in ...) must return only array values', function(t) {
 
 test('Splice', function(t) {
     argsCases.forEach(function(paramsCase) {
-        var register = dop.register(array.slice(0));
+        var object = dop.register({array:array.slice(0)});
+        var register = object.array;
         var original = array.slice(0);
         var description = JSON.stringify(paramsCase);
         t.equal(gify(register.splice.apply(register, paramsCase)), gify(original.splice.apply(original, paramsCase)), 'output case: '+description);
@@ -38,8 +40,8 @@ test('Splice', function(t) {
             if (isObjectRegistrable(item)) {
 
                 if (dop.isRegistered(item)) {
-                    var object_dop = dop.getObjectDop(item);
-                    t.equal(Number(object_dop[object_dop.length-1]), Number(index), 'correct path for subobject: '+index + ', Case:'+description);
+                    var property = dop.getObjectProperty(item);
+                    t.equal(Number(property), Number(index), 'correct path for subobject: '+index + ', Case:'+description);
                 }
                 else if (item.constructor === Object)
                     t.equal(false, true, 'object not registered: '+index + ', Case:'+description + ' ' + gify(item));
@@ -52,7 +54,8 @@ test('Splice', function(t) {
 
 
 test('Shift', function(t) {
-    var register = dop.register(array.slice(0));
+    var object = dop.register({array:array.slice(0)});
+    var register = object.array;
     var original = array.slice(0);
     do {
         var description = original.length;
@@ -64,8 +67,8 @@ test('Shift', function(t) {
             if (isObjectRegistrable(item)) {
 
                 if (dop.isRegistered(item)) {
-                    var object_dop = dop.getObjectDop(item);
-                    t.equal(Number(object_dop[object_dop.length-1]), Number(index), 'correct path for subobject: '+index + ', Case:'+description);
+                    var property = dop.getObjectProperty(item);
+                    t.equal(Number(property), Number(index), 'correct path for subobject: '+index + ', Case:'+description);
                 }
                 else if (item.constructor === Object)
                     t.equal(false, true, 'object not registered: '+index + ', Case:'+description + ' ' + gify(item));
@@ -79,7 +82,8 @@ test('Shift', function(t) {
 
 
 test('Pop', function(t) {
-    var register = dop.register(array.slice(0));
+    var object = dop.register({array:array.slice(0)});
+    var register = object.array;
     var original = array.slice(0);
     do {
         var description = original.length;
@@ -91,8 +95,8 @@ test('Pop', function(t) {
             if (isObjectRegistrable(item)) {
 
                 if (dop.isRegistered(item)) {
-                    var object_dop = dop.getObjectDop(item);
-                    t.equal(Number(object_dop[object_dop.length-1]), Number(index), 'correct path for subobject: '+index + ', Case:'+description);
+                    var property = dop.getObjectProperty(item);
+                    t.equal(Number(property), Number(index), 'correct path for subobject: '+index + ', Case:'+description);
                 }
                 else if (item.constructor === Object)
                     t.equal(false, true, 'object not registered: '+index + ', Case:'+description + ' ' + gify(item));
@@ -107,7 +111,8 @@ test('Pop', function(t) {
 
 test('Push', function(t) {
     argsCases.forEach(function(paramsCase) {
-        var register = dop.register(array.slice(0));
+        var object = dop.register({array:array.slice(0)});
+        var register = object.array;
         var original = array.slice(0);
         var description = JSON.stringify(paramsCase);
         t.equal(gify(register.push.apply(register, paramsCase)), gify(original.push.apply(original, paramsCase)), 'output case: '+description);
@@ -116,8 +121,8 @@ test('Push', function(t) {
             if (isObjectRegistrable(item)) {
 
                 if (dop.isRegistered(item)) {
-                    var object_dop = dop.getObjectDop(item);
-                    t.equal(Number(object_dop[object_dop.length-1]), Number(index), 'correct path for subobject: '+index + ', Case:'+description);
+                    var property = dop.getObjectProperty(item);
+                    t.equal(Number(property), Number(index), 'correct path for subobject: '+index + ', Case:'+description);
                 }
                 else if (item.constructor === Object)
                     t.equal(false, true, 'object not registered: '+index + ', Case:'+description + ' ' + gify(item));
@@ -132,7 +137,8 @@ test('Push', function(t) {
 
 test('Unshift', function(t) {
     argsCases.forEach(function(paramsCase) {
-        var register = dop.register(array.slice(0));
+        var object = dop.register({array:array.slice(0)});
+        var register = object.array;
         var original = array.slice(0);
         var description = JSON.stringify(paramsCase);
         t.equal(gify(register.unshift.apply(register, paramsCase)), gify(original.unshift.apply(original, paramsCase)), 'output case: '+description);
@@ -144,8 +150,8 @@ test('Unshift', function(t) {
             if (isObjectRegistrable(item)) {
 
                 if (dop.isRegistered(item)) {
-                    var object_dop = dop.getObjectDop(item);
-                    t.equal(Number(object_dop[object_dop.length-1]), Number(index), 'correct path for subobject: '+index + ', Case:'+description);
+                    var property = dop.getObjectProperty(item);
+                    t.equal(Number(property), Number(index), 'correct path for subobject: '+index + ', Case:'+description);
                 }
                 else if (item.constructor === Object)
                     t.equal(false, true, 'object not registered: '+index + ', Case:'+description + ' ' + gify(item));
@@ -157,7 +163,8 @@ test('Unshift', function(t) {
 
 
 test('Reverse', function(t) {
-    var register = dop.register(array.slice(0));
+    var object = dop.register({array:array.slice(0)});
+    var register = object.array;
     var original = array.slice(0);
     t.equal(gify(register.reverse()), gify(original.reverse()), 'output case');
     t.equal(gify(original), gify(register), 'stringify case');
@@ -165,10 +172,10 @@ test('Reverse', function(t) {
     for (var index=0,total=register.length; index<total; ++index) {
         var item = register[index];
         if (isObjectRegistrable(item)) {
-
+            dop.getObjectPath(item);
             if (dop.isRegistered(item)) {
-                var object_dop = dop.getObjectDop(item);
-                t.equal(Number(object_dop[object_dop.length-1]), Number(index), 'correct path for subobject: '+index + ', Case:');
+                var property = dop.getObjectProperty(item);
+                t.equal(Number(property), Number(index), 'correct path for subobject: '+index + ', Case:');
             }
             else if (item.constructor === Object)
                 t.equal(false, true, 'object not registered: '+index + ', Case:' + ' ' + gify(item));
@@ -218,7 +225,8 @@ test('Sort', function(t) {
         dop.core.sortDiff(arrayOriginal, copy);
         t.equal(gify(arrayOriginal), gify(copy), 'stringify');
         t.deepEqual(arrayOriginal, copy, 'deepEqual function:'+compareFunction);
-        arrayOriginal = dop.register(array.slice(0));
+        var objectRegistered = dop.register({array:array.slice(0)});
+        arrayOriginal = objectRegistered.array;
         arrayOriginal[13] = true;
         copy = arrayOriginal.slice(0);
         arrayOriginal.sort(compareFunction);
@@ -230,10 +238,11 @@ test('Sort', function(t) {
             if (isObjectRegistrable(item)) {
 
                 if (dop.isRegistered(item)) {
-                    var object_dop = dop.getObjectDop(item);
-                    if ( Number(object_dop[object_dop.length-1]) !== Number(index) )
-                        debugger;
-                    t.equal(Number(object_dop[object_dop.length-1]), Number(index), 'correct path for subobject: '+index + ', Case:');
+                    dop.getObjectPath(item);
+                    var property = dop.getObjectProperty(item);
+                    // if ( Number(property) !== Number(index) )
+                        // debugger;
+                    t.equal(Number(property), Number(index), 'correct path for subobject: '+index + ', Case:');
                 }
                 else if (item.constructor === Object)
                     t.equal(false, true, 'object not registered: '+index + ', Case:' + ' ' + gify(item));
@@ -242,7 +251,8 @@ test('Sort', function(t) {
     });
 
 
-    arrayOriginal = dop.register(array.slice(0));
+    var objectRegistered = dop.register({array:array.slice(0)});
+    arrayOriginal = objectRegistered.array;
     arrayOriginal[13] = true;
     copy = arrayOriginal.slice(0);
     var output1 = arrayOriginal.sort();

@@ -26,7 +26,7 @@ dop.protocol.onfunction = function(node, request_id, request, object_id, validat
                 dop.core.localProcedureCall(f, params, resolve, reject, function(req) {
                     req.node = node;
                     return req;
-                }, object);
+                }, dop.getObjectProxy(object));
 
             return;
         }

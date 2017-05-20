@@ -16,10 +16,14 @@ dop.protocol.onpatch = function(node, request_id, request) {
             // Storing patch
             object_node.applied[version] = patch;
             // Applying
-            collector = dop.collectFirst();
+            collector = dop.collect();
             while (object_node.applied[object_node.applied_version+1]) {
                 object_node.applied_version += 1;
-                dop.core.setPatchFunction(object_data.object, object_node.applied[object_node.applied_version]);
+                dop.core.setPatch(
+                    object_data.object,
+                    object_node.applied[object_node.applied_version],
+                    dop.core.setPatchFunctionMutator
+                );
                 delete object_node.applied[object_node.applied_version];
             }
             collector.emit();

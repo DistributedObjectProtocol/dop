@@ -1,4 +1,3 @@
-dist/
 
 # Dependency directories
 node_modules/
@@ -17,5 +16,5 @@ npm-debug.log*
 .grunt
 
 # Files
-test*.js
+test*.*
 examples/todomvc

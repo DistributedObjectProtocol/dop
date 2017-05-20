@@ -10,6 +10,7 @@ dop.core.emitObservers = function(mutations) {
         total2,
         object_dop,
         object_dops = [],
+        object_id,
         observersMultiples = {}, // from dop.core.observer() && dop.createObserver()
         observersProperties,
         observers,
@@ -20,8 +21,9 @@ dop.core.emitObservers = function(mutations) {
         mutation = mutations[index];
         object = mutation.object;
         object_dop = dop.getObjectDop(object);
+        object_id = dop.getObjectId(object);
 
-        if (!mutationsWithSubscribers && isObject(dop.data.object[object_dop[0]]))
+        if (!mutationsWithSubscribers && isObject(dop.data.object[object_id]))
             mutationsWithSubscribers = true;
 
         // Storing mutations that will be emited to observeMultiples aka observers

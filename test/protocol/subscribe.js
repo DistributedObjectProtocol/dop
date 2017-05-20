@@ -8,6 +8,14 @@ dopClient.env = 'CLIENT';
 dopClient2.env = 'CLIENT2';
 dopClientClient.env = 'CLIENTCLIENT';
 
+var dop = dopServer;
+var isTarget = function (object) {
+    return (dop.isRegistered(object) && dop.getObjectTarget(object)===object);
+};
+var isProxy = function (object) {
+    return (dop.isRegistered(object) && dop.getObjectProxy(object)===object);
+};
+
 test('SUBSCRIBE TESTS', function(tt) {
 
     var test = function(name, cb){
@@ -67,13 +75,13 @@ test('Client subscribe synchronously', function(t) {
     dopServer.onSubscribe(function(name, req) {
         if (name === 'DATA') {
             serverClient = req.node;
-            t.equal(dopServer.isTarget(DATA), false, 'Is not registered yet');
+            t.equal(isTarget(DATA), false, 'Is not registered yet');
             return DATA;
         }
         else if (name === 'DATA_DEEP') {
             t.equal(dopServer.isRegistered(DATA), true, 'Is registered');
-            t.equal(dopServer.isTarget(DATA), true, 'Is target');
-            t.equal(dopServer.isProxy(DATA.deep), true, 'Is proxy');
+            t.equal(isTarget(DATA), true, 'Is target');
+            t.equal(isProxy(DATA.deep), true, 'Is proxy');
             return DATA.deep;
         }
         else if (name === 'DATA_DEEPER') {
@@ -86,7 +94,7 @@ test('Client subscribe synchronously', function(t) {
             return req;
         }
         else if (name === 'INNER-COPY') {
-            return [Math.random(), DATA];
+            return {0:Math.random(), 1:DATA};
         }
         else if (name === 'REJECT') {
             req.reject({message:'Subscription rejected'})

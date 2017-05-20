@@ -1,10 +1,20 @@
 
-dop.core.setPatch = function(object, patch) {
+dop.core.setPatch = function(object, patch, mutator) {
     if (!isArray(patch))
         patch = [patch];
     
     for (var index=0,total=patch.length; index<total; ++index)
-        dop.util.path(patch[index], null, object, dop.core.setPatchMutator);
+        dop.util.path(patch[index], null, object, mutator);
+
+    return object;
+};
+
+
+dop.core.setPatchFunctionMutator = function(destiny, prop, value, typeofValue, path){
+    if (isFunction(value) && value.name==dop.core.createRemoteFunction.name)
+        dop.set(destiny, prop, value(dop.getObjectId(destiny), path.slice(0)));
+    else
+        return dop.core.setPatchMutator(destiny, prop, value, typeofValue, path);
 };
 
 

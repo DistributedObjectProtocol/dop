@@ -24,17 +24,17 @@ dop.core.configureObject = function(object, propertyParent, parent) {
     object_dop.om = {}; // observers multiple
     object_dop.omp = {}; // observers multiple property
     object_dop.m = []; // temporal mutations before will be emitted
-    Object.defineProperty(object, dop.cons.DOP, {value:object_dop});
+    Object.defineProperty(object, dop.cons.DOP, {value:object_dop, enumerable:false});
 
 
     // Deep objects (Recursion)
-    var property, value, object_dop, is_array=isArray(object);
+    var property, value, object_dop, path, is_array=isArray(object);
     for (property in object) {
         if (is_array)
             property = Number(property);
         value = object[property];
         if (isFunction(value) && value.name==dop.core.createRemoteFunction.name) {
-            throw Error('TODOOOOO')
+            path = dop.getObjectPath(object);
             object[property] = value(path[0], path.slice(1).concat(property));
         }
         else if (dop.isObjectRegistrable(value))

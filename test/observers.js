@@ -1,6 +1,6 @@
 var test = require('tape');
 // require('tabe').createStream( test );
-var dop = require('../dist/nodejs');
+var dop = require('../dist/nodejs').create()
 
 
 
@@ -117,6 +117,8 @@ test('mutations with createObserver', function(t) {
     dop.set(object, 'new', 123);
     collector.emit()
 
+    t.end()
+    
 })
 
 

@@ -1,8 +1,7 @@
 
 var test = require('tape');
 // require('tabe').createStream( test );
-var dop = require('../dist/nodejs');
-
+var dop = require('../dist/nodejs').create();
 
 
 

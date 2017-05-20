@@ -17,14 +17,14 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
 
             else {
                 if (node.owner[object_owner_id] === undefined) {
-                    collector = dop.collectFirst();
+                    collector = dop.collect();
                     if (dop.isRegistered(request.into))
-                        object = dop.core.setPatchFunction(request.into, object_owner);
+                        object = dop.core.setPatch(request.into, object_owner, dop.core.setPatchFunctionMutator);
                     else
                         object = dop.register((request.into===undefined) ? 
                             object_owner
                         :
-                            dop.core.setPatch(request.into, object_owner)
+                            dop.core.setPatch(request.into, object_owner, dop.core.setPatchMutator)
                         );
                     dop.core.registerOwner(node, object, object_owner_id);
                     collector.emit();
