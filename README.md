@@ -23,10 +23,11 @@ This repository is the JavaScript implementation of the protocol that runs on no
 // Server (node.js)
 const dop = require('dop')
 dop.listen() // WebSockets on port 4444 (https://github.com/websockets/ws)
-dop.onSubscribe(() => {
+const object = dop.register({
     hello: 'world',
     square: number => number * number
 })
+dop.onSubscribe(() => object)
 ```
 
 ```js

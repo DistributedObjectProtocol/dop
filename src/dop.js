@@ -12,7 +12,16 @@ var dop = {
         object:{},
         collectors:[[],[]],
         observers:{},
-        observers_inc:0
+        observers_inc:0,
+        gets_collecting:false,
+        gets_paths: [],
+
+        computed_inc: 0,
+        computed: {},
+        path: {
+            // computeds: []
+            // derivations: []
+        }
     },
     
     // src
@@ -30,6 +39,7 @@ var dop = {
         DISCONNECT: '~DISCONNECT',
         REMOTE_FUNCTION: '$DOP_REMOTE_FUNCTION',
         BROADCAST_FUNCTION: '$DOP_BROADCAST_FUNCTION',
+        COMPUTED_FUNCTION: '$DOP_COMPUTED_FUNCTION'
     }
 
 };

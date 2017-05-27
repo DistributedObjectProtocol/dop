@@ -91,7 +91,7 @@ client.subscribe().into(objClient).then(function(obj) {
     })
     .then(function(value){
         t.equal(value, 'resolveAsync', 'Resolved async');
-        return objServer.resolveAsync(dopClient.createAsync())
+        return objServer.resolveAsync(dopClient.core.createAsync())
     })
     .then(function(value){
         t.equal(value, 'resolveAsync', 'Resolved async local');

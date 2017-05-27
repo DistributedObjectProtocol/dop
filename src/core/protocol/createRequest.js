@@ -5,7 +5,7 @@ dop.core.createRequest = function(node) {
 
     node.requests[request_id] = request;
     request.unshift(request_id);
-    request.promise = dop.createAsync();
+    request.promise = dop.core.createAsync();
 
     return request;
 };

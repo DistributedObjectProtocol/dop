@@ -15,8 +15,7 @@ dop.core.configureObject = function(object, propertyParent, parent) {
 
 
     // Setting ~DOP object
-    var object_dop = {};
-    object_dop.r = parent === undefined ? object : dop.getObjectRoot(parent); // root
+    var object_dop = {}, object_proxy, object_target;
     object_dop._ = parent; // parent
     object_dop.pr = propertyParent; // property
     object_dop.o = []; // observers
@@ -24,44 +23,74 @@ dop.core.configureObject = function(object, propertyParent, parent) {
     object_dop.om = {}; // observers multiple
     object_dop.omp = {}; // observers multiple property
     object_dop.m = []; // temporal mutations before will be emitted
-    Object.defineProperty(object, dop.cons.DOP, {value:object_dop, enumerable:false});
+    // Making proxy object
+    if (canWeProxy) {
+        object_proxy = object_dop.p = new Proxy(object, dop.core.proxyObjectHandler);
+        object_target = object_dop.t = object;
+    }
+    else
+        object_proxy = object_target = object_dop.p = object_dop.t = object;
+
+    // root
+    object_dop.r = (parent === undefined) ? object_proxy : dop.getObjectDop(parent).r;
+    
+
+
+    // // Object parent level and more
+    // if (parent === undefined) {
+    //     object_dop.r = object_proxy;  // root
+    //     object_dop.l = 1; // deep level [1,"prop","arr"] this is level 3
+    //     object_dop.ia = false; // is inside of array
+    // }
+    // else {
+    //     var object_dop_parent = dop.getObjectDop(parent);
+    //     object_dop.l = object_dop_parent.l+1;  // deep level [1,"prop","arr"] this is level 3
+    //     object_dop.ia = (object_dop_parent.ia || isArray(parent)); // is inside of array
+    // }
+
+
+    Object.defineProperty(object_target, dop.cons.DOP, {
+        value:object_dop,
+        enumerable:false,
+        configurable:false,
+        writable:false
+    });
 
 
     // Deep objects (Recursion)
-    var property, value, object_dop, path, is_array=isArray(object);
-    for (property in object) {
+    var property, 
+        value,
+        path,
+        is_array = isArray(object_target),
+        is_function,
+        computed_pending = [];
+
+    for (property in object_target) {
         if (is_array)
             property = Number(property);
-        value = object[property];
-        if (isFunction(value) && value.name==dop.core.createRemoteFunction.name) {
+        value = object_target[property];
+        is_function = isFunction(value);
+        // remote function
+        if (is_function && value.name==dop.core.createRemoteFunction.name) {
             path = dop.getObjectPath(object);
-            object[property] = value(path[0], path.slice(1).concat(property));
+            object_target[property] = value(path[0], path.slice(1).concat(property));
         }
+        // storing computed value function
+        else if (is_function && value.name==dop.cons.COMPUTED_FUNCTION)
+            object_target[property] = value(object_proxy, property, false, undefined);
+        // object or array
         else if (dop.isObjectRegistrable(value))
-            object[property] = dop.core.configureObject(value, property, object);
+            object_target[property] = dop.core.configureObject(value, property, object_proxy);
     }
 
 
     // if (isObject(parent))
         // object_dop._ = (dop.isRegistered(parent)) ? dop.getObjectTarget(parent) : parent;
 
-
-    // Making proxy object
-    if (canWeProxy) {
-        var target = object;
-        object = new Proxy(object, dop.core.proxyObjectHandler);
-        // Adding proxy and target alias
-        object_dop.p = object;
-        object_dop.t = target;
-    }
-    else
-        object_dop.p = object_dop.t = object;
-
-
     // Adding traps for mutations methods of arrays
-    if (dop.util.typeof(object) == 'array')
-        Object.defineProperties(object, dop.core.proxyArrayHandler);
+    if (dop.util.typeof(object_target) == 'array')
+        Object.defineProperties(object_target, dop.core.proxyArrayHandler);
 
 
-    return object;
+    return object_proxy;
 };

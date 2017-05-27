@@ -23,7 +23,6 @@ dop.core.snapshot.prototype.redo = function () {
 };
 
 
-// This should be private
 dop.core.snapshot.prototype.emit = function () {
     // This is true if we have nodes subscribed to those object/mutations
     // Then we have to emit to nodes

@@ -14,11 +14,15 @@ dop.core.set = function(object, property, value) {
                 isNewProperty = !objectTarget.hasOwnProperty(property),
                 path;
 
-            // Setting
-            objectTarget[property] = dop.isObjectRegistrable(value) ?
-                dop.core.configureObject(value, property, objectTarget)
-            :
-                value;
+            // object or array
+            if (dop.isObjectRegistrable(value))
+                objectTarget[property] = dop.core.configureObject(value, property, objectTarget);
+            // computed value
+            else if (isFunction(value) && value.name==dop.cons.COMPUTED_FUNCTION)
+                objectTarget[property] = value(objectTarget, property, false, oldValue);
+            // other
+            else
+                objectTarget[property] = value;
 
             if (
                 (objectTarget===objectProxy || object===objectProxy) &&

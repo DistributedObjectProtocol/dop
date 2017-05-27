@@ -1,7 +1,6 @@
 
 dop.getObjectDop = function(object) {
-    if (isObject(object))
-        return object[dop.cons.DOP];
+    return object[dop.cons.DOP];
 };
 
 dop.getObjectRoot = function(object) {
@@ -21,44 +20,19 @@ dop.getObjectTarget = function(object) {
 };
 
 dop.getObjectProperty = function(object) {
-    return dop.getObjectDop(object).pr;
+    var object_dop = dop.getObjectDop(object);
+    if (isArray(object_dop._))
+        dop.getObjectPath(object);
+    return object_dop.pr;
 };
 
 dop.getObjectId = function(object) {
     return dop.getObjectProperty(dop.getObjectRoot(object));
 };
 
-dop.getObjectPath = function(object) {
-
-    var path=[], 
-        prop,
-        parent, 
-        object_dop = object[dop.cons.DOP];
-
-    while (object_dop._ !== undefined) {
-        prop = object_dop.pr;
-        parent = object_dop._;
-        if (parent[prop] === object_dop.p) {
-            path.unshift(prop);
-            object_dop = parent[dop.cons.DOP];
-        }
-        else {
-            if (isArray(parent)) {
-                prop = parent.indexOf(object_dop.p);
-                if (prop === -1)
-                    return;
-                else
-                    object_dop.pr = prop;
-                    // path.unshift(prop);
-            }
-            else
-                return;
-        }
-    }
-    
-    path.unshift(object_dop.pr);
-    return path;
-}
+dop.getObjectLevel = function(object) {
+    return dop.getObjectDop(object).l;
+};
 
 
 

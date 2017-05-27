@@ -20,7 +20,16 @@ var dop = {
         object:{},
         collectors:[[],[]],
         observers:{},
-        observers_inc:0
+        observers_inc:0,
+        gets_collecting:false,
+        gets_paths: [],
+
+        computed_inc: 0,
+        computed: {},
+        path: {
+            // computeds: []
+            // derivations: []
+        }
     },
     
     // src
@@ -38,6 +47,7 @@ var dop = {
         DISCONNECT: '~DISCONNECT',
         REMOTE_FUNCTION: '$DOP_REMOTE_FUNCTION',
         BROADCAST_FUNCTION: '$DOP_BROADCAST_FUNCTION',
+        COMPUTED_FUNCTION: '$DOP_COMPUTED_FUNCTION'
     }
 
 };
@@ -142,7 +152,6 @@ dop.util.get = function(object, path) {
     }
 
     return object[ path[index] ];
-
 };
 
 
@@ -415,6 +424,17 @@ dop.util.uuid = function () {
 
 
 
+//////////  src/api/addComputed.js
+
+dop.addComputed = function(object, property, callback) {
+    dop.util.invariant(dop.isRegistered(object), 'dop.addComputed needs a registered object as first parameter');
+    dop.util.invariant(isFunction(callback), 'dop.addComputed needs a function as third parameter');
+    return dop.core.createComputed(object, property, callback, true, object[property]);
+};
+
+
+
+
 //////////  src/api/collect.js
 
 dop.collect = function(filter) {
@@ -435,75 +455,14 @@ dop.collectFirst = function(filter) {
 
 
 
-//////////  src/api/createAsync.js
+//////////  src/api/computed.js
 
-dop.createAsync = function() {
-    var resolve, reject,
-    promise = new Promise(function(res, rej) {
-        resolve = res;
-        reject = rej;
-    });
-    promise.resolve = resolve;
-    promise.reject = reject;
-    return promise;
+dop.computed = function(callback) {
+    dop.util.invariant(isFunction(callback), 'dop.computed needs a function as first parameter');
+    return function $DOP_COMPUTED_FUNCTION(object, property, shallWeSet, oldValue) {
+        return dop.core.createComputed(object, property, callback, shallWeSet, oldValue);
+    };
 };
-
-
-
-// mypromise = dop.createAsync();
-// mypromise.then(function(v) {
-//     console.log('yeah',v)
-// });
-// setTimeout(function() {
-//     mypromise.resolve(1234567890)
-// },1000);
-
-
-// dop.core.createAsync = function() {
-//     var observable = Rx.Observable.create(function(observer) {
-//         observable.resolve = function(value) {
-//             observer.onNext(value);
-//             observer.onCompleted();
-//         };
-//         observable.reject = observer.onError;
-//     });
-//     return observable;
-//     // return {stream:observable,resolve:observer.onNext,reject:observer.onError,cancel:cancel};
-// };
-// mypromise = dop.createAsync();
-// mypromise.subscribe(function(v) {
-//     console.log('yeah',v);
-// });
-// setTimeout(function() {
-//     mypromise.resolve(1234567890);
-// },1000);
-
-
-
-
-// https://github.com/ReactiveX/rxjs/issues/556
-// function getData(num) {
-//   return new Promise((resolve, reject) => {
-//     resolve(num + 1);
-//   });
-// }
-
-// async function create() {
-//   var list = await Rx.Observable.range(1, 5)
-//     .flatMap(num => getData(num))
-//     .toArray().toPromise();
-
-//   return list;
-// }
-
-// console.clear();
-
-// Rx.Observable.fromPromise(create()).subscribe(list => {
-//   console.log(list);
-// }, err => {
-//   console.log(err);
-// });
-
 
 
 
@@ -571,6 +530,19 @@ dop.encodeFunction = function(data) {
 
 
 
+//////////  src/api/get.js
+
+dop.get = function(object, property) {
+    // dop.util.invariant(dop.isRegistered(object), 'Object passed to dop.del must be a registered object');
+    if (dop.isRegistered(object))
+        dop.core.proxyObjectHandler.get(dop.getObjectTarget(object), property);
+
+    return object[property];
+};
+
+
+
+
 //////////  src/api/getNodeBySocket.js
 
 dop.getNodeBySocket = function(socket) {
@@ -583,8 +555,7 @@ dop.getNodeBySocket = function(socket) {
 //////////  src/api/getObject.js
 
 dop.getObjectDop = function(object) {
-    if (isObject(object))
-        return object[dop.cons.DOP];
+    return object[dop.cons.DOP];
 };
 
 dop.getObjectRoot = function(object) {
@@ -604,44 +575,19 @@ dop.getObjectTarget = function(object) {
 };
 
 dop.getObjectProperty = function(object) {
-    return dop.getObjectDop(object).pr;
+    var object_dop = dop.getObjectDop(object);
+    if (isArray(object_dop._))
+        dop.getObjectPath(object);
+    return object_dop.pr;
 };
 
 dop.getObjectId = function(object) {
     return dop.getObjectProperty(dop.getObjectRoot(object));
 };
 
-dop.getObjectPath = function(object) {
-
-    var path=[], 
-        prop,
-        parent, 
-        object_dop = object[dop.cons.DOP];
-
-    while (object_dop._ !== undefined) {
-        prop = object_dop.pr;
-        parent = object_dop._;
-        if (parent[prop] === object_dop.p) {
-            path.unshift(prop);
-            object_dop = parent[dop.cons.DOP];
-        }
-        else {
-            if (isArray(parent)) {
-                prop = parent.indexOf(object_dop.p);
-                if (prop === -1)
-                    return;
-                else
-                    object_dop.pr = prop;
-                    // path.unshift(prop);
-            }
-            else
-                return;
-        }
-    }
-    
-    path.unshift(object_dop.pr);
-    return path;
-}
+dop.getObjectLevel = function(object) {
+    return dop.getObjectDop(object).l;
+};
 
 
 
@@ -667,6 +613,52 @@ dop.getObjectPath = function(object) {
 
 // dop.getObjectRootById = function(object_id) {
 //     return dop.data.object[object_id];
+// };
+
+
+
+
+//////////  src/api/getObjectPath.js
+
+dop.getObjectPath = function(object, strict) {
+
+    var path = [], 
+        // path_id = '',
+        parent,
+        prop,
+        strict = strict !== false,
+        object_dop = object[dop.cons.DOP];
+
+    while (object_dop._ !== undefined) {
+        prop = object_dop.pr;
+        parent = dop.getObjectTarget(object_dop._);
+        if (!strict || parent[prop] === object_dop.p) {
+            path.unshift(prop);
+            object_dop = parent[dop.cons.DOP];
+            // path_id = dop.core.pathSeparator(prop)+path_id;
+        }
+        else {
+            if (isArray(parent)) {
+                prop = parent.indexOf(object_dop.p);
+                if (prop === -1)
+                    return;
+                else
+                    object_dop.pr = prop;
+                    // path.unshift(prop);
+            }
+            else
+                return;
+        }
+    }
+    
+    path.unshift(object_dop.pr);
+    // path.path_id = dop.core.pathSeparator(object_dop.pr)+path_id;
+    return path;
+};
+
+
+// dop.getObjectPathId = function(object) {
+//     return dop.core.getPathId(dop.getObjectPath(object));
 // };
 
 
@@ -716,6 +708,7 @@ dop.isObjectRegistrable = function(object) {
 
 dop.isRegistered = function(object) {
     return (
+        isObject(object) &&
         dop.getObjectDop(object) !== undefined &&
         !Object.getOwnPropertyDescriptor(object, dop.cons.DOP).enumerable
     );
@@ -778,7 +771,7 @@ dop.observeProperty = function(object, property, callback) {
 
 
 
-//////////  src/api/onSubscribe.js
+//////////  src/api/onsubscribe.js
 
 dop.onSubscribe = function(callback) {
     dop.util.invariant(isFunction(callback), 'dop.onSubscribe only accept a function as parameter');
@@ -798,6 +791,59 @@ dop.register = function(object) {
         dop.core.configureObject(object, dop.data.object_inc++);
 };
 
+
+
+
+
+//////////  src/api/removeComputed.js
+
+dop.removeComputed = function(object, property, callback) {
+    dop.util.invariant(dop.isRegistered(object), 'dop.removeComputed needs a registered object as first parameter');
+    dop.util.invariant(property !== undefined, 'dop.removeComputed needs a string or number as second parameter');
+    
+    var computed_pathid = dop.core.getPathId(dop.getObjectPath(object).concat(property)),
+        shallWeRemoveAll = !isFunction(callback),
+        isSameFunction,
+        data_path = dop.data.path,
+        removed = [],
+        computed_ids,
+        computed_id,
+        computed,
+        derivation_pathid,
+        derivations,
+        index,
+        total,
+        index2,
+        total2;
+
+    if (isObject(data_path[computed_pathid]) && isArray(data_path[computed_pathid].computeds) && data_path[computed_pathid].computeds.length>0) {
+        computed_ids = data_path[computed_pathid].computeds;
+        for (index=0; index<computed_ids.length; ++index) {
+            computed_id = computed_ids[index];
+            computed = dop.data.computed[computed_id];
+            isSameFunction = computed.function===callback;
+            if (shallWeRemoveAll || isSameFunction) {
+                // Deleting computing itself
+                delete dop.data.computed[computed_id];
+                // Removing id in computed
+                computed_ids.splice(computed_ids.indexOf(computed_id), 1);
+                // Removing derivations
+                for (index2=0,total2=computed.derivations.length; index2<total2; ++index2) {
+                    derivation_pathid = computed.derivations[index2];
+                    derivations = data_path[derivation_pathid].derivations;
+                    derivations.splice(derivations.indexOf(computed_id,1));
+                }
+                index -= 1;
+                removed.push(computed.function);
+            }
+
+            if (isSameFunction)
+                break;
+        }
+    }
+
+    return removed;
+};
 
 
 
@@ -1282,7 +1328,6 @@ dop.core.snapshot.prototype.redo = function () {
 };
 
 
-// This should be private
 dop.core.snapshot.prototype.emit = function () {
     // This is true if we have nodes subscribed to those object/mutations
     // Then we have to emit to nodes
@@ -1359,18 +1404,20 @@ dop.core.delete = function(object, property) {
         
         var objectTarget = dop.getObjectTarget(object),
             objectProxy = dop.getObjectProxy(object),
-            path;
+            path,
+            oldValue = objectTarget[property],
+            deleted = delete objectTarget[property];
 
         if ((objectTarget===objectProxy || object===objectProxy) && (path = dop.getObjectPath(object)))
             dop.core.storeMutation({
                 object: dop.getObjectProxy(objectTarget),
                 prop: property,
                 path: path,
-                oldValue: dop.util.clone(objectTarget[property])
+                oldValue: dop.util.clone(oldValue)
             });
 
         // needed for dop.core.proxyObjectHandler.deleteProperty
-        return delete objectTarget[property];
+        return deleted;
     }
 };
 
@@ -1463,11 +1510,15 @@ dop.core.set = function(object, property, value) {
                 isNewProperty = !objectTarget.hasOwnProperty(property),
                 path;
 
-            // Setting
-            objectTarget[property] = dop.isObjectRegistrable(value) ?
-                dop.core.configureObject(value, property, objectTarget)
-            :
-                value;
+            // object or array
+            if (dop.isObjectRegistrable(value))
+                objectTarget[property] = dop.core.configureObject(value, property, objectTarget);
+            // computed value
+            else if (isFunction(value) && value.name==dop.cons.COMPUTED_FUNCTION)
+                objectTarget[property] = value(objectTarget, property, false, oldValue);
+            // other
+            else
+                objectTarget[property] = value;
 
             if (
                 (objectTarget===objectProxy || object===objectProxy) &&
@@ -1735,8 +1786,7 @@ dop.core.configureObject = function(object, propertyParent, parent) {
 
 
     // Setting ~DOP object
-    var object_dop = {};
-    object_dop.r = parent === undefined ? object : dop.getObjectRoot(parent); // root
+    var object_dop = {}, object_proxy, object_target;
     object_dop._ = parent; // parent
     object_dop.pr = propertyParent; // property
     object_dop.o = []; // observers
@@ -1744,46 +1794,76 @@ dop.core.configureObject = function(object, propertyParent, parent) {
     object_dop.om = {}; // observers multiple
     object_dop.omp = {}; // observers multiple property
     object_dop.m = []; // temporal mutations before will be emitted
-    Object.defineProperty(object, dop.cons.DOP, {value:object_dop, enumerable:false});
+    // Making proxy object
+    if (canWeProxy) {
+        object_proxy = object_dop.p = new Proxy(object, dop.core.proxyObjectHandler);
+        object_target = object_dop.t = object;
+    }
+    else
+        object_proxy = object_target = object_dop.p = object_dop.t = object;
+
+    // root
+    object_dop.r = (parent === undefined) ? object_proxy : dop.getObjectDop(parent).r;
+    
+
+
+    // // Object parent level and more
+    // if (parent === undefined) {
+    //     object_dop.r = object_proxy;  // root
+    //     object_dop.l = 1; // deep level [1,"prop","arr"] this is level 3
+    //     object_dop.ia = false; // is inside of array
+    // }
+    // else {
+    //     var object_dop_parent = dop.getObjectDop(parent);
+    //     object_dop.l = object_dop_parent.l+1;  // deep level [1,"prop","arr"] this is level 3
+    //     object_dop.ia = (object_dop_parent.ia || isArray(parent)); // is inside of array
+    // }
+
+
+    Object.defineProperty(object_target, dop.cons.DOP, {
+        value:object_dop,
+        enumerable:false,
+        configurable:false,
+        writable:false
+    });
 
 
     // Deep objects (Recursion)
-    var property, value, object_dop, path, is_array=isArray(object);
-    for (property in object) {
+    var property, 
+        value,
+        path,
+        is_array = isArray(object_target),
+        is_function,
+        computed_pending = [];
+
+    for (property in object_target) {
         if (is_array)
             property = Number(property);
-        value = object[property];
-        if (isFunction(value) && value.name==dop.core.createRemoteFunction.name) {
+        value = object_target[property];
+        is_function = isFunction(value);
+        // remote function
+        if (is_function && value.name==dop.core.createRemoteFunction.name) {
             path = dop.getObjectPath(object);
-            object[property] = value(path[0], path.slice(1).concat(property));
+            object_target[property] = value(path[0], path.slice(1).concat(property));
         }
+        // storing computed value function
+        else if (is_function && value.name==dop.cons.COMPUTED_FUNCTION)
+            object_target[property] = value(object_proxy, property, false, undefined);
+        // object or array
         else if (dop.isObjectRegistrable(value))
-            object[property] = dop.core.configureObject(value, property, object);
+            object_target[property] = dop.core.configureObject(value, property, object_proxy);
     }
 
 
     // if (isObject(parent))
         // object_dop._ = (dop.isRegistered(parent)) ? dop.getObjectTarget(parent) : parent;
 
-
-    // Making proxy object
-    if (canWeProxy) {
-        var target = object;
-        object = new Proxy(object, dop.core.proxyObjectHandler);
-        // Adding proxy and target alias
-        object_dop.p = object;
-        object_dop.t = target;
-    }
-    else
-        object_dop.p = object_dop.t = object;
-
-
     // Adding traps for mutations methods of arrays
-    if (dop.util.typeof(object) == 'array')
-        Object.defineProperties(object, dop.core.proxyArrayHandler);
+    if (dop.util.typeof(object_target) == 'array')
+        Object.defineProperties(object_target, dop.core.proxyArrayHandler);
 
 
-    return object;
+    return object_proxy;
 };
 
 
@@ -1795,6 +1875,84 @@ dop.core.createCollector = function(queue, index, filter) {
     var collector = new dop.core.collector(queue, index);
     collector.filter = filter;
     return collector;
+};
+
+
+
+
+//////////  src/core/objects/createComputed.js
+
+dop.core.createComputed = function (object, property, f, shallWeSet, oldValue) {
+
+    var computed_id = dop.data.computed_inc++,
+        data_path = dop.data.path,
+        derived_paths,
+        derived_pathsids = [],
+        derived_path,
+        derived_pathid,
+        computed_path,
+        computed_pathid,
+        value,
+        index = 0,
+        total,
+        index2,
+        total2;
+
+
+    // Running function and saving paths from getters
+    dop.data.gets_collecting = true;
+    value = f.call(object, oldValue);
+    dop.data.gets_collecting = false;
+    derived_paths = dop.data.gets_paths;
+    dop.data.gets_paths = [];
+
+
+    // Generating and storing paths ids
+    for (total=derived_paths.length; index<total; ++index) {
+        derived_path = derived_paths[index];
+        derived_pathid = '';
+        for (index2=0,total2=derived_path.length; index2<total2; ++index2) {
+            derived_pathid += dop.core.pathSeparator(derived_path[index2]);
+            if (index2>0) {
+                if (data_path[derived_pathid] === undefined)
+                    data_path[derived_pathid] = {};
+                
+                if (data_path[derived_pathid].derivations === undefined)
+                    data_path[derived_pathid].derivations = [];
+                
+                if (data_path[derived_pathid].derivations.indexOf(computed_id) < 0) {
+                    data_path[derived_pathid].derivations.push(computed_id);
+                    derived_pathsids.push(derived_pathid);
+                }
+            }
+        }
+    }
+
+    computed_path = dop.getObjectPath(object, false);
+    computed_pathid = dop.core.getPathId(computed_path.concat(property));
+
+    // Storing computed in dop.data 
+    if (data_path[computed_pathid] === undefined)
+        data_path[computed_pathid] = {};
+    
+    if (data_path[computed_pathid].computeds === undefined)
+        data_path[computed_pathid].computeds = [];
+
+    data_path[computed_pathid].computeds.push(computed_id);
+
+    dop.data.computed[computed_id] = {
+        object_root: dop.getObjectRoot(object),
+        path: computed_path.slice(1),
+        prop: property,
+        function: f,
+        derivations: derived_pathsids
+    };
+
+    // Setting value
+    if (shallWeSet)
+        dop.core.set(object, property, value);
+
+    return value;
 };
 
 
@@ -1978,6 +2136,23 @@ dop.core.getPatch = function(mutations, isUnpatch) {
 
 
 
+//////////  src/core/objects/getPathId.js
+
+dop.core.getPathId = function(path) {
+
+    var index = 0,
+        total = path.length,
+        path_id = '';
+
+    for (; index<total; ++index)
+        path_id += dop.core.pathSeparator(path[index]);
+
+    return path_id;
+};
+
+
+
+
 //////////  src/core/objects/getUnpatch.js
 
 dop.core.getUnpatch = function(mutations) {
@@ -2110,6 +2285,15 @@ dop.core.injectMutationInPatch = function(patch, mutation) {
 
 
 
+//////////  src/core/objects/pathSeparator.js
+
+dop.core.pathSeparator = function(property) {
+    return property+'.'+property;
+};
+
+
+
+
 //////////  src/core/objects/proxyArrayHandler.js
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype#Mutator_methods
 dop.core.proxyArrayHandler = {
@@ -2155,13 +2339,47 @@ dop.core.proxyObjectHandler = {
     deleteProperty: function(object, property) {
         return dop.core.delete(dop.getObjectProxy(object), property) !== undefined;
     },
-    /*get: function(object, property) {
-        dop.data.lastGet.object = object;
-        dop.data.lastGet.property = property;
-        return object[property];
-    }*/
-};
+    get: function(object, property) {
+        if (dop.data.gets_collecting && typeof property == 'string' && property !== dop.cons.DOP && object[property] !== Object.prototype[property])
+            dop.data.gets_paths.push(dop.getObjectPath(object).concat(property));
 
+        return object[property];
+    }
+};
+            /*var gets_paths = dop.data.gets_paths,
+                last_path = gets_paths[gets_paths.length-1],
+                path = dop.getObjectPath(object).concat(property);
+
+            if (gets_paths.length>0 && path.length>last_path.length)
+                gets_paths.pop();
+            
+            gets_paths.push(path);*/
+
+
+
+
+
+//////////  src/core/objects/runDerivations.js
+
+dop.core.runDerivations = function(mutation) {
+    if (dop.data.path[mutation.path_id] !== undefined && dop.data.path[mutation.path_id].derivations !== undefined) {
+        var derivations = dop.data.path[mutation.path_id].derivations,
+            computed,
+            object,
+            value,
+            total = derivations.length,
+            index = 0;
+
+        for (;index<total; ++index) {
+            computed = dop.data.computed[derivations[index]];
+            object = dop.util.get(computed.object_root, computed.path);
+            if (object !== undefined) {
+                value = computed.function.call(object, object[computed.prop]);
+                dop.core.set(object, computed.prop, value);
+            }
+        }
+    }
+};
 
 
 
@@ -2314,15 +2532,24 @@ dop.core.storeMutation = function(mutation) {
     var collectors = dop.data.collectors,
         index=0, total=collectors.length, index2=0, total2;
 
+    mutation.path_id = dop.core.getPathId(
+        (mutation.splice!==undefined || mutation.swaps!==undefined) ?
+            mutation.path
+        :
+            mutation.path.concat(mutation.prop)
+    );
+
     // Running collectors
     for (;index<total; index++)
         if (collectors[index].length > 0)
             for (index2=0,total2=collectors[index].length; index2<total2; index2++)
                 if (collectors[index][index2].add(mutation))
-                    return;
+                    return dop.core.runDerivations(mutation);
 
     var snapshot = new dop.core.snapshot([mutation]);
     snapshot.emit();
+
+    dop.core.runDerivations(mutation);
 };
 
 
@@ -2339,6 +2566,79 @@ dop.core.connector = function(args) {
     node.options.transport.apply(this, args);
     return node;
 };
+
+
+
+
+
+//////////  src/core/protocol/createAsync.js
+
+dop.core.createAsync = function() {
+    var resolve, reject,
+    promise = new Promise(function(res, rej) {
+        resolve = res;
+        reject = rej;
+    });
+    promise.resolve = resolve;
+    promise.reject = reject;
+    return promise;
+};
+
+
+
+// mypromise = dop.core.createAsync();
+// mypromise.then(function(v) {
+//     console.log('yeah',v)
+// });
+// setTimeout(function() {
+//     mypromise.resolve(1234567890)
+// },1000);
+
+
+// dop.core.createAsync = function() {
+//     var observable = Rx.Observable.create(function(observer) {
+//         observable.resolve = function(value) {
+//             observer.onNext(value);
+//             observer.onCompleted();
+//         };
+//         observable.reject = observer.onError;
+//     });
+//     return observable;
+//     // return {stream:observable,resolve:observer.onNext,reject:observer.onError,cancel:cancel};
+// };
+// mypromise = dop.core.createAsync();
+// mypromise.subscribe(function(v) {
+//     console.log('yeah',v);
+// });
+// setTimeout(function() {
+//     mypromise.resolve(1234567890);
+// },1000);
+
+
+
+
+// https://github.com/ReactiveX/rxjs/issues/556
+// function getData(num) {
+//   return new Promise((resolve, reject) => {
+//     resolve(num + 1);
+//   });
+// }
+
+// async function create() {
+//   var list = await Rx.Observable.range(1, 5)
+//     .flatMap(num => getData(num))
+//     .toArray().toPromise();
+
+//   return list;
+// }
+
+// console.clear();
+
+// Rx.Observable.fromPromise(create()).subscribe(list => {
+//   console.log(list);
+// }, err => {
+//   console.log(err);
+// });
 
 
 
@@ -2370,7 +2670,7 @@ dop.core.createRequest = function(node) {
 
     node.requests[request_id] = request;
     request.unshift(request_id);
-    request.promise = dop.createAsync();
+    request.promise = dop.core.createAsync();
 
     return request;
 };
@@ -2538,7 +2838,7 @@ dop.core.getRejectError = function(error) {
 //////////  src/core/protocol/localProcedureCall.js
 
 dop.core.localProcedureCall = function(f, args, resolve, reject, configureReq, scope) {
-    var req = dop.createAsync(), output;
+    var req = dop.core.createAsync(), output;
     if (isFunction(configureReq))
         req = configureReq(req);
 
