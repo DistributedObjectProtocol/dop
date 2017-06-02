@@ -32,8 +32,8 @@ dop.core.emitObservers = function(mutations) {
                 observersMultiples[observer_id] = [];
             observersMultiples[observer_id].push(mutation); 
         }
-        if (object_dop.omp[mutation.name] !== undefined) {
-            for (observer_id in object_dop.omp[mutation.name]) {
+        if (object_dop.omp[mutation.prop] !== undefined) {
+            for (observer_id in object_dop.omp[mutation.prop]) {
                 // If it hasn't been stored yet
                 if (object_dop.om[observer_id] === undefined) { 
                     if (observersMultiples[observer_id] === undefined)

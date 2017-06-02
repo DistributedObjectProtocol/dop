@@ -9,7 +9,7 @@ dop.core.proxyObjectHandler = {
     },
     get: function(object, property) {
         if (dop.data.gets_collecting && typeof property == 'string' && property !== dop.cons.DOP && object[property] !== Object.prototype[property])
-            dop.data.gets_paths.push(dop.getObjectPath(object).concat(property));
+            dop.data.gets_paths.push(dop.getObjectPath(object, false).concat(property));
 
         return object[property];
     }

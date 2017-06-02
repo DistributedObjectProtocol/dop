@@ -1,9 +1,9 @@
 
 dop.core.splice = function(array, args) {
 
-    var originalLength = array.length,
-        objectTarget = dop.getObjectTarget(array),
+    var objectTarget = dop.getObjectTarget(array),
         objectProxy = dop.getObjectProxy(array),
+        originalLength = objectTarget.length,
         spliced,
         path;
 
@@ -63,6 +63,19 @@ dop.core.splice = function(array, args) {
             };
             if (spliced.length > 0)
                 mutation.spliced = dop.util.clone(spliced);
+
+            // if (objectTarget.length !== originalLength) {
+            //     mutation.prop = 'length';
+            //     mutation.value = objectTarget.length;
+            //     mutation.oldValue = length;
+            // }
+            //     dop.core.storeMutation({
+            //         object: objectProxy,
+            //         prop: 'length',
+            //         path: path,
+            //         value: objectTarget.length,
+            //         oldValue: length
+            //     });
 
             dop.core.storeMutation(mutation);
         }

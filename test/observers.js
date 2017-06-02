@@ -116,9 +116,6 @@ test('mutations with createObserver', function(t) {
     dop.set(object, 'uno', 123);
     dop.set(object, 'new', 123);
     collector.emit()
-
-    t.end()
-    
 })
 
 

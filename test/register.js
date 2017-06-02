@@ -39,6 +39,24 @@ test('Object proxy and target', function(t) {
 
 
 
+test('Correct configuration on deleted neested object', function(t) {
+    var object = dop.register({
+        subobject: {
+            name:"Josema",
+            surname:"Gonzalez",
+        }
+    })
+    var copy = object.subobject;
+    dop.del(object, 'subobject')
+    dop.set(copy, "lol", {test:1234})
+    t.equal(dop.getObjectRoot(copy.lol), object)
+    t.equal(dop.getObjectPath(copy.lol), undefined)
+    t.deepEqual(dop.getObjectPath(copy.lol, false), [2, "subobject", "lol"])
+    dop.set(object, "subobject", copy)
+    t.deepEqual(dop.getObjectPath(copy.lol), [2, "subobject", "lol"])
+    
+    t.end()
+});
 
 
 // var object = dop.register({
