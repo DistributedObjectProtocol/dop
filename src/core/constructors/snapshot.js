@@ -26,7 +26,7 @@ dop.core.snapshot.prototype.redo = function () {
 dop.core.snapshot.prototype.emit = function () {
     // This is true if we have nodes subscribed to those object/mutations
     // Then we have to emit to nodes
-    if (this.mutations.length>0 && dop.core.emitObservers(this.mutations))
+    if (this.mutations.length>0 && dop.core.emitToObservers(this.mutations))
         dop.core.emitNodes(this.forward ? this.getPatch() : this.getUnpatch());
 };
 
