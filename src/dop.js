@@ -6,21 +6,27 @@ var dop = {
 
     // Internal data
     data: {
-        node_inc:0,
-        node:{},
-        object_inc:1,
-        object:{},
-        collectors:[[],[]],
-        observers:{},
-        observers_inc:0,
-        gets_collecting:false,
+        node_inc: 0,
+        node: {},
+
+        object_inc: 1,
+        object: {},
+
+        collectors: [],
+
+        gets_collecting: false,
         gets_paths: [],
+
+        observers_inc: 0,
+        observers: {},
 
         computed_inc: 0,
         computed: {},
+
         path: {
             // computeds: []
             // derivations: []
+            // observers: []
         }
     },
     
