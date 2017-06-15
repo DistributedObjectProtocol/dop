@@ -17,16 +17,19 @@ var dop = {
         gets_collecting: false,
         gets_paths: [],
 
-        observers_inc: 0,
-        observers: {},
-
         computed_inc: 0,
         computed: {},
 
+        observers_inc: 0,
+        observers: {},
+
         path: {
-            // computeds: []
-            // derivations: []
-            // observers: []
+            // "1.thepath.value": {
+                // observers: {},
+                // observers_prop: {},
+                // computeds: [],
+                // derivations: [],
+            // }
         }
     },
     

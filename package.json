@@ -1,6 +1,6 @@
 {
   "name": "dop",
-  "version": "0.20.1",
+  "version": "0.21.0",
   "main": "./dist/nodejs.js",
   "browser": "./dist/browser.js",
   "unpkg": "./dist/browser.min.js",

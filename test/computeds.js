@@ -347,7 +347,7 @@ test('Deleting parent object where derivation is instantiated', function(t) {
             try {
                 return get(this.subobject,"name") +' '+ get(this.subobject,"surname")
             } catch(e) {
-                t.equal(e.toString(), "TypeError: Cannot read property 'name' of undefined")
+                t.equal(e.toString().indexOf("TypeError")>-1, true, "Is a typeError")
             }
         })
     })
@@ -600,6 +600,48 @@ test('Removing all computeds', function(t) {
 
 
     t.equal(collector.mutations.length, 4, "mutations")
+    collector.emit()
+    t.end()
+});
+
+
+
+test('Update computeds', function(t) {
+    var collector = dop.collect()
+    var object = dop.register({
+        todos: [],
+        completedCount: computed(function () {
+            return get(this,'todos').reduce(
+                (sum, todo) => sum + (get(todo,'completed') ? 1 : 0),
+                0
+            )
+        }),
+        completedAll: computed(function () {
+            return get(this,'todos').length - get(this,'completedCount')
+        })
+    })
+
+    t.equal(object.completedCount, 0)
+    t.equal(object.completedAll, 0)
+    
+    object.todos.push({completed:false})
+    object.todos.push({completed:true})
+    object.todos.push({completed:false})
+
+    t.equal(object.completedCount, 1)
+    t.equal(object.completedAll, 2)
+
+    set(object.todos[0], 'completed', true)
+
+    t.equal(object.completedCount, 2)
+    t.equal(object.completedAll, 1)
+
+    set(object.todos[2], 'completed', true)
+    
+    t.equal(object.completedCount, 3)
+    t.equal(object.completedAll, 0)
+    
+    // t.equal(collector.mutations.length, 4, "mutations")
     collector.emit()
     t.end()
 });

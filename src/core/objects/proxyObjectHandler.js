@@ -8,7 +8,7 @@ dop.core.proxyObjectHandler = {
         return dop.core.delete(dop.getObjectProxy(object), property) !== undefined;
     },
     get: function(object, property) {
-        if (dop.data.gets_collecting && typeof property == 'string' && property !== dop.cons.DOP && object[property] !== Object.prototype[property])
+        if (dop.data.gets_collecting && typeof property == 'string' && property !== dop.cons.DOP && object[property] !== Array.prototype[property])
             dop.data.gets_paths.push(dop.getObjectPath(object, false).concat(property));
 
         return object[property];

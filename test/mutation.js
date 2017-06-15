@@ -69,16 +69,16 @@ test('Object.del', function(t) {
     observer.destroy()
 
 
-    // fun = function(mutations) {
-    //     var mutation = mutations[0]
-    //     t.equal(mutation.object, object.deep1, '.object')
-    //     t.equal(mutation.oldValue, '12345', '.oldValue')
-    //     t.equal(mutation.prop, 'newprop', '.prop')
-    //     t.equal(mutation.value, undefined, '.value')
-    //     t.deepEqual(mutation.path, [1,'deep1'], '.path')
-    // }
-    // var observer = dop.observe(object.deep1, fun)
-    // del(object.deep1, 'newprop')
+    fun = function(mutations) {
+        var mutation = mutations[0]
+        t.equal(mutation.object, object.deep1, '.object')
+        t.equal(mutation.oldValue, '12345', '.oldValue')
+        t.equal(mutation.prop, 'newprop', '.prop')
+        t.equal(mutation.value, undefined, '.value')
+        t.deepEqual(mutation.path, [1,'deep1'], '.path')
+    }
+    var observer = dop.observe(object.deep1, fun)
+    del(object.deep1, 'newprop')
     observer.destroy()
     
 
@@ -104,7 +104,7 @@ test('Object.del change value', function(t) {
         t.equal(mutation.object, object.deep1, '.object')
         t.equal(mutation.prop, 'newprop', '.prop')
         t.equal(mutation.value, '67890', '.value')
-        t.equal(mutation.oldValue, '12345', '.oldValue')
+        t.equal(mutation.oldValue, undefined, '.oldValue')
         t.deepEqual(mutation.path, [1,'deep1'], '.path')
     }
     var observer = dop.observe(object.deep1, fun)
@@ -180,8 +180,12 @@ test('Array.set', function(t) {
         }
     }
     var observer = dop.observe(array.array, fun)
+    var observer2 = dop.observe(array.array, "length", function(mutations){
+        t.equal(mutations.length, 1, 'mutations length')
+    })
     set(array.array, 5, [true])
     observer.destroy()
+    observer2.destroy()
 
 
     fun = function(mutations) {
@@ -235,8 +239,20 @@ test('Array.splice', function(t) {
         t.deepEqual(mutation.path, [2,'array'], '.path')
     }
     var observer = dop.observe(array.array, fun)
+    var observer2 = dop.observe(array.array, "length", function(mutations){
+        t.equal(mutations.length, 1, 'mutations length')
+        var mutation = mutations[0]
+        t.deepEqual(array.array.length, 4, 'array.array.length')
+        t.deepEqual(mutation.object.length, 4, '.object.length')
+        t.deepEqual(mutation.oldLength, 6, '.oldLength')
+        t.equal(mutation.object, array.array, '.object')
+        t.equal(mutation.prop, 'array', '.prop')
+        t.deepEqual(mutation.splice, [ 3, 3, [ true ] ], '.splice')
+        t.deepEqual(mutation.path, [2,'array'], '.path')
+    })
     array.array.splice(3,3,[true])
     observer.destroy()
+    observer2.destroy()
 
 
     fun = function(mutations) {

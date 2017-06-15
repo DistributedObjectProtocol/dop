@@ -18,9 +18,7 @@ dop.core.configureObject = function(object, propertyParent, parent) {
     var object_dop = {}, object_proxy, object_target;
     object_dop._ = parent; // parent
     object_dop.pr = propertyParent; // property
-    object_dop.om = {}; // observers multiple
-    object_dop.omp = {}; // observers multiple property
-    object_dop.m = []; // temporal mutations before will be emitted
+    
     // Making proxy object
     if (canWeProxy) {
         object_proxy = object_dop.p = new Proxy(object, dop.core.proxyObjectHandler);
