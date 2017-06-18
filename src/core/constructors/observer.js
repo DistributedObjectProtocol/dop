@@ -8,9 +8,12 @@ dop.core.observer = function(callback, id) {
 
 
 dop.core.observer.prototype.observe = function(object, property) {
-    dop.util.invariant(dop.isRegistered(object), 'observer.observe needs a registered object as first parameter');
+    dop.util.invariant(dop.isRegistered(object), 'observer.observe() needs a registered object as first parameter');
+    var path = dop.getObjectPath(object);
+    dop.util.invariant(isArray(path), 'observer.observe() The object you are passing is not allocated to a registered object');
     
-    var path_id = dop.core.getPathId(dop.getObjectPath(object, false)),
+
+    var path_id = dop.core.getPathId(path);
         data_path = dop.data.path,
         type = 'observers';
 
@@ -28,13 +31,21 @@ dop.core.observer.prototype.observe = function(object, property) {
 
     data_path[path_id][type][this.id] = true;
     this[type][path_id] = true;
+
+    return function unobserve() {
+        delete data_path[path_id][type][this.id];
+        delete this[type][path_id];
+    }.bind(this);
 };
 
 
 dop.core.observer.prototype.unobserve = function(object, property) {
-    dop.util.invariant(dop.isRegistered(object), 'observer.unobserve needs a registered object as first parameter');
+    dop.util.invariant(dop.isRegistered(object), 'observer.unobserve() needs a registered object as first parameter');
+    var path = dop.getObjectPath(object);
+    dop.util.invariant(isArray(path), 'observer.unobserve() The object you are passing is not allocated to a registered object');
     
-    var path_id = dop.core.getPathId(dop.getObjectPath(object, false)),
+
+    var path_id = dop.core.getPathId(path);
         data_path = dop.data.path,
         type = 'observers';
 

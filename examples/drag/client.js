@@ -2,13 +2,14 @@
 var server = dop.connect()
 var circleServer = dop.register({});
 server.subscribe().into(circleServer)
-dop.observe(circleServer, function() {
+var observer = dop.createObserver(function() {
     // We shouldn't update position from others if we are alredy moving it localy
     if (!circle.mover) { 
         circle.el.style.left = circleServer.x + 'px'
         circle.el.style.top = circleServer.y + 'px'
     }
 })
+observer.observe(circleServer)
 // end dop
 
 

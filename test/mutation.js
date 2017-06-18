@@ -1,11 +1,21 @@
 var test = require('tape');
 // require('tabe').createStream( test );
 var dop = require('../dist/nodejs').create();
-var dopClient = dop.create();
-var dopClientTwo = dop.create();
 var set = dop.set;
 var del = dop.del;
+dop.observe = function(object, property) {
+    var args = arguments;
+        callback = args[args.length-1];
 
+    var observer = dop.createObserver(callback);
+    
+    (args.length===2) ?
+        observer.observe(object)
+    :
+        observer.observe(object, property);
+        
+    return observer;
+};
 
 var object = dop.register({deep1:{deep2:{}}});
 var array = dop.register({array:[1,2,3]});
@@ -132,12 +142,12 @@ test('Object.del subobject', function(t) {
     observer.destroy()
 
 
-    fun = function(mutations) {
-        t.equal(true, false, "This mutation shouldn't be observed because deep2 is not inside of object anymore")
+    try {
+        var observer = dop.observe(deep2, function(){})
     }
-    var observer = dop.observe(deep2, fun)
-    set(deep2, 'deep3', {deeper:true})
-    observer.destroy()
+    catch(e) {
+        t.equal(e instanceof Error, true, 'This must throw an error because deep2 is not inside of a registered object anymore')
+    }
 
 
 
@@ -333,3 +343,66 @@ test('Array.sort', function(t) {
 
     t.end();
 });
+
+
+
+
+
+test('Same items after array mutations', function(t) {
+    var array = dop.register({array:[{a:1},{b:2},{c:3}]});
+    var obj = dop.register({e:5});
+    var tmp = array.array[0]
+    array.array.unshift({d:4})
+    t.equal(tmp, array.array[1], 'same object after unshift')
+    
+    array.array.reverse()
+    t.equal(tmp, array.array[2], 'same object after reverse')
+
+    array.array.unshift(obj)
+    t.deepEqual(obj, array.array[0], 'should be the same')
+    t.notEqual(obj, array.array[0], 'should be different')
+
+    t.deepEqual(dop.getObjectPath(obj), [4], 'correct path')
+    t.deepEqual(dop.getObjectPath(array.array[0]), [3,"array",0], 'correct path')
+
+
+    t.end();
+});
+
+
+
+test('Setting objects already registered', function(t) {
+    var a = dop.register({a:1});
+    var b = dop.register({b:2});
+
+    set(a,'b',b)    
+
+    t.deepEqual(a.b, b, 'should be the same')
+    t.notEqual(a.b, b, 'should be different')
+    t.deepEqual(dop.getObjectPath(a.b), [5,"b"], 'correct path')
+    t.deepEqual(dop.getObjectPath(b), [6], 'correct path')
+
+
+    t.end();
+});
+
+
+test('unobserve = observer.observe(...)', function(t) {
+    var object = dop.register({})
+    var times = 0
+    var observer = dop.createObserver(function(mutations) {
+        times += 1
+    })
+    var tounobserve = observer.observe(object)
+    set(object, 'newprop', '12345')
+    t.equal(times, 1)
+    set(object, 'newprop', '12345')
+    t.equal(times, 1)
+    set(object, 'newprop', '555')
+    t.equal(times, 2)
+    tounobserve()
+    set(object, 'newprop', 'blabla')
+    t.equal(times, 2)
+
+    t.end()
+})

@@ -57,16 +57,3 @@ test('mutations with createObserver', function(t) {
 })
 
 
-// todo
-// test('dop.observe', function(t) {})
-test('dop.observe', function(t) {
-    var object = dop.register({
-        todos: []
-    });
-    dop.observe(object.todos, function(mutations){
-        // console.log( mutations );
-    })
-    // object.todos.push(1);
-    dop.set(object.todos, 1, 25);
-    t.end();
-})
