@@ -45,7 +45,7 @@ module.exports = function(grunt) {
                     'src/node/*',
                     'src/umd.js'
                 ],
-                dest: 'dist/nodejs.js'
+                dest: 'dist/dop.nodejs.js'
             },
             browser: {
                 src: [
@@ -58,14 +58,14 @@ module.exports = function(grunt) {
                     'src/node/*',
                     'src/umd.js'
                 ],
-                dest: 'dist/browser.js'
+                dest: 'dist/dop.js'
             }
         },
 
         uglify: {
             build: {
-                src: 'dist/browser.js',
-                dest: 'dist/browser.min.js'
+                src: 'dist/dop.js',
+                dest: 'dist/dop.min.js'
             },
             options: {
                 banner: '/* dop@<%= pkg.version %> - (c) 2016 Josema Gonzalez - MIT Licensed */\n'
@@ -79,7 +79,7 @@ module.exports = function(grunt) {
             },
             dist: {
                 files: {
-                    'dist/browser.min.opt.js': 'dist/browser.min.js'
+                    'dist/dop.min.opt.js': 'dist/dop.min.js'
                 }
             }
         }

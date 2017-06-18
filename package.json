@@ -1,9 +1,9 @@
 {
   "name": "dop",
-  "version": "0.21.0",
-  "main": "./dist/nodejs.js",
-  "browser": "./dist/browser.js",
-  "unpkg": "./dist/browser.min.js",
+  "version": "0.21.1",
+  "main": "./dist/dop.nodejs.js",
+  "browser": "./dist/dop.js",
+  "unpkg": "./dist/dop.min.js",
   "license": "MIT",
   "url": "http://www.distributedobjectprotocol.org",
   "repository": {
