@@ -371,7 +371,7 @@ test('Creating computed from derivations deleted', function(t) {
         }
     })
     var copy = object.subobject;
-    copy.lol = {test:1234}
+    set(copy, 'lol', {test:1234})
     del(object, 'subobject')
     set(object, 'fullname', computed(function(){
         return get(copy,"name") +' '+ get(copy,"surname")
@@ -381,8 +381,8 @@ test('Creating computed from derivations deleted', function(t) {
     t.equal(object.fullname, "Josema Gonzalez")
     set(copy, 'name', "Enzo")
     t.equal(object.fullname, "Josema Gonzalez")
-    
-    t.equal(collector.mutations.length, 2, "mutations")
+
+    t.equal(collector.mutations.length, 3, "mutations")
     collector.emit()
     t.end()
 });
