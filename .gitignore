@@ -17,4 +17,3 @@ npm-debug.log*
 # Files
 dist
 test*.*
-examples/todomvc
