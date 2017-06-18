@@ -48,7 +48,7 @@ dop.core.splice = function(array, args) {
                 objectTarget[start] = dop.core.configureObject(
                     item,
                     start,
-                    objectTarget
+                    objectProxy
                 );
         }
 

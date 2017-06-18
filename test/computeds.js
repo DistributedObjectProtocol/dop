@@ -373,16 +373,16 @@ test('Creating computed from derivations deleted', function(t) {
     var copy = object.subobject;
     copy.lol = {test:1234}
     del(object, 'subobject')
-    object.fullname = computed(function(){
+    set(object, 'fullname', computed(function(){
         return get(copy,"name") +' '+ get(copy,"surname")
-    })
+    }))
 
 
     t.equal(object.fullname, "Josema Gonzalez")
-    set(copy.name, "Enzo")
+    set(copy, 'name', "Enzo")
     t.equal(object.fullname, "Josema Gonzalez")
     
-    t.equal(collector.mutations.length, 3, "mutations")
+    t.equal(collector.mutations.length, 2, "mutations")
     collector.emit()
     t.end()
 });
@@ -612,7 +612,7 @@ test('Update computeds', function(t) {
         todos: [],
         completedCount: computed(function () {
             return get(this,'todos').reduce(
-                (sum, todo) => sum + (get(todo,'completed') ? 1 : 0),
+                function(sum, todo) { return sum + (get(todo,'completed') ? 1 : 0) },
                 0
             )
         }),

@@ -100,7 +100,7 @@ test('Del a property no writable return true and value is deleted', function(t) 
 
 
 test('Add a new subobject must convert it as register', function(t) {
-    set(object, 'new', {isregisterd:true});
+    set(object, 'new', {isregistered:true});
     var dopobject = dop.getObjectDop(object.new);
     t.equal(typeof dopobject, 'object');
     // t.equal(JSON.stringify(dopobject), JSON.stringify([object_id, 'new']));
@@ -118,11 +118,22 @@ test('Add a new subobject that content another register object must create a new
 });
 
 
+
+
+
 test('Copying object already registered must create a new one', function(t) {
-    set(object, 'new2', object.new);
-    var dopobject = dop.getObjectDop(object.new2);
+    var obj2 = dop.register({new:{isregistered:true}})
+    set(object, 'new2', obj2.new);
     t.equal(object.new === object.new2, false);
-    // t.equal(JSON.stringify(dopobject), JSON.stringify([object_id, 'new2']));
+    t.deepEqual(object.new, object.new2);
+    t.end();
+});
+
+
+test('Copying object already registered but that belongs to the same parent won\'t create a new object', function(t) {
+    set(object, 'new2', object.new);
+    t.equal(object.new === object.new2, true);
+    t.deepEqual(object.new, object.new2);
     t.end();
 });
 
