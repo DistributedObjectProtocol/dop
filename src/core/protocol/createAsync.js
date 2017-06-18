@@ -1,5 +1,5 @@
 
-dop.createAsync = function() {
+dop.core.createAsync = function() {
     var resolve, reject,
     promise = new Promise(function(res, rej) {
         resolve = res;
@@ -12,7 +12,7 @@ dop.createAsync = function() {
 
 
 
-// mypromise = dop.createAsync();
+// mypromise = dop.core.createAsync();
 // mypromise.then(function(v) {
 //     console.log('yeah',v)
 // });
@@ -32,7 +32,7 @@ dop.createAsync = function() {
 //     return observable;
 //     // return {stream:observable,resolve:observer.onNext,reject:observer.onError,cancel:cancel};
 // };
-// mypromise = dop.createAsync();
+// mypromise = dop.core.createAsync();
 // mypromise.subscribe(function(v) {
 //     console.log('yeah',v);
 // });

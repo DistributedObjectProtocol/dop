@@ -18,7 +18,6 @@ dop.util.get = function(object, path) {
     }
 
     return object[ path[index] ];
-
 };
 
 

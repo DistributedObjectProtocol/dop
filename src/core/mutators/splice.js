@@ -1,9 +1,9 @@
 
 dop.core.splice = function(array, args) {
 
-    var originalLength = array.length,
-        objectTarget = dop.getObjectTarget(array),
+    var objectTarget = dop.getObjectTarget(array),
         objectProxy = dop.getObjectProxy(array),
+        originalLength = objectTarget.length,
         spliced,
         path;
 
@@ -16,6 +16,7 @@ dop.core.splice = function(array, args) {
 
         var argslength = args.length,
             length = objectTarget.length,
+            index=2,
             start = Number(args[0]),
             deleteCount = (Number(args[1])>0) ? args[1] : 0,
             itemslength = (args.length>2) ? (args.length-2) : 0,
@@ -41,8 +42,8 @@ dop.core.splice = function(array, args) {
 
 
         // We must register new objects
-        for (;start<end; ++start) {
-            item = objectTarget[start];
+        for (;index<argslength; ++index, ++start) {
+            item = args[index];
             if (dop.isObjectRegistrable(item))
                 objectTarget[start] = dop.core.configureObject(
                     item,
@@ -61,8 +62,12 @@ dop.core.splice = function(array, args) {
                 path: path,
                 splice: args
             };
+
             if (spliced.length > 0)
                 mutation.spliced = dop.util.clone(spliced);
+
+            if (length !== originalLength)
+                mutation.oldLength = originalLength;
 
             dop.core.storeMutation(mutation);
         }

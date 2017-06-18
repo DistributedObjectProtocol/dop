@@ -1,6 +1,6 @@
 
 dop.core.localProcedureCall = function(f, args, resolve, reject, configureReq, scope) {
-    var req = dop.createAsync(), output;
+    var req = dop.core.createAsync(), output;
     if (isFunction(configureReq))
         req = configureReq(req);
 

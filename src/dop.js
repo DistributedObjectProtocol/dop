@@ -6,13 +6,31 @@ var dop = {
 
     // Internal data
     data: {
-        node_inc:0,
-        node:{},
-        object_inc:1,
-        object:{},
-        collectors:[[],[]],
-        observers:{},
-        observers_inc:0
+        node_inc: 0,
+        node: {},
+
+        object_inc: 1,
+        object: {},
+
+        collectors: [],
+
+        gets_collecting: false,
+        gets_paths: [],
+
+        computed_inc: 0,
+        computed: {},
+
+        observers_inc: 0,
+        observers: {},
+
+        path: {
+            // "1.thepath.value": {
+                // observers: {},
+                // observers_prop: {},
+                // computeds: [],
+                // derivations: [],
+            // }
+        }
     },
     
     // src
@@ -30,6 +48,7 @@ var dop = {
         DISCONNECT: '~DISCONNECT',
         REMOTE_FUNCTION: '$DOP_REMOTE_FUNCTION',
         BROADCAST_FUNCTION: '$DOP_BROADCAST_FUNCTION',
+        COMPUTED_FUNCTION: '$DOP_COMPUTED_FUNCTION'
     }
 
 };
