@@ -1,6 +1,6 @@
 var test = require('tape');
 // require('tabe').createStream( test );
-var dop = require('../dist/nodejs').create()
+var dop = require('../dist/dop.nodejs').create()
 var computed = dop.computed;
 var get = dop.get;
 var set = dop.set;
