@@ -39,27 +39,27 @@ dop.core.observer.prototype.observe = function(object, property) {
 };
 
 
-dop.core.observer.prototype.unobserve = function(object, property) {
-    dop.util.invariant(dop.isRegistered(object), 'observer.unobserve() needs a registered object as first parameter');
-    var path = dop.getObjectPath(object);
-    dop.util.invariant(isArray(path), 'observer.unobserve() The object you are passing is not allocated to a registered object');
+// dop.core.observer.prototype.unobserve = function(object, property) {
+//     dop.util.invariant(dop.isRegistered(object), 'observer.unobserve() needs a registered object as first parameter');
+//     var path = dop.getObjectPath(object);
+//     dop.util.invariant(isArray(path), 'observer.unobserve() The object you are passing is not allocated to a registered object');
     
 
-    var path_id = dop.core.getPathId(path);
-        data_path = dop.data.path,
-        type = 'observers';
+//     var path_id = dop.core.getPathId(path);
+//         data_path = dop.data.path,
+//         type = 'observers';
 
-    // is observeProperty
-    if (arguments.length === 2) {
-        type = 'observers_prop';
-        path_id += dop.core.pathSeparator(property);
-    }
+//     // is observeProperty
+//     if (arguments.length === 2) {
+//         type = 'observers_prop';
+//         path_id += dop.core.pathSeparator(property);
+//     }
 
-    if (data_path[path_id] !== undefined && data_path[path_id][type] !== undefined) {
-        delete data_path[path_id][type][this.id];
-        delete this[type][path_id];
-    }
-};
+//     if (data_path[path_id] !== undefined && data_path[path_id][type] !== undefined) {
+//         delete data_path[path_id][type][this.id];
+//         delete this[type][path_id];
+//     }
+// };
 
 
 dop.core.observer.prototype.destroy = function() {

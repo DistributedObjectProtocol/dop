@@ -1,6 +1,6 @@
 {
   "name": "dop",
-  "version": "0.21.2",
+  "version": "0.22.0",
   "main": "./dist/dop.nodejs.js",
   "browser": "./dist/dop.js",
   "unpkg": "./dist/dop.min.js",
@@ -57,6 +57,7 @@
     "grunt": "grunt",
     "build": "grunt --build",
     "test": "tap test/**.js test/protocol/**.js",
+    "test-proxy": "tap test/**.js test/protocol/**.js --test-arg=proxy",
     "test-electron": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\"",
     "test-chrome": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser chrome",
     "test-safari": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser safari",

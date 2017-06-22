@@ -8,22 +8,21 @@
     <a href="https://gitter.im/DistributedObjectProtocol/dop?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"><img alt="Join the chat at" src="https://badges.gitter.im/DistributedObjectProtocol/dop.svg"></a>
 </p>
 
-## What is dop?
+## Distributed Object Protocol is for
 
-Distributed Object Protocol is for Data-sync, Pub/Sub, Remote procedure calls, Reactive programming,
-Optimistic updates, Time-travel debugging, State management,
-Unidirectional data flow, Real time apps and more.
+**State management**, Remote procedure calls, Reactive programming, 
+Data sync, Pub/Sub, Optimistic updates, Time-travel debugging, Unidirectional data flow and **Real time apps**.
 
 This repository is the JavaScript implementation of the protocol that runs on node.js and Browsers.
 
-
-## Basic example
+<!--
+## Connecting two nodes
 
 ```js
 // Server (node.js)
 const dop = require('dop')
 const object = dop.register({
-    hello: 'world',
+    fullname: 'John Doe',
     square: number => number * number
 })
 dop.listen() // WebSockets on port 4444 (https://github.com/websockets/ws)
@@ -35,11 +34,15 @@ dop.onSubscribe(() => object)
 import dop from 'dop'
 const server = dop.connect() // Native WebSockets 'ws://localhost:4444'
 const objectFromServer = await server.subscribe()
-console.log(objectFromServer.hello) // > "world"
+console.log(objectFromServer.fullname) // > "John Doe"
 console.log(await objectFromServer.square(5)) // > 25
-```
+```-->
 
-Check the website for more detailed documentation [https://distributedobjectprotocol.org/](https://distributedobjectprotocol.org/)
+
+
+
+
+Check the website for more detailed information [https://distributedobjectprotocol.org/](https://distributedobjectprotocol.org/)
 
 
 
