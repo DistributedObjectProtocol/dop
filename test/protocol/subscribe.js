@@ -1,8 +1,8 @@
 var test = require('tape');
-var dopServer = require('../../dist/dop.nodejs').create();
-var dopClient = require('../../dist/dop.nodejs').create();
-var dopClient2 = require('../../dist/dop.nodejs').create();
-var dopClientClient = require('../../dist/dop.nodejs').create();
+var dopServer = require('../.proxy').create();
+var dopClient = require('../.proxy').create();
+var dopClient2 = require('../.proxy').create();
+var dopClientClient = require('../.proxy').create();
 dopServer.env = 'SERVER';
 dopClient.env = 'CLIENT';
 dopClient2.env = 'CLIENT2';

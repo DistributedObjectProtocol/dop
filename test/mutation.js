@@ -1,6 +1,6 @@
 var test = require('tape');
 // require('tabe').createStream( test );
-var dop = require('../dist/dop.nodejs').create();
+var dop = require('./.proxy').create();
 var set = dop.set;
 var del = dop.del;
 dop.observe = function(object, property) {
@@ -183,7 +183,7 @@ test('Array.set', function(t) {
         }
         else {
             t.equal(mutation.object, array.array, '.object')
-            t.equal(mutation.prop, 5, '.prop')
+            t.equal(mutation.prop, "5", '.prop')
             t.deepEqual(mutation.value, [true], '.value')
             t.equal(mutation.oldValue, undefined, '.oldValue')
             t.deepEqual(mutation.path, [2,'array'], '.path')
@@ -201,7 +201,7 @@ test('Array.set', function(t) {
     fun = function(mutations) {
         var mutation = mutations[0]
         t.equal(mutation.object, array.array[5], '.object')
-        t.equal(mutation.prop, 0, '.prop')
+        t.equal(mutation.prop, "0", '.prop')
         t.equal(mutation.value, false, '.value')
         t.equal(mutation.oldValue, true, '.oldValue')
         t.deepEqual(mutation.path, [2,'array',5], '.path')
@@ -221,7 +221,7 @@ test('Array.del', function(t) {
     fun = function(mutations) {
         var mutation = mutations[0]
         t.equal(mutation.object, array.array, '.object')
-        t.equal(mutation.prop, 5, '.prop')
+        t.equal(mutation.prop, "5", '.prop')
         t.equal(mutation.value, undefined, '.value')
         t.deepEqual(mutation.oldValue, [false], '.oldValue')
         t.deepEqual(mutation.path, [2,'array'], '.path')

@@ -12,7 +12,7 @@ dop.core.delete = function(object, property) {
         if ((objectTarget===objectProxy || object===objectProxy) && (path = dop.getObjectPath(object)))
             dop.core.storeMutation({
                 object: dop.getObjectProxy(objectTarget),
-                prop: property,
+                prop: String(property),
                 path: path,
                 oldValue: dop.util.clone(oldValue)
             });

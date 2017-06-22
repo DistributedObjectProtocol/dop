@@ -1,7 +1,7 @@
 var test = require('tape');
-var dop = require('../../dist/dop.nodejs').create();
-var dopClient1 = require('../../dist/dop.nodejs').create();
-var dopClient2 = require('../../dist/dop.nodejs').create();
+var dop = require('../.proxy').create();
+var dopClient1 = require('../.proxy').create();
+var dopClient2 = require('../.proxy').create();
 var transportName = process.argv[2] || 'local';
 var transportListen = require('dop-transports').listen[transportName];
 var transportConnect = require('dop-transports').connect[transportName];

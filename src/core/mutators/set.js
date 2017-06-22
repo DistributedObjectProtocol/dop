@@ -12,7 +12,11 @@ dop.core.set = function(object, property, value) {
                 oldValue = objectTarget[property],
                 length = objectTarget.length,
                 isNewProperty = !objectTarget.hasOwnProperty(property),
+                objectIsArray = isArray(objectTarget),
                 path;
+            
+            // if (objectIsArray)
+            //     property = Number(property);
 
             // object or array
             if (dop.isObjectRegistrable(value) && !(dop.isRegistered(value) && dop.getObjectParent(value) === objectProxy))
@@ -31,7 +35,7 @@ dop.core.set = function(object, property, value) {
             ) {
                 var mutation = {
                     object: objectProxy,
-                    prop: property,
+                    prop: objectIsArray ? String(property) : property,
                     path: path,
                     value: dop.util.clone(value)
                 };
@@ -39,7 +43,7 @@ dop.core.set = function(object, property, value) {
                     mutation.oldValue = dop.util.clone(oldValue)
 
                 // If is array and length is different we must store the length 
-                if (objectTarget.length !== length && isArray(objectTarget))
+                if (objectTarget.length !== length && objectIsArray)
                     dop.core.storeMutation({
                         object: objectProxy,
                         prop: 'length',

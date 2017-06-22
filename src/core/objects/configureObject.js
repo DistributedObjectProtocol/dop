@@ -17,7 +17,7 @@ dop.core.configureObject = function(object, propertyParent, parent) {
     // Setting ~DOP object
     var object_dop = {}, object_proxy, object_target;
     object_dop._ = parent; // parent
-    object_dop.pr = propertyParent; // property
+    object_dop.pr = isArray(parent) ? Number(propertyParent) : propertyParent; // property
     
     // Making proxy object
     if (canWeProxy) {

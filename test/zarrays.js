@@ -1,5 +1,5 @@
 
-var dop = require('../dist/dop.nodejs').create();
+var dop = require('./.proxy').create();
 var Combinatorics = require('js-combinatorics');
 var test = require('tape');
 // // require('tabe').createStream( test );

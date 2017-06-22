@@ -1,5 +1,5 @@
 var test = require('tape');
-var dop = require('../dist/dop.nodejs').create();
+var dop = require('./.proxy').create();
 
 
 
