@@ -34,7 +34,7 @@ dop.core.setPatchMutator = function(destiny, prop, value, typeofValue, path) {
             dop.set(destiny, prop, dop.util.clone(value[1]));
 
         // Array mutations
-        else {
+        else if (isArray(destiny[prop])) {
             if (!isArray(typeInstruction))
                 value = [value];
 

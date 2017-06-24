@@ -20,10 +20,12 @@ var client2 = dopClient2.connect({transport:transportConnect, listener:server})
 
 
 var objServer = dop.register({
-    primero:1,
+    number:1,
     subobject:{},
-    dos:[]
+    array:[]
 })
+var objClient1;
+var objClient2;
 dop.onSubscribe(function(){
     return objServer;
 })
@@ -72,20 +74,21 @@ test('TWO CLIENTS SUBCRIBED AND ONE LOSE PATCH VERSION 2', function(t) {
     client1.subscribe().then(function(obj) {
         client2.subscribe().then(function(obj2) {
 
-            t.deepEqual(objServer, obj, 'Obj1 deepEqual objServer before mutations');
-            t.deepEqual(objServer, obj2, 'Obj2 deepEqual objServer before mutations');
+            objClient1 = obj;
+            objClient2 = obj2;
+            t.deepEqual(objServer, objClient1, 'objClient1 deepEqual objServer before mutations');
+            t.deepEqual(objServer, objClient2, 'objClient2 deepEqual objServer before mutations');
 
-            dop.set(objServer, 'primero', 'first');
-            dop.set(objServer, 'dos', [2,2,2]);
+            dop.set(objServer, 'number', 'first');
+            dop.set(objServer, 'array', [2,2,2]);
             dop.set(objServer, 'tres', 3);
             dop.set(objServer, 'cuatro', 4444);
             dop.set(objServer, 'cinco', 'elcinco');
 
             setTimeout(function(){
-                t.deepEqual(objServer, obj, 'Obj1 deepEqual objServer after mutations');
-                t.deepEqual(objServer, obj2, 'Obj2 deepEqual objServer after mutations');
+                t.deepEqual(objServer, objClient1, 'objClient1 deepEqual objServer after mutations');
+                t.deepEqual(objServer, objClient2, 'objClient2 deepEqual objServer after mutations');
                 t.end()
-                server.listener.close();
             },2000)
 
 
@@ -97,3 +100,21 @@ test('TWO CLIENTS SUBCRIBED AND ONE LOSE PATCH VERSION 2', function(t) {
 
 
 // // More test todo...
+
+// test('TWO CLIENTS SUBCRIBED AND ONE LOSE PATCH VERSION 2', function(t) {
+
+
+//     delete objClient2.array
+//     delete objClient2.subobject
+//     dop.set(objServer.subobject, 'value', 1234)
+//     objServer.array.unshift('LOL')
+
+//     setTimeout(function(){
+//         t.deepEqual(objServer, objClient1, 'objClient1 deepEqual objServer after mutations');
+//         t.deepEqual(objServer, objClient2, 'objClient2 deepEqual objServer after mutations');
+//         t.end()
+//         server.listener.close();
+//     },2000)
+
+
+// })

@@ -295,3 +295,4 @@ var single = types.map(function(item) {return [item]});
 argsCases = argsCases.concat(single) 
 var cmb = Combinatorics.baseN(types, 2);
 while(a = cmb.next()) argsCases.push(a)//argsCases.push(a, a.concat({},'string',{},1,null,undefined,new Date(),/test/,new gify(),true,{},[{}]));
+

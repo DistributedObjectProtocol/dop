@@ -1,6 +1,6 @@
 {
   "name": "dop",
-  "version": "0.22.0",
+  "version": "0.22.1",
   "main": "./dist/dop.nodejs.js",
   "browser": "./dist/dop.js",
   "unpkg": "./dist/dop.min.js",
@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "coveralls": "^2.11.4",
+    "electron": "^1.4.12",
     "express": "^4.13.4",
     "faucet": "^0.0.1",
     "grunt": "^0.4.5",
@@ -48,10 +49,10 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-optimize-js": "^0.6.0",
     "js-combinatorics": "^0.5.2",
+    "lodash.merge": "^4.6.0",
     "tap": "^7.1.2",
     "tape": "^4.6.3",
-    "tape-run": "^2.1.4",
-    "electron": "^1.4.12"
+    "tape-run": "^2.1.4"
   },
   "scripts": {
     "grunt": "grunt",

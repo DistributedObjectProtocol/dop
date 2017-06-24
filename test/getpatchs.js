@@ -7,7 +7,7 @@ var decode = dop.decode;
 
 
 
-function applyPatch(collector) {
+function getPatch(collector) {
     var patch = dop.core.getPatch(collector.mutations);
     var patchServer = decode(encode(patch));
     collector.destroy();
@@ -36,7 +36,7 @@ test(header+'Adding property', function(t) {
 
     var collector = dop.collect();
     set(objectServer, 'one', 1);
-    var patchGenerated = applyPatch(collector);
+    var patchGenerated = getPatch(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, patchGenerated, patchExpected);
 });
@@ -49,7 +49,7 @@ test(header+'Changing property', function(t) {
 
     var collector = dop.collect();
     set(objectServer, 'one', 11);
-    var patchGenerated = applyPatch(collector);
+    var patchGenerated = getPatch(collector);
     t.equal(collector.mutations.length, 1, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, patchGenerated, patchExpected);
 });
@@ -62,7 +62,7 @@ test(header+'Changing property with the same value', function(t) {
 
     var collector = dop.collect();
     set(objectServer, 'one', 11);
-    var patchGenerated = applyPatch(collector);
+    var patchGenerated = getPatch(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, patchGenerated, patchExpected);
 });
@@ -75,7 +75,7 @@ test(header+'Deleting property', function(t) {
 
     var collector = dop.collect();
     del(objectServer, 'one');
-    var patchGenerated = applyPatch(collector);
+    var patchGenerated = getPatch(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, patchGenerated, patchExpected);
 });
@@ -89,7 +89,7 @@ test(header+'Change and delete a removed item', function(t) {
     set(objectServer, 'one', 'Changeddd');
     del(objectServer, 'one');
     set(objectServer, 'two', 2);
-    var patchGenerated = applyPatch(collector);
+    var patchGenerated = getPatch(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, patchGenerated, patchExpected);
 });
@@ -105,7 +105,7 @@ test(header+'Setting property array', function(t) {
     set(object.array, 5, "three");
 
 
-    var patchGenerated = applyPatch(collector);
+    var patchGenerated = getPatch(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, patchGenerated, patchExpected);
 });
@@ -134,7 +134,7 @@ test(header+'Setting an array and mutating it', function(t) {
     set(object.array[2], 'B1', 'string');
 
 
-    var patchGenerated = applyPatch(collector);
+    var patchGenerated = getPatch(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, patchGenerated, patchExpected);
 });
@@ -156,7 +156,7 @@ test(header+'Mutating array then mutating nested objects', function(t) {
 
 
 
-    var patchGenerated = applyPatch(collector);
+    var patchGenerated = getPatch(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, patchGenerated, patchExpected);
 });
@@ -177,7 +177,7 @@ test(header+'Mutating nested objects then mutating parent array', function(t) {
 
 
 
-    var patchGenerated = applyPatch(collector);
+    var patchGenerated = getPatch(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, patchGenerated, patchExpected);
 });
@@ -197,7 +197,7 @@ test(header+'Mutating array twice', function(t) {
     object.array.sort();
 
 
-    var patchGenerated = applyPatch(collector);
+    var patchGenerated = getPatch(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, patchGenerated, patchExpected);
 
@@ -217,7 +217,7 @@ test(header+'Mutating array and mutating array deeper', function(t) {
     object.array[0].reverse();
 
 
-    var patchGenerated = applyPatch(collector);
+    var patchGenerated = getPatch(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, patchGenerated, patchExpected);
 
@@ -236,7 +236,7 @@ test(header+'Mutating array deeper and mutating container', function(t) {
     object.array.reverse();
 
 
-    var patchGenerated = applyPatch(collector);
+    var patchGenerated = getPatch(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
     maketest(t, patchGenerated, patchExpected);
 })
