@@ -1,6 +1,6 @@
 {
   "name": "dop",
-  "version": "0.22.1",
+  "version": "0.22.2",
   "main": "./dist/dop.nodejs.js",
   "browser": "./dist/dop.js",
   "unpkg": "./dist/dop.min.js",
@@ -48,6 +48,7 @@
     "grunt-contrib-uglify": "^0.6.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-optimize-js": "^0.6.0",
+    "grunt-replace": "^1.0.1",
     "js-combinatorics": "^0.5.2",
     "lodash.merge": "^4.6.0",
     "tap": "^7.1.2",

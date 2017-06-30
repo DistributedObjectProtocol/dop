@@ -10,10 +10,7 @@ function gify(obj) {
     this.myClassProperty=123;
     return JSON.stringify(obj);
 }
-function isObjectRegistrable(object) {
-    var tof = dop.util.typeof(object);
-    return (tof === 'object' || tof == 'array');
-}
+var isObjectRegistrable = dop.isObjectRegistrable;
 
 
 

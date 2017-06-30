@@ -1,14 +1,13 @@
 
 dop.isObjectRegistrable = function(object) {
-    var tof = dop.util.typeof(object);
-    return (tof === 'object' || tof == 'array');
+    if (!object || typeof object !== "object") return false;
+    var prototype = Object.getPrototypeOf(object);
+    return prototype === Object.prototype || prototype === Array.prototype;
 };
 
-// dop.isObjectRegistrable = function(object) {
-//     if (!object)
-//         return false;
-//     var prototype = Object.getPrototypeOf(object);
-//     return (prototype === Object.prototype || prototype === Array.prototype);
+//dop.isObjectRegistrable = function(object) {
+//     var tof = dop.util.typeof(object);
+//     return (tof === 'object' || tof == 'array');
 // };
 
 // function Test(){}

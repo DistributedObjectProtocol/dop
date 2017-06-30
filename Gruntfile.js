@@ -72,6 +72,35 @@ module.exports = function(grunt) {
             }
         },
 
+        replace: {
+            dist: {
+                options: {
+                    patterns: [
+                        {
+                            match: /\.core\./g,
+                            replacement: '.c.'
+                        },
+                        {
+                            match: /\.util\./g,
+                            replacement: '.u.'
+                        },
+                        {
+                            match: /\.protocol\./g,
+                            replacement: '.p.'
+                        }
+                    ]
+                },
+                files: [
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: 'dist/dop.min.js',
+                        dest: 'dist'
+                    }
+                ]
+            }
+        },
+
         'optimize-js': {
             options: {
                 sourceMap: false,
@@ -92,10 +121,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-replace');
     grunt.loadNpmTasks('grunt-optimize-js');
 
 
-    var tasks = ['copy', 'concat:nodejs', 'concat:browser', 'uglify'/*, 'optimize-js'*/];
+    var tasks = ['copy', 'concat:nodejs', 'concat:browser', 'uglify', /*'replace', 'optimize-js'*/];
     if (grunt.option('build') === undefined)
         tasks.push('watch');
     grunt.registerTask('default', tasks);
