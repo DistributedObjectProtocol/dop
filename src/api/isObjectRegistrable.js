@@ -1,6 +1,6 @@
 
 dop.isObjectRegistrable = function(object) {
-    if (!object || typeof object !== "object") return false;
+    if (object === null || typeof object !== "object") return false;
     var prototype = Object.getPrototypeOf(object);
     return prototype === Object.prototype || prototype === Array.prototype;
 };
