@@ -43,7 +43,15 @@ dop.protocol.instructions = {
                         // Owner -> Subscriptor
     patch: 5,           // [ 1234, <instruction>, <object_id>, <version>, <patch>]
                         // [-1234, 0]
+    
+
+
+    1: 'subscribe',
+    2: 'unsubscribe',
+    3: 'call',
+    4: 'broadcast',
+    5: 'patch'
 };
 
-for (var instruction in dop.protocol.instructions)
-    dop.protocol.instructions[ dop.protocol.instructions[instruction] ] = instruction;
+// for (var instruction in dop.protocol.instructions)
+    // dop.protocol.instructions[ dop.protocol.instructions[instruction] ] = instruction;
