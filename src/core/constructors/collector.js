@@ -1,5 +1,5 @@
 
-dop.core.collector = function(queue, index) {
+dop.core.collector = function Collector(queue, index) {
     this.active = true;
     this.mutations = [];
     this.queue = queue;

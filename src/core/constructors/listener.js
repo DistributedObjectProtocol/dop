@@ -1,5 +1,5 @@
 
-dop.core.listener = function(args) {
+dop.core.listener = function Listener(args) {
     // Inherit emitter
     dop.util.merge(this, new dop.util.emitter);
     args.unshift(dop, this);

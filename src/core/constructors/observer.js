@@ -1,5 +1,5 @@
 
-dop.core.observer = function(callback, id) {
+dop.core.observer = function Observer(callback, id) {
     this.callback = callback;
     this.id = id;
     this.observers = {}; // need it for destroy()

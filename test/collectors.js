@@ -32,11 +32,11 @@ test('Multiple collectors order', function(t) {
 
 test('Using collectFirst', function(t) {
     var collector1 = dop.collect();
-    var collector2 = dop.collectFirst();
+    var collector2 = dop.collect(function(){ return 0 });
     object.array.push(Math.random());
     var collector3 = dop.collect();
     object.array.push(Math.random());
-    var collector4 = dop.collectFirst();
+    var collector4 = dop.collect(function(){ return 0 });
     object.array.push(Math.random());
     t.equal(collector1.mutations.length, 0);
     t.equal(collector2.mutations.length, 2);
@@ -86,14 +86,22 @@ test('Destroying', function(t) {
 
 test('Filtering', function(t) {
     var totalArray = object.array.length;
-    var collector1 = dop.collect(function(mutation){
+    var collector1 = dop.collect();
+    collector1.filter = function(mutation){
         return (mutation.object.length===totalArray+1);
-    });
+    };
     object.array.push(Math.random());
     var collector2 = dop.collect();
     object.array.push(Math.random());
     t.equal(collector1.mutations.length, 1);
     t.equal(collector2.mutations.length, 1);
+    object.array.push(Math.random());
+    t.equal(collector1.mutations.length, 1);
+    t.equal(collector2.mutations.length, 2);
+    delete collector1.filter
+    object.array.push(Math.random());
+    t.equal(collector1.mutations.length, 2);
+    t.equal(collector2.mutations.length, 2);
     collector1.destroy();
     collector2.destroy();
     t.end();

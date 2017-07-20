@@ -1,5 +1,5 @@
 
-dop.core.snapshot = function (mutations) {
+dop.core.snapshot = function Snapshot(mutations) {
     this.mutations = mutations;
     this.forward = true;
 };

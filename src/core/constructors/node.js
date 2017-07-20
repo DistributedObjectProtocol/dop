@@ -1,5 +1,5 @@
 
-dop.core.node = function() {
+dop.core.node = function Node() {
     // Inherit emitter
     dop.util.merge(this, new dop.util.emitter); //https://jsperf.com/inheritance-call-vs-object-assign
     this.connected = false;

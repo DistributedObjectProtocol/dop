@@ -15,4 +15,7 @@ npm-debug.log*
 .grunt
 
 # Files
+src/
+test/
+examples/
 test*.*

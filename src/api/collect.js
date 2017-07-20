@@ -1,5 +1,6 @@
 
-dop.collect = function(filter) {
-    dop.util.invariant(arguments.length===0 || (arguments.length>0 && isFunction(filter)), 'dop.collect only accept one argument as function');
-    return dop.core.createCollector(dop.data.collectors, dop.data.collectors.length, filter);
+dop.collect = function(indexFunction) {
+    dop.util.invariant(arguments.length==0 || (arguments.length==1 && isFunction(indexFunction)), 'dop.collect only accept one argument as function');
+    var index = indexFunction ? indexFunction(dop.data.collectors) : dop.data.collectors.length;
+    return dop.core.createCollector(dop.data.collectors, index);
 };
