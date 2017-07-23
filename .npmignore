@@ -19,3 +19,6 @@ src/
 test/
 examples/
 test*.*
+.editorconfig
+.travis.yml
+Gruntfile.js
