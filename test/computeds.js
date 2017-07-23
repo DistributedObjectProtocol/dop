@@ -65,11 +65,11 @@ test('addComputed', function(t) {
         surname:"Gonzalez",
         fullname: "..."
     })
-    dop.addComputed(object, 'fullname', function(oldvalue){
+    dop.set(object, 'fullname', dop.computed(function(oldvalue){
         t.equal(oldvalue, "...")
         runs += 1
         return get(this,"name") +' '+ get(this,"surname")
-    })
+    }))
 
     t.equal(object.fullname, "Josema Gonzalez")
     t.equal(object.fullname, "Josema Gonzalez")
@@ -261,10 +261,10 @@ test('Deep computed addComputed', function(t) {
         surname:"Gonzalez",
         subobject: {}
     })
-    dop.addComputed(object.subobject, 'fullname', function(oldvalue){
+    dop.set(object.subobject, 'fullname', dop.computed(function(oldvalue){
         t.equal(oldvalue, undefined)
         return get(object,"name") +' '+ get(object,"surname")
-    })
+    }))
 
     t.equal(object.subobject.fullname, "Josema Gonzalez")
     t.equal(collector.mutations.length, 1, "mutations")
@@ -521,9 +521,9 @@ test('Multiple computed same property', function(t) {
     t.equal(object.fullname, "Josema Gonzalez")
     set(object, 'name', 'Enzo')
     t.equal(object.fullname, "Enzo Gonzalez")
-    dop.addComputed(object, 'fullname', function(){
+    dop.set(object, 'fullname', dop.computed(function(){
         return (get(this, "name")).toUpperCase()
-    })
+    }))
     set(object, 'name', 'Enza')
     t.equal(object.fullname, "ENZA")
     set(object, 'surname', 'Hernandez')
@@ -552,7 +552,7 @@ test('Removing computeds', function(t) {
         surname: "Gonzalez",
         fullname: computed(computed1)
     })
-    dop.addComputed(object, 'fullname', computed2)
+    dop.set(object, 'fullname', dop.computed(computed2))
 
     t.equal(object.fullname, "JOSEMA")
     set(object, 'surname', 'Hernandez')
@@ -588,7 +588,7 @@ test('Removing all computeds', function(t) {
         surname: "Gonzalez",
         fullname: computed(computed1)
     })
-    dop.addComputed(object, 'fullname', computed2)
+    dop.set(object, 'fullname', dop.computed(computed2))
 
     t.equal(object.fullname, "JOSEMA")
     set(object, 'surname', 'Hernandez')
