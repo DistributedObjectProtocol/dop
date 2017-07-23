@@ -2,6 +2,7 @@
 
 var dop = {
     name: 'dop',
+    version: '{{VERSION}}',
     create: factory,
 
     // Internal data

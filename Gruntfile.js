@@ -1,5 +1,9 @@
 module.exports = function(grunt) {
 
+    var dop = 'dop.js';
+    var dopnodejs = 'dop.nodejs.js';
+    var dopmin = 'dop.min.js';
+
     // Project configuration.
     grunt.initConfig({
 
@@ -14,6 +18,8 @@ module.exports = function(grunt) {
                 },
             },
         },
+
+
 
         copy: {
             main: {
@@ -45,7 +51,7 @@ module.exports = function(grunt) {
                     'src/node/*',
                     'src/umd.js'
                 ],
-                dest: 'dist/dop.nodejs.js'
+                dest: 'dist/'+dopnodejs
             },
             browser: {
                 src: [
@@ -58,14 +64,30 @@ module.exports = function(grunt) {
                     'src/node/*',
                     'src/umd.js'
                 ],
-                dest: 'dist/dop.js'
+                dest: 'dist/'+dop
             }
         },
 
+
+        'string-replace': {
+            dist: {
+                files: {
+                    'dist/': ['dist/'+dop,'dist/'+dopnodejs],
+                },
+                options: {
+                    replacements: [{
+                        pattern: /{{VERSION}}/ig,
+                        replacement: '<%= pkg.version %>'
+                    }]
+                }
+            }
+        },
+
+
         uglify: {
             build: {
-                src: 'dist/dop.js',
-                dest: 'dist/dop.min.js'
+                src: 'dist/'+dop,
+                dest: 'dist/'+dopmin
             },
             options: {
                 banner: '/* dop@<%= pkg.version %> - (c) 2016 Josema Gonzalez - MIT Licensed */\n'
@@ -94,7 +116,7 @@ module.exports = function(grunt) {
                     {
                         expand: true,
                         flatten: true,
-                        src: 'dist/dop.min.js',
+                        src: 'dist/'+dopmin,
                         dest: 'dist'
                     }
                 ]
@@ -108,7 +130,7 @@ module.exports = function(grunt) {
             },
             dist: {
                 files: {
-                    'dist/dop.min.opt.js': 'dist/dop.min.js'
+                    'dist/dop.min.opt.js': 'dist/'+dopmin
                 }
             }
         }
@@ -123,9 +145,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-replace');
     grunt.loadNpmTasks('grunt-optimize-js');
+    grunt.loadNpmTasks('grunt-string-replace');
 
 
-    var tasks = ['copy', 'concat:nodejs', 'concat:browser', 'uglify', /*'replace', 'optimize-js'*/];
+    var tasks = ['copy', 'concat:nodejs', 'concat:browser', 'string-replace', 'uglify',  /*'replace', 'optimize-js'*/];
     if (grunt.option('build') === undefined)
         tasks.push('watch');
     grunt.registerTask('default', tasks);
