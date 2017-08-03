@@ -17,10 +17,9 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
                 if (dop.core.registerSubscriber(node, object_root))
                     response.push(object_id, object_root);
 
-                // Object already registered
+                // Object already subscribed
                 else
-                    response.push(object_path);
-
+                    response.push(object_id, object_path.slice(1));
 
                 dop.core.storeSendMessages(node, response, dop.encodeFunction);
                 return object;

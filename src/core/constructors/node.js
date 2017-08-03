@@ -28,5 +28,6 @@ dop.core.node.prototype.subscribe = function() {
 };
 
 dop.core.node.prototype.unsubscribe = function(object) {
+    dop.util.invariant(dop.isRegistered(object), 'Node.unsubscribe needs a subscribed object');
     return dop.protocol.unsubscribe(this, object);
 };

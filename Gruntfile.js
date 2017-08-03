@@ -90,7 +90,7 @@ module.exports = function(grunt) {
                 dest: 'dist/'+dopmin
             },
             options: {
-                banner: '/* dop@<%= pkg.version %> - (c) 2016 Josema Gonzalez - MIT Licensed */\n'
+                banner: '/* dop - (c) 2016 Josema Gonzalez - MIT Licensed */\n'
             }
         },
 

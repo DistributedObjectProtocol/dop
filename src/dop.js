@@ -1,7 +1,6 @@
 (function factory(root) {
 
 var dop = {
-    name: 'dop',
     version: '{{VERSION}}',
     create: factory,
 
