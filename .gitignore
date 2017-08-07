@@ -16,4 +16,4 @@ npm-debug.log*
 
 # Files
 dist
-test*.*
+testing/

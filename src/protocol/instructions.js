@@ -23,24 +23,24 @@ dop.protocol.instructions = {
     // Sending the same request without parameters means a cancel/abort of the request
     // [1234]
 
-                        // Subscriptor -> Owner
+                        // Subscriber -> Owner
     subscribe: 1,       // [ 1234, <instruction>, <params...>]
                         // [-1234, 0, <object_id>, <data_object>]
                         // [-1234, 0, <object_id>, ['path']]
 
-                        // Subscriptor -> Owner
+                        // Subscriber -> Owner
     unsubscribe: 2,     // [ 1234, <instruction>, <object_id>]
                         // [-1234, 0]
 
-                        // Subscriptor -> Owner
-    call: 3,            // [ 1234, <instruction>, <object_id>, ['path','path'], [<params...>]]
+                        // Subscriber -> Owner
+    call: 3,            // [ 1234, <instruction>, <object_id>, ['path','subpath'], [<params...>]]
                         // [-1234, 0, <return>]
 
-                        // Owner -> Subscriptor
-    broadcast: 4,       // [ 1234, <instruction>, <object_id>, ['path','path'], [<params...>]]
+                        // Owner -> Subscriber
+    broadcast: 4,       // [ 1234, <instruction>, <object_id>, ['path','subpath'], [<params...>]]
                         // [-1234, 0, <return>]
 
-                        // Owner -> Subscriptor
+                        // Owner -> Subscriber
     patch: 5,           // [ 1234, <instruction>, <object_id>, <version>, <patch>]
                         // [-1234, 0]
     

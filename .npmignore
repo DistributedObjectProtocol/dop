@@ -18,7 +18,7 @@ npm-debug.log*
 src/
 test/
 examples/
-test*.*
+testing/
 .editorconfig
 .travis.yml
 Gruntfile.js

@@ -125,7 +125,7 @@ test(header+'Setting an array and mutating it', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":[2,["c","b",{"B1":"string"},false,true]]}];
+    var patchExpected = [{"array":[0,["c","b",{"B1":"string"},false,true]]}];
     var mutationsExpected = 5;
     set(object, 'array', [true,false]);
     object.array.push('a','b','c')
@@ -149,7 +149,7 @@ test(header+'Mutating array then mutating nested objects', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":[4,[0,1]]},{"array":{"2":[2,{"B1":false}],"length":3}}];
+    var patchExpected = [{"array":[2,[0,1]]},{"array":{"2":[0,{"B1":false}],"length":3}}];
     var mutationsExpected = 3;
     object.array.reverse();
     set(object.array, 2, {B1:false});
@@ -170,7 +170,7 @@ test(header+'Mutating nested objects then mutating parent array', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":{"2":[2,{"B1":false}],"length":3}},{"array":[4,[0,2]]}];
+    var patchExpected = [{"array":{"2":[0,{"B1":false}],"length":3}},{"array":[2,[0,2]]}];
     var mutationsExpected = 3;
     set(object.array, 2, {B1:false});
     object.array.reverse();
@@ -191,7 +191,7 @@ test(header+'Mutating array twice', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":[[3,[3,0,5,4,6]],[4,[0,1,1,2,3,4]]]}];
+    var patchExpected = [{"array":[[1,[3,0,5,4,6]],[2,[0,1,1,2,3,4]]]}];
     var mutationsExpected = 2;
     object.array.push(5,4,6);
     object.array.sort();
@@ -211,7 +211,7 @@ test(header+'Mutating array and mutating array deeper', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":[4,[0,2]]},{"array":{"0":[4,[0,1]]}}];
+    var patchExpected = [{"array":[2,[0,2]]},{"array":{"0":[2,[0,1]]}}];
     var mutationsExpected = 2;
     object.array.reverse();
     object.array[0].reverse();
@@ -230,7 +230,7 @@ test(header+'Mutating array deeper and mutating container', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":{"2":[4,[0,1]]}},{"array":[4,[0,2]]}];
+    var patchExpected = [{"array":{"2":[2,[0,1]]}},{"array":[2,[0,2]]}];
     var mutationsExpected = 2;
     object.array[2].reverse();
     object.array.reverse();
