@@ -218,3 +218,18 @@ test('From string to array and mutations', function(t) {
     
     makeTest(t, snapshot, original, object, mutated) 
 });
+
+
+
+
+test('Negative splice', function(t) {
+
+    var object = dop.register({dos:[1,2,3]})
+    var original = dop.util.clone(object)
+    var collector = dop.collect()
+    object.dos.splice(1,-1,'!') 
+    var snapshot = collector.emit()
+    var mutated = dop.util.clone(object)
+    
+    makeTest(t, snapshot, original, object, mutated) 
+});
