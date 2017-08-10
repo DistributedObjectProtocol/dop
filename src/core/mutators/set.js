@@ -43,7 +43,7 @@ dop.core.set = function(object, property, value) {
                     mutation.oldValue = dop.util.clone(oldValue)
 
                 // If is array and length is different we must store the length 
-                if (objectTarget.length !== length && objectIsArray)
+                if (property !== 'length' && objectTarget.length !== length && objectIsArray)
                     dop.core.storeMutation({
                         object: objectProxy,
                         prop: 'length',

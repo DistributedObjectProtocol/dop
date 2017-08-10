@@ -406,3 +406,21 @@ test('unobserve = observer.observe(...)', function(t) {
 
     t.end()
 })
+
+
+
+test('mutating length of array', function(t) {
+    var object = dop.register({array:[1,2,3]})
+    var times = 0
+    var observer = dop.createObserver(function(mutations) {
+        times += 1
+    })
+    observer.observe(object.array)
+    observer.observe(object.array, 'length')
+    set(object.array, 'length', 1)
+    t.equal(object.array.length, 1)
+    t.equal(times, 1)
+    
+
+    t.end()
+})
