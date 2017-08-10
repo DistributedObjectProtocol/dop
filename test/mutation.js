@@ -175,17 +175,17 @@ test('Array.set', function(t) {
         var mutation = mutations[0]
         if (first) {
             t.equal(mutation.object, array.array, '.object')
-            t.equal(mutation.prop, 'length', '.prop')
-            t.deepEqual(mutation.value, 6, '.value')
-            t.equal(mutation.oldValue, 3, '.oldValue')
+            t.equal(mutation.prop, "5", '.prop')
+            t.deepEqual(mutation.value, [true], '.value')
+            t.equal(mutation.oldValue, undefined, '.oldValue')
             t.deepEqual(mutation.path, [2,'array'], '.path')
             first = false
         }
         else {
             t.equal(mutation.object, array.array, '.object')
-            t.equal(mutation.prop, "5", '.prop')
-            t.deepEqual(mutation.value, [true], '.value')
-            t.equal(mutation.oldValue, undefined, '.oldValue')
+            t.equal(mutation.prop, 'length', '.prop')
+            t.deepEqual(mutation.value, 6, '.value')
+            t.equal(mutation.oldValue, 3, '.oldValue')
             t.deepEqual(mutation.path, [2,'array'], '.path')
         }
     }
