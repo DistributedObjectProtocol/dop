@@ -41,7 +41,7 @@ dop.core.storeMutation = function(mutation) {
 dop.core.runInterceptors = function(interceptors, type, mutation) {
     if (interceptors && (interceptors=interceptors[type]) && interceptors.length>0)
         for (var index=0,total=interceptors.length; index<total; ++index)
-            if (interceptors[index](mutation) !== true)
+            if (interceptors[index](mutation, dop.getObjectTarget(mutation.object)) !== true)
                 return false;
 
     return true;

@@ -57,3 +57,15 @@ test('mutations with createObserver', function(t) {
 })
 
 
+
+
+test('check swap mutation with createObserver', function(t) {
+    
+    var object = dop.register({array:[1,2,3]});
+    var observer = dop.createObserver(function first(mutations) {
+        t.equal(Array.isArray(mutations[0].swaps), true)
+        t.end()
+    });
+    observer.observe(object.array);
+    object.array.reverse()
+})

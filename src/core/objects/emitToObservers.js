@@ -4,7 +4,7 @@ dop.core.emitToObservers = function(mutations) {
     var mutation,
         path_id,
         observer_id,
-        observers = {},
+        mutationsToEmitByIdObserver = {},
         mutationsWithSubscribers = false,
         data_path = dop.data.path,
         index = 0,
@@ -17,25 +17,25 @@ dop.core.emitToObservers = function(mutations) {
         if (!mutationsWithSubscribers && isObject(dop.data.object[dop.getObjectId(mutation.object)]))
             mutationsWithSubscribers = true;
 
-
+        // .observers
         if (data_path[path_id] !== undefined && data_path[path_id].observers !== undefined) {
             for (observer_id in data_path[path_id].observers) {
-                if (observers[observer_id] === undefined)
-                    observers[observer_id] = [];
-                observers[observer_id].push(mutation);
+                if (mutationsToEmitByIdObserver[observer_id] === undefined)
+                    mutationsToEmitByIdObserver[observer_id] = [];
+                mutationsToEmitByIdObserver[observer_id].push(mutation);
             }
         }
 
-        // If mutation is swap type we should skip
-        if (mutation.swaps === undefined) {
+        // .observers_prop
+        if (mutation.swaps === undefined) { // If mutation is swaps type we should skip because does not have observers_prop and also the length never changes
             path_id += dop.core.pathSeparator(mutation.splice===undefined ? mutation.prop : 'length');
             if (data_path[path_id] !== undefined && data_path[path_id].observers_prop !== undefined) {
                 for (observer_id in data_path[path_id].observers_prop) {
-                    if (observers[observer_id] === undefined)
-                        observers[observer_id] = [];
+                    if (mutationsToEmitByIdObserver[observer_id] === undefined)
+                        mutationsToEmitByIdObserver[observer_id] = [];
                     // We have to check this because we dont want to duplicate
-                    if (observers[observer_id].indexOf(mutation) == -1)
-                        observers[observer_id].push(mutation);
+                    if (mutationsToEmitByIdObserver[observer_id].indexOf(mutation) == -1)
+                        mutationsToEmitByIdObserver[observer_id].push(mutation);
                 }
             }
         }
@@ -43,8 +43,11 @@ dop.core.emitToObservers = function(mutations) {
     }
 
     // Emiting
-    for (observer_id in observers)
-        dop.data.observers[observer_id].callback(observers[observer_id]);
+    for (observer_id in mutationsToEmitByIdObserver) {
+        var observer = dop.data.observers[observer_id];
+        if (observer !== undefined) // We need to make sure that the observer still exists, because maybe has been removed after calling previous observers
+            observer.callback(mutationsToEmitByIdObserver[observer_id]);
+    }
 
     return mutationsWithSubscribers;
 };
