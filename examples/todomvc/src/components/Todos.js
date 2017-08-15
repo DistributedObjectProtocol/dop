@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { createObserver } from 'dop';
-import state from '../state';
+import store from '../store';
 import { completeAll } from '../actions';
 import { SHOW_ALL, SHOW_COMPLETED, SHOW_ACTIVE } from '../constants';
 import TodoItem from './TodoItem';
@@ -13,12 +13,10 @@ const TODO_FILTERS = {
 
 export default class Todos extends Component {
     componentWillMount() {
-        const observer = createObserver(mutations => {
-            this.forceUpdate();
-        });
-        observer.observe(state.todos, 'length');
-        observer.observe(state, 'selectedFilter');
-        observer.observe(state, 'itemsLeftCount');
+        const observer = createObserver(m => this.forceUpdate());
+        observer.observe(store.todos, 'length');
+        observer.observe(store, 'selectedFilter');
+        observer.observe(store, 'itemsLeftCount');
     }
 
     shouldComponentUpdate() {
@@ -28,8 +26,8 @@ export default class Todos extends Component {
     render() {
         return (
             <TodosTemplate
-                todos={state.todos}
-                selectedFilter={state.selectedFilter}
+                todos={store.todos}
+                selectedFilter={store.selectedFilter}
                 todoFilters={TODO_FILTERS}
                 onCompleteAll={completeAll}
             />

@@ -1,7 +1,7 @@
 import { register, computed } from 'dop';
 import { SHOW_ALL } from './constants';
 
-// Initial state
+// Initial store
 export default register({
     newTodoText: '',
     todos: [],

@@ -1,0 +1,247 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Checking item lefts 1`] = `
+<footer
+  className="footer"
+>
+  <span
+    className="todo-count"
+  >
+    <strong>
+      No
+    </strong>
+     
+    items
+     left
+  </span>
+  <ul
+    className="filters"
+  >
+    <li>
+      <a
+        className="selected"
+        onClick={[Function]}
+        style={
+          Object {
+            "cursor": "pointer",
+          }
+        }
+      >
+        All
+      </a>
+    </li>
+    <li>
+      <a
+        className=""
+        onClick={[Function]}
+        style={
+          Object {
+            "cursor": "pointer",
+          }
+        }
+      >
+        Active
+      </a>
+    </li>
+    <li>
+      <a
+        className=""
+        onClick={[Function]}
+        style={
+          Object {
+            "cursor": "pointer",
+          }
+        }
+      >
+        Completed
+      </a>
+    </li>
+  </ul>
+</footer>
+`;
+
+exports[`Checking item lefts 2`] = `
+<footer
+  className="footer"
+>
+  <span
+    className="todo-count"
+  >
+    <strong>
+      1
+    </strong>
+     
+    item
+     left
+  </span>
+  <ul
+    className="filters"
+  >
+    <li>
+      <a
+        className="selected"
+        onClick={[Function]}
+        style={
+          Object {
+            "cursor": "pointer",
+          }
+        }
+      >
+        All
+      </a>
+    </li>
+    <li>
+      <a
+        className=""
+        onClick={[Function]}
+        style={
+          Object {
+            "cursor": "pointer",
+          }
+        }
+      >
+        Active
+      </a>
+    </li>
+    <li>
+      <a
+        className=""
+        onClick={[Function]}
+        style={
+          Object {
+            "cursor": "pointer",
+          }
+        }
+      >
+        Completed
+      </a>
+    </li>
+  </ul>
+</footer>
+`;
+
+exports[`Checking item lefts 3`] = `
+<footer
+  className="footer"
+>
+  <span
+    className="todo-count"
+  >
+    <strong>
+      2
+    </strong>
+     
+    items
+     left
+  </span>
+  <ul
+    className="filters"
+  >
+    <li>
+      <a
+        className="selected"
+        onClick={[Function]}
+        style={
+          Object {
+            "cursor": "pointer",
+          }
+        }
+      >
+        All
+      </a>
+    </li>
+    <li>
+      <a
+        className=""
+        onClick={[Function]}
+        style={
+          Object {
+            "cursor": "pointer",
+          }
+        }
+      >
+        Active
+      </a>
+    </li>
+    <li>
+      <a
+        className=""
+        onClick={[Function]}
+        style={
+          Object {
+            "cursor": "pointer",
+          }
+        }
+      >
+        Completed
+      </a>
+    </li>
+  </ul>
+</footer>
+`;
+
+exports[`Checking item lefts 4`] = `
+<footer
+  className="footer"
+>
+  <span
+    className="todo-count"
+  >
+    <strong>
+      1
+    </strong>
+     
+    item
+     left
+  </span>
+  <ul
+    className="filters"
+  >
+    <li>
+      <a
+        className="selected"
+        onClick={[Function]}
+        style={
+          Object {
+            "cursor": "pointer",
+          }
+        }
+      >
+        All
+      </a>
+    </li>
+    <li>
+      <a
+        className=""
+        onClick={[Function]}
+        style={
+          Object {
+            "cursor": "pointer",
+          }
+        }
+      >
+        Active
+      </a>
+    </li>
+    <li>
+      <a
+        className=""
+        onClick={[Function]}
+        style={
+          Object {
+            "cursor": "pointer",
+          }
+        }
+      >
+        Completed
+      </a>
+    </li>
+  </ul>
+  <button
+    className="clear-completed"
+    onClick={[Function]}
+  >
+    Clear completed
+  </button>
+</footer>
+`;

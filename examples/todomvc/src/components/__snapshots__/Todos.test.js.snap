@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Adding a new todo 1`] = `
+<div>
+  <section
+    className="main"
+  >
+    <ul
+      className="todo-list"
+    />
+  </section>
+</div>
+`;
+
+exports[`Adding a new todo 2`] = `
+<div>
+  <section
+    className="main"
+  >
+    <ul
+      className="todo-list"
+    >
+      <li
+        className=""
+      >
+        <div
+          className="view"
+        >
+          <input
+            checked={false}
+            className="toggle"
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <label
+            onDoubleClick={[Function]}
+          >
+            My new todo
+          </label>
+          <button
+            className="destroy"
+            onClick={[Function]}
+          />
+        </div>
+      </li>
+    </ul>
+  </section>
+</div>
+`;
+
+exports[`My new todo 1`] = `"My new todo"`;
+
+exports[`Removing todo 1`] = `
+<div>
+  <section
+    className="main"
+  >
+    <ul
+      className="todo-list"
+    >
+      <li
+        className=""
+      >
+        <div
+          className="view"
+        >
+          <input
+            checked={false}
+            className="toggle"
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <label
+            onDoubleClick={[Function]}
+          >
+            My new todo
+          </label>
+          <button
+            className="destroy"
+            onClick={[Function]}
+          />
+        </div>
+      </li>
+    </ul>
+  </section>
+</div>
+`;
+
+exports[`Removing todo 2`] = `
+<div>
+  <section
+    className="main"
+  >
+    <ul
+      className="todo-list"
+    />
+  </section>
+</div>
+`;
+
+exports[`label 1`] = `"label"`;

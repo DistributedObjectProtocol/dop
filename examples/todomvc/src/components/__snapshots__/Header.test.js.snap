@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Adding a new todo 1`] = `
+<header
+  className="header"
+>
+  <h1>
+    todos
+  </h1>
+  <input
+    autoFocus="true"
+    className="new-todo"
+    onChange={[Function]}
+    onKeyDown={[Function]}
+    placeholder="What needs to be done?"
+    type="text"
+    value=""
+  />
+</header>
+`;
+
+exports[`Adding a new todo 2`] = `
+<header
+  className="header"
+>
+  <h1>
+    todos
+  </h1>
+  <input
+    autoFocus="true"
+    className="new-todo"
+    onChange={[Function]}
+    onKeyDown={[Function]}
+    placeholder="What needs to be done?"
+    type="text"
+    value=""
+  />
+  <input
+    checked={false}
+    className="toggle-al"
+    onChange={[Function]}
+    type="checkbox"
+  />
+</header>
+`;

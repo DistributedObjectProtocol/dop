@@ -1,17 +1,15 @@
 import React, { Component, PropTypes } from 'react';
 import { createObserver } from 'dop';
-import state from '../state';
+import store from '../store';
 import { changeTextNewTodo, addTodo, completeAll } from '../actions';
 
 
 export default class Header extends Component {
     componentWillMount() {
-        const observer = createObserver(mutations => {
-            this.forceUpdate();
-        });
-        observer.observe(state.todos, 'length');
-        observer.observe(state, 'newTodoText');
-        observer.observe(state, 'areAllItemsCompleted');
+        const observer = createObserver(m => this.forceUpdate());
+        observer.observe(store.todos, 'length');
+        observer.observe(store, 'newTodoText');
+        observer.observe(store, 'areAllItemsCompleted');
     }
 
     shouldComponentUpdate() {
@@ -30,12 +28,12 @@ export default class Header extends Component {
     render() {
         return (
             <HeaderTemplate
-                value={state.newTodoText}
-                todosLength={state.todos.length}
+                value={store.newTodoText}
+                todosLength={store.todos.length}
                 onChangeText={this.onChangeText}
                 onSave={this.onSave}
                 onCompleteAll={completeAll}
-                areAllItemsCompleted={state.areAllItemsCompleted}
+                areAllItemsCompleted={store.areAllItemsCompleted}
             />
         );
     }

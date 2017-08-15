@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import { createObserver, getObjectPath } from 'dop';
-import state from '../state';
+import store from '../store';
 import { editTodo, completeTodo, deleteTodo, editingTodo } from '../actions';
 
 export default class TodoItem extends Component {
@@ -16,17 +16,15 @@ export default class TodoItem extends Component {
     }
 
     componentWillMount() {
-        this.todo = state.todos[this.props.index]
-        this.observer = createObserver(() => {
-            this.forceUpdate()
-        });
+        this.todo = store.todos[this.props.index]
+        this.observer = createObserver(m => this.forceUpdate());
         this.unobserveTodo = this.observer.observe(this.todo)
     }
 
     shouldComponentUpdate(nextProps) {
         if (nextProps.index !== this.props.index) {
             this.unobserveTodo()
-            this.todo = state.todos[nextProps.index]
+            this.todo = store.todos[nextProps.index]
             this.unobserveTodo = this.observer.observe(this.todo)
         }
         return false;

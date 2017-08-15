@@ -1,8 +1,8 @@
 import { collect } from 'dop';
-import state from './state';
+import store from './store';
 
 export function changeTextNewTodo(text) {
-    state.newTodoText = text;
+    store.newTodoText = text;
 }
 
 let todoIdInc = 1;
@@ -10,7 +10,7 @@ export function addTodo(text) {
     if (text.length > 0) {
         const collector = collect()
         changeTextNewTodo('')
-        state.todos.push({
+        store.todos.push({
             text: text,
             completed: false,
             id: todoIdInc++,
@@ -21,9 +21,9 @@ export function addTodo(text) {
 }
 
 export function deleteTodo(id) {
-    const index = state.todos.findIndex(todo => todo.id === id);
+    const index = store.todos.findIndex(todo => todo.id === id);
     const collector = collect();
-    state.todos.splice(index, 1);
+    store.todos.splice(index, 1);
     collector.emit();
 }
 
@@ -31,7 +31,7 @@ export function editTodo(id, text) {
     if (text.length === 0)
         deleteTodo(id);
     else {
-        const todo = state.todos.filter(todo => todo.id === id)[0];
+        const todo = store.todos.filter(todo => todo.id === id)[0];
         const collector = collect();
         if (text !== todo.text)
             todo.text = text;
@@ -40,7 +40,7 @@ export function editTodo(id, text) {
 }
 
 export function completeTodo(id) {
-    const todo = state.todos.filter(todo => todo.id === id)[0];
+    const todo = store.todos.filter(todo => todo.id === id)[0];
     const collector = collect();
     todo.completed = !todo.completed;
     collector.emit();
@@ -48,18 +48,18 @@ export function completeTodo(id) {
 
 export function completeAll() {
     const collector = collect();
-    const areAllMarked = state.todos.every(todo => todo.completed);
-    state.todos.forEach(todo => (todo.completed = !areAllMarked));
+    const areAllMarked = store.todos.every(todo => todo.completed);
+    store.todos.forEach(todo => (todo.completed = !areAllMarked));
     collector.emit();
 }
 
 export function changeFilter(filter) {
-    state.selectedFilter = filter;
+    store.selectedFilter = filter;
 }
 
 export function clearCompleted() {
     const collector = collect();
-    const completeds = state.todos
+    const completeds = store.todos
         .filter(todo => todo.completed === true)
         .map(todo => todo.id)
         .forEach(deleteTodo);
@@ -67,6 +67,6 @@ export function clearCompleted() {
 }
 
 export function editingTodo(id) {
-    const todo = state.todos.filter(todo => todo.id === id)[0];
+    const todo = store.todos.filter(todo => todo.id === id)[0];
     todo.editing = !todo.editing;
 }

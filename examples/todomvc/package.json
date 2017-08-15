@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "description": "dop TodoMVC example",
   "scripts": {
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "test": "react-scripts test"
   },
   "repository": {
     "type": "git",
@@ -17,9 +18,10 @@
   "dependencies": {
     "babel-polyfill": "^6.3.14",
     "classnames": "^2.1.2",
-    "react": "^0.14.7",
-    "react-dom": "^0.14.7",
-    "dop": "^0.21.0"
+    "dop": "^0.24.0",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "style-loader": "^0.18.2"
   },
   "devDependencies": {
     "babel-core": "^6.3.15",
@@ -28,16 +30,12 @@
     "babel-preset-react": "^6.3.13",
     "babel-preset-react-hmre": "^1.1.1",
     "babel-register": "^6.3.13",
-    "cross-env": "^1.0.7",
-    "enzyme": "^2.2.0",
-    "expect": "^1.8.0",
+    "enzyme": "^2.9.1",
     "express": "^4.13.3",
-    "jsdom": "^5.6.1",
-    "mocha": "^2.2.5",
-    "node-libs-browser": "^0.5.2",
     "raw-loader": "^0.5.1",
-    "react-addons-test-utils": "^0.14.7",
-    "style-loader": "^0.12.3",
+    "react-addons-test-utils": "^0.14.8",
+    "react-scripts": "^1.0.10",
+    "react-test-renderer": "^15.6.1",
     "todomvc-app-css": "^2.0.1",
     "webpack": "^1.9.11",
     "webpack-dev-middleware": "^1.2.0",

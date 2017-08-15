@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import classnames from 'classnames';
 import { createObserver } from 'dop';
-import state from '../state';
+import store from '../store';
 import { clearCompleted, changeFilter } from '../actions';
 import { SHOW_ALL, SHOW_COMPLETED, SHOW_ACTIVE } from '../constants';
 
@@ -13,12 +13,10 @@ const FILTER_TITLES = {
 
 export default class Footer extends Component {
     componentWillMount() {
-        const observer = createObserver(mutations => {
-            this.forceUpdate();
-        });
-        observer.observe(state, 'itemsLeftCount');
-        observer.observe(state, 'selectedFilter');
-        observer.observe(state, 'completedCount');
+        const observer = createObserver(m => this.forceUpdate());
+        observer.observe(store, 'itemsLeftCount');
+        observer.observe(store, 'selectedFilter');
+        observer.observe(store, 'completedCount');
     }
 
     shouldComponentUpdate() {
@@ -28,9 +26,9 @@ export default class Footer extends Component {
     render() {
         return (
             <FooterTemplate
-                activeCount={state.itemsLeftCount}
-                completedCount={state.completedCount}
-                selectedFilter={state.selectedFilter}
+                activeCount={store.itemsLeftCount}
+                completedCount={store.completedCount}
+                selectedFilter={store.selectedFilter}
                 onChangeFilter={changeFilter}
                 onClearCompleted={clearCompleted}
             />
