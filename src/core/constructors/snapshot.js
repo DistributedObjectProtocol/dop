@@ -46,7 +46,7 @@ dop.core.snapshot.prototype.getUnpatch = function() {
 
 
 dop.core.snapshot.prototype.setPatch = function(patch) {
-    for (object_id in patch)
+    for (var object_id in patch)
         dop.core.setPatch(
             patch[object_id].object,
             patch[object_id].chunks,

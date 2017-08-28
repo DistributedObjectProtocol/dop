@@ -5,7 +5,6 @@ dop.core.runDerivations = function(path_id) {
             computed,
             computed_id,
             object,
-            value,
             total = derivations.length,
             index = 0;
 

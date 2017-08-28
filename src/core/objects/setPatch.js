@@ -18,10 +18,8 @@ dop.core.setPatchFunctionMutator = function(destiny, prop, value, typeofValue, p
 };
 
 
-dop.core.setPatchMutator = function(destiny, prop, value, typeofValue, path) {
-    var typeofDestinyParent = dop.util.typeof(destiny),
-        typeofDestiny = dop.util.typeof(destiny[prop]),
-        typeInstruction,
+dop.core.setPatchMutator = function(destiny, prop, value, typeofValue) {
+    var typeInstruction,
         instructionsPatchs = dop.protocol.instructionsPatchs,
         mutation;
 

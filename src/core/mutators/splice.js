@@ -12,15 +12,16 @@ dop.core.splice = function(array, args) {
 
     // If enviroment do not allow proxies (objectTarget and objectProxy are same object in that case) 
     // or if the array is the proxy itself
-    if (path = dop.getObjectPath(array)) {
+    path = dop.getObjectPath(array)
+    if (path) {
 
         var argslength = args.length,
             length = objectTarget.length,
             index=2,
             start = Number(args[0]),
-            deleteCount = (Number(args[1])>0) ? args[1] : 0,
+            // deleteCount = (Number(args[1])>0) ? args[1] : 0,
             itemslength = (args.length>2) ? (args.length-2) : 0,
-            end, item, object_dop;
+            item;
 
 
         // Defaults for start
@@ -32,13 +33,13 @@ dop.core.splice = function(array, args) {
             start = originalLength;
 
 
-        // We dont need update becase no items remaining after splice
-        end = (argslength===1) ? 0 :
-            // If deleteCount is the same of items to add means the new lengh is the same and we only need to update the new elements
-            (argslength>2 && deleteCount===itemslength) ?
-                start+deleteCount
-            :
-                objectTarget.length;
+        // // We dont need update becase no items remaining after splice
+        // end = (argslength===1) ? 0 :
+        //     // If deleteCount is the same of items to add means the new lengh is the same and we only need to update the new elements
+        //     (argslength>2 && deleteCount===itemslength) ?
+        //         start+deleteCount
+        //     :
+        //         objectTarget.length;
 
 
         // We must register new objects

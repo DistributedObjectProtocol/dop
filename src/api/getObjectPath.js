@@ -5,8 +5,9 @@ dop.getObjectPath = function(object, strict) {
         // path_id = '',
         parent,
         prop,
-        strict = strict !== false,
         object_dop = object[dop.cons.DOP];
+
+    strict = strict !== false;    
 
     while (object_dop._ !== undefined) {
         prop = object_dop.pr;

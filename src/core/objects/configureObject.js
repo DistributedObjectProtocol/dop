@@ -58,8 +58,7 @@ dop.core.configureObject = function(object, propertyParent, parent) {
         value,
         path,
         is_array = isArray(object_target),
-        is_function,
-        computed_pending = [];
+        is_function;
 
     for (property in object_target) {
         if (is_array)

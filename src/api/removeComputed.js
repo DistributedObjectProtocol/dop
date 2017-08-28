@@ -14,7 +14,7 @@ dop.removeComputed = function(object, property, callback) {
         derivation_pathid,
         derivations,
         index,
-        total,
+        // total,
         index2,
         total2;
 

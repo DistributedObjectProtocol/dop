@@ -13,7 +13,7 @@ dop.core.observer.prototype.observe = function(object, property) {
     dop.util.invariant(isArray(path), 'observer.observe() The object you are passing is not allocated to a registered object');
     
 
-    var path_id = dop.core.getPathId(path);
+    var path_id = dop.core.getPathId(path),
         data_path = dop.data.path,
         type = 'observers';
 
