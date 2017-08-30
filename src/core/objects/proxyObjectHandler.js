@@ -5,7 +5,8 @@ dop.core.proxyObjectHandler = {
         return true;
     },
     deleteProperty: function(object, property) {
-        return dop.core.delete(dop.getObjectProxy(object), property) !== undefined;
+        dop.core.delete(dop.getObjectProxy(object), property) !== undefined;
+        return true;
     },
     get: function(object, property) {
         if (dop.data.gets_collecting && typeof property == 'string' && property !== dop.cons.DOP && object[property] !== Array.prototype[property])
