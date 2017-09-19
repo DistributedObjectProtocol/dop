@@ -4,7 +4,8 @@ dop.setBroadcastFunction = function (object, namefunction) {
     var path = dop.getObjectPath(object),
         object_id = path.shift();
     path.push(namefunction);
-    dop.getObjectTarget(object)[namefunction] = function $DOP_BROADCAST_FUNCTION() {
+    dop.getObjectTarget(object)[namefunction] = function() {
         return dop.protocol.broadcast(object_id, path, arguments);
     }
+    dop.getObjectTarget(object)[namefunction]._name = dop.cons.BROADCAST_FUNCTION;
 };

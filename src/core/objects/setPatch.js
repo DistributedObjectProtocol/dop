@@ -11,7 +11,7 @@ dop.core.setPatch = function(object, patch, mutator) {
 
 
 dop.core.setPatchFunctionMutator = function(destiny, prop, value, typeofValue, path){
-    if (isFunction(value) && value.name==dop.core.createRemoteFunction.name)
+    if (isFunction(value) && value._name==dop.cons.REMOTE_FUNCTION_UNSETUP)
         dop.set(destiny, prop, value(dop.getObjectId(destiny), path.slice(0)));
     else
         return dop.core.setPatchMutator(destiny, prop, value, typeofValue, path);

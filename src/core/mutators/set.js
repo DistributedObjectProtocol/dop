@@ -22,7 +22,7 @@ dop.core.set = function(object, property, value) {
             if (dop.isObjectRegistrable(value) && !(dop.isRegistered(value) && dop.getObjectParent(value) === objectProxy))
                 objectTarget[property] = dop.core.configureObject(value, property, objectProxy);
             // computed value
-            else if (isFunction(value) && value.name==dop.cons.COMPUTED_FUNCTION)
+            else if (isFunction(value) && value._name==dop.cons.COMPUTED_FUNCTION)
                 objectTarget[property] = value(objectTarget, property, false, oldValue);
             // other
             else

@@ -66,12 +66,12 @@ dop.core.configureObject = function(object, propertyParent, parent) {
         value = object_target[property];
         is_function = isFunction(value);
         // remote function
-        if (is_function && value.name==dop.core.createRemoteFunction.name) {
+        if (is_function && value._name==dop.cons.REMOTE_FUNCTION_UNSETUP) {
             path = dop.getObjectPath(object);
             object_target[property] = value(path[0], path.slice(1).concat(property));
         }
         // storing computed value function
-        else if (is_function && value.name==dop.cons.COMPUTED_FUNCTION)
+        else if (is_function && value._name==dop.cons.COMPUTED_FUNCTION)
             object_target[property] = value(object_proxy, property, false, undefined);
         // object or array
         else if (dop.isObjectRegistrable(value))
