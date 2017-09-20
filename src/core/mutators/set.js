@@ -1,5 +1,11 @@
 
-dop.core.set = function(object, property, value) {
+dop.core.set = function(object, property, value, options) {
+
+    if (!isObject(options))
+        options = {}
+
+    options.deep = typeof options.deep == 'boolean' ? options.deep : true
+    options.shadow = typeof options.shadow == 'boolean' ? options.shadow : false
 
     // If is a different value
     if (object[property] !== value) {
@@ -19,7 +25,7 @@ dop.core.set = function(object, property, value) {
             //     property = Number(property);
 
             // object or array
-            if (dop.isObjectRegistrable(value) && !(dop.isRegistered(value) && dop.getObjectParent(value) === objectProxy))
+            if (options.deep && dop.isObjectRegistrable(value) && !(dop.isRegistered(value) && dop.getObjectParent(value) === objectProxy))
                 objectTarget[property] = dop.core.configureObject(value, property, objectProxy);
             // computed value
             else if (isFunction(value) && value._name==dop.cons.COMPUTED_FUNCTION)
@@ -29,6 +35,7 @@ dop.core.set = function(object, property, value) {
                 objectTarget[property] = value;
 
             if (
+                !options.shadow &&
                 (objectTarget===objectProxy || object===objectProxy) &&
                 !(isFunction(oldValue) && isFunction(value)) &&
                 (path = dop.getObjectPath(object))

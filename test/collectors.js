@@ -122,3 +122,16 @@ test('Emit', function(t) {
     t.equal(collector.mutations.length, 0);
     t.end();
 });
+
+
+
+
+test('Testing shadow option on set', function(t) {
+    var collector = dop.collect();
+    dop.set(object, 'noshadow', [2,3,4])
+    dop.set(object, 'shadow', [2,3,4], {shadow:true})
+    t.equal(collector.mutations.length, 1);
+    t.deepEqual(object.noshadow, object.shadow);
+    collector.destroy();
+    t.end();
+});

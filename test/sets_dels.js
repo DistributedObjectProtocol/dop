@@ -186,3 +186,18 @@ test('Update a property freeze return same value and dont change property', func
     t.equal(object.new, 'newsealvalue');
     t.end();
 });
+
+
+
+
+
+
+test('set() deep option', function(t) {
+    var object = dop.register({})
+    set(object, 'deep', {a:1,b:{e:true}})
+    set(object, 'nodeep', {a:1,b:{e:true}}, {deep:false})
+    t.equal(dop.isRegistered(object.deep), true)
+    t.equal(dop.isRegistered(object.nodeep), false)
+    t.deepEqual(object.deep, object.nodeep)
+    t.end();
+});
