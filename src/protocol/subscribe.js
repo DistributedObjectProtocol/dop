@@ -6,6 +6,7 @@ dop.protocol.subscribe = function(node, params) {
     request.promise.into = function(object) {
         if (dop.isObjectRegistrable(object))
             request.into = (dop.isRegistered(object)) ? dop.getObjectProxy(object) : object;
+        delete request.promise.into
         return request.promise;
     };
     dop.core.storeSendMessages(node, request);
