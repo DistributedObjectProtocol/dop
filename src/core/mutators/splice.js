@@ -45,7 +45,7 @@ dop.core.splice = function(array, args) {
         // We must register new objects
         for (;index<argslength; ++index, ++start) {
             item = args[index];
-            if (dop.isObjectRegistrable(item))
+            if (dop.isPojoObject(item))
                 objectTarget[start] = dop.core.configureObject(
                     item,
                     start,
