@@ -645,3 +645,38 @@ test('Update computeds', function(t) {
     collector.emit()
     t.end()
 });
+
+
+test('Computed must listen mutations even if property is not defined (objects)', function(t) {
+    var object = dop.register({
+        items: {},
+        totalItems: computed(function () {
+            return Object.keys(this.items).length
+        })
+    })
+
+    t.equal(object.totalItems, 0)
+    set(object.items, 'demo', true)
+    set(object.items, 'demo2', true)
+    t.equal(object.totalItems, 2)
+    
+    t.end()
+})
+
+
+test('Computed must listen mutations even if property is not defined (arrays)', function(t) {
+    var object = dop.register({
+        items: [],
+        totalItems: computed(function () {
+            return this.items.length
+        })
+    })
+
+    t.equal(object.totalItems, 0)
+    set(object.items, 0, true)
+    object.items.push(true)
+    set(object.items, 'demo2', true)
+    t.equal(object.totalItems, 2)
+    
+    t.end()
+})

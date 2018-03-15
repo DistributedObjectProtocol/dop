@@ -26,14 +26,19 @@ dop.core.storeMutation = function(mutation) {
 
 
     // Collectors
-    for (;index<total; index++)
-        if (collectors[index].add(mutation))
-            return dop.core.runDerivations(path_id);
+    for (;index<total; index++) {
+        if (collectors[index].add(mutation)) {
+            dop.core.runDerivations(path_id_parent);
+            dop.core.runDerivations(path_id);
+            return
+        }
+    }
 
 
     var snapshot = new dop.core.snapshot([mutation]);
     snapshot.emit();
 
+    dop.core.runDerivations(path_id_parent);
     dop.core.runDerivations(path_id);
 };
 
