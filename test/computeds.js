@@ -651,7 +651,7 @@ test('Computed must listen mutations even if property is not defined (objects)',
     var object = dop.register({
         items: {},
         totalItems: computed(function () {
-            return Object.keys(this.items).length
+            return Object.keys(get(this,'items')).length
         })
     })
 
@@ -668,7 +668,7 @@ test('Computed must listen mutations even if property is not defined (arrays)', 
     var object = dop.register({
         items: [],
         totalItems: computed(function () {
-            return this.items.length
+            return get(this,'items').length
         })
     })
 
