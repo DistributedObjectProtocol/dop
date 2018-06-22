@@ -10,7 +10,7 @@ function gify(obj) {
     this.myClassProperty=123;
     return JSON.stringify(obj);
 }
-var isObjectRegistrable = dop.isObjectRegistrable;
+var isPojoObject = dop.isPojoObject;
 
 
 
@@ -34,7 +34,7 @@ test('Splice', function(t) {
 
         for (var index=0,total=register.length; index<total; ++index) {
             var item = register[index];
-            if (isObjectRegistrable(item)) {
+            if (isPojoObject(item)) {
 
                 if (dop.isRegistered(item)) {
                     var property = dop.getObjectProperty(item);
@@ -61,7 +61,7 @@ test('Shift', function(t) {
         t.deepEqual(original,register, 'deepEqual case: '+description);
         for (var index=0,total=register.length; index<total; ++index) {
             var item = register[index];
-            if (isObjectRegistrable(item)) {
+            if (isPojoObject(item)) {
 
                 if (dop.isRegistered(item)) {
                     var property = dop.getObjectProperty(item);
@@ -89,7 +89,7 @@ test('Pop', function(t) {
         t.deepEqual(original,register, 'deepEqual case: '+description);
         for (var index=0,total=register.length; index<total; ++index) {
             var item = register[index];
-            if (isObjectRegistrable(item)) {
+            if (isPojoObject(item)) {
 
                 if (dop.isRegistered(item)) {
                     var property = dop.getObjectProperty(item);
@@ -115,7 +115,7 @@ test('Push', function(t) {
         t.equal(gify(register.push.apply(register, paramsCase)), gify(original.push.apply(original, paramsCase)), 'output case: '+description);
         for (var index=0,total=register.length; index<total; ++index) {
             var item = register[index];
-            if (isObjectRegistrable(item)) {
+            if (isPojoObject(item)) {
 
                 if (dop.isRegistered(item)) {
                     var property = dop.getObjectProperty(item);
@@ -144,7 +144,7 @@ test('Unshift', function(t) {
 
         for (var index=0,total=register.length; index<total; ++index) {
             var item = register[index];
-            if (isObjectRegistrable(item)) {
+            if (isPojoObject(item)) {
 
                 if (dop.isRegistered(item)) {
                     var property = dop.getObjectProperty(item);
@@ -168,7 +168,7 @@ test('Reverse', function(t) {
     t.deepEqual(original,register, 'deepEqual case');
     for (var index=0,total=register.length; index<total; ++index) {
         var item = register[index];
-        if (isObjectRegistrable(item)) {
+        if (isPojoObject(item)) {
             dop.getObjectPath(item);
             if (dop.isRegistered(item)) {
                 var property = dop.getObjectProperty(item);
@@ -232,7 +232,7 @@ test('Sort', function(t) {
         t.deepEqual(arrayOriginal, copy, 'deepEqual function:'+compareFunction);
         for (var index=0,total=arrayOriginal.length; index<total; ++index) {
             var item = arrayOriginal[index];
-            if (isObjectRegistrable(item)) {
+            if (isPojoObject(item)) {
 
                 if (dop.isRegistered(item)) {
                     dop.getObjectPath(item);

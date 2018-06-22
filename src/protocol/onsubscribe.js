@@ -6,7 +6,7 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
         var params = Array.prototype.slice.call(request, 1);
 
         dop.core.localProcedureCall(dop.data.onsubscribe, params, function resolve(value) {
-            if (dop.isObjectRegistrable(value)) {
+            if (dop.isPojoObject(value)) {
                 var object = dop.register(value),
                     object_root = dop.getObjectRoot(object),
                     object_path = dop.getObjectPath(object),

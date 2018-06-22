@@ -1,10 +1,6 @@
 var test = require('tape');
 // require('tabe').createStream( test );
 var dop = require('./.proxy').create();
-var dopClient = dop.create();
-var dopClientTwo = dop.create();
-
-
 var objectTarget = {deep1:{deep2:{}}}
 var object = dop.register(objectTarget);
 
@@ -58,6 +54,28 @@ test('Correct configuration on deleted neested object', function(t) {
     t.end()
 });
 
+
+test('register({})', function(t) {
+    var o = dop.register({})
+    t.equal(typeof o, 'object')
+    t.end()
+})
+
+
+test('register(new Date)', function(t) {
+    var o = dop.register(new Date)
+    t.equal(typeof o, 'object')
+    t.end()
+})
+
+test('register([])', function(t) {
+    try {
+    var o = dop.register([])
+    } catch(e) {
+        t.equal(typeof e, 'object')
+        t.end()
+    }
+})
 
 // var object = dop.register({
 //     prop: "prop",

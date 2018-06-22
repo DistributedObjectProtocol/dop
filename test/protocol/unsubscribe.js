@@ -57,3 +57,25 @@ test('Client unsubscribe Server', function(t) {
     })
 
 })
+
+// https://github.com/DistributedObjectProtocol/dop/issues/4
+test('Subscribe Unsubscribe and Subscribe same object', function(t) {
+
+    var x = dopServer.register({ hi:'world' });
+    dopServer.onSubscribe(function(name){return x});
+
+    var a, b
+    client.subscribe().then(function(_) {
+        a = _
+        return client.unsubscribe(a)
+    }).then(function() {
+        return client.subscribe()
+    }).then(function (_) {
+        b = _
+        t.deepEqual(x, a, "x and a deepEqual")
+        t.deepEqual(a, b, "a and b deepEqual")
+        t.notEqual(x, a, "x and a notEqual")
+        t.notEqual(a, b, "a and b notEqual")
+        t.end()
+    })
+})

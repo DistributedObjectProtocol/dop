@@ -74,7 +74,7 @@ dop.core.configureObject = function(object, propertyParent, parent) {
         else if (is_function && value._name==dop.cons.COMPUTED_FUNCTION)
             object_target[property] = value(object_proxy, property, false, undefined);
         // object or array
-        else if (dop.isObjectRegistrable(value))
+        else if (dop.isPojoObject(value))
             object_target[property] = dop.core.configureObject(value, property, object_proxy);
     }
 

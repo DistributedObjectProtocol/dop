@@ -25,7 +25,7 @@ dop.core.set = function(object, property, value, options) {
             //     property = Number(property);
 
             // object or array
-            if (options.deep && dop.isObjectRegistrable(value) && !(dop.isRegistered(value) && dop.getObjectParent(value) === objectProxy))
+            if (options.deep && dop.isPojoObject(value) && !(dop.isRegistered(value) && dop.getObjectParent(value) === objectProxy))
                 objectTarget[property] = dop.core.configureObject(value, property, objectProxy);
             // computed value
             else if (isFunction(value) && value._name==dop.cons.COMPUTED_FUNCTION)

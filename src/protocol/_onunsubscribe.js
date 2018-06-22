@@ -16,8 +16,17 @@ dop.protocol._onunsubscribe = function(node, request_id, request, response) {
                 if (roles.subscriber === 0)
                     object_data.nodes_total -= 1;
 
-                if (object_data.nodes_total === 0)
+                if (object_data.nodes_total === 0) {
+                    // Deleting object
                     delete dop.data.object[object_id];
+                    // Deleting reference of the object in the node instance
+                    for (var id in node.owner) {
+                        if (node.owner[id] === object_id) {
+                            delete node.owner[id];
+                            break;
+                        }
+                    }
+                }
                 
                 request.promise.resolve();
             }
