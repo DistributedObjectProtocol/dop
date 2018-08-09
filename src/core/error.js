@@ -1,6 +1,4 @@
-
 dop.core.error = {
-
     // warning: {
     //     TOKEN_REJECTED: 'User disconnected because is rejecting too many times the token assigned'
     // },
@@ -19,8 +17,7 @@ dop.core.error = {
         2: 'Subscription not found to unsubscribe this object',
         FUNCTION_NOT_FOUND: 3,
         3: 'Remote function not found to be called',
-        CUSTOM_REJECTION: 4,
+        CUSTOM_REJECTION: 4
         // 4: ''
     }
-
-};
+}

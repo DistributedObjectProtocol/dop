@@ -33,7 +33,7 @@ module.exports = function(grunt) {
                 banner: '/*\n' +
                 ' * dop@<%= pkg.version %>\n' +
                 ' * www.distributedobjectprotocol.org\n' +
-                ' * (c) 2016 Josema Gonzalez\n' +
+                ' * (c) 2018 Josema Gonzalez\n' +
                 ' * MIT License.\n' +
                 ' */\n',
                 process: function(src, filepath) {
@@ -90,7 +90,7 @@ module.exports = function(grunt) {
                 dest: 'dist/'+dopmin
             },
             options: {
-                banner: '/* dop - (c) 2016 Josema Gonzalez - MIT Licensed */\n'
+                banner: '/* dop - (c) 2018 Josema Gonzalez - MIT Licensed */\n'
             }
         },
 

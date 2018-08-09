@@ -55,4 +55,4 @@ var dop = {
         COMPUTED_FUNCTION: '$DOP_COMPUTED_FUNCTION',
     }
 
-};
+}; 

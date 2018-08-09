@@ -1,4 +1,3 @@
-
 dop.core.pathSeparator = function(property) {
-    return property+'.'+property;
-};
+    return property + '.' + property
+}

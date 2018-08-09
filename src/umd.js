@@ -17,4 +17,4 @@ else if (typeof window == 'object' && window)
 else
     root.dop = dop;
 
-})(this);
+})(this)

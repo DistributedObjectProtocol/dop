@@ -1,25 +1,26 @@
-
 dop.core.getPatch = function(mutations, isUnpatch) {
-
     var patchs = {},
         index = 0,
         total = mutations.length,
         mutation,
-        object_id;
+        object_id
 
-    for (;index<total; ++index) {
-        mutation = isUnpatch ? dop.core.getMutationInverted(mutations[index]) : mutations[index];
-        object_id = dop.getObjectId(mutation.object);
+    for (; index < total; ++index) {
+        mutation = isUnpatch
+            ? dop.core.getMutationInverted(mutations[index])
+            : mutations[index]
+        object_id = dop.getObjectId(mutation.object)
         if (patchs[object_id] === undefined)
-            patchs[object_id] = {chunks:[{}], object:dop.getObjectRoot(mutation.object)};
-        dop.core.injectMutationInPatch(patchs[object_id], mutation);
+            patchs[object_id] = {
+                chunks: [{}],
+                object: dop.getObjectRoot(mutation.object)
+            }
+        dop.core.injectMutationInPatch(patchs[object_id], mutation)
         // console.log(JSON.stringify(patchs[object_id].chunks))
     }
 
-    return patchs;
-};
-
-
+    return patchs
+}
 
 // dop.core.objectIsStillStoredOnPath = function(object) {
 

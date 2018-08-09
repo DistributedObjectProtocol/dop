@@ -1,16 +1,14 @@
-
 dop.core.injectMutationInPatch = function(patch, mutation) {
-
     var prop = mutation.prop,
         path = mutation.path,
         value = mutation.value,
         isMutationDelete = !mutation.hasOwnProperty('value'),
-        isMutationSplice = mutation.splice!==undefined,
-        isMutationSwaps = mutation.swaps!==undefined,
+        isMutationSplice = mutation.splice !== undefined,
+        isMutationSwaps = mutation.swaps !== undefined,
         isMutationArray = isMutationSplice || isMutationSwaps,
         typeofValue = dop.util.typeof(value),
         index = 1,
-        chunk = patch.chunks[patch.chunks.length-1],
+        chunk = patch.chunks[patch.chunks.length - 1],
         chunkParent = chunk,
         chunkNext = {},
         chunkNextParent = chunkNext,
@@ -22,81 +20,67 @@ dop.core.injectMutationInPatch = function(patch, mutation) {
         isNewChunk = false,
         propPath,
         valueMerged,
-        newSpecialInstruction;
-
-
+        newSpecialInstruction
 
     // Going deep
-    for (;index<path.length; ++index) {
-
-        propPath = path[index];
-        chunkParent = chunk;
-        chunkNextParent = chunkNext;
-        chunkNext = chunkNext[propPath] = {};
-        tofCurrentObject = dop.util.typeof(chunk[propPath]);
-
+    for (; index < path.length; ++index) {
+        propPath = path[index]
+        chunkParent = chunk
+        chunkNextParent = chunkNext
+        chunkNext = chunkNext[propPath] = {}
+        tofCurrentObject = dop.util.typeof(chunk[propPath])
 
         if (tofCurrentObject == 'array') {
-            specialInstruction = chunk[propPath];
+            specialInstruction = chunk[propPath]
             // Is a new object
             if (specialInstruction[0] === instructionsPatchs.object) {
-                isNewObject = true;
-                chunk = specialInstruction[1];
+                isNewObject = true
+                chunk = specialInstruction[1]
+            } else if (
+                !isMutationArray ||
+                (isMutationArray && index + 1 < path.length)
+            ) {
+                isNewChunk = true
+                chunk = chunkNext
+                patch.chunks.push(chunkNextRoot)
             }
-            else if (!isMutationArray || (isMutationArray && index+1<path.length)) {
-                isNewChunk = true;
-                chunk = chunkNext;
-                patch.chunks.push(chunkNextRoot);
-            }
-        }
-
-        else if (!isNewChunk && isMutationArray && tofCurrentObject == 'object') {
+        } else if (
+            !isNewChunk &&
+            isMutationArray &&
+            tofCurrentObject == 'object'
+        ) {
             // isNewChunk = true;
-            chunkParent = chunkNextParent;
-            chunk = chunkNext; 
-            patch.chunks.push(chunkNextRoot);
-        }
-
-        else if (tofCurrentObject == 'object')
-            chunk = chunk[propPath];
-
-        else
-            chunk = chunk[propPath] = {};
+            chunkParent = chunkNextParent
+            chunk = chunkNext
+            patch.chunks.push(chunkNextRoot)
+        } else if (tofCurrentObject == 'object') chunk = chunk[propPath]
+        else chunk = chunk[propPath] = {}
     }
-
 
     /// INJECTING ///
 
     // Objects or array
     if (typeofValue == 'object' || typeofValue == 'array') {
-        valueMerged = dop.util.merge(typeofValue == 'array' ? [] : {}, value);
-        if (isNewObject)
-            chunk[prop] = valueMerged;
+        valueMerged = dop.util.merge(typeofValue == 'array' ? [] : {}, value)
+        if (isNewObject) chunk[prop] = valueMerged
         else {
-            chunk[prop] = [
-                instructionsPatchs.object,
-                valueMerged
-            ];
+            chunk[prop] = [instructionsPatchs.object, valueMerged]
         }
     }
 
     // Mutations over arrays
     else if (isMutationArray) {
         if (isNewObject)
-            (isMutationSplice) ?
-                Array.prototype.splice.apply(chunk, mutation.splice.slice(0))
-            :
-                dop.util.swap(chunk, mutation.swaps.slice(0));
-
+            isMutationSplice
+                ? Array.prototype.splice.apply(chunk, mutation.splice.slice(0))
+                : dop.util.swap(chunk, mutation.swaps.slice(0))
         else {
-            newSpecialInstruction = (isMutationSplice) ?
-                [instructionsPatchs.splice, mutation.splice.slice(0)]
-            :
-                [instructionsPatchs.swaps, mutation.swaps.slice(0)]
+            newSpecialInstruction = isMutationSplice
+                ? [instructionsPatchs.splice, mutation.splice.slice(0)]
+                : [instructionsPatchs.swaps, mutation.swaps.slice(0)]
 
             if (!isArray(chunkParent[prop]))
-                chunkParent[prop] = newSpecialInstruction;
-
+                chunkParent[prop] = newSpecialInstruction
             else {
                 if (isNumber(chunkParent[prop][0]))
                     chunkParent[prop] = [chunkParent[prop]]
@@ -107,14 +91,10 @@ dop.core.injectMutationInPatch = function(patch, mutation) {
     }
 
     // Delete
-    else if (isMutationDelete)
-        chunk[prop] = [instructionsPatchs.delete];
-
+    else if (isMutationDelete) chunk[prop] = [instructionsPatchs.delete]
     // Others values
-    else
-        chunk[prop] = value;
-};
-
+    else chunk[prop] = value
+}
 
 // isCurrentNewObject
 // isCurrentArrayMutation

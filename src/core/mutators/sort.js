@@ -6,47 +6,48 @@ dop.core.sort = function(array, compareFunction) {
     var objectTarget = dop.getObjectTarget(array),
         objectProxy = dop.getObjectProxy(array),
         copy = objectTarget.slice(0),
-        output, swaps, path;
+        output,
+        swaps,
+        path
 
-    output = Array.prototype.sort.call(objectTarget, compareFunction);
+    output = Array.prototype.sort.call(objectTarget, compareFunction)
 
-    if ((objectTarget===objectProxy || array===objectProxy) && (path = dop.getObjectPath(array))) {
-        swaps = dop.core.sortDiff(objectTarget, copy);
-        if (swaps.length>1)
+    if (
+        (objectTarget === objectProxy || array === objectProxy) &&
+        (path = dop.getObjectPath(array))
+    ) {
+        swaps = dop.core.sortDiff(objectTarget, copy)
+        if (swaps.length > 1)
             dop.core.storeMutation({
                 object: dop.getObjectProxy(array),
                 prop: dop.getObjectProperty(array),
                 path: path,
                 swaps: swaps
-            });
+            })
     }
 
-    return output;
-};
+    return output
+}
 
-
-dop.core.sortDiff = function (array, copy) {
-
+dop.core.sortDiff = function(array, copy) {
     var total = copy.length,
         swaps = [],
         index1 = 0,
-        index2, tmp;
+        index2,
+        tmp
 
-    for (;index1<total; ++index1) {
+    for (; index1 < total; ++index1) {
         if (array[index1] !== copy[index1]) {
-            index2 = copy.indexOf(array[index1]);
-            tmp = copy[index1];
-            copy[index1] = copy[index2];
-            copy[index2] = tmp;
-            swaps.push(index1, index2);
+            index2 = copy.indexOf(array[index1])
+            tmp = copy[index1]
+            copy[index1] = copy[index2]
+            copy[index2] = tmp
+            swaps.push(index1, index2)
         }
     }
 
-    return swaps;
-};
-
-
-
+    return swaps
+}
 
 // function diffArray(array) {
 //     var copy = array.slice(0),
@@ -64,12 +65,12 @@ dop.core.sortDiff = function (array, copy) {
 //             copy[index] = copy[indexNew];
 //             copy[indexNew] = tmp;
 //             swaps.push([index, indexNew]);
-            
+
 //             console.log([index, indexNew], copy );
 //             if (indexNew < index) {
 //                 console.log( 'lol' );
 //             }
-            
+
 //             // swapeds[indexNew] = true;
 //             // if (indexCache!==indexNew && indexCache !== index) {
 //             //     swapeds[indexCache] = true;

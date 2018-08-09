@@ -1,40 +1,42 @@
-
 dop.core.collector = function Collector(queue, index) {
-    this.active = true;
-    this.mutations = [];
-    this.queue = queue;
-    queue.splice(index, 0, this);
-};
+    this.active = true
+    this.mutations = []
+    this.queue = queue
+    queue.splice(index, 0, this)
+}
 
 dop.core.collector.prototype.add = function(mutation) {
-    if (this.active && (this.filter===undefined || this.filter(mutation)===true)) {
-        this.mutations.push(mutation);
-        return true;
+    if (
+        this.active &&
+        (this.filter === undefined || this.filter(mutation) === true)
+    ) {
+        this.mutations.push(mutation)
+        return true
     }
-    return false;
-};
+    return false
+}
 
 dop.core.collector.prototype.emit = function() {
-    this.destroy();
-    return this.emitWithoutDestroy();
-};
+    this.destroy()
+    return this.emitWithoutDestroy()
+}
 
 dop.core.collector.prototype.emitWithoutDestroy = function() {
-    var snapshot = new dop.core.snapshot(this.mutations);
-    snapshot.emit();
-    this.mutations = [];
-    return snapshot;
-};
+    var snapshot = new dop.core.snapshot(this.mutations)
+    snapshot.emit()
+    this.mutations = []
+    return snapshot
+}
 
 dop.core.collector.prototype.pause = function() {
-    this.active = false;
-};
+    this.active = false
+}
 
 dop.core.collector.prototype.resume = function() {
-    this.active = true;
-};
+    this.active = true
+}
 
 dop.core.collector.prototype.destroy = function() {
-    this.active = false;
-    this.queue.splice(this.queue.indexOf(this), 1);
-};
+    this.active = false
+    this.queue.splice(this.queue.indexOf(this), 1)
+}

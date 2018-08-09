@@ -1,4 +1,3 @@
-
 dop.protocol.onpatch = function(node, request_id, request) {
     var object_id_owner = request[1],
         object_id = node.owner[object_id_owner],
@@ -7,31 +6,36 @@ dop.protocol.onpatch = function(node, request_id, request) {
         response = dop.core.createResponse(request_id),
         object_data = dop.data.object[object_id],
         object_node,
-        collector;
-    
-    if (isObject(object_data) && isObject(object_data.node[node.token]) && object_data.node[node.token].owner===object_id_owner) {
-        object_node = object_data.node[node.token];
+        collector
+
+    if (
+        isObject(object_data) &&
+        isObject(object_data.node[node.token]) &&
+        object_data.node[node.token].owner === object_id_owner
+    ) {
+        object_node = object_data.node[node.token]
         // Storing patch
-        if (object_node.applied_version < version && object_node.applied[version]===undefined) {
+        if (
+            object_node.applied_version < version &&
+            object_node.applied[version] === undefined
+        ) {
             // Storing patch
-            object_node.applied[version] = patch;
+            object_node.applied[version] = patch
             // Applying
-            collector = dop.collect();
-            while (object_node.applied[object_node.applied_version+1]) {
-                object_node.applied_version += 1;
+            collector = dop.collect()
+            while (object_node.applied[object_node.applied_version + 1]) {
+                object_node.applied_version += 1
                 dop.core.setPatch(
                     object_data.object,
                     object_node.applied[object_node.applied_version],
                     dop.core.setPatchFunctionMutator
-                );
-                delete object_node.applied[object_node.applied_version];
+                )
+                delete object_node.applied[object_node.applied_version]
             }
-            collector.emit();
+            collector.emit()
         }
-        response.push(0);
-    }
-    else
-        response.push(dop.core.error.reject_remote.OBJECT_NOT_FOUND);
-    
-    dop.core.storeSendMessages(node, response);
-};
+        response.push(0)
+    } else response.push(dop.core.error.reject_remote.OBJECT_NOT_FOUND)
+
+    dop.core.storeSendMessages(node, response)
+}

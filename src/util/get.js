@@ -1,29 +1,20 @@
-
 dop.util.get = function(object, path) {
+    if (path.length === 0) return object
 
-    if (path.length === 0)
-        return object;
+    for (
+        var index = 0, total = path.length, tmpobject;
+        index < total;
+        index++
+    ) {
+        tmpobject = object[path[index]]
 
-    for (var index=0, total=path.length, tmpobject; index<total; index++) {
-
-        tmpobject = object[ path[index] ];
-
-        if (index+1<total && isObject(tmpobject))
-            object = tmpobject;
-
-        else if (object.hasOwnProperty(path[index]))
-            return tmpobject;
-
-        else
-            return undefined;
-
+        if (index + 1 < total && isObject(tmpobject)) object = tmpobject
+        else if (object.hasOwnProperty(path[index])) return tmpobject
+        else return undefined
     }
 
-    return object[ path[index] ];
-};
-
-
-
+    return object[path[index]]
+}
 
 // dop.util.set = function(object, path, value) {
 
@@ -50,5 +41,3 @@ dop.util.get = function(object, path) {
 // ori = {test:{hs:124}}
 // console.log( dop.util.set(ori, ['test','more'], undefined))
 // */
-
-

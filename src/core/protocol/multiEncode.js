@@ -1,4 +1,3 @@
-
 // dop.core.multiEncode = function() {
 //     var encoders = arguments,
 //         length = encoders.length, v;

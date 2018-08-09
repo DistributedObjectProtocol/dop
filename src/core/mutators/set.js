@@ -1,16 +1,12 @@
-
 dop.core.set = function(object, property, value, options) {
-
-    if (!isObject(options))
-        options = {}
+    if (!isObject(options)) options = {}
 
     options.deep = typeof options.deep == 'boolean' ? options.deep : true
     options.shadow = typeof options.shadow == 'boolean' ? options.shadow : false
 
     // If is a different value
     if (object[property] !== value || !object.hasOwnProperty(property)) {
-
-        var descriptor = Object.getOwnPropertyDescriptor(object, property);
+        var descriptor = Object.getOwnPropertyDescriptor(object, property)
 
         if (!descriptor || (descriptor && descriptor.writable)) {
             var objectTarget = dop.getObjectTarget(object),
@@ -19,24 +15,42 @@ dop.core.set = function(object, property, value, options) {
                 length = objectTarget.length,
                 isNewProperty = !objectTarget.hasOwnProperty(property),
                 objectIsArray = isArray(objectTarget),
-                path;
-            
+                path
+
             // if (objectIsArray)
             //     property = Number(property);
 
             // object or array
-            if (options.deep && dop.isPojoObject(value) && !(dop.isRegistered(value) && dop.getObjectParent(value) === objectProxy))
-                objectTarget[property] = dop.core.configureObject(value, property, objectProxy);
+            if (
+                options.deep &&
+                dop.isPojoObject(value) &&
+                !(
+                    dop.isRegistered(value) &&
+                    dop.getObjectParent(value) === objectProxy
+                )
+            )
+                objectTarget[property] = dop.core.configureObject(
+                    value,
+                    property,
+                    objectProxy
+                )
             // computed value
-            else if (isFunction(value) && value._name==dop.cons.COMPUTED_FUNCTION)
-                objectTarget[property] = value(objectTarget, property, false, oldValue);
+            else if (
+                isFunction(value) &&
+                value._name == dop.cons.COMPUTED_FUNCTION
+            )
+                objectTarget[property] = value(
+                    objectTarget,
+                    property,
+                    false,
+                    oldValue
+                )
             // other
-            else
-                objectTarget[property] = value;
+            else objectTarget[property] = value
 
             if (
                 !options.shadow &&
-                (objectTarget===objectProxy || object===objectProxy) &&
+                (objectTarget === objectProxy || object === objectProxy) &&
                 !(isFunction(oldValue) && isFunction(value)) &&
                 (path = dop.getObjectPath(object))
             ) {
@@ -45,22 +59,25 @@ dop.core.set = function(object, property, value, options) {
                     prop: objectIsArray ? String(property) : property,
                     path: path,
                     value: dop.util.clone(value)
-                };
-                if (!isNewProperty)
-                    mutation.oldValue = dop.util.clone(oldValue)
+                }
+                if (!isNewProperty) mutation.oldValue = dop.util.clone(oldValue)
 
-                dop.core.storeMutation(mutation);
+                dop.core.storeMutation(mutation)
 
-                // If is array and length is different we must store the length 
-                if (property !== 'length' && objectTarget.length !== length && objectIsArray)
+                // If is array and length is different we must store the length
+                if (
+                    property !== 'length' &&
+                    objectTarget.length !== length &&
+                    objectIsArray
+                )
                     dop.core.storeMutation({
                         object: objectProxy,
                         prop: 'length',
                         path: path,
                         value: objectTarget.length,
                         oldValue: length
-                    });
+                    })
             }
         }
     }
-};
+}

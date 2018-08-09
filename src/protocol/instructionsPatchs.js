@@ -1,4 +1,3 @@
-
 dop.protocol.instructionsPatchs = {
     delete: 0, // Delete
     object: 1, // New object or array
@@ -12,10 +11,7 @@ dop.protocol.instructionsPatchs = {
     regex: '~R',
     infinity: '~I',
     _infinity: '~i'
-};
-
-
-
+}
 
 // a={
 //     a: [0],
@@ -39,7 +35,6 @@ dop.protocol.instructionsPatchs = {
 //     c: "[0]",
 //     newarr: [2,{a:"[0]",b:[0],c:"[[0]",d:[4,[0],{}]}],
 // }
-
 
 // c={
 //     a: [2,[0]],

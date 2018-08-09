@@ -1,26 +1,19 @@
 // https://jsperf.com/typeof-with-more-types
 // dop={util:{}}
 dop.util.typeof = function(value) {
-    var s = typeof value;
+    var s = typeof value
     if (s == 'object') {
         if (value) {
-            if (isArray(value))
-                s = 'array';
-            else if (value instanceof Date)
-                s = 'date';
-            else if (value instanceof RegExp)
-                s = 'regexp';
-        }
-        else
-            s = 'null';
+            if (isArray(value)) s = 'array'
+            else if (value instanceof Date) s = 'date'
+            else if (value instanceof RegExp) s = 'regexp'
+        } else s = 'null'
     }
-    return s;
-};
-
-
+    return s
+}
 
 // dop.util.typeof2 = (function() {
-    
+
 //     var list = {
 
 //         '[object Null]': 'null',
@@ -36,13 +29,11 @@ dop.util.typeof = function(value) {
 //         '[object Date]': 'date'
 //     };
 
-
 //     return function(type) {
 
 //         return list[ Object.prototype.toString.call(type) ];
 
 //     };
-
 
 // })();
 
@@ -60,7 +51,6 @@ dop.util.typeof = function(value) {
 // console.log(Typeof(Symbol('')));
 // console.log(Typeof(new Typeof));
 
-
 // Typeof(null);
 // Typeof(undefined);
 // Typeof({});
@@ -73,4 +63,3 @@ dop.util.typeof = function(value) {
 // Typeof(new Date());
 // Typeof(Symbol(''));
 // Typeof(new Typeof);
-

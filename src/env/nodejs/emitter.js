@@ -1,1 +1,1 @@
-dop.util.emitter = require('events').EventEmitter;
+dop.util.emitter = require('events').EventEmitter

@@ -1,7 +1,4 @@
-
 dop.protocol.instructions = {
-
-
     // [<request_id>, <instruction>, <params...>]
     // If <request_id> it's greater than 0 is a request, if is less than 0 then is the response of the request.
 
@@ -23,35 +20,33 @@ dop.protocol.instructions = {
     // Sending the same request without parameters means a cancel/abort of the request
     // [1234]
 
-                        // Subscriber -> Owner
-    subscribe: 1,       // [ 1234, <instruction>, <params...>]
-                        // [-1234, 0, <object_id>, <data_object>]
-                        // [-1234, 0, <object_id>, ['path']]
+    // Subscriber -> Owner
+    subscribe: 1, // [ 1234, <instruction>, <params...>]
+    // [-1234, 0, <object_id>, <data_object>]
+    // [-1234, 0, <object_id>, ['path']]
 
-                        // Subscriber -> Owner
-    unsubscribe: 2,     // [ 1234, <instruction>, <object_id>]
-                        // [-1234, 0]
+    // Subscriber -> Owner
+    unsubscribe: 2, // [ 1234, <instruction>, <object_id>]
+    // [-1234, 0]
 
-                        // Subscriber -> Owner
-    call: 3,            // [ 1234, <instruction>, <object_id>, ['path','subpath'], [<params...>]]
-                        // [-1234, 0, <return>]
+    // Subscriber -> Owner
+    call: 3, // [ 1234, <instruction>, <object_id>, ['path','subpath'], [<params...>]]
+    // [-1234, 0, <return>]
 
-                        // Owner -> Subscriber
-    broadcast: 4,       // [ 1234, <instruction>, <object_id>, ['path','subpath'], [<params...>]]
-                        // [-1234, 0, <return>]
+    // Owner -> Subscriber
+    broadcast: 4, // [ 1234, <instruction>, <object_id>, ['path','subpath'], [<params...>]]
+    // [-1234, 0, <return>]
 
-                        // Owner -> Subscriber
-    patch: 5,           // [ 1234, <instruction>, <object_id>, <version>, <patch>]
-                        // [-1234, 0]
-    
-
+    // Owner -> Subscriber
+    patch: 5, // [ 1234, <instruction>, <object_id>, <version>, <patch>]
+    // [-1234, 0]
 
     1: 'subscribe',
     2: 'unsubscribe',
     3: 'call',
     4: 'broadcast',
     5: 'patch'
-};
+}
 
 // for (var instruction in dop.protocol.instructions)
-    // dop.protocol.instructions[ dop.protocol.instructions[instruction] ] = instruction;
+// dop.protocol.instructions[ dop.protocol.instructions[instruction] ] = instruction;
