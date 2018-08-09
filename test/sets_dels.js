@@ -9,6 +9,7 @@ var object = dop.register({
 })
 var object_id = 1
 var f = function() {}
+var isProxy = typeof Proxy == 'function'
 
 test('Update a property with method set must return the value', function(t) {
     var ret = set(object, 'prop', 'newvalue')
@@ -171,40 +172,42 @@ test('set() deep option', function(t) {
     t.end()
 })
 
-test('Add a object', function(t) {
-    var object_ori = {}
-    var object = dop.register(object_ori)
-    var o = {}
-    var a = []
-    var c = new f()
-    set(object, 'o', o)
-    set(object, 'a', a)
-    set(object, 'c', c)
-    t.notEqual(object, object_ori)
-    t.equal(dop.getObjectTarget(object), object_ori)
-    t.notEqual(object.o, o)
-    t.equal(dop.getObjectTarget(object.o), o)
-    t.notEqual(object.a, a)
-    t.equal(dop.getObjectTarget(object.a), a)
-    t.equal(object.c, c)
-    t.end()
-})
+if (isProxy) {
+    test('Add a object', function(t) {
+        var object_ori = {}
+        var object = dop.register(object_ori)
+        var o = {}
+        var a = []
+        var c = new f()
+        set(object, 'o', o)
+        set(object, 'a', a)
+        set(object, 'c', c)
+        t.notEqual(object, object_ori)
+        t.equal(dop.getObjectTarget(object), object_ori)
+        t.notEqual(object.o, o)
+        t.equal(dop.getObjectTarget(object.o), o)
+        t.notEqual(object.a, a)
+        t.equal(dop.getObjectTarget(object.a), a)
+        t.equal(object.c, c)
+        t.end()
+    })
 
-test('Add a class', function(t) {
-    var object_ori = new f()
-    var object = dop.register(object_ori)
-    var o = {}
-    var a = []
-    var c = new f()
-    set(object, 'o', o)
-    set(object, 'a', a)
-    set(object, 'c', c)
-    t.notEqual(object, object_ori)
-    t.equal(dop.getObjectTarget(object), object_ori)
-    t.notEqual(object.o, o)
-    t.equal(dop.getObjectTarget(object.o), o)
-    t.notEqual(object.a, a)
-    t.equal(dop.getObjectTarget(object.a), a)
-    t.equal(object.c, c)
-    t.end()
-})
+    test('Add a class', function(t) {
+        var object_ori = new f()
+        var object = dop.register(object_ori)
+        var o = {}
+        var a = []
+        var c = new f()
+        set(object, 'o', o)
+        set(object, 'a', a)
+        set(object, 'c', c)
+        t.notEqual(object, object_ori)
+        t.equal(dop.getObjectTarget(object), object_ori)
+        t.notEqual(object.o, o)
+        t.equal(dop.getObjectTarget(object.o), o)
+        t.notEqual(object.a, a)
+        t.equal(dop.getObjectTarget(object.a), a)
+        t.equal(object.c, c)
+        t.end()
+    })
+}
