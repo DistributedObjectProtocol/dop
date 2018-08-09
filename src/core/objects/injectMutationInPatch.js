@@ -4,6 +4,7 @@ dop.core.injectMutationInPatch = function(patch, mutation) {
     var prop = mutation.prop,
         path = mutation.path,
         value = mutation.value,
+        isMutationDelete = !mutation.hasOwnProperty('value'),
         isMutationSplice = mutation.splice!==undefined,
         isMutationSwaps = mutation.swaps!==undefined,
         isMutationArray = isMutationSplice || isMutationSwaps,
@@ -79,7 +80,6 @@ dop.core.injectMutationInPatch = function(patch, mutation) {
         }
     }
 
-
     // Mutations over arrays
     else if (isMutationArray) {
         if (isNewObject)
@@ -106,6 +106,9 @@ dop.core.injectMutationInPatch = function(patch, mutation) {
         }
     }
 
+    // Delete
+    else if (isMutationDelete)
+        chunk[prop] = [instructionsPatchs.delete];
 
     // Others values
     else

@@ -8,7 +8,7 @@ dop.core.set = function(object, property, value, options) {
     options.shadow = typeof options.shadow == 'boolean' ? options.shadow : false
 
     // If is a different value
-    if (object[property] !== value) {
+    if (object[property] !== value || !object.hasOwnProperty(property)) {
 
         var descriptor = Object.getOwnPropertyDescriptor(object, property);
 

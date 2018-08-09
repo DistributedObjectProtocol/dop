@@ -1,6 +1,6 @@
 {
   "name": "dop",
-  "version": "0.27.0",
+  "version": "0.28.0",
   "main": "./dist/dop.nodejs.js",
   "browser": "./dist/dop.js",
   "unpkg": "./dist/dop.min.js",
@@ -57,7 +57,7 @@
     "tape-run": "^2.1.4"
   },
   "scripts": {
-    "grunt": "grunt",
+    "dev": "grunt",
     "build": "grunt --build",
     "test": "tap test/**.js test/protocol/**.js",
     "test-proxy": "tap test/**.js test/protocol/**.js --test-arg=proxy",

@@ -27,8 +27,12 @@ dop.core.setPatchMutator = function(destiny, prop, value, typeofValue) {
     if (typeofValue == 'array') {
         typeInstruction = value[0];
 
+        // Delete
+        if (typeInstruction === instructionsPatchs.delete)
+            dop.del(destiny, prop);
+
         // New object/array
-        if (typeInstruction === instructionsPatchs.object)
+        else if (typeInstruction === instructionsPatchs.object)
             dop.set(destiny, prop, dop.util.clone(value[1]));
 
         // Array mutations
@@ -51,9 +55,7 @@ dop.core.setPatchMutator = function(destiny, prop, value, typeofValue) {
         return true; // Skiping to dont go inside of [instructionPatch, ...]
     }
 
-    // Delete
-    else if (typeofValue=='undefined')
-        dop.del(destiny, prop);
+
 
     // Set value
     else if (typeofValue!='object')

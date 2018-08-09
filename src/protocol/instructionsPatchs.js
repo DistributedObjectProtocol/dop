@@ -1,12 +1,13 @@
 
 dop.protocol.instructionsPatchs = {
-    undefined: '~U', // Delete
+    delete: 0, // Delete
+    object: 1, // New object or array
+    splice: 2, // Splice array
+    swaps: 3, // Swap array
     function: '~F', // Remote function
-    object: 0, // New object or array
-    splice: 1, // Splice array
-    swaps: 2, // Swap array
 
     // Non standards, only for JavaScript
+    undefined: '~U', // Undefined
     nan: '~N',
     regex: '~R',
     infinity: '~I',

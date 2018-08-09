@@ -8,13 +8,15 @@ var del = dop.del;
 
 function makeTest(t, snapshot, original, object, mutated) {
 
-    var patch, unpatch;
     var object_id = dop.getObjectId(object)
     var target = dop.getObjectTarget(object)
+    var unpatch = snapshot.getUnpatch()[object_id].chunks
+    var patch = snapshot.getPatch()[object_id].chunks
 
-    unpatch = dop.decode(dop.encode(snapshot.getUnpatch()[object_id].chunks))
+
+    unpatch = dop.decode(dop.encode(unpatch))
     // console.log('UNDO', unpatch.length, JSON.stringify(unpatch))
-    patch = dop.decode(dop.encode(snapshot.getPatch()[object_id].chunks))
+    patch = dop.decode(dop.encode(patch))
     // console.log('REDO', patch.length, JSON.stringify(patch))
 
     // Undo
@@ -61,6 +63,7 @@ test('Set array', function(t) {
     var original = dop.util.clone(object)
     var collector = dop.collect()
     set(object, 'dos', {e:4})
+    set(object, 'three', undefined)
     var snapshot = collector.emit()
     var mutated = dop.util.clone(object)
     

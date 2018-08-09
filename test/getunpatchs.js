@@ -30,7 +30,7 @@ var header = '--- ';
 
 test(header+'Adding property', function(t) {
     var objectServer = dop.register({});
-    var patchExpected = [{one:undefined}];
+    var patchExpected = [{one:[0]}];
     var mutationsExpected = 1;
 
 
@@ -88,7 +88,7 @@ test(header+'Change and delete a removed item', function(t) {
 
 
     var mutationsExpected = 3;
-    var patchExpected = [{one:11,two:undefined}];
+    var patchExpected = [{one:11,two:[0]}];
     set(objectServer, 'one', 'Changeddd');
     del(objectServer, 'one');
     set(objectServer, 'two', 2);
@@ -96,7 +96,7 @@ test(header+'Change and delete a removed item', function(t) {
 
     var patchGenerated = applyPatch(collector);
     t.equal(collector.mutations.length, mutationsExpected, 'Mutations expecteds: '+collector.mutations.length);
-    maketest(t, patchGenerated, patchExpected);
+    maketest(t, patchGenerated, patchExpected, false);
 });
 
 
@@ -107,7 +107,7 @@ test(header+'Setting property array', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":{"5":undefined,"length":2}}];
+    var patchExpected = [{"array":{"5":[0],"length":2}}];
     var mutationsExpected = 2;
     set(object.array, 5, "three");
 
@@ -130,7 +130,7 @@ test(header+'Setting an array and mutating it', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":[2,[2,0]]},{"array":undefined}];
+    var patchExpected = [{"array":[3,[2,0]]},{"array":[0]}];
     var mutationsExpected = 4;
     set(object, 'array', [true,false]);
     set(object.array, 2, {B1:[true,false]});
@@ -152,7 +152,7 @@ test(header+'Mutating array then mutating nested objects', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":{"2":undefined,"length":2}},{"array":[2,[1,0]]}];
+    var patchExpected = [{"array":{"2":[0],"length":2}},{"array":[3,[1,0]]}];
     var mutationsExpected = 3;
     object.array.reverse();
     set(object.array, 2, {B1:false});
@@ -173,7 +173,7 @@ test(header+'Mutating nested objects then mutating parent array', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":[2,[2,0]]},{"array":{"2":undefined,"length":2}}];
+    var patchExpected = [{"array":[3,[2,0]]},{"array":{"2":[0],"length":2}}];
     var mutationsExpected = 3;
     set(object.array, 2, {B1:false});
     object.array.reverse();
@@ -194,7 +194,7 @@ test(header+'Mutating array twice', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":[[2,[4,3,2,1,1,0]],[1,[3,3]]]}];
+    var patchExpected = [{"array":[[3,[4,3,2,1,1,0]],[2,[3,3]]]}];
     var mutationsExpected = 2;
     object.array.push(5,4,6);
     object.array.sort();
@@ -213,7 +213,7 @@ test(header+'Mutating array and mutating array deeper', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":{"0":[2,[1,0]]}},{"array":[2,[2,0]]}];
+    var patchExpected = [{"array":{"0":[3,[1,0]]}},{"array":[3,[2,0]]}];
     var mutationsExpected = 2;
     object.array.reverse();
     object.array[0].reverse();
@@ -232,7 +232,7 @@ test(header+'Mutating array deeper and mutating container', function(t) {
     var collector = dop.collect();
     
 
-    var patchExpected = [{"array":[2,[2,0]]},{"array":{"2":[2,[1,0]]}}];
+    var patchExpected = [{"array":[3,[2,0]]},{"array":{"2":[3,[1,0]]}}];
     var mutationsExpected = 2;
     object.array[2].reverse();
     object.array.reverse();
