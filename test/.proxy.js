@@ -1,12 +1,11 @@
+var dop = require('../dist/dop.nodejs')
 
-var dop = require('../dist/dop.nodejs');
-
-if (process.argv[2] === "proxy") {
+if (process.argv[2] === 'proxy') {
     dop.set = function(o, p, v) {
         var old = o[o]
         try {
-        o[p] = v
-        } catch(e){}
+            o[p] = v
+        } catch (e) {}
         return v
     }
     dop.get = function(o, p) {

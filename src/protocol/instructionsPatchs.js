@@ -5,8 +5,8 @@ dop.protocol.instructionsPatchs = {
     swaps: 3, // Swap array
     function: '~F', // Remote function
 
-    // Non standards, only for JavaScript
-    undefined: '~U', // Undefined
+    // No standard, only for JavaScript
+    undefined: '~U',
     nan: '~N',
     regex: '~R',
     infinity: '~I',

@@ -34,7 +34,7 @@
         "client"
     ],
     "dependencies": {
-        "dop-transports": "^2.0.7"
+        "dop-transports": "^2.0.9"
     },
     "devDependencies": {
         "coveralls": "^2.11.4",
@@ -54,20 +54,20 @@
         "lodash.merge": "^4.6.0",
         "tap": "^7.1.2",
         "tape": "^4.6.3",
-        "tape-run": "^2.1.4"
+        "tape-run": "^2.4.1"
     },
     "scripts": {
         "dev": "grunt",
         "build": "grunt --build",
-        "test": "tap test/**.js test/protocol/**.js",
-        "test-proxy": "tap test/**.js test/protocol/**.js --test-arg=proxy",
+        "test": "tap test/*.js test/protocol/*.js",
         "test-electron": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\"",
         "test-chrome": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser chrome",
-        "test-safari": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser safari",
         "test-firefox": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser firefox",
-        "test-websockets": "tap test/protocol/**.js --test-arg=websockets",
-        "test-socketio": "tap test/protocol/**.js --test-arg=socketio",
-        "test-sockjs": "tap test/protocol/**.js --test-arg=sockjs",
-        "test-local": "tap test/protocol/**.js --test-arg=local"
+        "test-safari": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser safari",
+        "test-websockets": "tap test/protocol/*.js --test-arg=websockets",
+        "test-socketio": "tap test/protocol/*.js --test-arg=socketio",
+        "test-sockjs": "tap test/protocol/*.js --test-arg=sockjs",
+        "test-local": "tap test/protocol/*.js --test-arg=local",
+        "test-proxy": "tap test/*.js test/protocol/*.js --test-arg=proxy"
     }
 }
