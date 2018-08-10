@@ -254,7 +254,7 @@ test('Array.splice', function(t) {
         var mutation = mutations[0]
         t.deepEqual(array.array.length, 4, 'array.array.length')
         t.deepEqual(mutation.object.length, 4, '.object.length')
-        t.deepEqual(mutation.oldLength, 6, '.oldLength')
+        t.deepEqual(mutation.old_length, 6, '.old_length')
         t.equal(mutation.object, array.array, '.object')
         t.equal(mutation.prop, 'array', '.prop')
         t.deepEqual(mutation.splice, [ 3, 3, [ true ] ], '.splice')
