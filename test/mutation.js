@@ -26,7 +26,7 @@ test('Object.set', function(t) {
         t.equal(mutation.object, object, '.object')
         t.equal(mutation.prop, 'newprop', '.prop')
         t.equal(mutation.value, '12345', '.value')
-        t.equal(mutation.oldValue, undefined, '.oldValue')
+        t.equal(mutation.old_value, undefined, '.old_value')
         t.deepEqual(mutation.path, [1], '.path')
     }
     var observer = dop.observe(object, fun)
@@ -39,7 +39,7 @@ test('Object.set', function(t) {
         t.equal(mutation.object, object.deep1, '.object')
         t.equal(mutation.prop, 'newprop', '.prop')
         t.equal(mutation.value, '12345', '.value')
-        t.equal(mutation.oldValue, undefined, '.oldValue')
+        t.equal(mutation.old_value, undefined, '.old_value')
         t.deepEqual(mutation.path, [1,'deep1'], '.path')
     }
     var observer = dop.observe(object.deep1, fun)
@@ -52,7 +52,7 @@ test('Object.set', function(t) {
         t.equal(mutation.object, object.deep1.deep2, '.object')
         t.equal(mutation.prop, 'newprop', '.prop')
         t.equal(mutation.value, '12345', '.value')
-        t.equal(mutation.oldValue, undefined, '.oldValue')
+        t.equal(mutation.old_value, undefined, '.old_value')
         t.deepEqual(mutation.path, [1,'deep1','deep2'], '.path')
     }
     var observer = dop.observe(object.deep1.deep2, fun)
@@ -71,7 +71,7 @@ test('Object.del', function(t) {
         t.equal(mutation.object, object, '.object')
         t.equal(mutation.prop, 'newprop', '.prop')
         t.equal(mutation.value, undefined, '.value')
-        t.equal(mutation.oldValue, '12345', '.oldValue')
+        t.equal(mutation.old_value, '12345', '.old_value')
         t.deepEqual(mutation.path, [1], '.path')
     }
     var observer = dop.observe(object, fun)
@@ -82,7 +82,7 @@ test('Object.del', function(t) {
     fun = function(mutations) {
         var mutation = mutations[0]
         t.equal(mutation.object, object.deep1, '.object')
-        t.equal(mutation.oldValue, '12345', '.oldValue')
+        t.equal(mutation.old_value, '12345', '.old_value')
         t.equal(mutation.prop, 'newprop', '.prop')
         t.equal(mutation.value, undefined, '.value')
         t.deepEqual(mutation.path, [1,'deep1'], '.path')
@@ -97,7 +97,7 @@ test('Object.del', function(t) {
         t.equal(mutation.object, object.deep1.deep2, '.object')
         t.equal(mutation.prop, 'newprop', '.prop')
         t.equal(mutation.value, undefined, '.value')
-        t.equal(mutation.oldValue, '12345', '.oldValue')
+        t.equal(mutation.old_value, '12345', '.old_value')
         t.deepEqual(mutation.path, [1,'deep1','deep2'], '.path')
     }
     var observer = dop.observe(object.deep1.deep2, fun)
@@ -114,7 +114,7 @@ test('Object.del change value', function(t) {
         t.equal(mutation.object, object.deep1, '.object')
         t.equal(mutation.prop, 'newprop', '.prop')
         t.equal(mutation.value, '67890', '.value')
-        t.equal(mutation.oldValue, undefined, '.oldValue')
+        t.equal(mutation.old_value, undefined, '.old_value')
         t.deepEqual(mutation.path, [1,'deep1'], '.path')
     }
     var observer = dop.observe(object.deep1, fun)
@@ -134,7 +134,7 @@ test('Object.del subobject', function(t) {
         t.equal(mutation.object, object.deep1, '.object')
         t.equal(mutation.prop, 'deep2', '.prop')
         t.deepEqual(mutation.value, {}, '.value')
-        t.deepEqual(mutation.oldValue, dop.util.clone(deep2), '.oldValue')
+        t.deepEqual(mutation.old_value, dop.util.clone(deep2), '.old_value')
         t.deepEqual(mutation.path, [1,'deep1'], '.path')
     }
     var observer = dop.observe(object.deep1, fun)
@@ -156,7 +156,7 @@ test('Object.del subobject', function(t) {
         t.equal(mutation.object, object.deep1.deep2, '.object')
         t.equal(mutation.prop, 'deep3', '.prop')
         t.deepEqual(mutation.value, 'hola mundo', '.value')
-        t.deepEqual(mutation.oldValue, undefined, '.oldValue')
+        t.deepEqual(mutation.old_value, undefined, '.old_value')
         t.deepEqual(mutation.path, [1,'deep1','deep2'], '.path')
     }
     var observer = dop.observe(object.deep1.deep2, fun)
@@ -177,7 +177,7 @@ test('Array.set', function(t) {
             t.equal(mutation.object, array.array, '.object')
             t.equal(mutation.prop, "5", '.prop')
             t.deepEqual(mutation.value, [true], '.value')
-            t.equal(mutation.oldValue, undefined, '.oldValue')
+            t.equal(mutation.old_value, undefined, '.old_value')
             t.deepEqual(mutation.path, [2,'array'], '.path')
             first = false
         }
@@ -185,7 +185,7 @@ test('Array.set', function(t) {
             t.equal(mutation.object, array.array, '.object')
             t.equal(mutation.prop, 'length', '.prop')
             t.deepEqual(mutation.value, 6, '.value')
-            t.equal(mutation.oldValue, 3, '.oldValue')
+            t.equal(mutation.old_value, 3, '.old_value')
             t.deepEqual(mutation.path, [2,'array'], '.path')
         }
     }
@@ -203,7 +203,7 @@ test('Array.set', function(t) {
         t.equal(mutation.object, array.array[5], '.object')
         t.equal(mutation.prop, "0", '.prop')
         t.equal(mutation.value, false, '.value')
-        t.equal(mutation.oldValue, true, '.oldValue')
+        t.equal(mutation.old_value, true, '.old_value')
         t.deepEqual(mutation.path, [2,'array',5], '.path')
     }
     var observer = dop.observe(array.array[5], fun)
@@ -223,7 +223,7 @@ test('Array.del', function(t) {
         t.equal(mutation.object, array.array, '.object')
         t.equal(mutation.prop, "5", '.prop')
         t.equal(mutation.value, undefined, '.value')
-        t.deepEqual(mutation.oldValue, [false], '.oldValue')
+        t.deepEqual(mutation.old_value, [false], '.old_value')
         t.deepEqual(mutation.path, [2,'array'], '.path')
     }
     var observer = dop.observe(array.array, fun)

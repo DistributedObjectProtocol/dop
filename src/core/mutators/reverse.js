@@ -1,37 +1,37 @@
 // https://jsperf.com/array-reverse-algorithm
 dop.core.reverse = function(array) {
-    var objectTarget = dop.getObjectTarget(array),
-        objectProxy = dop.getObjectProxy(array),
+    var object_target = dop.getObjectTarget(array),
+        object_proxy = dop.getObjectProxy(array),
         path
 
     if (
-        (objectTarget === objectProxy || array === objectProxy) &&
+        (object_target === object_proxy || array === object_proxy) &&
         (path = dop.getObjectPath(array))
     ) {
-        var total = objectTarget.length / 2,
+        var total = object_target.length / 2,
             index = 0,
             indexr,
-            tempItem,
+            temp_item,
             swaps = []
 
         for (; index < total; ++index) {
-            indexr = objectTarget.length - index - 1
+            indexr = object_target.length - index - 1
             if (index !== indexr) {
-                tempItem = objectTarget[indexr]
-                objectTarget[indexr] = objectTarget[index]
-                objectTarget[index] = tempItem
+                temp_item = object_target[indexr]
+                object_target[indexr] = object_target[index]
+                object_target[index] = temp_item
                 swaps.push(index, indexr)
             }
         }
 
         if (swaps.length > 0)
             dop.core.storeMutation({
-                object: objectProxy,
+                object: object_proxy,
                 prop: dop.getObjectProperty(array),
                 path: path,
                 swaps: swaps
             })
-    } else Array.prototype.reverse.call(objectTarget)
+    } else Array.prototype.reverse.call(object_target)
 
     return array
 }

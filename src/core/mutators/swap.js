@@ -1,12 +1,12 @@
 dop.core.swap = function(array, swaps) {
-    var objectTarget = dop.getObjectTarget(array),
-        objectProxy = dop.getObjectProxy(array)
+    var object_target = dop.getObjectTarget(array),
+        object_proxy = dop.getObjectProxy(array)
 
-    var result = dop.util.swap(objectTarget, swaps)
+    var result = dop.util.swap(object_target, swaps)
 
-    if (objectTarget === objectProxy || array === objectProxy)
+    if (object_target === object_proxy || array === object_proxy)
         dop.core.storeMutation({
-            object: objectProxy,
+            object: object_proxy,
             prop: dop.getObjectProperty(array),
             path: dop.getObjectPath(array),
             swaps: swaps.slice(0)

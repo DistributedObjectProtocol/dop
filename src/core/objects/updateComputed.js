@@ -1,4 +1,4 @@
-dop.core.updateComputed = function(computed_id, computed, context, oldValue) {
+dop.core.updateComputed = function(computed_id, computed, context, old_value) {
     var data_path = dop.data.path,
         derived_paths,
         derived_pathsids = computed.derivations,
@@ -12,7 +12,7 @@ dop.core.updateComputed = function(computed_id, computed, context, oldValue) {
 
     // Running function and saving paths from getters
     dop.data.gets_collecting = true
-    value = computed.function.call(context, oldValue)
+    value = computed.function.call(context, old_value)
     dop.data.gets_collecting = false
     derived_paths = dop.data.gets_paths
     dop.data.gets_paths = []

@@ -1,10 +1,10 @@
-var canWeProxy = typeof Proxy == 'function'
-dop.core.configureObject = function(object, propertyParent, parent) {
+var can_we_proxy = typeof Proxy == 'function'
+dop.core.configureObject = function(object, property_parent, parent) {
     // Creating a copy if is another object registered
     if (dop.isRegistered(object))
         return dop.core.configureObject(
             dop.util.clone(object),
-            propertyParent,
+            property_parent,
             parent
         )
 
@@ -16,10 +16,10 @@ dop.core.configureObject = function(object, propertyParent, parent) {
         object_proxy,
         object_target
     object_dop._ = parent // parent
-    object_dop.pr = isArray(parent) ? Number(propertyParent) : propertyParent // property
+    object_dop.pr = isArray(parent) ? Number(property_parent) : property_parent // property
 
     // Making proxy object
-    if (canWeProxy) {
+    if (can_we_proxy) {
         object_proxy = object_dop.p = new Proxy(
             object,
             dop.core.proxyObjectHandler

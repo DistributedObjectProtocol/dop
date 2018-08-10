@@ -15,9 +15,9 @@ dop.protocol.onfunction = function(
         isObject(object_data.node[node.token]) &&
         validator(object_data.node[node.token])
     ) {
-        var functionName = path.pop(),
+        var function_name = path.pop(),
             object = dop.util.get(object_data.object, path),
-            f = object[functionName]
+            f = object[function_name]
         if (isFunction(f) && !dop.isBroadcastFunction(f)) {
             function resolve(value) {
                 var response = dop.core.createResponse(request_id, 0)

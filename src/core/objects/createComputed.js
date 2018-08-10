@@ -1,4 +1,4 @@
-dop.core.createComputed = function(object, prop, f, shallWeSet, oldValue) {
+dop.core.createComputed = function(object, prop, f, shall_we_set, old_value) {
     var data_path = dop.data.path,
         value,
         computed_id = dop.data.computed_inc++,
@@ -20,10 +20,10 @@ dop.core.createComputed = function(object, prop, f, shallWeSet, oldValue) {
         data_path[computed.pathid].computeds = []
 
     dop.data.computed[computed_id] = computed
-    value = dop.core.updateComputed(computed_id, computed, object, oldValue)
+    value = dop.core.updateComputed(computed_id, computed, object, old_value)
 
     // Setting value
-    if (shallWeSet) dop.core.set(object, prop, value)
+    if (shall_we_set) dop.core.set(object, prop, value)
 
     return value
 }

@@ -9,15 +9,15 @@ dop.core.set = function(object, property, value, options) {
         var descriptor = Object.getOwnPropertyDescriptor(object, property)
 
         if (!descriptor || (descriptor && descriptor.writable)) {
-            var objectTarget = dop.getObjectTarget(object),
-                objectProxy = dop.getObjectProxy(object),
-                oldValue = objectTarget[property],
-                length = objectTarget.length,
-                isNewProperty = !objectTarget.hasOwnProperty(property),
-                objectIsArray = isArray(objectTarget),
+            var object_target = dop.getObjectTarget(object),
+                object_proxy = dop.getObjectProxy(object),
+                old_value = object_target[property],
+                length = object_target.length,
+                is_new_property = !object_target.hasOwnProperty(property),
+                object_is_array = isArray(object_target),
                 path
 
-            // if (objectIsArray)
+            // if (object_is_array)
             //     property = Number(property);
 
             // object or array
@@ -26,56 +26,57 @@ dop.core.set = function(object, property, value, options) {
                 dop.isPojoObject(value) &&
                 !(
                     dop.isRegistered(value) &&
-                    dop.getObjectParent(value) === objectProxy
+                    dop.getObjectParent(value) === object_proxy
                 )
             )
-                objectTarget[property] = dop.core.configureObject(
+                object_target[property] = dop.core.configureObject(
                     value,
                     property,
-                    objectProxy
+                    object_proxy
                 )
             // computed value
             else if (
                 isFunction(value) &&
                 value._name == dop.cons.COMPUTED_FUNCTION
             )
-                objectTarget[property] = value(
-                    objectTarget,
+                object_target[property] = value(
+                    object_target,
                     property,
                     false,
-                    oldValue
+                    old_value
                 )
             // other
-            else objectTarget[property] = value
+            else object_target[property] = value
 
             if (
                 !options.shadow &&
-                (objectTarget === objectProxy || object === objectProxy) &&
-                !(isFunction(oldValue) && isFunction(value)) &&
+                (object_target === object_proxy || object === object_proxy) &&
+                !(isFunction(old_value) && isFunction(value)) &&
                 (path = dop.getObjectPath(object))
             ) {
                 var mutation = {
-                    object: objectProxy,
-                    prop: objectIsArray ? String(property) : property,
+                    object: object_proxy,
+                    prop: object_is_array ? String(property) : property,
                     path: path,
                     value: dop.util.clone(value)
                 }
-                if (!isNewProperty) mutation.oldValue = dop.util.clone(oldValue)
+                if (!is_new_property)
+                    mutation.old_value = dop.util.clone(old_value)
 
                 dop.core.storeMutation(mutation)
 
                 // If is array and length is different we must store the length
                 if (
                     property !== 'length' &&
-                    objectTarget.length !== length &&
-                    objectIsArray
+                    object_target.length !== length &&
+                    object_is_array
                 )
                     dop.core.storeMutation({
-                        object: objectProxy,
+                        object: object_proxy,
                         prop: 'length',
                         path: path,
-                        value: objectTarget.length,
-                        oldValue: length
+                        value: object_target.length,
+                        old_value: length
                     })
             }
         }

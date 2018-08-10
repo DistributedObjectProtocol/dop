@@ -17,10 +17,10 @@ dop.util.merge = function(first, second) {
     }
 }
 
-dop.util.mergeMutator = function(destiny, prop, value, typeofValue) {
-    if (typeofValue == 'object' || typeofValue == 'array')
+dop.util.mergeMutator = function(destiny, prop, value, tof_value) {
+    if (tof_value == 'object' || tof_value == 'array')
         !destiny.hasOwnProperty(prop)
-            ? (destiny[prop] = typeofValue == 'array' ? [] : {})
+            ? (destiny[prop] = tof_value == 'array' ? [] : {})
             : destiny[prop]
     else destiny[prop] = value
 }

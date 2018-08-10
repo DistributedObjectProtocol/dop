@@ -1,4 +1,4 @@
-dop.core.getPatch = function(mutations, isUnpatch) {
+dop.core.getPatch = function(mutations, is_unpatch) {
     var patchs = {},
         index = 0,
         total = mutations.length,
@@ -6,7 +6,7 @@ dop.core.getPatch = function(mutations, isUnpatch) {
         object_id
 
     for (; index < total; ++index) {
-        mutation = isUnpatch
+        mutation = is_unpatch
             ? dop.core.getMutationInverted(mutations[index])
             : mutations[index]
         object_id = dop.getObjectId(mutation.object)

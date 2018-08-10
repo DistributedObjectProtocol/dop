@@ -11,41 +11,44 @@ dop.core.setPatchFunctionMutator = function(
     destiny,
     prop,
     value,
-    typeofValue,
+    tof_value,
     path
 ) {
     if (isFunction(value) && value._name == dop.cons.REMOTE_FUNCTION_UNSETUP)
         dop.set(destiny, prop, value(dop.getObjectId(destiny), path.slice(0)))
-    else
-        return dop.core.setPatchMutator(destiny, prop, value, typeofValue, path)
+    else return dop.core.setPatchMutator(destiny, prop, value, tof_value, path)
 }
 
-dop.core.setPatchMutator = function(destiny, prop, value, typeofValue) {
-    var typeInstruction,
-        instructionsPatchs = dop.protocol.instructionsPatchs,
+dop.core.setPatchMutator = function(destiny, prop, value, tof_value) {
+    var type_instruction,
+        instructions_patchs = dop.protocol.instructionsPatchs,
         mutation
 
-    // console.log( prop, typeofValue, value );
-    if (typeofValue == 'array') {
-        typeInstruction = value[0]
+    // console.log( prop, tof_value, value );
+    if (tof_value == 'array') {
+        type_instruction = value[0]
 
         // Delete
-        if (typeInstruction === instructionsPatchs.delete)
+        if (type_instruction === instructions_patchs.delete) {
             dop.del(destiny, prop)
+        }
+
         // New object/array
-        else if (typeInstruction === instructionsPatchs.object)
+        else if (type_instruction === instructions_patchs.object) {
             dop.set(destiny, prop, dop.util.clone(value[1]))
+        }
+
         // Array mutations
         else if (isArray(destiny[prop])) {
-            if (!isArray(typeInstruction)) value = [value]
+            if (!isArray(type_instruction)) value = [value]
 
             for (var index = 0, total = value.length; index < total; ++index) {
                 mutation = value[index]
 
                 // Splice
-                if (mutation[0] === instructionsPatchs.splice)
+                if (mutation[0] === instructions_patchs.splice)
                     dop.core.splice(destiny[prop], mutation[1])
-                else if (mutation[0] === instructionsPatchs.swaps)
+                else if (mutation[0] === instructions_patchs.swaps)
                     dop.core.swap(destiny[prop], mutation[1])
             }
         }
@@ -54,11 +57,13 @@ dop.core.setPatchMutator = function(destiny, prop, value, typeofValue) {
     }
 
     // Set value
-    else if (typeofValue != 'object') dop.set(destiny, prop, value)
+    else if (tof_value != 'object') {
+        dop.set(destiny, prop, value)
+    }
 }
 
 // // Array mutations
-// if (typeofValue=='object' && typeofDestiny=='array' && value.hasOwnProperty(dop.cons.DOP)) {
+// if (tof_value=='object' && typeofDestiny=='array' && value.hasOwnProperty(dop.cons.DOP)) {
 
 //     var mutations = value[dop.cons.DOP],
 //         mutation,
@@ -110,18 +115,18 @@ dop.core.setPatchMutator = function(destiny, prop, value, typeofValue) {
 // else //if (path.length > 1) {
 
 //     // Objects
-//     if (typeofValue=='object' && typeofDestiny!='object') //!destiny.hasOwnProperty(prop)
+//     if (tof_value=='object' && typeofDestiny!='object') //!destiny.hasOwnProperty(prop)
 //         dop.set(destiny, prop, {});
 
 //     // Arrays
-//     else if (typeofValue=='array' && typeofDestiny!='array')
+//     else if (tof_value=='array' && typeofDestiny!='array')
 //         dop.set(destiny, prop, []);
 
 //     // Delete
-//     else if (typeofValue=='undefined')
+//     else if (tof_value=='undefined')
 //         dop.del(destiny, prop);
 
 //     // Set value
-//     else if (typeofValue!='object')
+//     else if (tof_value!='object')
 //         dop.set(destiny, prop, value);
 // //}

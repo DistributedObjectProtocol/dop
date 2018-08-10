@@ -1,21 +1,21 @@
 dop.core.delete = function(object, property) {
     var descriptor = Object.getOwnPropertyDescriptor(object, property)
     if (descriptor && descriptor.configurable) {
-        var objectTarget = dop.getObjectTarget(object),
-            objectProxy = dop.getObjectProxy(object),
+        var object_target = dop.getObjectTarget(object),
+            object_proxy = dop.getObjectProxy(object),
             path,
-            oldValue = objectTarget[property],
-            deleted = delete objectTarget[property]
+            old_value = object_target[property],
+            deleted = delete object_target[property]
 
         if (
-            (objectTarget === objectProxy || object === objectProxy) &&
+            (object_target === object_proxy || object === object_proxy) &&
             (path = dop.getObjectPath(object))
         )
             dop.core.storeMutation({
-                object: dop.getObjectProxy(objectTarget),
+                object: dop.getObjectProxy(object_target),
                 prop: String(property),
                 path: path,
-                oldValue: dop.util.clone(oldValue)
+                old_value: dop.util.clone(old_value)
             })
 
         // needed for dop.core.proxyObjectHandler.deleteProperty

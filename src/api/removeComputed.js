@@ -11,8 +11,8 @@ dop.removeComputed = function(object, property, callback) {
     var computed_pathid = dop.core.getPathId(
             dop.getObjectPath(object, false).concat(property)
         ),
-        shallWeRemoveAll = !isFunction(callback),
-        isSameFunction,
+        shall_we_remove_all = !isFunction(callback),
+        is_same_function,
         data_path = dop.data.path,
         removed = [],
         computed_ids,
@@ -34,8 +34,8 @@ dop.removeComputed = function(object, property, callback) {
         for (index = 0; index < computed_ids.length; ++index) {
             computed_id = computed_ids[index]
             computed = dop.data.computed[computed_id]
-            isSameFunction = computed.function === callback
-            if (shallWeRemoveAll || isSameFunction) {
+            is_same_function = computed.function === callback
+            if (shall_we_remove_all || is_same_function) {
                 // Deleting computing itself
                 delete dop.data.computed[computed_id]
                 // Removing id in computed
@@ -54,7 +54,7 @@ dop.removeComputed = function(object, property, callback) {
                 removed.push(computed.function)
             }
 
-            if (isSameFunction) break
+            if (is_same_function) break
         }
     }
 
