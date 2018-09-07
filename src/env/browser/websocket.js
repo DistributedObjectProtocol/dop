@@ -1,7 +1,7 @@
 ;(function(root) {
     function websocket(dop, node, options) {
         var url = 'ws://localhost:4444/' + dop.name,
-            old_socket
+            oldSocket
 
         if (typeof options.url == 'string')
             url = options.url.replace('http', 'ws')
@@ -25,83 +25,83 @@
         // Variables
         var api = options.transport.getApi(),
             socket = new api(url),
-            token_server,
+            tokenServer,
             send_queue = [],
-            ready_state
+            readyState
 
         // Helpers
         function send(message) {
-            socket.ready_state === OPEN
+            socket.readyState === OPEN
                 ? socket.send(message)
                 : send_queue.push(message)
         }
         function sendQueue() {
-            if (socket.ready_state === OPEN)
+            if (socket.readyState === OPEN)
                 while (send_queue.length > 0) socket.send(send_queue.shift())
         }
 
         // Socket events
         function onopen() {
             // Reconnect
-            if (ready_state === CONNECTING) socket.send(token_server)
+            if (readyState === CONNECTING) socket.send(tokenServer)
             // Connect
             else {
                 socket.send('') // Empty means we want to get connected
-                ready_state = OPEN
+                readyState = OPEN
             }
             dop.core.emitOpen(node, socket, options.transport)
         }
         function onmessage(message) {
             // console.log( 'C<<: `'+message.data+'`' );
             // Reconnecting
-            if (ready_state === CONNECTING && message.data === token_server) {
-                ready_state = CONNECT
+            if (readyState === CONNECTING && message.data === tokenServer) {
+                readyState = CONNECT
                 dop.core.setSocketToNode(node, socket)
-                dop.core.emitReconnect(node, old_socket)
+                dop.core.emitReconnect(node, oldSocket)
                 sendQueue()
-            } else if (ready_state !== CONNECT) {
-                token_server = message.data
-                ready_state = CONNECT
+            } else if (readyState !== CONNECT) {
+                tokenServer = message.data
+                readyState = CONNECT
                 dop.core.setSocketToNode(node, socket)
-                send(token_server)
+                send(tokenServer)
                 sendQueue()
                 dop.core.emitConnect(node)
             } else dop.core.emitMessage(node, message.data, message)
         }
         function onclose() {
-            ready_state = CLOSE
+            readyState = CLOSE
             dop.core.emitClose(node, socket)
             dop.core.emitDisconnect(node)
         }
 
         // dop events
         // function onconnect() {
-        //     if (ready_state === CONNECTING) {
+        //     if (readyState === CONNECTING) {
         //         dop.core.emitDisconnect(node);
         //         dop.core.setSocketToNode(node, socket);
         //     }
-        //     ready_state = CONNECT;
+        //     readyState = CONNECT;
         //     dop.core.emitConnect(node);
         //     sendQueue();
         // }
         function ondisconnect() {
-            ready_state = CLOSE
+            readyState = CLOSE
             socket.close()
         }
 
         function reconnect() {
-            if (ready_state === CLOSE) {
-                old_socket = socket
+            if (readyState === CLOSE) {
+                oldSocket = socket
                 socket = new api(url)
-                ready_state = CONNECTING
+                readyState = CONNECTING
                 addListeners(socket, onopen, onmessage, onclose)
-                removeListeners(old_socket, onopen, onmessage, onclose)
+                removeListeners(oldSocket, onopen, onmessage, onclose)
             }
         }
 
         // Setting up
         dop.core.setSocketToNode(node, socket)
-        ready_state = CLOSE
+        readyState = CLOSE
         node.reconnect = reconnect
         // node.on(dop.cons.CONNECT, onconnect);
         node.on(dop.cons.SEND, send)
