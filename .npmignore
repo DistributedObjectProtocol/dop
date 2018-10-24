@@ -22,3 +22,5 @@ testing/
 .editorconfig
 .travis.yml
 Gruntfile.js
+.eslintrc
+yarn.lock
