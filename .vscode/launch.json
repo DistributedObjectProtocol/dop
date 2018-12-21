@@ -4,10 +4,9 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
             "name": "V8",
-            "type": "node2",
+            "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/${relativeFile}",
             "cwd": "${workspaceRoot}"
@@ -23,7 +22,7 @@
                 "--nolazy",
                 "--debug",
                 "-TTDebug:log",
-                "-TTBreakFirst" 
+                "-TTBreakFirst"
             ],
             "env": {
                 "NODE_ENV": "development"
@@ -43,14 +42,23 @@
         },
         {
             "name": "test",
-            "type": "node2",
+            "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/test/observers.js",
             "cwd": "${workspaceRoot}"
         },
+
+        {
+            "type": "node",
+            "request": "launch",
+            "useWSL": true,
+            "runtimeExecutable": "node", // /home/enzo/.nvm/versions/node/v8.11.4/bin/node
+            "name": "Win relative",
+            "program": "${workspaceFolder}/${relativeFile}"
+        }
         // {
         //     "name": "Attach",
-        //     "type": "node2",
+        //     "type": "node",
         //     "request": "attach",
         //     "port": 12345
         // },
