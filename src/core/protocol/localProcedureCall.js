@@ -6,14 +6,19 @@ dop.core.localProcedureCall = function(
     configureReq,
     scope
 ) {
-    var req = dop.core.createAsync(),
-        output
+    var req = dop.core.createAsync()
+
     if (isFunction(configureReq)) req = configureReq(req)
 
-    args.push(req)
     req.then(resolve).catch(reject)
-    output = f.apply(scope || req, args)
+    args.push(req)
 
-    // Is sync
-    if (output !== req) req.resolve(output)
+    try {
+        var output = f.apply(scope || req, args)
+        // Is sync
+        if (output !== req) req.resolve(output)
+    } catch (e) {
+        // Is sync
+        req.reject(e)
+    }
 }
