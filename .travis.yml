@@ -1,15 +1,14 @@
 language: node_js
 node_js:
-  - "4"
-  - "5"
-  - "6"
-  - "7"
+    - '4'
+    - '6'
+    - '9'
 script:
-  - npm run build
-  - npm run test
-  - npm run test-local
+    - npm run build
+    - npm run testtravis
+    - npm run test:nodelocal
 after_success:
-  - cat ./coverage/lcov.info|./node_modules/coveralls/bin/coveralls.js
+    - cat ./coverage/lcov.info|./node_modules/coveralls/bin/coveralls.js
 branches:
-  only:
-    - master
+    only:
+        - master

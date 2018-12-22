@@ -37,8 +37,6 @@
         "dop-transports": "^2.0.11"
     },
     "devDependencies": {
-        "babel-preset-es2015": "^6.24.1",
-        "babel-tape-runner": "^3.0.0",
         "coveralls": "^2.11.4",
         "electron": "^1.4.12",
         "express": "^4.13.4",
@@ -61,16 +59,15 @@
     "scripts": {
         "dev": "grunt",
         "build": "grunt --build",
-        "testbabel": "babel-tape-runner test/es6/*",
         "test": "tap test/*.js test/protocol/*.js",
-        "test-electron": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\"",
-        "test-chrome": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser chrome",
-        "test-firefox": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser firefox",
-        "test-safari": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser safari",
-        "test-websockets": "tap test/protocol/*.js --test-arg=websockets",
-        "test-socketio": "tap test/protocol/*.js --test-arg=socketio",
-        "test-sockjs": "tap test/protocol/*.js --test-arg=sockjs",
-        "test-local": "tap test/protocol/*.js --test-arg=local",
-        "test-proxy": "tap test/*.js test/protocol/*.js --test-arg=proxy"
+        "test:electron": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\"",
+        "test:chrome": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser chrome",
+        "test:firefox": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser firefox",
+        "test:safari": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser safari",
+        "test:websockets": "tap test/protocol/*.js --test-arg=websockets",
+        "test:socketio": "tap test/protocol/*.js --test-arg=socketio",
+        "test:sockjs": "tap test/protocol/*.js --test-arg=sockjs",
+        "test:local": "tap test/protocol/*.js --test-arg=local",
+        "test:proxy": "tap test/*.js test/protocol/*.js --test-arg=proxy"
     }
 }

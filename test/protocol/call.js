@@ -1,201 +1,311 @@
 var test = require('tape')
 var dopServer = require('../.proxy').create()
 var dopClient = require('../.proxy').create()
-var dopClientClient = require('../.proxy').create()
-dopServer.env = 'SERVER'
-dopClient.env = 'CLIENT'
-dopClientClient.env = 'CLIENTCLIENT'
-dopServer.data.object_inc = 7
-
 var transportName = process.argv[2] || 'local'
 var transportListen = require('dop-transports').listen[transportName]
 var transportConnect = require('dop-transports').connect[transportName]
+dopServer.env = 'SERVER'
+dopClient.env = 'CLIENT'
 
+// this code would be in node.js
 var server = dopServer.listen({ transport: transportListen })
+// this code would be in browser
 var client = dopClient.connect({
     transport: transportConnect,
     listener: server
 })
-var clientlisten = dopClient.listen({ transport: transportListen, port: 5555 })
-var clientclient = dopClientClient.connect({
-    transport: transportConnect,
-    url: 'ws://localhost:5555/dop',
-    listener: clientlisten
-})
 
-var objServer = dopServer.register({
-    string: function() {
-        return 'Hello world'
+var localFunctions = dopServer.register({
+    syncOk: function(req) {
+        return 'Ok'
     },
-    undefined: function() {
-        // returning nothing
+
+    syncError: function(req) {
+        throw 'Error'
     },
-    object: function(f) {
-        return { hola: 'mundo' }
+
+    syncUndefined: function(re) {
+        // return
     },
-    sum: function(a, b) {
-        tglobal.equal(
-            objServer,
-            this,
-            'Scope when calling remote is the same that calling locally'
-        )
-        return a + b
+
+    syncReqOk: function(req) {
+        return req.resolve('Ok')
     },
-    resolve: function(req) {
-        tglobal.equal(req.hasOwnProperty('node'), true, 'hasOwnProperty node')
-        tglobal.equal(
-            req.hasOwnProperty('resolve'),
-            true,
-            'hasOwnProperty resolve'
-        )
-        tglobal.equal(
-            req.hasOwnProperty('reject'),
-            true,
-            'hasOwnProperty reject'
-        )
-        req.resolve('resolved')
+
+    syncReqError: function(req) {
+        return req.reject('Error')
     },
-    resolveAsync: function(req) {
+
+    syncTimeoutOk: function(req) {
         setTimeout(function() {
-            req.resolve('resolveAsync')
-        }, 100)
+            req.resolve('Ok')
+        }, 10)
         return req
     },
-    reject: function(req) {
-        req.reject('rejected')
+
+    syncTimeoutError: function(req) {
+        setTimeout(function() {
+            req.reject('Error')
+        }, 10)
+        return req
     },
-    reject0: function(req) {
-        req.reject(0)
+
+    syncPromiseOk: function(req) {
+        return Promise.resolve('Ok')
     },
-    function: function(f) {
-        tglobal.equal(f, null, 'when passing a function this must be null')
-        return function() {}
+
+    syncPromiseError: function(req) {
+        return Promise.reject('Error')
+    },
+
+    // Async
+    asyncOk: function(req) {
+        return new Promise(function(resolve, reject) {
+            resolve('Ok')
+        })
+    },
+
+    asyncError: function(req) {
+        return new Promise(function(resolve, reject) {
+            reject('Error')
+        })
+    },
+
+    asyncUndefined: function(req) {
+        return new Promise(function(resolve, reject) {
+            resolve(undefined)
+        })
+    },
+
+    asyncReqOk: function(req) {
+        return new Promise(function(resolve, reject) {
+            resolve(req.resolve('Ok'))
+        })
+    },
+
+    asyncReqError: function(req) {
+        return new Promise(function(resolve, reject) {
+            resolve(req.reject('Error'))
+        })
+    },
+
+    // asyncTimeoutOk: function(req) {
+    //     return new Promise(function(resolve, reject) {
+    //         setTimeout(function() {
+    //             req.resolve('Ok')
+    //         }, 10)
+    //         resolve(req)
+    //     })
+    // },
+
+    // asyncTimeoutError: function(req) {
+    //     return new Promise(function(resolve, reject) {
+    //         setTimeout(function() {
+    //             req.reject('Error')
+    //         }, 10)
+    //         resolve(req)
+    //     })
+    // },
+
+    asyncPromiseOk: function(req) {
+        return new Promise(function(resolve, reject) {
+            resolve(Promise.resolve('Ok'))
+        })
+    },
+
+    asyncPromiseError: function(req) {
+        return new Promise(function(resolve, reject) {
+            resolve(Promise.reject('Error'))
+        })
     }
 })
 
+// server
 dopServer.onSubscribe(function() {
-    return objServer
+    return localFunctions
 })
 
-var objClient = dopClient.register({})
-dopClient.onSubscribe(function() {
-    return objClient
+var remoteFunctions
+test('Matching same values', function(t) {
+    remoteFunctions = client.subscribe().then(function(o) {
+        remoteFunctions = o
+        t.deepEqual(Object.keys(remoteFunctions), Object.keys(localFunctions))
+        t.end()
+    })
 })
 
-test('TESTING RESOLVE AN REJECTS', function(t) {
-    client
-        .subscribe()
-        .into(objClient)
-        .then(function(obj) {
-            tglobal = t
-            obj.string()
-                .then(function(value) {
-                    t.equal('Hello world', value, 'Returning a string')
-                    return obj.undefined()
-                })
-                .then(function(value) {
-                    t.equal(undefined, value, 'Returning nothing')
-                    return obj.object(function() {})
-                })
-                .then(function(value) {
-                    t.equal(value.hola, 'mundo', 'Returning an object')
-                    return obj.sum(2, 2)
-                })
-                .then(function(value) {
-                    t.equal(value, 4, 'Passing two parameters')
-                    return obj.resolve()
-                })
-                .then(function(value) {
-                    t.equal(value, 'resolved', 'req.resolve instead of return')
-                    return obj.resolveAsync()
-                })
-                .then(function(value) {
-                    t.equal(value, 'resolveAsync', 'Resolved async')
-                    return objServer.resolveAsync(dopClient.core.createAsync())
-                })
-                .then(function(value) {
-                    t.equal(value, 'resolveAsync', 'Resolved async local')
-                    return obj.reject()
-                })
-                .catch(function(value) {
-                    t.equal(value, 'rejected', 'req.reject')
-                    // t.equal(value, null, 'req.function')
-                    return obj.reject0()
-                })
-                .catch(function(value) {
-                    t.equal(value, 0, 'Rejecting cero value')
-                    delete objServer.sum
-                    return obj.sum()
-                })
-                .catch(function(value) {
-                    t.equal(
-                        value,
-                        dopClient.core.error.reject_remote[3],
-                        dopClient.core.error.reject_remote.FUNCTION_NOT_FOUND
-                    )
-                    return obj.function(function() {})
-                })
-                .then(function(value) {
-                    t.equal(value, null, 'obj.function')
-                    t.end()
-                })
+test('syncOk', function(t) {
+    remoteFunctions.syncOk().then(function(dataremote) {
+        var datalocal = localFunctions.syncOk()
+        t.equal(dataremote, 'Ok')
+        t.equal(dataremote, datalocal)
+        t.end()
+    })
+})
+
+test('syncError', function(t) {
+    remoteFunctions
+        .syncError()
+        .then(function(dataremote) {
+            t.equal(1, 2, 'this should not happen')
+        })
+        .catch(function(e) {
+            t.equal(e, 'Error')
+            try {
+                localFunctions.syncError()
+                t.equal(1, 2, 'this should not happen 2')
+            } catch (e) {
+                t.equal(e, 'Error')
+            }
+            t.end()
         })
 })
 
-test('CALLING A FUNCTIONS BY TWO LEVELS', function(t) {
-    objClient.sum = function(a, b) {
-        return a + a + b + b
-    }
-
-    clientclient.subscribe().then(function(obj) {
-        tglobal = t
-        obj.string()
-            .then(function(value) {
-                t.equal('Hello world', value, 'Returning a string')
-                return obj.undefined()
-            })
-            .then(function(value) {
-                t.equal(undefined, value, 'Returning nothing')
-                return obj.object(function() {})
-            })
-            .then(function(value) {
-                t.equal(value.hola, 'mundo', 'Returning an object')
-                return obj.sum(1, 1)
-            })
-            .then(function(value) {
-                t.equal(value, 4, 'Passing two parameters')
-                return obj.resolve()
-            })
-            .then(function(value) {
-                t.equal(value, 'resolved', 'req.resolve instead of return')
-                return obj.resolveAsync()
-            })
-            .then(function(value) {
-                t.equal(value, 'resolveAsync', 'Resolved async')
-                return obj.reject()
-            })
-            .catch(function(value) {
-                t.equal(value, 'rejected', 'req.reject')
-                return obj.reject0()
-            })
-            .catch(function(value) {
-                t.equal(value, 0, 'Rejecting cero value')
-                delete objClient.sum
-                return obj.sum()
-            })
-            .catch(function(value) {
-                t.equal(
-                    value,
-                    dopClient.core.error.reject_remote[3],
-                    dopClient.core.error.reject_remote.FUNCTION_NOT_FOUND
-                )
-                return obj.function(function() {})
-            })
-            .then(function(value) {
-                t.equal(value, null, 'obj.function')
-                t.end()
-                server.listener.close()
-                clientlisten.listener.close()
-            })
+test('syncUndefined', function(t) {
+    remoteFunctions.syncUndefined().then(function(dataremote) {
+        var datalocal = localFunctions.syncUndefined()
+        t.equal(dataremote, undefined)
+        t.equal(dataremote, datalocal)
+        t.end()
     })
+})
+
+test('syncReqOk', function(t) {
+    remoteFunctions.syncReqOk().then(function(dataremote) {
+        t.equal(dataremote, 'Ok')
+        t.end()
+    })
+})
+
+test('syncReqError', function(t) {
+    remoteFunctions
+        .syncReqError()
+        .then(function(dataremote) {
+            t.equal(1, 2, 'this should not happen')
+        })
+        .catch(function(e) {
+            t.equal(e, 'Error')
+            t.end()
+        })
+})
+
+test('syncTimeoutOk', function(t) {
+    remoteFunctions.syncTimeoutOk().then(function(dataremote) {
+        t.equal(dataremote, 'Ok')
+        t.end()
+    })
+})
+
+test('syncTimeoutError', function(t) {
+    remoteFunctions
+        .syncTimeoutError()
+        .then(function(dataremote) {
+            t.equal(1, 2, 'this should not happen')
+        })
+        .catch(function(e) {
+            t.equal(e, 'Error')
+            t.end()
+        })
+})
+
+test('syncPromiseOk', function(t) {
+    remoteFunctions.syncPromiseOk().then(function(dataremote) {
+        t.equal(dataremote, 'Ok')
+        t.end()
+    })
+})
+
+test('syncPromiseError', function(t) {
+    remoteFunctions
+        .syncPromiseError()
+        .then(function(dataremote) {
+            t.equal(1, 2, 'this should not happen')
+        })
+        .catch(function(e) {
+            t.equal(e, 'Error')
+            t.end()
+        })
+})
+
+test('asyncOk', function(t) {
+    remoteFunctions.asyncOk().then(function(dataremote) {
+        t.equal(dataremote, 'Ok')
+        t.end()
+    })
+})
+
+test('asyncError', function(t) {
+    remoteFunctions
+        .asyncError()
+        .then(function(dataremote) {
+            t.equal(1, 2, 'this should not happen')
+        })
+        .catch(function(e) {
+            t.equal(e, 'Error')
+            t.end()
+        })
+})
+
+test('asyncUndefined', function(t) {
+    remoteFunctions.asyncUndefined().then(function(dataremote) {
+        t.equal(dataremote, undefined)
+        t.end()
+    })
+})
+
+test('asyncReqOk', function(t) {
+    remoteFunctions.asyncReqOk().then(function(dataremote) {
+        t.equal(dataremote, 'Ok')
+        t.end()
+    })
+})
+
+test('asyncReqError', function(t) {
+    remoteFunctions
+        .asyncReqError()
+        .then(function(dataremote) {
+            t.equal(1, 2, 'this should not happen')
+        })
+        .catch(function(e) {
+            t.equal(e, 'Error')
+            t.end()
+        })
+})
+
+// test('asyncTimeoutOk', function(t) {
+//     remoteFunctions.asyncTimeoutOk().then(function(dataremote) {
+//         t.equal(dataremote, 'Ok')
+//         t.end()
+//     })
+// })
+
+// test('asyncTimeoutError', function(t) {
+//     remoteFunctions
+//         .asyncTimeoutError()
+//         .then(function(dataremote) {
+//             t.equal(1, 2, 'this should not happen')
+//         })
+//         .catch(function(e) {
+//             t.equal(e, 'Error')
+//             t.end()
+//         })
+// })
+
+test('asyncPromiseOk', function(t) {
+    remoteFunctions.asyncPromiseOk().then(function(dataremote) {
+        t.equal(dataremote, 'Ok')
+        t.end()
+    })
+})
+
+test('syncPromiseError', function(t) {
+    remoteFunctions
+        .syncPromiseError()
+        .then(function(dataremote) {
+            t.equal(1, 2, 'this should not happen')
+        })
+        .catch(function(e) {
+            t.equal(e, 'Error')
+            t.end()
+        })
 })

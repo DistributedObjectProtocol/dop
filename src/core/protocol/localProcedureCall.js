@@ -15,7 +15,10 @@ dop.core.localProcedureCall = function(
 
     try {
         var output = f.apply(scope || req, args)
-        // Is sync
+        // var is_promise = output instanceof Promise
+        // var output_is_req = output === req
+        // var req_pending = req.pending
+
         if (output !== req) req.resolve(output)
     } catch (e) {
         // Is sync
