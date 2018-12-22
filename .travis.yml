@@ -6,7 +6,8 @@ node_js:
 script:
     - npm run build
     - npm run testtravis
-    - npm run test:nodelocal
+    - npm run test:local
+    - npm run test:websockets
 after_success:
     - cat ./coverage/lcov.info|./node_modules/coveralls/bin/coveralls.js
 branches:

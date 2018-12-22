@@ -295,22 +295,13 @@ test('asyncPromiseOk', function(t) {
     remoteFunctions.asyncPromiseOk().then(function(dataremote) {
         t.equal(dataremote, 'Ok')
         t.end()
+        server.listener.close()
     })
 })
 
-test('syncPromiseError', function(t) {
-    remoteFunctions
-        .syncPromiseError()
-        .then(function(dataremote) {
-            t.equal(1, 2, 'this should not happen')
-        })
-        .catch(function(e) {
-            t.equal(e, 'Error')
-            t.end()
-        })
-})
-
-try {
-    eval('async () => {}')
-    require('../ES6/call')
-} catch (e) {}
+if (transportName === 'local') {
+    try {
+        eval('async () => {}')
+        require('../ES6/call')
+    } catch (e) {}
+}

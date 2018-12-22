@@ -285,4 +285,5 @@ test('Promise.reject', async function(t) {
     }
 
     t.end()
+    server.listener.close()
 })

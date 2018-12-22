@@ -60,14 +60,14 @@
         "dev": "grunt",
         "build": "grunt --build",
         "test": "tap test/*.js test/protocol/*.js",
-        "test:electron": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\"",
-        "test:chrome": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser chrome",
-        "test:firefox": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser firefox",
-        "test:safari": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser safari",
         "test:websockets": "tap test/protocol/*.js --test-arg=websockets",
         "test:socketio": "tap test/protocol/*.js --test-arg=socketio",
         "test:sockjs": "tap test/protocol/*.js --test-arg=sockjs",
         "test:local": "tap test/protocol/*.js --test-arg=local",
+        "test:electron": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\"",
+        "test:chrome": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser chrome",
+        "test:firefox": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser firefox",
+        "test:safari": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser safari",
         "test:proxy": "tap test/*.js test/protocol/*.js --test-arg=proxy"
     }
 }
