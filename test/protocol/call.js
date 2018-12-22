@@ -89,23 +89,23 @@ var localFunctions = dopServer.register({
         })
     },
 
-    // asyncTimeoutOk: function(req) {
-    //     return new Promise(function(resolve, reject) {
-    //         setTimeout(function() {
-    //             req.resolve('Ok')
-    //         }, 10)
-    //         resolve(req)
-    //     })
-    // },
+    asyncTimeoutOk: function(req) {
+        return new Promise(function(resolve, reject) {
+            setTimeout(function() {
+                req.resolve('Ok')
+            }, 10)
+            resolve(req)
+        })
+    },
 
-    // asyncTimeoutError: function(req) {
-    //     return new Promise(function(resolve, reject) {
-    //         setTimeout(function() {
-    //             req.reject('Error')
-    //         }, 10)
-    //         resolve(req)
-    //     })
-    // },
+    asyncTimeoutError: function(req) {
+        return new Promise(function(resolve, reject) {
+            setTimeout(function() {
+                req.reject('Error')
+            }, 10)
+            resolve(req)
+        })
+    },
 
     asyncPromiseOk: function(req) {
         return new Promise(function(resolve, reject) {
@@ -272,24 +272,24 @@ test('asyncReqError', function(t) {
         })
 })
 
-// test('asyncTimeoutOk', function(t) {
-//     remoteFunctions.asyncTimeoutOk().then(function(dataremote) {
-//         t.equal(dataremote, 'Ok')
-//         t.end()
-//     })
-// })
+test('asyncTimeoutOk', function(t) {
+    remoteFunctions.asyncTimeoutOk().then(function(dataremote) {
+        t.equal(dataremote, 'Ok')
+        t.end()
+    })
+})
 
-// test('asyncTimeoutError', function(t) {
-//     remoteFunctions
-//         .asyncTimeoutError()
-//         .then(function(dataremote) {
-//             t.equal(1, 2, 'this should not happen')
-//         })
-//         .catch(function(e) {
-//             t.equal(e, 'Error')
-//             t.end()
-//         })
-// })
+test('asyncTimeoutError', function(t) {
+    remoteFunctions
+        .asyncTimeoutError()
+        .then(function(dataremote) {
+            t.equal(1, 2, 'this should not happen')
+        })
+        .catch(function(e) {
+            t.equal(e, 'Error')
+            t.end()
+        })
+})
 
 test('asyncPromiseOk', function(t) {
     remoteFunctions.asyncPromiseOk().then(function(dataremote) {
@@ -309,3 +309,8 @@ test('syncPromiseError', function(t) {
             t.end()
         })
 })
+
+try {
+    eval('async () => {}')
+    require('../ES6/call')
+} catch (e) {}
