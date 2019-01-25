@@ -55,12 +55,23 @@ dop.core.configureObject = function(object, property_parent, parent) {
         value,
         path,
         is_array = isArray(object_target),
-        is_function
+        is_function,
+        object_descriptor
 
     for (property in object_target) {
-        if (is_array) property = Number(property)
-        value = object_target[property]
+        if (is_array) {
+            property = Number(property)
+        }
+        object_descriptor = Object.getOwnPropertyDescriptor(
+            object_target,
+            property
+        )
+        value =
+            typeof object_descriptor.get == 'function'
+                ? dop.computed(object_descriptor.get)
+                : object_target[property]
         is_function = isFunction(value)
+
         // remote function
         if (is_function && value._name == dop.cons.REMOTE_FUNCTION_UNSETUP) {
             path = dop.getObjectPath(object)
@@ -69,14 +80,16 @@ dop.core.configureObject = function(object, property_parent, parent) {
                 path.slice(1).concat(property)
             )
         }
-        // storing computed value function
-        else if (is_function && value._name == dop.cons.COMPUTED_FUNCTION)
+        // computed value
+        else if (is_function && value._name == dop.cons.COMPUTED_FUNCTION) {
+            delete object_target[property] // we need this line in order to remove the defineProperty of get syntax
             object_target[property] = value(
                 object_proxy,
                 property,
                 false,
                 undefined
             )
+        }
         // object or array
         else if (dop.isPojoObject(value))
             object_target[property] = dop.core.configureObject(

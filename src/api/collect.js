@@ -4,8 +4,7 @@ dop.collect = function(index_function) {
             (arguments.length == 1 && isFunction(index_function)),
         'dop.collect only accept one argument as function'
     )
-    var index = index_function
-        ? index_function(dop.data.collectors)
-        : dop.data.collectors.length
-    return dop.core.createCollector(dop.data.collectors, index)
+    var collectors = dop.data.collectors
+    var index = index_function ? index_function(collectors) : collectors.length
+    return dop.core.createCollector(collectors, index)
 }

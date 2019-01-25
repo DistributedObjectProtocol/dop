@@ -3,6 +3,7 @@ dop.core.observer = function Observer(callback, id) {
     this.id = id
     this.observers = {} // need it for destroy()
     this.observers_prop = {} // need it for destroy()
+    this.observers_all = {} // need it for destroy()
 }
 
 dop.core.observer.prototype.observe = function(object, property) {
@@ -17,14 +18,34 @@ dop.core.observer.prototype.observe = function(object, property) {
     )
 
     var path_id = dop.core.getPathId(path),
-        data_path = dop.data.path,
         type = 'observers'
 
     // is observeProperty
     if (arguments.length === 2) {
-        type = 'observers_prop'
         path_id += dop.core.pathSeparator(property)
+        type = 'observers_prop'
     }
+
+    return this._observe(path_id, type)
+}
+
+dop.core.observer.prototype.observeAll = function(object) {
+    dop.util.invariant(
+        dop.isRegistered(object),
+        'observer.observeAll() needs a registered object as first parameter'
+    )
+    var path = dop.getObjectPath(object)
+    dop.util.invariant(
+        isArray(path),
+        'observer.observeAll() The object you are passing is not allocated to a registered object'
+    )
+
+    return this._observe(dop.core.getPathId(path), 'observers_all')
+}
+
+// private
+dop.core.observer.prototype._observe = function(path_id, type) {
+    var data_path = dop.data.path
 
     if (data_path[path_id] === undefined) data_path[path_id] = {}
 
