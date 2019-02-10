@@ -26,7 +26,7 @@ dop.core.observer.prototype.observe = function(object, property) {
         type = 'observers_prop'
     }
 
-    return this._observe(path_id, type)
+    return this.observe(path_id, type)
 }
 
 dop.core.observer.prototype.observeAll = function(object) {
@@ -40,11 +40,10 @@ dop.core.observer.prototype.observeAll = function(object) {
         'observer.observeAll() The object you are passing is not allocated to a registered object'
     )
 
-    return this._observe(dop.core.getPathId(path), 'observers_all')
+    return this.observe(dop.core.getPathId(path), 'observers_all')
 }
 
-// private
-dop.core.observer.prototype._observe = function(path_id, type) {
+dop.core.observer.prototype.observe = function(path_id, type) {
     var data_path = dop.data.path
 
     if (data_path[path_id] === undefined) data_path[path_id] = {}
@@ -59,27 +58,6 @@ dop.core.observer.prototype._observe = function(path_id, type) {
         delete this[type][path_id]
     }.bind(this)
 }
-
-// dop.core.observer.prototype.unobserve = function(object, property) {
-//     dop.util.invariant(dop.isRegistered(object), 'observer.unobserve() needs a registered object as first parameter');
-//     var path = dop.getObjectPath(object);
-//     dop.util.invariant(isArray(path), 'observer.unobserve() The object you are passing is not allocated to a registered object');
-
-//     var path_id = dop.core.getPathId(path);
-//         data_path = dop.data.path,
-//         type = 'observers';
-
-//     // is observeProperty
-//     if (arguments.length === 2) {
-//         type = 'observers_prop';
-//         path_id += dop.core.pathSeparator(property);
-//     }
-
-//     if (data_path[path_id] !== undefined && data_path[path_id][type] !== undefined) {
-//         delete data_path[path_id][type][this.id];
-//         delete this[type][path_id];
-//     }
-// };
 
 dop.core.observer.prototype.destroy = function() {
     var path_id,

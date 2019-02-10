@@ -42,18 +42,9 @@ dop.core.emitToObservers = function(mutations) {
                 data_path[path_id_all].observers_all !== undefined
             ) {
                 for (observer_id in data_path[path_id_all].observers_all) {
-                    console.log(
-                        { path_id_all, observer_id },
-                        data_path[path_id_all].observers_all[observer_id]
-                    )
-                    // if (
-                    //     mutations_by_observers[observer_id] ===
-                    //     undefined
-                    // )
-                    //     mutations_by_observers[observer_id] = []
-                    // mutations_by_observers[observer_id].push(
-                    //     mutation
-                    // )
+                    if (mutations_by_observers[observer_id] === undefined)
+                        mutations_by_observers[observer_id] = []
+                    mutations_by_observers[observer_id].push(mutation)
                 }
             }
         }
