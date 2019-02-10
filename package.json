@@ -68,6 +68,7 @@
         "test:chrome": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser chrome",
         "test:firefox": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser firefox",
         "test:safari": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser safari",
-        "test:proxy": "tap test/*.js test/protocol/*.js --test-arg=proxy"
+        "test:proxy": "tap test/*.js test/protocol/*.js --test-arg=proxy",
+        "testtravis": "tap test/*.js test/protocol/*.js"
     }
 }

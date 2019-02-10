@@ -5,9 +5,7 @@ node_js:
     - '9'
 script:
     - npm run build
-    - npm run testtravis
-    - npm run test:local
-    - npm run test:websockets
+    - npm run test
 after_success:
     - cat ./coverage/lcov.info|./node_modules/coveralls/bin/coveralls.js
 branches:
