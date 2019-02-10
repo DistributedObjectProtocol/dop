@@ -110,7 +110,7 @@ test('register([])', function(t) {
 //     t.equal(object.prearr.arr[2].subarr[0]["~DOP"].ia, true);
 //     t.end();
 
-// dop.observe(object.subobject, function(){
+// dop.createObserver(object.subobject, function(){
 //     console.log('changed', object.subobject.value)
 // })
 

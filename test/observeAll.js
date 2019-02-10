@@ -13,7 +13,7 @@ test('observing root', function(t) {
     })
     // observer.observeAll(object.b)
     observer.observeAll(object)
-    object.b.b1.b11 = false
+    dop.set(object.b.b1, 'b11', false)
 })
 
 test('mutation above', function(t) {
@@ -25,7 +25,7 @@ test('mutation above', function(t) {
         t.equal(true, false, 'This should not happen')
     })
     observer.observeAll(object.b)
-    object.a = false
+    dop.set(object, 'a', false)
     t.equal(true, true, 'All good')
     t.end()
 })
@@ -41,8 +41,8 @@ test('mutating both levels observing root', function(t) {
     })
     observer.observeAll(object)
     dop.action(function() {
-        object.a = false
-        object.b.b1.b11 = false
+        dop.set(object, 'a', false)
+        dop.set(object.b.b1, 'b11', false)
     })()
 })
 
@@ -57,7 +57,7 @@ test('mutating both levels observing deep', function(t) {
     })
     observer.observeAll(object.b.b1)
     dop.action(function() {
-        object.a = false
-        object.b.b1.b11 = false
+        dop.set(object, 'a', false)
+        dop.set(object.b.b1, 'b11', false)
     })()
 })

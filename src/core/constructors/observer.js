@@ -6,40 +6,25 @@ dop.core.observer = function Observer(callback, id) {
     this.observers_all = {} // need it for destroy()
 }
 
-dop.core.observer.prototype.observe = function(object, property) {
+dop.core.observer.prototype.observeProperty = function(object, property) {
+    var path = observerCheckObject(object, 'observeProperty')
     dop.util.invariant(
-        dop.isRegistered(object),
-        'observer.observe() needs a registered object as first parameter'
+        arguments.length === 2,
+        'observer.observeProperty() You must pass a name property as second parameter'
     )
-    var path = dop.getObjectPath(object)
-    dop.util.invariant(
-        isArray(path),
-        'observer.observe() The object you are passing is not allocated to a registered object'
+    return this.observe(
+        dop.core.getPathId(path) + dop.core.pathSeparator(property),
+        'observers_prop'
     )
+}
 
-    var path_id = dop.core.getPathId(path),
-        type = 'observers'
-
-    // is observeProperty
-    if (arguments.length === 2) {
-        path_id += dop.core.pathSeparator(property)
-        type = 'observers_prop'
-    }
-
-    return this.observe(path_id, type)
+dop.core.observer.prototype.observeObject = function(object) {
+    var path = observerCheckObject(object, 'observeObject')
+    return this.observe(dop.core.getPathId(path), 'observers')
 }
 
 dop.core.observer.prototype.observeAll = function(object) {
-    dop.util.invariant(
-        dop.isRegistered(object),
-        'observer.observeAll() needs a registered object as first parameter'
-    )
-    var path = dop.getObjectPath(object)
-    dop.util.invariant(
-        isArray(path),
-        'observer.observeAll() The object you are passing is not allocated to a registered object'
-    )
-
+    var path = observerCheckObject(object, 'observeAll')
     return this.observe(dop.core.getPathId(path), 'observers_all')
 }
 
@@ -69,4 +54,19 @@ dop.core.observer.prototype.destroy = function() {
 
     for (path_id in this.observers_prop)
         delete data_path[path_id].observers_prop[this.id]
+}
+
+function observerCheckObject(object, method) {
+    dop.util.invariant(
+        dop.isRegistered(object),
+        'observer.' + method + '() needs a registered object as first parameter'
+    )
+    var path = dop.getObjectPath(object)
+    dop.util.invariant(
+        isArray(path),
+        'observer.' +
+            method +
+            '() The object you are passing is not allocated to a registered object'
+    )
+    return path
 }

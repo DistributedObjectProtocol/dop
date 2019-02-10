@@ -4,7 +4,7 @@ var dop = require('./.proxy').create()
 
 var object = dop.register({ uno: 'A', dos: 'B' })
 var object2 = dop.register({ uno: 1, cuatro: 4 })
-// dop.observe(object, myfun)
+// dop.createObserver(object, myfun)
 // object.uno = 25
 
 test('createObserver.observe', function(t) {
@@ -54,9 +54,9 @@ test('mutations with createObserver', function(t) {
         )
         t.end()
     })
-    observer.observe(object)
-    observer.observe(object, 'uno')
-    observer2.observe(object, 'uno')
+    observer.observeObject(object)
+    observer.observeProperty(object, 'uno')
+    observer2.observeProperty(object, 'uno')
 
     collector = dop.collect()
     dop.set(object, 'uno', 123)
@@ -70,6 +70,6 @@ test('check swap mutation with createObserver', function(t) {
         t.equal(Array.isArray(mutations[0].swaps), true)
         t.end()
     })
-    observer.observe(object.array)
+    observer.observeObject(object.array)
     object.array.reverse()
 })
