@@ -46,6 +46,11 @@ var localFunctions = dopServer.register({
         tGlobal.equal(request.hasOwnProperty('resolve'), true)
         tGlobal.equal(request.hasOwnProperty('reject'), true)
         tGlobal.equal(request.hasOwnProperty('node'), false)
+    },
+    resolvingSquare: function(number) {
+        const request = dopServer.getRequest(arguments)
+        request.resolve(number * number)
+        return request
     }
 })
 
@@ -88,6 +93,24 @@ test('checkNodePropertyRemote', function(t) {
 test('checkNodePropertyLocal', function(t) {
     tGlobal = t
     localFunctions.checkNodePropertyLocal()
+    t.end()
+})
+
+test('resolving', function(t) {
+    var number = 5
+    localFunctions
+        .resolvingSquare(number)
+        .then(square => {
+            t.equal(square, number * number)
+            return remoteFunctions.resolvingSquare(number)
+        })
+        .then(square => {
+            t.equal(square, number * number)
+            t.end()
+        })
+})
+
+test('closing', function(t) {
     t.end()
     server.listener.close()
 })
