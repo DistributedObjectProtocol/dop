@@ -17,14 +17,14 @@ test('Multiple collectors order', function(t) {
     var collector1 = dop.collect()
     var collector2 = dop.collect()
     object.array.push(Math.random())
-    t.equal(collector1.mutations.length, 0)
-    t.equal(collector2.mutations.length, 1)
+    t.equal(collector1.mutations.length, 1)
+    t.equal(collector2.mutations.length, 0)
     collector1.destroy()
     collector2.destroy()
     t.end()
 })
 
-test('Using index_function', function(t) {
+test('Using collectFirst', function(t) {
     var collector1 = dop.collect()
     var collector2 = dop.collect(function() {
         return 0
@@ -37,30 +37,10 @@ test('Using index_function', function(t) {
     })
     object.array.push(Math.random())
     t.equal(collector1.mutations.length, 0)
-    t.equal(collector2.mutations.length, 1)
-    t.equal(collector3.mutations.length, 1)
+    t.equal(collector2.mutations.length, 2)
+    t.equal(collector3.mutations.length, 0)
     t.equal(collector4.mutations.length, 1)
     collector1.destroy()
-    collector2.destroy()
-    collector3.destroy()
-    collector4.destroy()
-    t.end()
-})
-
-test('Using index_function 2', function(t) {
-    var collector2 = dop.collect(function() {
-        return 0
-    })
-    object.array.push(Math.random())
-    var collector3 = dop.collect()
-    object.array.push(Math.random())
-    var collector4 = dop.collect(function(collectors) {
-        return collectors.length
-    })
-    object.array.push(Math.random())
-    t.equal(collector2.mutations.length, 1)
-    t.equal(collector3.mutations.length, 2)
-    t.equal(collector4.mutations.length, 0)
     collector2.destroy()
     collector3.destroy()
     collector4.destroy()
@@ -76,8 +56,8 @@ test('Active and inactive collectores', function(t) {
     object.array.push(Math.random())
     collector1.active = true
     object.array.push(Math.random())
-    t.equal(collector1.mutations.length, 1)
-    t.equal(collector2.mutations.length, 3)
+    t.equal(collector1.mutations.length, 3)
+    t.equal(collector2.mutations.length, 1)
     collector1.destroy()
     collector2.destroy()
     t.end()
@@ -90,8 +70,8 @@ test('Destroying', function(t) {
     object.array.push(Math.random())
     collector1.destroy()
     object.array.push(Math.random())
-    t.equal(collector1.mutations.length, 1)
-    t.equal(collector2.mutations.length, 2)
+    t.equal(collector1.mutations.length, 2)
+    t.equal(collector2.mutations.length, 1)
     collector1.destroy()
     collector2.destroy()
     t.end()
@@ -113,8 +93,8 @@ test('Filtering', function(t) {
     t.equal(collector2.mutations.length, 2)
     delete collector1.filter
     object.array.push(Math.random())
-    t.equal(collector1.mutations.length, 1)
-    t.equal(collector2.mutations.length, 3)
+    t.equal(collector1.mutations.length, 2)
+    t.equal(collector2.mutations.length, 2)
     collector1.destroy()
     collector2.destroy()
     t.end()
