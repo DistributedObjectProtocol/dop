@@ -30,35 +30,42 @@ test('BROADCAST TESTS', function(tt) {
         number: 1,
         subobject: {}
     }
+    var objClient1 = {
+        subobject: {
+            broadcastFunction: function(a, b) {
+                return a + b
+            }
+        }
+    }
+    var objClient2 = {
+        subobject: {
+            broadcastFunction: function(a, b) {
+                return a * b
+            }
+        }
+    }
+
     dop.register(objServer)
-    dop.setBroadcastFunction(objServer.subobject, 'broadcast')
+    dop.setBroadcastFunction(objServer.subobject, 'broadcastFunction')
     dop.onSubscribe(function() {
         return objServer
     })
 
-    // setBroadcastFunction(object, 'namefunction')
+    tt.equal(
+        typeof objServer.subobject.broadcastFunction,
+        'function',
+        'broadcastFunction is a function'
+    )
 
     test('BROADCASTING TO CLIENTS', function(t) {
         client1
             .subscribe()
-            .into({
-                subobject: {
-                    broadcast: function(a, b) {
-                        return a + b
-                    }
-                }
+            .into(objClient1)
+            .then(function(obj) {
+                return client2.subscribe().into(objClient2)
             })
             .then(function(obj) {
-                return client2.subscribe().into({
-                    subobject: {
-                        broadcast: function(a, b) {
-                            return a * b
-                        }
-                    }
-                })
-            })
-            .then(function(obj) {
-                var promises = objServer.subobject.broadcast(2, 5)
+                var promises = objServer.subobject.broadcastFunction(2, 5)
                 t.equal(Array.isArray(promises), true, 'Promises is array')
                 t.equal(promises.length, 2, 'Promises are two promises')
                 t.equal(
@@ -66,22 +73,28 @@ test('BROADCAST TESTS', function(tt) {
                     true,
                     'First promise is instanceof Promise'
                 )
-                Promise.all(promises).then(function(values) {
-                    t.equal(values[0], 7, 'First value must be 2+5=7')
-                    t.equal(values[0], 7, 'Second value must be 2*5=10')
-                    // try {
-                    server.listener.close()
-                    // client1.socket.close();
-                    // client2.socket.close();
-                    // } catch(e) {
-                    // console.log( e );
-                    // process.exit();
-                    // }
-                    t.end()
-                })
+                return Promise.all(promises)
                 // .catch(function(err){
                 //     console.log( err );
                 // })
+            })
+            .then(function(values) {
+                t.equal(values[0], 7, 'First value must be 2+5=7')
+                t.equal(values[1], 10, 'Second value must be 2*5=10')
+
+                objClient1.subobject.broadcastFunction = function(a, b) {
+                    return a / b
+                }
+
+                return Promise.all(objServer.subobject.broadcastFunction(10, 2))
+            })
+            .then(function(values) {
+                t.equal(values[0], 5, 'First value must be 10/2=5')
+                t.equal(values[1], 20, 'Second value must be 10*2=20')
+                server.listener.close()
+                // client1.socket.close();
+                // client2.socket.close();
+                t.end()
             })
     })
 
