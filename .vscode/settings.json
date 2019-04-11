@@ -1,9 +1,0 @@
-{
-    "eslint.enable": true,
-    "editor.formatOnSave": true,
-    "prettier.eslintIntegration": true,
-    "prettier.tabWidth": 4,
-    "prettier.singleQuote": true,
-    "prettier.semi": false,
-    "git.ignoreLimitWarning": true
-}
