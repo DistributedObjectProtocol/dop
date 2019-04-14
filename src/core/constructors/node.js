@@ -1,7 +1,10 @@
-dop.core.node = function Node() {
+dop.core.node = function Node(transport, socket, sendRaw) {
     // Inherit emitter
     dop.util.merge(this, new dop.util.emitter()) //https://jsperf.com/inheritance-call-vs-object-assign
-    this.connected = false
+    this.transport = transport
+    this.socket = socket
+    this.sendRaw = sendRaw
+    this.status = dop.cons.NODE_STATE_OPEN
     this.request_inc = 1
     this.requests = {}
     this.message_queue = [] // Response / Request / instrunctions queue

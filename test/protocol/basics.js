@@ -5,30 +5,44 @@ var dop = require('../.proxy').create()
 // var dopClient = dop.create()
 
 const port = 8989
-const wsServer = new WebSocket.Server({ port })
-const wsClient = new WebSocket('ws://localhost:' + port)
-const transportServer = new dop.core.transport(wsServer, 'SERVER')
-const transportClient = new dop.core.transport(wsClient, 'CLIENT')
+const transportServer = new dop.core.transport()
+const transportClient = new dop.core.transport()
 
+// SERVER
+const wsServer = new WebSocket.Server({ port })
 wsServer.on('connection', function(socket) {
-    transportServer.onOpen(socket, socket.send)
+    transportServer.onOpen(socket, socket.send.bind(socket)) // do not send any message before onOpen
     socket.on('message', function(message) {
         transportServer.onMessage(socket, message)
-        transportServer.send(socket, message) // use this method rather than socket.send(message) to guarantee sending the message
     })
     socket.on('close', function() {
         transportServer.onClose(socket)
     })
+    // setTimeout(socket.close.bind(socket), 5000)
 })
 
-wsClient.on('open', function open() {
-    transportClient.onOpen(wsClient, wsClient.send)
-    wsClient.on('message', function(message) {
-        transportClient.onMessage(wsClient, message)
+// CLIENT
+;(function reconnect(wsClientOld) {
+    const wsClient = new WebSocket('ws://localhost:' + port)
+    const send = wsClient.send.bind(wsClient)
+    wsClient.on('open', function() {
+        if (wsClientOld === undefined) {
+            transportClient.onOpen(wsClient, send)
+        } else {
+            transportClient.onReconnect(wsClientOld, wsClient, send)
+        }
+        wsClient.on('message', function(message) {
+            transportClient.onMessage(wsClient, message)
+        })
+        wsClient.on('close', function() {
+            transportClient.onClose(wsClient)
+            reconnect(wsClient)
+        })
     })
-    wsClient.send('hello')
-})
+})()
 
+transportServer.type = 'SERVER'
+transportClient.type = 'CLIENT'
 // test('RECONNECT TEST', function(t) {
 //     t.end()
 // })
