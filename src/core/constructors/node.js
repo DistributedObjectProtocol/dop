@@ -2,7 +2,6 @@ dop.core.node = function Node(transport) {
     // Inherit emitter
     dop.util.merge(this, new dop.util.emitter()) //https://jsperf.com/inheritance-call-vs-object-assign
     this.transport = transport
-
     this.status = dop.cons.NODE_STATE_OPEN
     this.request_inc = 1
     this.requests = {}
@@ -20,7 +19,7 @@ dop.core.node.prototype.send = function(message) {
 }
 
 dop.core.node.prototype.disconnect = function() {
-    // this.emit(dop.cons.DISCONNECT)
+    this.transport.onDisconnect(this)
 }
 
 dop.core.node.prototype.subscribe = function() {

@@ -95,6 +95,13 @@ test('SERVER RECONNECT', function(t) {
         t.equal(Object.keys(transportServer.nodesByToken).length, 1)
         t.equal(Object.keys(transportServer.nodesByRemoteToken).length, 1)
         t.equal(transportServer.nodesBySocket.size, 1)
+        nodeClient.disconnect()
+        t.end()
+    })
+})
+
+test('CLIENT DISCONNECT', function(t) {
+    transportClient.on('disconnect', function(node) {
         t.end()
     })
 })
