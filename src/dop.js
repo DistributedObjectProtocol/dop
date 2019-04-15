@@ -54,7 +54,9 @@ var dop = {
         NODE_STATE_CONNECTED: 1,
         NODE_STATE_RECONNECTING: 2,
         NODE_STATE_DISCONNECTED: 3,
-        EVENT_CONNECT: 'connect'
+        EVENT_CONNECT: 'connect',
+        EVENT_RECONNECT: 'reconnect',
+        EVENT_DISCONNECT: 'disconnect'
     }
 
 }; 
