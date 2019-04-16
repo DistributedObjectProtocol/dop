@@ -16,7 +16,7 @@ wsServer.on('connection', function(socket) {
         socket,
         socket.send.bind(socket),
         socket.close.bind(socket)
-    ) // do not send any message before onOpen
+    )
     socket.on('message', function(message) {
         transportServer.onMessage(socket, message)
     })
@@ -57,7 +57,7 @@ var nodeServer
 var nodeClient
 var socketClient
 var socketServer
-test('CLIENT onCONNECT', function(t) {
+test('CLIENT onConnect', function(t) {
     transportClient.on('connect', function(node) {
         nodeClient = node
         socketClient = node.socket
@@ -67,7 +67,7 @@ test('CLIENT onCONNECT', function(t) {
     })
 })
 
-test('SERVER onCONNECT', function(t) {
+test('SERVER onConnect', function(t) {
     transportServer.on('connect', function(node) {
         nodeServer = node
         socketServer = node.socket
@@ -79,7 +79,7 @@ test('SERVER onCONNECT', function(t) {
     })
 })
 
-test('CLIENT onRECONNECT', function(t) {
+test('CLIENT onReconnect', function(t) {
     transportClient.on('reconnect', function(node) {
         t.equal(nodeClient, node)
         t.notEqual(nodeClient.socket, socketClient)
@@ -89,7 +89,7 @@ test('CLIENT onRECONNECT', function(t) {
     })
 })
 
-test('SERVER onRECONNECT', function(t) {
+test('SERVER onReconnect', function(t) {
     transportServer.on('reconnect', function(node) {
         t.equal(nodeServer, node)
         t.notEqual(nodeServer.socket, socketServer)
@@ -101,6 +101,10 @@ test('SERVER onRECONNECT', function(t) {
 
 test('SERVER RUN disconnect()', function(t) {
     transportServer.on('disconnect', function(node) {
+        t.equal(nodeServer, node)
+    })
+    transportClient.on('disconnect', function(node) {
+        t.equal(nodeClient, node)
         t.end()
     })
     nodeServer.disconnect()

@@ -60,10 +60,9 @@ dop.core.transport.prototype.onMessage = function(socket, message_token) {
 
 dop.core.transport.prototype.onClose = function(socket) {
     var node = this.nodesBySocket.get(socket)
-    node.status =
-        node.status === dop.cons.NODE_STATE_CONNECTED
-            ? dop.cons.NODE_STATE_RECONNECTING
-            : dop.cons.NODE_STATE_DISCONNECTED
+    // If node is undefined is because we already removed socket as disconnected
+    if (node !== undefined && node.status === dop.cons.NODE_STATE_CONNECTED)
+        node.status = dop.cons.NODE_STATE_RECONNECTING
 }
 
 dop.core.transport.prototype.onReconnect = function(
@@ -91,9 +90,11 @@ dop.core.transport.prototype.onReconnect = function(
 }
 
 dop.core.transport.prototype.forceDisconnect = function(node) {
-    // Sending token as instruccion to disconnect
-    node.sendSocket(node.token)
-    this.onDisconnect(node)
+    if (node.status === dop.cons.NODE_STATE_CONNECTED) {
+        // Sending token as instruccion to disconnect
+        node.sendSocket(node.token)
+        this.onDisconnect(node)
+    }
 }
 
 dop.core.transport.prototype.onDisconnect = function(node) {
@@ -103,6 +104,9 @@ dop.core.transport.prototype.onDisconnect = function(node) {
     // Emitting
     node.emit(dop.cons.EVENT_DISCONNECT)
     this.emit(dop.cons.EVENT_DISCONNECT, node)
+    // Removing everything
+    this.nodesBySocket.delete(node.socket)
+    dop.core.unregisterNode(node)
 }
 
 dop.core.transport.prototype.updateSocket = function(
