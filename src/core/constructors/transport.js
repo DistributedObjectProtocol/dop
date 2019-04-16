@@ -60,7 +60,7 @@ dop.core.transport.prototype.onMessage = function(socket, message_token) {
 
 dop.core.transport.prototype.onClose = function(socket) {
     var node = this.nodesBySocket.get(socket)
-    // If node is undefined is because we already removed socket as disconnected
+    // If node is undefined is because we already removed the linked socket in onDisconnect()
     if (node !== undefined && node.status === dop.cons.NODE_STATE_CONNECTED)
         node.status = dop.cons.NODE_STATE_RECONNECTING
 }

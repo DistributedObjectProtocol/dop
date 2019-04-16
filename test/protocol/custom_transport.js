@@ -5,12 +5,12 @@ var dop = require('../.proxy').create()
 var dopServer = dop.create()
 var dopClient = dop.create()
 
-const port = 8989
-const transportServer = new dopServer.core.transport()
-const transportClient = new dopClient.core.transport()
+var port = 8989
+var transportServer = new dopServer.core.transport()
+var transportClient = new dopClient.core.transport()
 
 // SERVER
-const wsServer = new WebSocket.Server({ port })
+var wsServer = new WebSocket.Server({ port })
 wsServer.on('connection', function(socket) {
     transportServer.onOpen(
         socket,
@@ -27,10 +27,10 @@ wsServer.on('connection', function(socket) {
 
 // CLIENT
 ;(function reconnect(wsClientOld) {
-    let keepReconnecting = true
-    const wsClient = new WebSocket('ws://localhost:' + port)
-    const send = wsClient.send.bind(wsClient)
-    const close = () => {
+    var keepReconnecting = true
+    var wsClient = new WebSocket('ws://localhost:' + port)
+    var send = wsClient.send.bind(wsClient)
+    var close = () => {
         keepReconnecting = false
         wsClient.close()
     }

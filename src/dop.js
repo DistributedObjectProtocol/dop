@@ -45,7 +45,6 @@ var dop = {
     // Constants
     cons: {
         DOP: '~DOP',
-        TOKEN: '~TOKEN_DOP',
         TOKEN_LENGTH: 32,        
         REMOTE_FUNCTION: '$DOP_REMOTE_FUNCTION',
         REMOTE_FUNCTION_UNSETUP: '$DOP_REMOTE_FUNCTION_UNSETUP',
