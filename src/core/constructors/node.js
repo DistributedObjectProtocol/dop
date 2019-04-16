@@ -8,9 +8,10 @@ dop.core.node = function Node(transport) {
     this.message_queue = [] // Response / Request / instrunctions queue
     this.subscriber = {}
     this.owner = {}
-    // Generating token
+    // Generating token temp
     do {
-        this.token = dop.util.uuid()
+        this.token = String(global.tokeninc++)
+        // this.token = dop.util.uuid()
     } while (typeof dop.data.node[this.token] == 'object')
 }
 

@@ -13,16 +13,15 @@ dop.core.transport.prototype.onOpen = function(socket, sendRaw) {
 }
 
 dop.core.transport.prototype.onMessage = function(socket, message) {
-    var token = message
-    var old_node = this.nodesByRemoteToken[token]
+    var remote_token = message
+    var old_node = this.nodesByRemoteToken[remote_token]
     var node = this.nodesBySocket.get(socket)
-    console.log(old_node === node, this.type, node.status, typeof old_node)
     if (node.status === dop.cons.NODE_STATE_OPEN) {
         // CONNECT
         if (old_node === undefined) {
             node.status = dop.cons.NODE_STATE_CONNECTED
             this.nodesByToken[node.token] = node // dop.core.registerNode(node)
-            this.nodesByRemoteToken[token] = node
+            this.nodesByRemoteToken[remote_token] = node
             this.emit(dop.cons.EVENT_CONNECT, node)
         }
         // RECONNECT
@@ -65,8 +64,8 @@ dop.core.transport.prototype.onReconnect = function(
     this.nodesBySocket.delete(old_socket)
     // Updating the new socket to the node
     this.updateSocket(node, socket, sendRaw)
-    // Sending old token to reconnect
-    sendRaw(node.token)
+    // Sending instruccion to reconnect
+    node.sendRaw(node.token)
     // Emit event
     node.status = dop.cons.NODE_STATE_CONNECTED
     node.emit(dop.cons.EVENT_RECONNECT)

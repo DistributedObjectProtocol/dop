@@ -1,3 +1,4 @@
+global.tokeninc = 1
 var test = require('tape')
 var WebSocket = require('ws')
 var dop = require('../.proxy').create()
