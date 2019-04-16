@@ -10,8 +10,8 @@ dop.core.node = function Node(transport) {
     this.owner = {}
     // Generating token temp
     do {
-        this.token = String(global.tokeninc++)
-        // this.token = dop.util.uuid()
+        // this.token = String(global.tokeninc++)
+        this.token = dop.util.uuid(dop.cons.TOKEN_LENGTH / 2)
     } while (typeof dop.data.node[this.token] == 'object')
 }
 
@@ -20,7 +20,7 @@ dop.core.node.prototype.send = function(message) {
 }
 
 dop.core.node.prototype.disconnect = function() {
-    this.transport.onDisconnect(this)
+    this.transport.forceDisconnect(this)
 }
 
 dop.core.node.prototype.subscribe = function() {
