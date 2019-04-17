@@ -2,11 +2,11 @@
 dop.util.uuid = function(length) {
     // if (length === undefined) length = 32
     var text = []
-    var possible =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    var charsLength = chars.length
 
     for (var i = 0; i < length; i++)
-        text.push(possible.charAt(Math.floor(Math.random() * possible.length)))
+        text.push(chars.charAt(Math.floor(Math.random() * charsLength)))
 
     return text.join('')
 }

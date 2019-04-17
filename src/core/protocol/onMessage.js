@@ -1,12 +1,5 @@
-dop.core.emitMessage = function(node, message_string, message_raw) {
-    // If server
-    if (node.listener)
-        node.listener.emit('message', node, message_string, message_raw)
-
-    node.emit('message', message_string, message_raw)
-
+dop.core.onMessage = function(node, message_string) {
     var messages
-
     // Parsing messages
     if (typeof message_string == 'string' && message_string[0] == '[') {
         // https://jsperf.com/slice-substr-substring-test

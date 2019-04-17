@@ -17,7 +17,10 @@ dop.core.transport.prototype.onOpen = function(
 
 dop.core.transport.prototype.onMessage = function(socket, message_token) {
     var node = this.nodesBySocket.get(socket)
-    if (node.status === dop.cons.NODE_STATE_OPEN) {
+    if (
+        node.status === dop.cons.NODE_STATE_OPEN &&
+        message_token.length <= dop.cons.TOKEN_LENGTH // https://jsperf.com/checking-undefined-or-by-length
+    ) {
         var old_node = this.nodesByToken[message_token]
         // CONNECT
         if (old_node === undefined) {
@@ -48,13 +51,17 @@ dop.core.transport.prototype.onMessage = function(socket, message_token) {
             // So we must force the disconnection of the socket/node.
             node.closeSocket()
         }
-    }
-    // DISCONNECT
-    else if (
-        node.status === dop.cons.NODE_STATE_CONNECTED &&
-        node.token === message_token
-    ) {
-        this.onDisconnect(node)
+    } else if (node.status === dop.cons.NODE_STATE_CONNECTED) {
+        // DISCONNECT
+        if (node.token === message_token) {
+            this.onDisconnect(node)
+        }
+        // EMIT and MANAGE MESSAGE
+        else {
+            this.emit('message', node, message_token)
+            node.emit('message', message_token)
+            dop.core.onMessage(node, message_token)
+        }
     }
 }
 

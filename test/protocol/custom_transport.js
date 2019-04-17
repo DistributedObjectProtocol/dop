@@ -5,8 +5,8 @@ var dopServer = dop.create()
 var dopClient = dop.create()
 
 var port = 8989
-var transportServer = new dopServer.core.transport()
-var transportClient = new dopClient.core.transport()
+var transportServer = dopServer.createTransport()
+var transportClient = dopClient.createTransport()
 
 // SERVER
 var wsServer = new WebSocket.Server({ port })
