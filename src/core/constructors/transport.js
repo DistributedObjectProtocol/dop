@@ -116,6 +116,14 @@ dop.core.transport.prototype.onDisconnect = function(node) {
     dop.core.unregisterNode(node)
 }
 
+dop.core.transport.prototype.onError = function(socket, error) {
+    var node = this.nodesBySocket.get(socket)
+    if (node !== undefined) {
+        node.emit(dop.cons.EVENT_ERROR, error)
+    }
+    this.emit(dop.cons.EVENT_ERROR, node || socket, error)
+}
+
 dop.core.transport.prototype.updateSocket = function(
     node,
     socket,

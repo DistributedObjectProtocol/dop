@@ -1,3 +1,3 @@
-dop.core.getDefaultListenTransport = function() {
+dop.getDefaultListenTransport = function() {
     return require('dop-transports').listen.ws
 }

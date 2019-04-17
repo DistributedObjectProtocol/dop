@@ -4,7 +4,8 @@ var dop = require('../.proxy').create()
 var dopServer = dop.create()
 var dopClient = dop.create()
 
-var port = 8989
+var portOriginal = 8989
+var port = portOriginal
 var transportServer = dopServer.createTransport()
 var transportClient = dopClient.createTransport()
 
@@ -22,10 +23,13 @@ wsServer.on('connection', function(socket) {
     socket.on('close', function() {
         transportServer.onClose(socket)
     })
+    socket.on('error', function(error) {
+        transportServer.onError(socket, error)
+    })
 })
 
 // CLIENT
-;(function reconnect(wsClientOld) {
+function reconnect(wsClientOld) {
     var keepReconnecting = true
     var wsClient = new WebSocket('ws://localhost:' + port)
     var send = wsClient.send.bind(wsClient)
@@ -39,15 +43,20 @@ wsServer.on('connection', function(socket) {
         } else {
             transportClient.onReconnect(wsClientOld, wsClient, send, close)
         }
-        wsClient.on('message', function(message) {
-            transportClient.onMessage(wsClient, message)
-        })
-        wsClient.on('close', function() {
-            transportClient.onClose(wsClient)
-            if (keepReconnecting) reconnect(wsClient)
-        })
     })
-})()
+    wsClient.on('message', function(message) {
+        transportClient.onMessage(wsClient, message)
+    })
+    wsClient.on('close', function() {
+        transportClient.onClose(wsClient)
+        if (keepReconnecting) reconnect(wsClient)
+    })
+    wsClient.on('error', function(error) {
+        keepReconnecting = false
+        transportClient.onError(wsClient, error)
+    })
+    return wsClient
+}
 
 transportServer.type = 'SERVER'
 transportClient.type = 'CLIENT'
@@ -56,7 +65,19 @@ var nodeServer
 var nodeClient
 var socketClient
 var socketServer
+test('CLIENT trying connect invalid port', function(t) {
+    port = 2131
+    var wsClient = reconnect()
+    transportClient.on('error', function(socket, error) {
+        t.equal(socket, wsClient)
+        t.notEqual(error, undefined)
+        t.end()
+    })
+})
+
 test('CLIENT onConnect', function(t) {
+    port = portOriginal
+    reconnect()
     transportClient.on('connect', function(node) {
         nodeClient = node
         socketClient = node.socket

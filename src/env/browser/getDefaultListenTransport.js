@@ -1,3 +1,3 @@
-dop.core.getDefaultListenTransport = function() {
+dop.getDefaultListenTransport = function() {
     return dop.transports.listen.local
 }
