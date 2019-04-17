@@ -43,10 +43,10 @@ dop.core.transport.prototype.onMessage = function(socket, message_token) {
             old_node.emit(dop.cons.EVENT_RECONNECT)
             this.emit(dop.cons.EVENT_RECONNECT, old_node)
         } else {
-            // This could happen if another node is trying to
-            // connect with a token that is already used by another node.
+            // This could happen if a new node is trying to connect
+            // with a token that is already used by another node.
             // So we must force the disconnection of the socket/node.
-            console.log('WE MUST GO HERE!')
+            node.closeSocket()
         }
     }
     // DISCONNECT
@@ -60,7 +60,7 @@ dop.core.transport.prototype.onMessage = function(socket, message_token) {
 
 dop.core.transport.prototype.onClose = function(socket) {
     var node = this.nodesBySocket.get(socket)
-    // If node is undefined is because we already removed the linked socket in onDisconnect()
+    // If node is undefined is because we already removed the linked socket inside of onDisconnect()
     if (node !== undefined && node.status === dop.cons.NODE_STATE_CONNECTED)
         node.status = dop.cons.NODE_STATE_RECONNECTING
 }

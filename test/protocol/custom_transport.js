@@ -1,4 +1,3 @@
-global.tokeninc = 1
 var test = require('tape')
 var WebSocket = require('ws')
 var dop = require('../.proxy').create()
@@ -99,12 +98,24 @@ test('SERVER onReconnect', function(t) {
     })
 })
 
+test('CHEATING CONNECTION MUST CLOSE THE SOCKET', function(t) {
+    var wsClient = new WebSocket('ws://localhost:' + port)
+    wsClient.on('open', function() {
+        wsClient.send(nodeClient.token)
+    })
+    wsClient.on('close', function() {
+        t.equal(true, true)
+        t.end()
+    })
+})
+
 test('SERVER RUN disconnect()', function(t) {
     transportServer.on('disconnect', function(node) {
         t.equal(nodeServer, node)
     })
     transportClient.on('disconnect', function(node) {
         t.equal(nodeClient, node)
+        wsServer.close()
         t.end()
     })
     nodeServer.disconnect()
