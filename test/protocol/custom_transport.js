@@ -37,21 +37,21 @@ function reconnect(wsClientOld) {
         keepReconnecting = false
         wsClient.close()
     }
-    wsClient.on('open', function() {
+    wsClient.addEventListener('open', function() {
         if (wsClientOld === undefined) {
             transportClient.onOpen(wsClient, send, close)
         } else {
             transportClient.onReconnect(wsClientOld, wsClient, send, close)
         }
     })
-    wsClient.on('message', function(message) {
-        transportClient.onMessage(wsClient, message)
+    wsClient.addEventListener('message', function(message) {
+        transportClient.onMessage(wsClient, message.data)
     })
-    wsClient.on('close', function() {
+    wsClient.addEventListener('close', function() {
         transportClient.onClose(wsClient)
         if (keepReconnecting) reconnect(wsClient)
     })
-    wsClient.on('error', function(error) {
+    wsClient.addEventListener('error', function(error) {
         keepReconnecting = false
         transportClient.onError(wsClient, error)
     })

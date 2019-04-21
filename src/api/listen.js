@@ -5,6 +5,6 @@ dop.listen = function(options) {
         options.transport = dop.getDefaultListenTransport()
 
     return typeof options.transport == 'function'
-        ? options.transport(options)
+        ? options.transport(dop, options)
         : options.transport
 }

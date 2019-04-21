@@ -6,11 +6,13 @@ dop.connect = function(options) {
 
     var transport =
         typeof options.transport == 'function'
-            ? options.transport(options)
+            ? options.transport(dop, options)
             : options.transport
 
     return new Promise(function(resolve, reject) {
         transport.on(dop.cons.EVENT_CONNECT, resolve)
-        transport.on(dop.cons.EVENT_ERROR, reject)
+        transport.on(dop.cons.EVENT_ERROR, function(node_socket, error) {
+            reject(error)
+        })
     })
 }
