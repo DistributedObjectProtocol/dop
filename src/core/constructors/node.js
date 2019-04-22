@@ -6,6 +6,7 @@ dop.core.node = function Node(transport) {
     this.request_inc = 1
     this.requests = {}
     this.message_queue = [] // Response / Request / instrunctions queue
+    this.sends_queue = []
     this.subscriber = {}
     this.owner = {}
     // Generating token temp
@@ -16,7 +17,11 @@ dop.core.node = function Node(transport) {
 }
 
 dop.core.node.prototype.send = function(message) {
-    // this.emit(dop.cons.SEND, message)
+    if (this.status === dop.cons.NODE_STATE_CONNECTED) {
+        this.sendSocket(message)
+    } else {
+        this.sends_queue.push(message)
+    }
 }
 
 dop.core.node.prototype.disconnect = function() {

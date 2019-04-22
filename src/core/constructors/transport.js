@@ -5,6 +5,13 @@ dop.core.transport = function Transport() {
     this.nodesByToken = dop.data.node
 }
 
+// dop.core.transport.prototype.disconnectAll = function() {
+//     var nodes = this.nodesByToken
+//     for (var token in nodes) {
+//         nodes[token].disconnect()
+//     }
+// }
+
 dop.core.transport.prototype.onOpen = function(
     socket,
     sendSocket,
@@ -28,6 +35,7 @@ dop.core.transport.prototype.onMessage = function(socket, message_token) {
             node.token = this.getUniqueToken(node.token, message_token)
             this.nodesByToken[node.token] = node
             this.emit(dop.cons.EVENT_CONNECT, node)
+            this.sendQueue(node)
         }
         // RECONNECT
         else if (old_node.status === dop.cons.NODE_STATE_RECONNECTING) {
@@ -45,6 +53,7 @@ dop.core.transport.prototype.onMessage = function(socket, message_token) {
             old_node.status = dop.cons.NODE_STATE_CONNECTED
             old_node.emit(dop.cons.EVENT_RECONNECT)
             this.emit(dop.cons.EVENT_RECONNECT, old_node)
+            this.sendQueue(node)
         } else {
             // This could happen if a new node is trying to connect
             // with a token that is already used by another node.
@@ -94,6 +103,7 @@ dop.core.transport.prototype.onReconnect = function(
     node.status = dop.cons.NODE_STATE_CONNECTED
     node.emit(dop.cons.EVENT_RECONNECT)
     this.emit(dop.cons.EVENT_RECONNECT, node)
+    this.sendQueue(node)
 }
 
 dop.core.transport.prototype.forceDisconnect = function(node) {
@@ -134,6 +144,12 @@ dop.core.transport.prototype.updateSocket = function(
     node.sendSocket = sendSocket
     node.closeSocket = closeSocket
     this.nodesBySocket.set(socket, node)
+}
+
+dop.core.transport.prototype.sendQueue = function(node) {
+    while (node.sends_queue.length > 0) {
+        node.sendSocket(node.sends_queue.shift())
+    }
 }
 
 dop.core.transport.prototype.getUniqueToken = function(token1, token2) {
