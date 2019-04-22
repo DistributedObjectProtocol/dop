@@ -19,13 +19,22 @@
                 '/' +
                 dop.name
         }
+        if (typeof options.timeoutReconnect != 'number') {
+            options.timeoutReconnect = 1 // seconds
+        }
 
         var transport = dop.createTransport()
         var WebSocket = options.transport.getApi()
         ;(function reconnect(ws_client_old) {
             var keep_reconnecting = true
             var ws_client = new WebSocket(url)
-            var send = ws_client.send.bind(ws_client)
+            var send = function(message) {
+                if (ws_client.readyState === 1) {
+                    ws_client.send(message)
+                    return true
+                }
+                return false
+            }
             var close = function() {
                 keep_reconnecting = false
                 ws_client.close()
@@ -43,7 +52,10 @@
             })
             ws_client.addEventListener('close', function() {
                 transport.onClose(ws_client)
-                if (keep_reconnecting) reconnect(ws_client)
+                if (keep_reconnecting)
+                    setTimeout(function() {
+                        reconnect(ws_client)
+                    }, options.timeoutReconnect)
             })
             ws_client.addEventListener('error', function(error) {
                 keep_reconnecting = false

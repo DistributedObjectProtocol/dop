@@ -5,13 +5,6 @@ dop.core.transport = function Transport() {
     this.nodesByToken = dop.data.node
 }
 
-// dop.core.transport.prototype.disconnectAll = function() {
-//     var nodes = this.nodesByToken
-//     for (var token in nodes) {
-//         nodes[token].disconnect()
-//     }
-// }
-
 dop.core.transport.prototype.onOpen = function(
     socket,
     sendSocket,
@@ -24,6 +17,7 @@ dop.core.transport.prototype.onOpen = function(
 
 dop.core.transport.prototype.onMessage = function(socket, message_token) {
     var node = this.nodesBySocket.get(socket)
+    // console.log(dop.env, node.status, message_token)
     if (
         node.status === dop.cons.NODE_STATE_OPEN &&
         message_token.length <= dop.cons.TOKEN_LENGTH // https://jsperf.com/checking-undefined-or-by-length
@@ -60,6 +54,12 @@ dop.core.transport.prototype.onMessage = function(socket, message_token) {
             // So we must force the disconnection of the socket/node.
             node.closeSocket()
         }
+    } else if (node.status === dop.cons.NODE_STATE_PRECONNECTED) {
+        // RECONNECTED!
+        node.status = dop.cons.NODE_STATE_CONNECTED
+        node.emit(dop.cons.EVENT_RECONNECT)
+        this.emit(dop.cons.EVENT_RECONNECT, node)
+        this.sendQueue(node)
     } else if (node.status === dop.cons.NODE_STATE_CONNECTED) {
         // DISCONNECT
         if (node.token === message_token) {
@@ -100,10 +100,14 @@ dop.core.transport.prototype.onReconnect = function(
     // Sending instruccion to reconnect
     node.sendSocket(node.token)
     // Emit event
-    node.status = dop.cons.NODE_STATE_CONNECTED
-    node.emit(dop.cons.EVENT_RECONNECT)
-    this.emit(dop.cons.EVENT_RECONNECT, node)
-    this.sendQueue(node)
+    node.status = dop.cons.NODE_STATE_PRECONNECTED
+}
+
+dop.core.transport.prototype.disconnectAll = function() {
+    var nodes = this.nodesByToken
+    for (var token in nodes) {
+        nodes[token].disconnect()
+    }
 }
 
 dop.core.transport.prototype.forceDisconnect = function(node) {
@@ -147,9 +151,8 @@ dop.core.transport.prototype.updateSocket = function(
 }
 
 dop.core.transport.prototype.sendQueue = function(node) {
-    while (node.sends_queue.length > 0) {
+    while (node.sends_queue.length > 0)
         node.sendSocket(node.sends_queue.shift())
-    }
 }
 
 dop.core.transport.prototype.getUniqueToken = function(token1, token2) {

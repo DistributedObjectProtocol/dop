@@ -17,11 +17,15 @@ dop.core.node = function Node(transport) {
 }
 
 dop.core.node.prototype.send = function(message) {
-    if (this.status === dop.cons.NODE_STATE_CONNECTED) {
-        this.sendSocket(message)
-    } else {
+    if (
+        this.status !== dop.cons.NODE_STATE_CONNECTED ||
+        this.sends_queue.length > 0 ||
+        !this.sendSocket(message)
+    ) {
         this.sends_queue.push(message)
+        return false
     }
+    return true
 }
 
 dop.core.node.prototype.disconnect = function() {
