@@ -1,6 +1,6 @@
 {
     "name": "dop",
-    "version": "0.43.1",
+    "version": "1.0.0-rc1",
     "main": "./dist/dop.nodejs.js",
     "browser": "./dist/dop.js",
     "unpkg": "./dist/dop.min.js",
@@ -34,7 +34,7 @@
         "client"
     ],
     "dependencies": {
-        "dop-transports": "^2.0.14"
+        "dop-transports": "file:../dop-transports"
     },
     "devDependencies": {
         "coveralls": "^2.11.4",
@@ -54,7 +54,8 @@
         "lodash.merge": "^4.6.0",
         "tap": "^7.1.2",
         "tape": "^4.6.3",
-        "tape-run": "^2.4.1"
+        "tape-run": "^2.4.1",
+        "ws": "^6.2.1"
     },
     "scripts": {
         "dev": "grunt",

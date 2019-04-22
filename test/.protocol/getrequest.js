@@ -1,6 +1,6 @@
 var test = require('tape')
-var dopServer = require('./.proxy').create()
-var dopClient = require('./.proxy').create()
+var dopServer = require('../.proxy').create()
+var dopClient = require('../.proxy').create()
 var transportName = process.argv[2] || 'local'
 var transportListen = require('dop-transports').listen[transportName]
 var transportConnect = require('dop-transports').connect[transportName]
