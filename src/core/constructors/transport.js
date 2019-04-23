@@ -19,8 +19,7 @@ dop.core.transport.prototype.onMessage = function(socket, message_token) {
     var node = this.nodesBySocket.get(socket)
     // console.log(dop.env, node.status, message_token)
     if (
-        node.status === dop.cons.NODE_STATE_OPEN &&
-        message_token.length <= dop.cons.TOKEN_LENGTH // https://jsperf.com/checking-undefined-or-by-length
+        node.status === dop.cons.NODE_STATE_OPEN //&&message_token.length <= dop.cons.TOKEN_LENGTH // https://jsperf.com/checking-undefined-or-by-length
     ) {
         var old_node = this.nodesByToken[message_token]
         // CONNECT

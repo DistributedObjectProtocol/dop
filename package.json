@@ -61,8 +61,6 @@
         "dev": "grunt",
         "build": "grunt --build",
         "test": "tap test/*.js test/protocol/*.js",
-        "test:websocket": "tap test/protocol/*.js --test-arg=websocket",
-        "test:local": "tap test/protocol/*.js --test-arg=local",
         "test:electron": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\"",
         "test:chrome": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser chrome",
         "test:firefox": "browserify test/protocol/*.js test/*.js | tape-run --render=\"faucet\" --browser firefox",
