@@ -52,10 +52,11 @@
             })
             ws_client.addEventListener('close', function() {
                 transport.onClose(ws_client)
-                if (keep_reconnecting)
+                if (keep_reconnecting) {
                     setTimeout(function() {
                         reconnect(ws_client)
                     }, options.timeoutReconnect * 1000)
+                }
             })
             ws_client.addEventListener('error', function(error) {
                 keep_reconnecting = false
