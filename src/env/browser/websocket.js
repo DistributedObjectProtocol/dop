@@ -55,7 +55,7 @@
                 if (keep_reconnecting)
                     setTimeout(function() {
                         reconnect(ws_client)
-                    }, options.timeoutReconnect)
+                    }, options.timeoutReconnect * 1000)
             })
             ws_client.addEventListener('error', function(error) {
                 keep_reconnecting = false

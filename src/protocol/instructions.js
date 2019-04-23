@@ -21,25 +21,25 @@ dop.protocol.instructions = {
     // [1234]
 
     // Subscriber -> Owner
-    subscribe: 1, // [ 1234, <instruction>, <params...>]
-    // [-1234, 0, <object_id>, <data_object>]
-    // [-1234, 0, <object_id>, ['path']]
+    subscribe: 1, // [ <request_id>, <instruction>, <params...>]
+    // [-<request_id>, 0, <object_id>, <data_object>]
+    // [-<request_id>, 0, <object_id>, ['path']]
 
     // Subscriber -> Owner
-    unsubscribe: 2, // [ 1234, <instruction>, <object_id>]
-    // [-1234, 0]
+    unsubscribe: 2, // [ <request_id>, <instruction>, <object_id>]
+    // [-<request_id>, 0]
 
     // Subscriber -> Owner
-    call: 3, // [ 1234, <instruction>, <object_id>, ['path','subpath'], [<params...>]]
-    // [-1234, 0, <return>]
+    call: 3, // [ <request_id>, <instruction>, <object_id>, ['path','subpath'], [<params...>]]
+    // [-<request_id>, 0, <return>]
 
     // Owner -> Subscriber
-    broadcast: 4, // [ 1234, <instruction>, <object_id>, ['path','subpath'], [<params...>]]
-    // [-1234, 0, <return>]
+    broadcast: 4, // [ <request_id>, <instruction>, <object_id>, ['path','subpath'], [<params...>]]
+    // [-<request_id>, 0, <return>]
 
     // Owner -> Subscriber
-    patch: 5, // [ 1234, <instruction>, <object_id>, <version>, <patch>]
-    // [-1234, 0]
+    patch: 5, // [ <request_id>, <instruction>, <object_id>, <version>, <patch>]
+    // [-<request_id>, 0]
 
     1: 'subscribe',
     2: 'unsubscribe',
