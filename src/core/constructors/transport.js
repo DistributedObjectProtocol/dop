@@ -18,9 +18,23 @@ dop.core.transport.prototype.onOpen = function(
 dop.core.transport.prototype.onMessage = function(socket, message_token) {
     var node = this.nodesBySocket.get(socket)
     // console.log(dop.env, node.status, message_token)
-    if (
-        node.status === dop.cons.NODE_STATE_OPEN //&&message_token.length <= dop.cons.TOKEN_LENGTH // https://jsperf.com/checking-undefined-or-by-length
-    ) {
+
+    if (node.status === dop.cons.NODE_STATE_CONNECTED) {
+        // DISCONNECT
+        if (node.token === message_token) {
+            this.onDisconnectByNode(node)
+        }
+        // EMIT and MANAGE MESSAGE
+        else {
+            this.emit('message', node, message_token)
+            node.emit('message', message_token)
+            dop.core.onMessage(node, message_token)
+        }
+    }
+    // IF NODE STATUS IS OPEN MEANS IS A NEW CONNECTION OR A RECCONNECTION
+    // IS A RRECONNECTION ONLY IF WE CAN GET THE OLD NODE.TOKEN
+    // AND THE STATUS OF THAT OLD_NODE IS RECONNECTING
+    else if (node.status === dop.cons.NODE_STATE_OPEN) {
         var old_node = this.nodesByToken[message_token]
         // CONNECT
         if (old_node === undefined) {
@@ -46,6 +60,7 @@ dop.core.transport.prototype.onMessage = function(socket, message_token) {
             old_node.status = dop.cons.NODE_STATE_CONNECTED
             old_node.emit(dop.cons.EVENT_RECONNECT)
             this.emit(dop.cons.EVENT_RECONNECT, old_node)
+            // Sending the old_node token means is an instrunction to reconnect on the other side
             old_node.sendSocket(old_node.token)
             this.sendQueue(old_node)
         } else {
@@ -64,17 +79,6 @@ dop.core.transport.prototype.onMessage = function(socket, message_token) {
         node.emit(dop.cons.EVENT_RECONNECT)
         this.emit(dop.cons.EVENT_RECONNECT, node)
         this.sendQueue(node)
-    } else if (node.status === dop.cons.NODE_STATE_CONNECTED) {
-        // DISCONNECT
-        if (node.token === message_token) {
-            this.onDisconnectBySocket(node)
-        }
-        // EMIT and MANAGE MESSAGE
-        else {
-            this.emit('message', node, message_token)
-            node.emit('message', message_token)
-            dop.core.onMessage(node, message_token)
-        }
     }
 }
 
@@ -94,19 +98,17 @@ dop.core.transport.prototype.onReconnect = function(
     this.nodesBySocket.delete(old_socket)
     // Updating the new socket to the node
     this.updateSocket(node, socket, sendSocket, closeSocket)
-    // Sending instruccion to reconnect
+    // Sending token as instruccion to reconnect
     node.sendSocket(node.token)
     node.status = dop.cons.NODE_STATE_PRECONNECTED
 }
 
-dop.core.transport.prototype.onClose = function(socket, timeout) {
+dop.core.transport.prototype.onClose = function(socket) {
     var node = this.nodesBySocket.get(socket)
-    // If node is undefined is because we already removed the linked socket inside of onDisconnectBySocket()
+    // If node is undefined is because we already removed the linked socket inside of onDisconnectByNode()
     if (node !== undefined && node.status === dop.cons.NODE_STATE_CONNECTED) {
         node.status = dop.cons.NODE_STATE_RECONNECTING
-        if (typeof timeout == 'number') {
-            node.timeout = timeout
-        }
+        node.closedAt = Date.now()
     }
 }
 
@@ -118,23 +120,25 @@ dop.core.transport.prototype.onError = function(socket, error) {
     this.emit(dop.cons.EVENT_ERROR, node || socket, error)
 }
 
-dop.core.transport.prototype.onDisconnectBySocket = function(node) {
-    node.status = dop.cons.NODE_STATE_DISCONNECTED
+dop.core.transport.prototype.onDisconnectByNode = function(node) {
     // Closing socket
     node.closeSocket()
-    // Emitting
-    node.emit(dop.cons.EVENT_DISCONNECT)
-    this.emit(dop.cons.EVENT_DISCONNECT, node)
     // Removing everything
     this.nodesBySocket.delete(node.socket)
     dop.core.unregisterNode(node)
+    // Emitting
+    node.status = dop.cons.NODE_STATE_DISCONNECTED
+    node.emit(dop.cons.EVENT_DISCONNECT)
+    this.emit(dop.cons.EVENT_DISCONNECT, node)
 }
 
 dop.core.transport.prototype.forceDisconnect = function(node) {
     if (node.status === dop.cons.NODE_STATE_CONNECTED) {
         // Sending token as instruccion to disconnect
         node.sendSocket(node.token)
-        this.onDisconnectBySocket(node)
+        this.onDisconnectByNode(node)
+    } else if (node.status === dop.cons.NODE_STATE_RECONNECTING) {
+        this.onDisconnectByNode(node)
     }
 }
 
