@@ -29,7 +29,7 @@ dop.core.node.prototype.send = function(message) {
 }
 
 dop.core.node.prototype.disconnect = function() {
-    this.transport.forceDisconnect(this)
+    this.transport.onDisconnect(this)
 }
 
 dop.core.node.prototype.subscribe = function() {
