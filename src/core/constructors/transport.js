@@ -22,8 +22,9 @@ dop.core.transport.prototype.onMessage = function(socket, message) {
     // var message_splited = message.split(CONNECTIVITY_CHARACTER)
     // var instruction = message_splited[0]
     // var token = message_splited[1]
-    // console.log((dop.env === 'CLIENT') + 0, dop.env, node.status, message)
+    console.log((dop.env === 'CLIENT') + 0, dop.env, node.status, message)
 
+    // We use this functions to separate the logic a bit and make it cleaner
     if (node.status === dop.cons.NODE_STATE_CONNECTED)
         this.onMessageCONNECTED(node, message)
     else if (node.status === dop.cons.NODE_STATE_OPEN)
@@ -131,33 +132,26 @@ dop.core.transport.prototype.getUniqueToken = function(token1, token2) {
     return token1 < token2 ? token1 + token2 : token2 + token1
 }
 
-dop.core.transport.prototype.onMessageCONNECTED = function(
-    node,
-    message_token
-) {
+dop.core.transport.prototype.onMessageCONNECTED = function(node, message) {
     // DISCONNECT
-    if (node.token === message_token) {
+    if (node.token === message) {
         this.disconnectAndDelete(node)
     }
     // EMIT and MANAGE MESSAGE VIA dop
     else {
-        this.emit('message', node, message_token)
-        node.emit('message', message_token)
-        dop.core.onMessage(node, message_token)
+        this.emit('message', node, message)
+        node.emit('message', message)
+        dop.core.onMessage(node, message)
     }
 }
 
-dop.core.transport.prototype.onMessageOPEN = function(
-    node,
-    message_token,
-    socket
-) {
-    var old_node = this.nodesByToken[message_token]
+dop.core.transport.prototype.onMessageOPEN = function(node, message, socket) {
+    var old_node = this.nodesByToken[message]
     // PRECONNECT
     if (old_node === undefined) {
         node.status = dop.cons.NODE_STATE_PRECONNECTED
-        node.token_remote = message_token
-        node.sendSocket(node.token_remote)
+        node.token_remote = message
+        node.sendSocket(node.token_local)
     }
     // RECONNECT as remote instruction (from client the one that usually execute onReconnect)
     else if (old_node.status === dop.cons.NODE_STATE_RECONNECTING) {
@@ -183,25 +177,25 @@ dop.core.transport.prototype.onMessageOPEN = function(
 
 dop.core.transport.prototype.onMessagePRECONNECTED = function(
     node,
-    message_token,
+    message,
     socket
 ) {
     // CONNECT
-    if (node.token_local === message_token) {
+    if (node.token_remote === message) {
         node.status = dop.cons.NODE_STATE_CONNECTED
         node.token = this.getUniqueToken(node.token_local, node.token_remote)
         this.nodesByToken[node.token] = node
         this.emit(dop.cons.EVENT_CONNECT, node)
         this.sendQueue(node)
     }
-
     // RECONNECTED! (Means that server have't removed the token yet and can be restored)
-    // if (node.token === message_token) {
-    //     node.status = dop.cons.NODE_STATE_CONNECTED
-    //     node.emit(dop.cons.EVENT_RECONNECT)
-    //     this.emit(dop.cons.EVENT_RECONNECT, node)
-    //     this.sendQueue(node)
-    // }
+    else if (node.token === message) {
+        node.status = dop.cons.NODE_STATE_CONNECTED
+        node.emit(dop.cons.EVENT_RECONNECT)
+        this.emit(dop.cons.EVENT_RECONNECT, node)
+        this.sendQueue(node)
+    }
+
     // // NEW CONNECTION BECAUSE onReconnect COULDN'T RECONNECT
     // else if (node.preToken !== undefined) {
     //     // Removing and emitting disconnection of the old node
@@ -217,24 +211,17 @@ dop.core.transport.prototype.onMessagePRECONNECTED = function(
     //     this.emit(dop.cons.EVENT_CONNECT, newnode)
     //     this.sendQueue(node) // we just created this no need to sendQueue
     // } else {
-    //     node.preToken = message_token
+    //     node.preToken = message
     // }
 }
 
 dop.core.transport.prototype.onMessageRECONNECTING = function(
     node,
-    message_token,
+    message,
     socket
 ) {
-    // RECONNECTED! (Means that server have't removed the token yet and can be restored)
-    if (node.token === message_token) {
-        node.status = dop.cons.NODE_STATE_CONNECTED
-        node.emit(dop.cons.EVENT_RECONNECT)
-        this.emit(dop.cons.EVENT_RECONNECT, node)
-        this.sendQueue(node)
-    }
-    // WHEN SERVER SENDS THEIR NEW LOCAL_TOKEN BECAUSE DON'T KNOW WE WANT TO RECONNECT
-    else {
-        node.token_remote = message_token
-    }
+    // SERVER SENDS THEIR NEW LOCAL_TOKEN BECAUSE DON'T KNOW WE WANT TO RECONNECT
+
+    node.status = dop.cons.NODE_STATE_PRECONNECTED
+    node.token_remote = message
 }
