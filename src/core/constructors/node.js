@@ -10,10 +10,9 @@ dop.core.node = function Node(transport) {
     this.subscriber = {}
     this.owner = {}
     // Generating token temp
-    do {
-        // this.token = String(global.tokeninc++)
-        this.token = dop.util.uuid(dop.cons.TOKEN_LENGTH / 2)
-    } while (typeof dop.data.node[this.token] == 'object')
+    // this.pre_token = String(global.tokeninc++)
+    this.pre_token = '__' + dop.env
+    // this.pre_token = dop.util.uuid(dop.cons.TOKEN_LENGTH / 2)
 }
 
 dop.core.node.prototype.send = function(message) {
