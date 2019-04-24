@@ -5,14 +5,12 @@ dop.core.node = function Node(transport) {
     this.status = dop.cons.NODE_STATE_OPEN
     this.request_inc = 1
     this.requests = {}
-    this.message_queue = [] // Response / Request / instrunctions queue
+    this.message_queue = [] // Response / Request / instructions queue
     this.sends_queue = []
     this.subscriber = {}
     this.owner = {}
-    // Generating token temp
-    // this.pre_token = String(global.tokeninc++)
-    this.pre_token = '__' + dop.env
-    // this.pre_token = dop.util.uuid(dop.cons.TOKEN_LENGTH / 2)
+    this.token_local = dop.util.uuid(dop.cons.TOKEN_LENGTH / 2) // Pre token is used to combine with the remote pre token to generate the real token
+    this.token_local = '_' + dop.env + '_'
 }
 
 dop.core.node.prototype.send = function(message) {

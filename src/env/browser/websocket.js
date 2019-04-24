@@ -59,7 +59,6 @@
                 }
             })
             ws_client.addEventListener('error', function(error) {
-                keep_reconnecting = false
                 transport.onError(ws_client, error)
             })
         })()
