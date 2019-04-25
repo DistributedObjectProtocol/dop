@@ -1,6 +1,6 @@
 dop.core.sendRequests = function(node) {
     var total = node.request_queue.length
-    if (total > 0 && node.status === dop.cons.NODE_STATE_CONNECTED) {
+    if (total) {
         var index = 0
         var requests_wrapped = []
         var request_string
