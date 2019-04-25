@@ -17,7 +17,7 @@ dop.core.node.prototype.send = function(message) {
     if (
         this.status !== dop.cons.NODE_STATE_CONNECTED ||
         this.sends_queue.length > 0 ||
-        !this.sendSocket(message)
+        this.sendSocket(message) === false
     ) {
         this.sends_queue.push(message)
         return false

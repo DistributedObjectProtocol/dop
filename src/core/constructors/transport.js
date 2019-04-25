@@ -82,10 +82,6 @@ dop.core.transport.prototype.onDisconnect = function(node) {
 /////// PRIVATE
 /////// PRIVATE
 
-// dop.core.transport.prototype.makeInstruction = function(instruction, token) {
-//     return instruction + dop.cons.CONNECTIVITY_CHARACTER + token
-// }
-
 dop.core.transport.prototype.disconnectAndDelete = function(node) {
     // Closing socket
     if (node.status !== dop.cons.NODE_STATE_PRECONNECTED) {
@@ -121,9 +117,9 @@ dop.core.transport.prototype.getUniqueToken = function(token1, token2) {
     var t1l = token1.length
     var t2l = token2.length
     if (t1l < t2l) {
-        token2 = token2.substr(t1l / 2, t1l)
+        token2 = token2.substr(0, t1l)
     } else if (t1l > t2l) {
-        token1 = token1.substr(t2l / 2, t2l)
+        token1 = token1.substr(0, t2l)
     }
     return token1 < token2 ? token1 + token2 : token2 + token1
 }
@@ -167,7 +163,7 @@ dop.core.transport.prototype.onMessageOPEN = function(node, message, socket) {
         // This could happen if a new node is trying to connect
         // with a token that is already used by another node.
         // So we must force the disconnection of the socket/node.
-        node.disconnect()
+        node.closeSocket()
     }
 }
 
