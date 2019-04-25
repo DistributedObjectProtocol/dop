@@ -22,11 +22,11 @@ dop.protocol.onfunction = function(
             function resolve(value) {
                 var response = dop.core.createResponse(request_id, 0)
                 if (value !== undefined) response.push(value)
-                dop.core.storeSendMessages(node, response)
+                dop.core.storeAndSendRequests(node, response)
                 return value
             }
             function reject(err) {
-                dop.core.storeSendMessages(
+                dop.core.storeAndSendRequests(
                     node,
                     dop.core.createResponse(
                         request_id,
@@ -57,7 +57,7 @@ dop.protocol.onfunction = function(
         }
     }
 
-    dop.core.storeSendMessages(
+    dop.core.storeAndSendRequests(
         node,
         dop.core.createResponse(
             request_id,

@@ -37,5 +37,5 @@ dop.protocol.onpatch = function(node, request_id, request) {
         response.push(0)
     } else response.push(dop.core.error.reject_remote.OBJECT_NOT_FOUND)
 
-    dop.core.storeSendMessages(node, response)
+    dop.core.storeAndSendRequests(node, response)
 }

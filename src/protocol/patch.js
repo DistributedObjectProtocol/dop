@@ -14,6 +14,6 @@ dop.protocol.patchSend = function(node, object_id, version, patch) {
         version,
         patch
     )
-    dop.core.storeSendMessages(node, request, dop.encodeFunction)
+    dop.core.storeAndSendRequests(node, request, dop.encodeFunction)
     return request.promise
 }

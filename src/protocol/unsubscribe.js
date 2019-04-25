@@ -12,7 +12,7 @@ dop.protocol.unsubscribe = function(node, object) {
             dop.protocol.instructions.unsubscribe,
             object_data.node[node.token].owner
         )
-        dop.core.storeSendMessages(node, request)
+        dop.core.storeAndSendRequests(node, request)
         return request.promise
     } else return Promise.reject(dop.core.error.reject_remote[2])
 }

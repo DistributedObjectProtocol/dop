@@ -19,7 +19,7 @@ dop.protocol.broadcast = function(object_id, path, params) {
                     params
                 )
                 request.promise.node = node
-                dop.core.storeSendMessages(node, request)
+                dop.core.storeAndSendRequests(node, request)
                 promises.push(request.promise)
             }
         }

@@ -19,7 +19,7 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
                     // Object already subscribed
                     else response.push(object_id, object_path.slice(1))
 
-                    dop.core.storeSendMessages(
+                    dop.core.storeAndSendRequests(
                         node,
                         response,
                         dop.encodeFunction
@@ -48,6 +48,6 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
     function reject(error) {
         var response = dop.core.createResponse(request_id)
         error instanceof Error ? console.log(error.stack) : response.push(error)
-        dop.core.storeSendMessages(node, response, JSON.stringify)
+        dop.core.storeAndSendRequests(node, response, JSON.stringify)
     }
 }

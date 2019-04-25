@@ -3,10 +3,10 @@ dop.core.node = function Node(transport) {
     dop.util.merge(this, new dop.util.emitter()) //https://jsperf.com/inheritance-call-vs-object-assign
     this.transport = transport
     this.status = dop.cons.NODE_STATE_OPEN
+    this.sends_queue = []
     this.request_inc = 1
     this.requests = {}
-    this.message_queue = [] // Response / Request / instructions queue
-    this.sends_queue = []
+    this.request_queue = [] // [<request>, <wrapper>]
     this.subscriber = {}
     this.owner = {}
     this.token_local = dop.util.uuid(dop.cons.TOKEN_LENGTH / 2) // Pre token is used to combine with the remote pre token to generate the real token

@@ -14,7 +14,7 @@ dop.protocol.call = function(node, object_id, path, params) {
             path,
             params
         )
-        dop.core.storeSendMessages(node, request)
+        dop.core.storeAndSendRequests(node, request)
         return request.promise
     } else return Promise.reject(dop.core.error.reject_local.NODE_NOT_FOUND)
 }
