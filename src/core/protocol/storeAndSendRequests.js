@@ -1,4 +1,4 @@
-dop.core.storeAndSendRequests = function(node, message, wrapper) {
-    dop.core.storeRequest(node, message, wrapper)
+dop.core.storeAndSendRequests = function(node, request, wrapper) {
+    dop.core.storeRequest(node, request, wrapper)
     dop.core.sendRequests(node)
 }
