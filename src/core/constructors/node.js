@@ -10,7 +10,7 @@ dop.core.node = function Node(transport) {
     this.subscriber = {}
     this.owner = {}
     this.token_local = dop.util.uuid(dop.cons.TOKEN_LENGTH / 2) // Pre token is used to combine with the remote pre token to generate the real token
-    this.token_local = '_' + dop.env + (dop.inc = (dop.inc || 0) + 1) + '_'
+    // this.token_local = '_' + dop.env + (dop.inc = (dop.inc || 0) + 1) + '_'
 }
 
 dop.core.node.prototype.send = function(message) {
