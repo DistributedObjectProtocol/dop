@@ -1,6 +1,6 @@
 {
     "name": "dop",
-    "version": "1.0.0-rc2",
+    "version": "1.0.0-rc1",
     "main": "./dist/dop.nodejs.js",
     "browser": "./dist/dop.js",
     "unpkg": "./dist/dop.min.js",
@@ -33,7 +33,9 @@
         "server",
         "client"
     ],
-    "dependencies": {},
+    "dependencies": {
+        "dop-transports": "file:../dop-transports"
+    },
     "devDependencies": {
         "coveralls": "^2.11.4",
         "electron": "^1.4.12",

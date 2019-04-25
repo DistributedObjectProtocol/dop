@@ -22,7 +22,7 @@ dop.core.transport.prototype.onMessage = function(socket, message) {
     // var message_splited = message.split(CONNECTIVITY_CHARACTER)
     // var instruction = message_splited[0]
     // var token = message_splited[1]
-    console.log((dop.env === 'CLIENT') + 0, dop.env, node.status, message)
+    // console.log((dop.env === 'CLIENT') + 0, dop.env, node.status, message)
 
     // We use this functions to separate the logic a bit and make it cleaner
     if (node.status === dop.cons.NODE_STATE_CONNECTED)
