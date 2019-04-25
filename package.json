@@ -52,8 +52,7 @@
         "lodash.merge": "^4.6.0",
         "tap": "^7.1.2",
         "tape": "^4.6.3",
-        "tape-run": "^2.4.1",
-        "ws": "^6.2.1"
+        "tape-run": "^2.4.1"
     },
     "scripts": {
         "dev": "grunt",
