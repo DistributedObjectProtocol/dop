@@ -1,5 +1,6 @@
 dop.core.sendRequests = function(node) {
-    var total = node.request_queue.length
+    var request_queue = node.request_queue
+    var total = request_queue.length
     if (total) {
         var index = 0
         var requests_wrapped = []
@@ -8,8 +9,8 @@ dop.core.sendRequests = function(node) {
         var request_id
 
         for (; index < total; ++index) {
-            request = node.request_queue[index][0]
-            requests_wrapped.push(node.request_queue[index][1](request))
+            request = request_queue[index][0]
+            requests_wrapped.push(request_queue[index][1](request))
             request_id = request[0]
             // If is a request (not a response) we set a timeout
             if (request_id > 0) {
