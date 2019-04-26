@@ -20,7 +20,7 @@
                 dop.name
         }
         if (typeof options.timeoutReconnect != 'number') {
-            options.timeoutReconnect = 1 // seconds
+            options.timeoutReconnect = 1000 // ms
         }
 
         var transport = dop.createTransport()
@@ -55,7 +55,7 @@
                 if (keep_reconnecting) {
                     setTimeout(function() {
                         reconnect(ws_client)
-                    }, options.timeoutReconnect * 1000)
+                    }, options.timeoutReconnect)
                 }
             })
             ws_client.addEventListener('error', function(error) {

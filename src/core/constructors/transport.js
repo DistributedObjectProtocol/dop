@@ -1,10 +1,14 @@
-dop.core.transport = function Transport(socket, close) {
+dop.core.transport = function Transport(socket, closeSocket) {
     // Inherit emitter
     dop.util.merge(this, new dop.util.emitter())
     this.socket = socket
-    this.close = close
+    this.closeSocket = closeSocket
     this.nodesBySocket = dop.util.map()
     this.nodesByToken = dop.data.node
+}
+
+dop.core.transport.prototype.close = function() {
+    return this.closeSocket()
 }
 
 dop.core.transport.prototype.onOpen = function(
