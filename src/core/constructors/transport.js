@@ -1,46 +1,20 @@
-dop.core.transport = function Transport(socket, closeSocket) {
+dop.core.transport = function Transport(socket, close) {
     // Inherit emitter
     dop.util.merge(this, new dop.util.emitter())
     this.socket = socket
-    this.closeSocket = closeSocket
+    this.close = close
     this.nodesBySocket = dop.util.map()
     this.nodesByToken = dop.data.node
 }
 
-dop.core.transport.prototype.close = function() {
-    if (typeof this.closeSocket == 'function') {
-        return this.closeSocket()
-    }
-}
-
-dop.core.transport.prototype.onCreate = function(
+dop.core.transport.prototype.onOpen = function(
     socket,
     sendSocket,
     closeSocket
 ) {
     var node = new dop.core.node(this)
     this.updateSocket(node, socket, sendSocket, closeSocket)
-}
-
-dop.core.transport.prototype.onOpen = function(socket) {
-    var node = this.nodesBySocket.get(socket)
-    node.sendSocket(node.token_local)
-}
-
-dop.core.transport.prototype.onReconnect = function(old_socket, socket) {
-    // Getting original node
-    var old_node = this.nodesBySocket.get(old_socket)
-    var node = this.nodesBySocket.get(socket)
-    dop.util.invariant(
-        old_node.status === dop.cons.NODE_STATE_RECONNECTING,
-        'You are trying to reconnect a socket/node that is not reconnecting'
-    )
-    // Removing the closed socket
-    this.nodesBySocket.delete(old_socket)
-    // Updating socket to the old_node
-    this.updateSocket(old_node, socket, node.sendSocket, node.closeSocket)
-    // Sending token as instruction to reconnect
-    node.sendSocket(old_node.token)
+    sendSocket(node.token_local)
 }
 
 dop.core.transport.prototype.onMessage = function(socket, message) {
@@ -57,6 +31,26 @@ dop.core.transport.prototype.onMessage = function(socket, message) {
         this.onMessageRECONNECTING(node, message, socket)
 }
 
+dop.core.transport.prototype.onReconnect = function(
+    old_socket,
+    socket,
+    sendSocket,
+    closeSocket
+) {
+    // Getting original node
+    var node = this.nodesBySocket.get(old_socket)
+    dop.util.invariant(
+        node.status === dop.cons.NODE_STATE_RECONNECTING,
+        'You are trying to reconnect a socket/node that is not reconnecting'
+    )
+    // Removing the closed socket
+    this.nodesBySocket.delete(old_socket)
+    // Updating the new socket to the node
+    this.updateSocket(node, socket, sendSocket, closeSocket)
+    // Sending token as instruction to reconnect
+    node.sendSocket(node.token)
+}
+
 dop.core.transport.prototype.onClose = function(socket) {
     var node = this.nodesBySocket.get(socket)
     // If node is undefined is because we already removed the linked socket inside of disconnectAndDelete()
@@ -68,9 +62,9 @@ dop.core.transport.prototype.onClose = function(socket) {
 
 dop.core.transport.prototype.onError = function(socket, error) {
     var node = this.nodesBySocket.get(socket)
-    // if (node !== undefined) {
-    //     node.emit(dop.cons.EVENT_ERROR, error)
-    // }
+    if (node !== undefined) {
+        node.emit(dop.cons.EVENT_ERROR, error)
+    }
     this.emit(dop.cons.EVENT_ERROR, node || socket, error)
 }
 

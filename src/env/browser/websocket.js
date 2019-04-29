@@ -39,8 +39,7 @@
                 keep_reconnecting = false
                 socket.close()
             }
-            transport.socket = socket
-            transport.onCreate(socket, send, close)
+            transport.onCreate(socket, send, close, reconnect)
             socket.addEventListener('open', function() {
                 if (socket_old === undefined) {
                     transport.onOpen(socket)
