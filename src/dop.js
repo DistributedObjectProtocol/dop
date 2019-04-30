@@ -55,10 +55,14 @@ var dop = {
         NODE_STATE_CONNECTED: 'CONNECTED',
         NODE_STATE_RECONNECTING: 'RECONNECTING',
         NODE_STATE_DISCONNECTED: 'DISCONNECTED',
-        EVENT_CONNECT: 'connect',
-        EVENT_RECONNECT: 'reconnect',
-        EVENT_DISCONNECT: 'disconnect',
-        EVENT_ERROR: 'error'
+        EVENT_OPEN: 'open', // socket
+        EVENT_MESSAGE: 'message', // socket
+        EVENT_CLOSE: 'close', // socket
+        EVENT_ERROR: 'error', // socket
+        EVENT_CONNECT: 'connect', // node
+        EVENT_RECONNECTINTG: 'reconnecting', // node
+        EVENT_RECONNECT: 'reconnect', // node
+        EVENT_DISCONNECT: 'disconnect', // node
     }
 
 }; 

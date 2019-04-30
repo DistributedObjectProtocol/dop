@@ -15,14 +15,16 @@ dop.core.transport.prototype.onOpen = function(
     var node = new dop.core.node(this)
     this.updateSocket(node, socket, sendSocket, closeSocket)
     sendSocket(node.token_local)
+    this.emit(dop.cons.EVENT_OPEN, socket)
 }
 
 dop.core.transport.prototype.onMessage = function(socket, message) {
+    this.emit(dop.cons.EVENT_MESSAGE, socket, message)
     var node = this.nodesBySocket.get(socket)
     // console.log((dop.env === 'CLIENT') + 0, dop.env, node.status, message)
     // We use this functions to separate the logic a bit and make it cleaner
     if (node.status === dop.cons.NODE_STATE_CONNECTED)
-        this.onMessageCONNECTED(node, message)
+        this.onMessageCONNECTED(node, message, socket)
     else if (node.status === dop.cons.NODE_STATE_OPEN)
         this.onMessageOPEN(node, message, socket)
     else if (node.status === dop.cons.NODE_STATE_PRECONNECTED)
@@ -49,23 +51,29 @@ dop.core.transport.prototype.onReconnect = function(
     this.updateSocket(node, socket, sendSocket, closeSocket)
     // Sending token as instruction to reconnect
     node.sendSocket(node.token)
+    // emit event
+    this.emit(dop.cons.EVENT_OPEN, socket)
 }
 
 dop.core.transport.prototype.onClose = function(socket) {
+    this.emit(dop.cons.EVENT_CLOSE, socket)
     var node = this.nodesBySocket.get(socket)
     // If node is undefined is because we already removed the linked socket inside of disconnectAndDelete()
+    // or never been created from onOpen or onReconnect
     if (node !== undefined && node.status === dop.cons.NODE_STATE_CONNECTED) {
         node.status = dop.cons.NODE_STATE_RECONNECTING
         node.closedAt = Date.now()
+        this.emit(dop.cons.EVENT_RECONNECTINTG, node)
+        node.emit(dop.cons.EVENT_RECONNECTINTG)
     }
 }
 
 dop.core.transport.prototype.onError = function(socket, error) {
-    var node = this.nodesBySocket.get(socket)
-    if (node !== undefined) {
-        node.emit(dop.cons.EVENT_ERROR, error)
-    }
-    this.emit(dop.cons.EVENT_ERROR, node || socket, error)
+    // var node = this.nodesBySocket.get(socket)
+    // if (node !== undefined) {
+    //     node.emit(dop.cons.EVENT_ERROR, error)
+    // }
+    this.emit(dop.cons.EVENT_ERROR, socket, error)
 }
 
 dop.core.transport.prototype.onDisconnect = function(node) {
@@ -129,15 +137,19 @@ dop.core.transport.prototype.getUniqueToken = function(token1, token2) {
     return token1 < token2 ? token1 + token2 : token2 + token1
 }
 
-dop.core.transport.prototype.onMessageCONNECTED = function(node, message) {
+dop.core.transport.prototype.onMessageCONNECTED = function(
+    node,
+    message,
+    socket
+) {
     // DISCONNECT
     if (node.token === message) {
         this.disconnectAndDelete(node)
     }
     // EMIT and MANAGE MESSAGE VIA dop
     else {
-        this.emit('message', node, message)
-        node.emit('message', message)
+        // Not sure if we should emit this
+        node.emit(dop.cons.EVENT_MESSAGE, message)
         dop.core.onMessage(node, message)
     }
 }

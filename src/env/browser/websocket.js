@@ -25,9 +25,10 @@
 
         var transport = dop.createTransport()
         var WebSocket = options.transport.getApi()
-        ;(function reconnect(socket_old) {
+        ;(function reconnect(socket_closed) {
             var keep_reconnecting = true
             var socket = new WebSocket(url)
+            var socket_open = socket_closed
             var send = function(message) {
                 if (socket.readyState === 1) {
                     socket.send(message)
@@ -39,12 +40,12 @@
                 keep_reconnecting = false
                 socket.close()
             }
-            transport.onCreate(socket, send, close, reconnect)
             socket.addEventListener('open', function() {
-                if (socket_old === undefined) {
-                    transport.onOpen(socket)
+                socket_open = socket
+                if (socket_closed === undefined) {
+                    transport.onOpen(socket, send, close)
                 } else {
-                    transport.onReconnect(socket_old, socket)
+                    transport.onReconnect(socket_closed, socket, send, close)
                 }
             })
             socket.addEventListener('message', function(message) {
@@ -54,7 +55,7 @@
                 transport.onClose(socket)
                 if (keep_reconnecting) {
                     setTimeout(function() {
-                        reconnect(socket)
+                        reconnect(socket_open)
                     }, options.timeoutReconnect)
                 }
             })
