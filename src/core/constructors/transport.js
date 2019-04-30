@@ -19,7 +19,6 @@ dop.core.transport.prototype.onOpen = function(
 }
 
 dop.core.transport.prototype.onMessage = function(socket, message) {
-    this.emit(dop.cons.EVENT_MESSAGE, socket, message)
     var node = this.nodesBySocket.get(socket)
     // console.log((dop.env === 'CLIENT') + 0, dop.env, node.status, message)
     // We use this functions to separate the logic a bit and make it cleaner
@@ -31,6 +30,9 @@ dop.core.transport.prototype.onMessage = function(socket, message) {
         this.onMessagePRECONNECTED(node, message, socket)
     else if (node.status === dop.cons.NODE_STATE_RECONNECTING)
         this.onMessageRECONNECTING(node, message, socket)
+
+    // Emit
+    this.emit(dop.cons.EVENT_MESSAGE, socket, message)
 }
 
 dop.core.transport.prototype.onReconnect = function(
@@ -56,16 +58,16 @@ dop.core.transport.prototype.onReconnect = function(
 }
 
 dop.core.transport.prototype.onClose = function(socket) {
-    this.emit(dop.cons.EVENT_CLOSE, socket)
     var node = this.nodesBySocket.get(socket)
     // If node is undefined is because we already removed the linked socket inside of disconnectAndDelete()
     // or never been created from onOpen or onReconnect
     if (node !== undefined && node.status === dop.cons.NODE_STATE_CONNECTED) {
         node.status = dop.cons.NODE_STATE_RECONNECTING
         node.closedAt = Date.now()
-        this.emit(dop.cons.EVENT_RECONNECTINTG, node)
         node.emit(dop.cons.EVENT_RECONNECTINTG)
+        this.emit(dop.cons.EVENT_RECONNECTINTG, node)
     }
+    this.emit(dop.cons.EVENT_CLOSE, socket)
 }
 
 dop.core.transport.prototype.onError = function(socket, error) {
@@ -169,14 +171,15 @@ dop.core.transport.prototype.onMessageOPEN = function(node, message, socket) {
         this.nodesBySocket.delete(old_socket)
         // Updating the new socket to the old node
         this.updateSocket(old_node, socket, node.sendSocket, node.closeSocket)
-        // Emitting
         old_node.status = dop.cons.NODE_STATE_CONNECTED
-        old_node.emit(dop.cons.EVENT_RECONNECT)
-        this.emit(dop.cons.EVENT_RECONNECT, old_node)
+
         // Sending the old_node token means is an instruction to reconnect on the other side
         old_node.sendSocket(old_node.token)
         this.deleteTemporalTokens(old_node)
         this.sendQueue(old_node)
+        // Emitting
+        old_node.emit(dop.cons.EVENT_RECONNECT)
+        this.emit(dop.cons.EVENT_RECONNECT, old_node)
     } else {
         // This could happen if a new node is trying to connect
         // with a token that is already used by another node.
@@ -195,17 +198,17 @@ dop.core.transport.prototype.onMessagePRECONNECTED = function(
         node.status = dop.cons.NODE_STATE_CONNECTED
         node.token = this.getUniqueToken(node.token_local, node.token_remote)
         this.nodesByToken[node.token] = node
-        this.emit(dop.cons.EVENT_CONNECT, node)
         this.deleteTemporalTokens(node)
         this.sendQueue(node)
+        this.emit(dop.cons.EVENT_CONNECT, node)
     }
     // RECONNECTED! (Means that server have't removed the token yet and can be restored)
     else if (node.token === message) {
         node.status = dop.cons.NODE_STATE_CONNECTED
-        node.emit(dop.cons.EVENT_RECONNECT)
-        this.emit(dop.cons.EVENT_RECONNECT, node)
         this.deleteTemporalTokens(node)
         this.sendQueue(node)
+        node.emit(dop.cons.EVENT_RECONNECT)
+        this.emit(dop.cons.EVENT_RECONNECT, node)
     }
     // NEW CONNECTION BECAUSE onReconnect COULDN'T RECONNECT
     else if (node.token_remote === message) {
@@ -224,10 +227,10 @@ dop.core.transport.prototype.onMessagePRECONNECTED = function(
             old_node.sendSocket,
             old_node.closeSocket
         )
-        this.emit(dop.cons.EVENT_CONNECT, node)
         node.sendSocket(old_node.token)
         this.deleteTemporalTokens(old_node)
         this.sendQueue(old_node)
+        this.emit(dop.cons.EVENT_CONNECT, node)
     }
 }
 
