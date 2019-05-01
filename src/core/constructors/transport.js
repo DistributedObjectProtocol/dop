@@ -13,8 +13,8 @@ dop.core.transport.prototype.onOpen = function(
     closeSocket
 ) {
     var node = new dop.core.node(this)
-    this.updateSocket(node, socket, sendSocket, closeSocket)
     sendSocket(node.token_local)
+    this.updateSocket(node, socket, sendSocket, closeSocket)
     this.emit(dop.cons.EVENT_OPEN, socket)
 }
 
@@ -82,10 +82,8 @@ dop.core.transport.prototype.onDisconnect = function(node) {
     if (node.status === dop.cons.NODE_STATE_CONNECTED) {
         // Sending token as instruccion to disconnect
         node.sendSocket(node.token)
-        this.disconnectAndDelete(node)
-    } else if (node.status === dop.cons.NODE_STATE_RECONNECTING) {
-        this.disconnectAndDelete(node)
     }
+    this.disconnectAndDelete(node)
 }
 
 /////// PRIVATE
@@ -133,7 +131,7 @@ dop.core.transport.prototype.getUniqueToken = function(token1, token2) {
     var t2l = token2.length
     if (t1l < t2l) {
         token2 = token2.substr(0, t1l)
-    } else if (t1l > t2l) {
+    } else if (t2l < t1l) {
         token1 = token1.substr(0, t2l)
     }
     return token1 < token2 ? token1 + token2 : token2 + token1
