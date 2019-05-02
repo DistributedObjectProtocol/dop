@@ -50,17 +50,13 @@ var dop = {
         REMOTE_FUNCTION_UNSETUP: '$DOP_REMOTE_FUNCTION_UNSETUP',
         BROADCAST_FUNCTION: '$DOP_BROADCAST_FUNCTION',
         COMPUTED_FUNCTION: '$DOP_COMPUTED_FUNCTION',
-        NODE_STATE_OPEN: 'OPEN',
-        NODE_STATE_PRECONNECTED: 'PRECONNECTED',
-        NODE_STATE_CONNECTED: 'CONNECTED',
-        NODE_STATE_RECONNECTING: 'RECONNECTING',
-        NODE_STATE_DISCONNECTED: 'DISCONNECTED',
-        
-        EVENT_CONNECT: 'connect',
-        EVENT_MESSAGE: 'message',
-        EVENT_RECONNECTINTG: 'reconnecting',
-        EVENT_RECONNECT: 'reconnect',
-        EVENT_DISCONNECT: 'disconnect',
+
+        NODE_STATUS_CONNECTED: 'CONNECTED', // CONNECTED
+        NODE_STATUS_DISCONNECTED: 'DISCONNECTED', // DISCONNECTED, can't be reconnected
+
+        ON_CONNECT: 'connect',
+        ON_MESSAGE: 'message',
+        ON_DISCONNECT: 'disconnect',
     }
 
 }; 

@@ -2,31 +2,30 @@ dop.core.node = function Node(transport) {
     // Inherit emitter
     dop.util.merge(this, new dop.util.emitter()) //https://jsperf.com/inheritance-call-vs-object-assign
     this.transport = transport
-    this.status = dop.cons.NODE_STATE_OPEN
-    this.sends_queue = []
+    this.status = dop.cons.NODE_STATUS_DISCONNECTED
     this.request_inc = 1
     this.requests = {}
     this.request_queue = [] // [<request>, <wrapper>]
     this.subscriber = {}
     this.owner = {}
-    this.token_local = dop.util.uuid(dop.cons.TOKEN_LENGTH / 2) // Pre token is used to combine with the remote pre token to generate the real token
-    // this.token_local = '_' + dop.env + (dop.inc = (dop.inc || 0) + 1) + '_'
+    // this.sends_queue = []
 }
 
 dop.core.node.prototype.send = function(message) {
-    if (
-        this.status !== dop.cons.NODE_STATE_CONNECTED ||
-        this.sends_queue.length > 0 ||
-        this.sendSocket(message) === false
-    ) {
-        this.sends_queue.push(message)
-        return false
-    }
-    return true
+    return this.sendSocket(message)
+    // if (
+    //     this.status !== dop.cons.NODE_STATUS_CONNECTED ||
+    //     this.sends_queue.length > 0 ||
+    //     this.sendSocket(message) === false
+    // ) {
+    //     this.sends_queue.push(message)
+    //     return false
+    // }
+    // return true
 }
 
 dop.core.node.prototype.disconnect = function() {
-    this.transport.onDisconnect(this)
+    return this.disconnectSocket()
 }
 
 dop.core.node.prototype.subscribe = function() {
