@@ -19,13 +19,10 @@
                 '/' +
                 dop.name
         }
-        if (typeof options.timeoutReconnect != 'number') {
-            options.timeoutReconnect = 1000 // ms
-        }
 
         var transport = dop.createTransport()
         var WebSocket = options.transport.getApi()
-        ;(function reconnect(node_closed) {
+        ;(function reconnect() {
             var socket = new WebSocket(url)
             function send(message) {
                 socket.send(message)
@@ -35,7 +32,7 @@
             }
             var node = transport.onCreate(socket, send, disconnect)
             socket.addEventListener('open', function() {
-                transport.onConnect(node, node_closed)
+                transport.onConnect(node)
             })
             socket.addEventListener('message', function(message) {
                 transport.onMessage(node, message.data)
