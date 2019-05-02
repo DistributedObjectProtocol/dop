@@ -17,7 +17,7 @@ dop.core.transport.prototype.onCreate = function(
 }
 
 dop.core.transport.prototype.onConnect = function(node) {
-    node.status = dop.cons.NODE_STATUS_CONNECTED
+    node.connected = true
     this.emit(dop.cons.ON_CONNECT, node)
 }
 
@@ -27,7 +27,7 @@ dop.core.transport.prototype.onMessage = function(node, message) {
 }
 
 dop.core.transport.prototype.onDisconnect = function(node) {
-    node.status = dop.cons.NODE_STATUS_DISCONNECTED
+    node.connected = false
     dop.core.unregisterNode(node)
     this.emit(dop.cons.ON_DISCONNECT, node)
 }
