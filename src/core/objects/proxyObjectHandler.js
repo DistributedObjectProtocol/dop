@@ -14,9 +14,11 @@ dop.core.proxyObjectHandler = {
             property !== dop.cons.DOP &&
             object[property] !== Array.prototype[property]
         )
-            dop.data.gets_paths.push(
-                dop.getObjectPath(object, false).concat(property)
-            )
+            dop.data.gets_paths.push({
+                object: object,
+                property: property,
+                path: dop.getObjectPath(object, false).concat(property)
+            })
 
         return object[property]
     }
