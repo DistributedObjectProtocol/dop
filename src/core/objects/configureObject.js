@@ -66,37 +66,43 @@ dop.core.configureObject = function(object, property_parent, parent) {
             object_target,
             property
         )
-        value =
-            typeof object_descriptor.get == 'function'
-                ? dop.computed(object_descriptor.get)
-                : object_target[property]
-        is_function = isFunction(value)
 
-        // remote function
-        if (is_function && value._name == dop.cons.REMOTE_FUNCTION_UNSETUP) {
-            path = dop.getObjectPath(object)
-            object_target[property] = value(
-                path[0],
-                path.slice(1).concat(property)
-            )
+        if (object_descriptor !== undefined) {
+            value =
+                typeof object_descriptor.get == 'function'
+                    ? dop.computed(object_descriptor.get)
+                    : object_target[property]
+            is_function = isFunction(value)
+
+            // remote function
+            if (
+                is_function &&
+                value._name == dop.cons.REMOTE_FUNCTION_UNSETUP
+            ) {
+                path = dop.getObjectPath(object)
+                object_target[property] = value(
+                    path[0],
+                    path.slice(1).concat(property)
+                )
+            }
+            // computed value
+            else if (is_function && value._name == dop.cons.COMPUTED_FUNCTION) {
+                delete object_target[property] // we need this line in order to remove the defineProperty of get syntax
+                object_target[property] = value(
+                    object_proxy,
+                    property,
+                    false,
+                    undefined
+                )
+            }
+            // object or array
+            else if (dop.isPojoObject(value))
+                object_target[property] = dop.core.configureObject(
+                    value,
+                    property,
+                    object_proxy
+                )
         }
-        // computed value
-        else if (is_function && value._name == dop.cons.COMPUTED_FUNCTION) {
-            delete object_target[property] // we need this line in order to remove the defineProperty of get syntax
-            object_target[property] = value(
-                object_proxy,
-                property,
-                false,
-                undefined
-            )
-        }
-        // object or array
-        else if (dop.isPojoObject(value))
-            object_target[property] = dop.core.configureObject(
-                value,
-                property,
-                object_proxy
-            )
     }
 
     // if (isObject(parent))
