@@ -32,8 +32,9 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
                 }
                 // No registered object
                 else {
-                    object = dop.register(
-                        dop.core.mergeSubscription(request.into, object_owner)
+                    object = dop.core.mergeSubscription(
+                        dop.register(request.into),
+                        object_owner
                     )
                 }
                 dop.core.registerOwner(node, object, object_owner_id)
