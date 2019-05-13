@@ -24,7 +24,17 @@ dop.core.setPatchMutator = function(destiny, prop, value, tof_value) {
         instructions_patchs = dop.protocol.instructionsPatchs,
         mutation
 
-    // console.log( prop, tof_value, value );
+    // Any value
+    if (tof_value != 'object' && tof_value != 'array') {
+        dop.set(destiny, prop, value)
+    }
+
+    // Not defined object or array
+    else if (!destiny.hasOwnProperty(prop)) {
+        dop.set(destiny, prop, tof_value == 'array' ? [] : {})
+    }
+
+    // Array instruction
     if (tof_value == 'array') {
         type_instruction = value[0]
 
@@ -54,11 +64,6 @@ dop.core.setPatchMutator = function(destiny, prop, value, tof_value) {
         }
 
         return true // Skiping to dont go inside of [instructionPatch, ...]
-    }
-
-    // Set value
-    else if (tof_value != 'object') {
-        dop.set(destiny, prop, value)
     }
 }
 

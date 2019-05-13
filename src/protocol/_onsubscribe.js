@@ -12,28 +12,30 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
             // New object
             if (node.owner[object_owner_id] === undefined) {
                 // If is new object and third parameter is an array we must reject
-                if (object_owner === object_path)
+                if (object_owner === object_path) {
                     request.promise.reject(
                         dop.core.error.reject_local.OBJECT_NOT_FOUND
                     )
+                }
 
                 collector = dop.collect()
-                if (dop.isRegistered(request.into))
-                    object = dop.core.setPatch(
+                // New object
+                if (request.into === undefined) {
+                    object = dop.register(object_owner)
+                }
+                // Registered object
+                else if (dop.isRegistered(request.into)) {
+                    object = dop.core.mergeSubscription(
                         request.into,
-                        object_owner,
-                        dop.core.setPatchFunctionMutator
+                        object_owner
                     )
-                else
+                }
+                // No registered object
+                else {
                     object = dop.register(
-                        request.into === undefined
-                            ? object_owner
-                            : dop.core.setPatch(
-                                  request.into,
-                                  object_owner,
-                                  dop.core.setPatchMutator
-                              )
+                        dop.core.mergeSubscription(request.into, object_owner)
                     )
+                }
                 dop.core.registerOwner(node, object, object_owner_id)
                 collector.emit()
             }
