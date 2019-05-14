@@ -25,7 +25,11 @@
         ;(function reconnect() {
             var socket = new WebSocket(url)
             function send(message) {
-                socket.send(message)
+                if (socket.readyState === 1) {
+                    socket.send(message)
+                    return true
+                }
+                return false
             }
             function disconnect() {
                 socket.close()
