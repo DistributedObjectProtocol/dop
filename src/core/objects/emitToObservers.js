@@ -16,11 +16,11 @@ dop.core.emitToObservers = function(mutations) {
         path_id = mutation.path_id
         path = mutation.path
 
-        if (
-            !mutations_with_subscribers &&
-            isObject(dop.data.object[dop.getObjectId(mutation.object)])
-        )
-            mutations_with_subscribers = true
+        // if (
+        //     !mutations_with_subscribers &&
+        //     isObject(dop.data.object[dop.getObjectId(mutation.object)])
+        // )
+        //     mutations_with_subscribers = true
 
         // .observers
         if (
