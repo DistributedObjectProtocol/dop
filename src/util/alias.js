@@ -14,3 +14,8 @@ function isArray(array) {
 function isNumber(number) {
     return typeof number == 'number'
 }
+
+function isEmptyObject(object) {
+    for (var key in object) return false
+    return true
+}

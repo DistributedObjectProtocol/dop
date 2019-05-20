@@ -14,10 +14,13 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
                         response = dop.core.createResponse(request_id, 0)
 
                     // New object
-                    if (dop.core.registerSubscriber(node, object_root))
+                    if (dop.core.registerSubscriber(node, object_root)) {
                         response.push(object_id, object_root)
+                    }
                     // Object already subscribed
-                    else response.push(object_id, object_path.slice(1))
+                    else {
+                        response.push(object_id, object_path.slice(1))
+                    }
 
                     dop.core.storeAndSendRequests(
                         node,
@@ -25,17 +28,19 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
                         dop.encodeFunction
                     )
                     return object
-                } else if (value === undefined)
+                } else if (value === undefined) {
                     return Promise.reject(
                         dop.core.error.reject_remote.OBJECT_NOT_FOUND
                     )
+                }
                 // http://www.2ality.com/2016/03/promise-rejections-vs-exceptions.html
                 // http://stackoverflow.com/questions/41254636/catch-an-error-inside-of-promise-resolver
-                else
+                else {
                     dop.util.invariant(
                         false,
-                        'dop.onsubscribe callback must return or resolve a regular object'
+                        'dop.onSubscribe callback must return or resolve a regular object'
                     )
+                }
             },
             reject,
             function(req) {
@@ -43,7 +48,9 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
                 return req
             }
         )
-    } else reject(dop.core.error.reject_remote.OBJECT_NOT_FOUND)
+    } else {
+        reject(dop.core.error.reject_remote.OBJECT_NOT_FOUND)
+    }
 
     function reject(error) {
         var response = dop.core.createResponse(request_id)

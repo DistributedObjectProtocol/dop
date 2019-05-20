@@ -50,10 +50,20 @@ dop.core.observer.prototype.destroy = function() {
 
     delete dop.data.observers[this.id]
 
-    for (path_id in this.observers) delete data_path[path_id].observers[this.id]
-
-    for (path_id in this.observers_prop)
+    // Removing observeProperty
+    for (path_id in this.observers_prop) {
         delete data_path[path_id].observers_prop[this.id]
+    }
+
+    // Removing observeObject
+    for (path_id in this.observers) {
+        delete data_path[path_id].observers[this.id]
+    }
+
+    // Removing observeAll
+    for (path_id in this.observers_all) {
+        delete data_path[path_id].observers_all[this.id]
+    }
 }
 
 function observerCheckObject(object, method) {
