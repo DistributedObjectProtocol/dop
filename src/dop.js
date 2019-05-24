@@ -26,8 +26,9 @@ var dop = {
 
         path: {
             // "1.thepath.value": {
-                // observers: {},
+                // observers_object: {},
                 // observers_prop: {},
+                // observers_all: {},
                 // interceptors: {},
                 // interceptors_prop: {},
                 // computeds: [],

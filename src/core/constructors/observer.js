@@ -1,7 +1,7 @@
 dop.core.observer = function Observer(callback, id) {
     this.callback = callback
     this.id = id
-    this.observers = {} // need it for destroy()
+    this.observers_object = {} // need it for destroy()
     this.observers_prop = {} // need it for destroy()
     this.observers_all = {} // need it for destroy()
 }
@@ -20,7 +20,7 @@ dop.core.observer.prototype.observeProperty = function(object, property) {
 
 dop.core.observer.prototype.observeObject = function(object) {
     var path = observerCheckObject(object, 'observeObject')
-    return this.observe(dop.core.getPathId(path), 'observers')
+    return this.observe(dop.core.getPathId(path), 'observers_object')
 }
 
 dop.core.observer.prototype.observeAll = function(object) {
@@ -58,11 +58,11 @@ dop.core.observer.prototype.destroy = function() {
     }
 
     // Removing observeObject
-    for (path_id in this.observers) {
+    for (path_id in this.observers_object) {
         path_ids[path_id] = true
-        delete data_path[path_id].observers[this.id]
-        if (isEmptyObject(data_path[path_id].observers))
-            delete data_path[path_id].observers
+        delete data_path[path_id].observers_object[this.id]
+        if (isEmptyObject(data_path[path_id].observers_object))
+            delete data_path[path_id].observers_object
     }
 
     // Removing observeAll

@@ -22,12 +22,12 @@ dop.core.emitToObservers = function(mutations) {
         // )
         //     mutations_with_subscribers = true
 
-        // .observers
+        // .observers_object
         if (
             data_path[path_id] !== undefined &&
-            data_path[path_id].observers !== undefined
+            data_path[path_id].observers_object !== undefined
         ) {
-            for (observer_id in data_path[path_id].observers) {
+            for (observer_id in data_path[path_id].observers_object) {
                 if (mutations_by_observers[observer_id] === undefined)
                     mutations_by_observers[observer_id] = []
                 mutations_by_observers[observer_id].push(mutation)
