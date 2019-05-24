@@ -7,19 +7,21 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
             params,
             function resolve(value) {
                 if (dop.isPojoObject(value)) {
-                    var object = dop.register(value),
-                        object_root = dop.getObjectRoot(object),
-                        object_path = dop.getObjectPath(object),
-                        object_id = object_path[0],
-                        response = dop.core.createResponse(request_id, 0)
-
+                    var response = dop.core.createResponse(request_id, 0)
+                    var object = dop.register(value)
+                    var object_path_id = dop.getObjectPathId(object)
                     // New object
-                    if (dop.core.registerSubscriber(node, object_root)) {
-                        response.push(object_id, object_root)
+                    if (node.subscriber[object_path_id] === undefined) {
+                        dop.core.registerSubscriber(
+                            node,
+                            object,
+                            object_path_id
+                        )
+                        response.push(object_path_id, object)
                     }
                     // Object already subscribed
                     else {
-                        response.push(object_id, object_path.slice(1))
+                        response.push(object_path_id, object_path.slice(1))
                     }
 
                     dop.core.storeAndSendRequests(
@@ -27,7 +29,6 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
                         response,
                         dop.encodeFunction
                     )
-                    return object
                 } else if (value === undefined) {
                     return Promise.reject(
                         dop.core.error.reject_remote.OBJECT_NOT_FOUND
