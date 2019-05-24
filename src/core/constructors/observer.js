@@ -45,25 +45,42 @@ dop.core.observer.prototype.observe = function(path_id, type) {
 }
 
 dop.core.observer.prototype.destroy = function() {
-    var path_id,
-        data_path = dop.data.path
-
-    delete dop.data.observers[this.id]
+    var path_id
+    var data_path = dop.data.path
+    var path_ids = {}
 
     // Removing observeProperty
     for (path_id in this.observers_prop) {
+        path_ids[path_id] = true
         delete data_path[path_id].observers_prop[this.id]
+        if (isEmptyObject(data_path[path_id].observers_prop))
+            delete data_path[path_id].observers_prop
     }
 
     // Removing observeObject
     for (path_id in this.observers) {
+        path_ids[path_id] = true
         delete data_path[path_id].observers[this.id]
+        if (isEmptyObject(data_path[path_id].observers))
+            delete data_path[path_id].observers
     }
 
     // Removing observeAll
     for (path_id in this.observers_all) {
+        path_ids[path_id] = true
         delete data_path[path_id].observers_all[this.id]
+        if (isEmptyObject(data_path[path_id].observers_all))
+            delete data_path[path_id].observers_all
     }
+
+    // Removing path_ids
+    for (path_id in path_ids) {
+        if (isEmptyObject(data_path[path_id])) {
+            delete data_path[path_id]
+        }
+    }
+
+    delete dop.data.observers[this.id]
 }
 
 function observerCheckObject(object, method) {
