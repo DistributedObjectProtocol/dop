@@ -1,36 +1,29 @@
 dop.protocol.onpatch = function(node, request_id, request) {
     var object_id_owner = request[1],
-        object_id = node.owner[object_id_owner],
         version = request[2],
         patch = request[3],
+        owner = node.owner[object_id_owner],
         response = dop.core.createResponse(request_id),
-        object_data = dop.data.object[object_id],
-        object_node,
         collector
 
-    if (
-        isObject(object_data) &&
-        isObject(object_data.node[node.token]) &&
-        object_data.node[node.token].owner === object_id_owner
-    ) {
-        object_node = object_data.node[node.token]
+    if (owner !== undefined) {
         // Storing patch
         if (
-            object_node.applied_version < version &&
-            object_node.applied[version] === undefined
+            owner.applied_version < version &&
+            owner.applied[version] === undefined
         ) {
             // Storing patch
-            object_node.applied[version] = patch
+            owner.applied[version] = patch
             // Applying
             collector = dop.collect()
-            while (object_node.applied[object_node.applied_version + 1]) {
-                object_node.applied_version += 1
+            while (owner.applied[owner.applied_version + 1]) {
+                owner.applied_version += 1
                 dop.core.setPatch(
-                    object_data.object,
-                    object_node.applied[object_node.applied_version],
+                    owner.object,
+                    owner.applied[owner.applied_version],
                     dop.core.setPatchFunctionMutator
                 )
-                delete object_node.applied[object_node.applied_version]
+                delete owner.applied[owner.applied_version]
             }
             collector.emit()
         }
