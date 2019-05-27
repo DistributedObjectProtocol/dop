@@ -95,35 +95,23 @@ test('observe mutations after subscription', async t => {
     await nodeClient.subscribe().into(objectClient)
 })
 
-// test('into() observe', t => {
-//     const dopServer = dop.create()
-//     const dopClient = dop.create()
-//     const objectServer = dopServer.register({ inc: 0 })
-//     const objectClient = dopClient.register({ deep: {} })
-//     const transportServer = dopServer.listen({ transport: transportListen })
-//     dopServer.onSubscribe(() => objectServer)
-//     ;(function loop(times) {
-//         const transportClient = dopClient.connect({
-//             transport: transportConnect
-//         })
-//         transportClient.on('connect', async nodeClient => {
-//             // t.notDeepEqual(objectServer, objectClient.deep)
-//             await nodeClient.subscribe().into(objectClient.deep)
-//             t.deepEqual(objectServer, objectClient.deep)
-//             const observer = dopClient.createObserver(() => {
-//                 t.deepEqual(objectServer, objectClient.deep)
-//                 setTimeout(() => {
-//                     nodeClient.disconnect()
-//                     if (times === 2) {
-//                         t.end()
-//                         transportServer.socket.close()
-//                     } else {
-//                         loop(times + 1)
-//                     }
-//                 }, 0)
-//             })
-//             observer.observeAll(objectClient)
-//             objectServer.inc += 1
-//         })
-//     })(1)
-// })
+test('basic three nodes', async t => {
+    const {
+        dopServer,
+        dopClient,
+        nodeClient,
+        nodeSubClient,
+        close
+    } = await connect(t)
+    const objectServer = {
+        hello: 'world',
+        deep: { hola: 'mundo' }
+    }
+    dopServer.onSubscribe(() => objectServer)
+    const objectClient = await nodeClient.subscribe()
+    dopClient.onSubscribe(() => objectClient)
+    const objectSubClient = await nodeSubClient.subscribe()
+    t.deepEqual(objectServer, objectClient)
+    t.deepEqual(objectSubClient, objectClient)
+    close()
+})

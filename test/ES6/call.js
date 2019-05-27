@@ -275,3 +275,58 @@ test('Promise.reject', async function(t) {
     t.end()
     closeServer()
 })
+
+test('basic three nodes', async t => {
+    const {
+        dopServer,
+        dopClient,
+        nodeClient,
+        nodeSubClient,
+        close
+    } = await connect(t)
+    const objectServer = {
+        times: (a, b) => a * b
+    }
+    dopServer.onSubscribe(() => objectServer)
+    const objectClient = await nodeClient.subscribe()
+    dopClient.onSubscribe(() => objectClient)
+    const objectSubClient = await nodeSubClient.subscribe()
+
+    t.equal(await objectClient.times(5, 5), 25)
+    t.equal(await objectSubClient.times(4, 2), 8)
+    close()
+})
+
+test('throwing error three nodes', async t => {
+    const {
+        dopServer,
+        dopClient,
+        nodeClient,
+        nodeSubClient,
+        close
+    } = await connect(t)
+    const objectServer = {
+        error: customerror => {
+            throw customerror
+        }
+    }
+    dopServer.onSubscribe(() => objectServer)
+    const objectClient = await nodeClient.subscribe()
+    dopClient.onSubscribe(() => objectClient)
+    const objectSubClient = await nodeSubClient.subscribe()
+
+    try {
+        await objectClient.error('Custom remote error')
+        t.equal(true, false, 'This should not happen one')
+    } catch (e) {
+        t.equal(e, 'Custom remote error')
+    }
+
+    try {
+        await objectSubClient.error('Custom sub remote error')
+        t.equal(true, false, 'This should not happen two')
+    } catch (e) {
+        t.equal(e, 'Custom sub remote error')
+    }
+    close()
+})
