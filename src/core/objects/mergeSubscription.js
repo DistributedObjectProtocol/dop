@@ -3,14 +3,15 @@ dop.core.mergeSubscription = function(object, object_remote) {
         object_remote,
         null,
         object,
-        dop.core.mergeSubscriptionMutator
+        dop.util.mergeMutator
+        // dop.core.mergeSubscriptionMutator
     )
 }
 
-dop.core.mergeSubscriptionMutator = function(destiny, prop, value, tof_value) {
-    if (tof_value == 'object' || tof_value == 'array')
-        !destiny.hasOwnProperty(prop)
-            ? (destiny[prop] = tof_value == 'array' ? [] : {})
-            : destiny[prop]
-    else destiny[prop] = value
-}
+// dop.core.mergeSubscriptionMutator = function(destiny, prop, value, tof_value) {
+//     if (tof_value == 'object' || tof_value == 'array')
+//         !destiny.hasOwnProperty(prop)
+//             ? (destiny[prop] = tof_value == 'array' ? [] : {})
+//             : destiny[prop]
+//     else destiny[prop] = value
+// }

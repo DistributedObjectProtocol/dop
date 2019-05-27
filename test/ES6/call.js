@@ -1,21 +1,7 @@
-var test = require('tape')
-var dopServer = require('../.proxy').create()
-var dopClient = require('../.proxy').create()
-var transportName = process.argv[2] || 'local'
-var transportListen = require('dop-transports').listen[transportName]
-var transportConnect = require('dop-transports').connect[transportName]
-dopServer.env = 'SERVER'
-dopClient.env = 'CLIENT'
+const test = require('tape')
+const { connect } = require('../ES6/.connect.js')
 
-// this code would be in node.js
-var server = dopServer.listen({ transport: transportListen })
-// this code would be in browser
-var client = dopClient.connect({
-    transport: transportConnect,
-    listener: server
-})
-
-var localFunctions = dopServer.register({
+const localFunctions = {
     okSync: function(req) {
         return 'Ok'
     },
@@ -116,16 +102,18 @@ var localFunctions = dopServer.register({
             resolve(Promise.reject('Error'))
         })
     }
-})
+}
 
-// server
-dopServer.onSubscribe(function() {
-    return localFunctions
-})
-
-var remoteFunctions
+let remoteFunctions
+let closeServer
 test('Matching same values', async function(t) {
-    remoteFunctions = await client.subscribe()
+    const { dopServer, nodeClient, close } = await connect(
+        t,
+        false
+    )
+    closeServer = close
+    dopServer.onSubscribe(() => localFunctions)
+    remoteFunctions = await nodeClient.subscribe()
     t.deepEqual(Object.keys(remoteFunctions), Object.keys(localFunctions))
     t.end()
 })
@@ -285,5 +273,5 @@ test('Promise.reject', async function(t) {
     }
 
     t.end()
-    server.listener.close()
+    closeServer()
 })

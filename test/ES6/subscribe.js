@@ -1,42 +1,12 @@
-var test = require('tape')
-var dop = require('../.proxy')
-var transportName = process.argv[2] || 'local'
-var transportListen = require('dop-transports').listen[transportName]
-var transportConnect = require('dop-transports').connect[transportName]
-
-function connect(t) {
-    return new Promise((response, reject) => {
-        const dopServer = dop.create()
-        const dopClient = dop.create()
-        dopServer.env = 'SERVER'
-        dopClient.env = 'CLIENT1'
-        const transportServer = dopServer.listen({ transport: transportListen })
-        const transportClient = dopClient.connect({
-            transport: transportConnect
-        })
-        transportClient.on('connect', async nodeClient => {
-            const close = () => {
-                nodeClient.disconnect()
-                transportServer.socket.close()
-                t.end()
-            }
-            response({
-                dopServer,
-                dopClient,
-                transportServer,
-                transportClient,
-                nodeClient,
-                close
-            })
-        })
-    })
-}
+const test = require('tape')
+const dop = require('../.proxy')
+const { connect } = require('../ES6/.connect.js')
 
 test('basic', async t => {
     const { dopServer, nodeClient, close } = await connect(t)
     const objectServer = dopServer.register({ hello: 'world' })
     dopServer.onSubscribe(() => objectServer)
-    const objectClient = await nodeClient.subscribe().into({})
+    const objectClient = await nodeClient.subscribe()
     t.deepEqual(objectServer, objectClient)
     close()
 })
@@ -112,12 +82,12 @@ test('into() client and server deep object', async t => {
 
 test('observe mutations after subscription', async t => {
     const { dopServer, dopClient, nodeClient, close } = await connect(t)
-    const objectServer = { hello: 'world' }
+    const objectServer = { hello: 'world', second: 'arg' }
     const objectClient = dopClient.register({})
     dopServer.onSubscribe(() => objectServer)
     dopClient
         .createObserver(mutations => {
-            t.equal(mutations.length, 1)
+            t.equal(mutations.length, 2)
             t.deepEqual(objectServer, objectClient)
             close()
         })

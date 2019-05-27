@@ -1,5 +1,6 @@
-dop.protocol.oncall = function(node, request_id, request, object_id) {
-    var path = request[2],
+dop.protocol.oncall = function(node, request_id, request) {
+    var object_id = request[1],
+        path = request[2],
         params = request[3],
         subscriber = node.subscriber[object_id]
 
