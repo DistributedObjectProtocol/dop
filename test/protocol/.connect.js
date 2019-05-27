@@ -4,7 +4,7 @@ const transportListen = require('dop-transports').listen[transportName]
 const transportConnect = require('dop-transports').connect[transportName]
 
 function connect(t, end = true) {
-    return new Promise((response, reject) => {
+    return new Promise(function(response, reject) {
         const dopServer = dop.create()
         const dopClient = dop.create()
         dopServer.env = 'SERVER'
@@ -13,8 +13,8 @@ function connect(t, end = true) {
         const transportClient = dopClient.connect({
             transport: transportConnect
         })
-        transportClient.on('connect', async nodeClient => {
-            const close = () => {
+        transportClient.on('connect', function(nodeClient) {
+            const close = function() {
                 nodeClient.disconnect()
                 transportServer.socket.close()
                 if (end) t.end()

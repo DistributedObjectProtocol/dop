@@ -1,6 +1,6 @@
 const test = require('tape')
 const dop = require('../.proxy')
-const { connect } = require('../ES6/.connect.js')
+const { connect } = require('../protocol/.connect.js')
 
 test('basic', async t => {
     const { dopServer, nodeClient, close } = await connect(t)

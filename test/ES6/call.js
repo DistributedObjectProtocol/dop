@@ -1,5 +1,5 @@
 const test = require('tape')
-const { connect } = require('../ES6/.connect.js')
+const { connect } = require('../protocol/.connect.js')
 
 const localFunctions = {
     okSync: function(req) {
