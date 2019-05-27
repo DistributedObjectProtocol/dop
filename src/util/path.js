@@ -46,7 +46,8 @@ dop.util.pathRecursive = function(
                 skip !== true &&
                 value !== source &&
                 circular.indexOf(value) == -1 &&
-                (has_destiny && destiny[prop] !== undefined)
+                // ((has_destiny && destiny[prop] !== undefined) ||
+                source[prop] !== undefined
             ) {
                 circular.push(value)
                 dop.util.pathRecursive(
