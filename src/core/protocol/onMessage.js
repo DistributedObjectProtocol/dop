@@ -4,7 +4,7 @@ dop.core.onMessage = function(node, message_string) {
     if (typeof message_string == 'string' && message_string[0] == '[') {
         // https://jsperf.com/slice-substr-substring-test
         try {
-            messages = dop.decode(message_string, node)
+            messages = dop.decode(message_string)
         } catch (e) {
             /*console.log(e);*/
         }

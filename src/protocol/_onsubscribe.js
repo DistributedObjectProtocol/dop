@@ -7,8 +7,12 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
             var object_owner = response[2]
             var object
 
+            // Already subscribed
+            if (node.owner[object_owner_id] !== undefined) {
+                object = node.owner[object_owner_id].object
+            }
             // New subscription
-            if (node.owner[object_owner_id] === undefined) {
+            else {
                 var collector = dop.collect()
                 // New object
                 if (request.into === undefined) {
@@ -28,12 +32,9 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
                         object_owner
                     )
                 }
+                dop.core.configureRemoteFunctions(node, object, object_owner_id)
                 dop.core.registerOwner(node, object, object_owner_id)
                 collector.emit()
-            }
-            // Already subscribed
-            else {
-                object = node.owner[object_owner_id].object
             }
 
             // Resolving/Rejecting promise
@@ -46,4 +47,20 @@ dop.protocol._onsubscribe = function(node, request_id, request, response) {
             }
         }
     }
+}
+
+dop.core.configureRemoteFunctions = function(node, object, object_owner_id) {
+    dop.util.path(
+        object,
+        function(source, prop, value, destiny, path) {
+            console.log(prop, object_owner_id, path.slice(0))
+            if (
+                isFunction(value) &&
+                value._name == dop.cons.REMOTE_FUNCTION_UNSETUP
+            ) {
+                // dop.set(source, prop, value(node, object_owner_id, path.slice(0)))
+            }
+        },
+        {}
+    )
 }

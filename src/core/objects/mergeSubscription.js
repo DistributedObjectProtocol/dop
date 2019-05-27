@@ -7,16 +7,8 @@ dop.core.mergeSubscription = function(object, object_remote) {
     )
 }
 
-dop.core.mergeSubscriptionMutator = function(
-    destiny,
-    prop,
-    value,
-    tof_value,
-    path
-) {
-    if (isFunction(value) && value._name == dop.cons.REMOTE_FUNCTION_UNSETUP)
-        dop.set(destiny, prop, value(dop.getObjectId(destiny), path.slice(0)))
-    else if (tof_value == 'object' || tof_value == 'array')
+dop.core.mergeSubscriptionMutator = function(destiny, prop, value, tof_value) {
+    if (tof_value == 'object' || tof_value == 'array')
         !destiny.hasOwnProperty(prop)
             ? (destiny[prop] = tof_value == 'array' ? [] : {})
             : destiny[prop]
