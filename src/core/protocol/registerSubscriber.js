@@ -1,11 +1,18 @@
 dop.core.registerSubscriber = function(node, object, object_path_id) {
-    var observer = dop.createObserver(function(mutations, shallWeEmitToNode) {
+    var observer = dop.createObserver(function(
+        mutations,
+        filterMutationsToNode
+    ) {
+        if (typeof filterMutationsToNode == 'function')
+            mutations = filterMutationsToNode(mutations, node)
+
         var object_id,
             chunks,
             patch = dop.core.getPatch(mutations)
         for (object_id in patch) {
             chunks = patch[object_id].chunks
             dop.protocol.patch(node, object_path_id, chunks, subscriber)
+            return
         }
     })
     var subscriber = {

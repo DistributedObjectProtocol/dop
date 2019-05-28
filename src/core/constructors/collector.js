@@ -16,14 +16,16 @@ dop.core.collector.prototype.add = function(mutation) {
     return false
 }
 
-dop.core.collector.prototype.emit = function(shallWeEmitToNode) {
+dop.core.collector.prototype.emit = function(filterMutationsToNode) {
     this.destroy()
-    return this.emitWithoutDestroy(shallWeEmitToNode)
+    return this.emitWithoutDestroy(filterMutationsToNode)
 }
 
-dop.core.collector.prototype.emitWithoutDestroy = function(shallWeEmitToNode) {
+dop.core.collector.prototype.emitWithoutDestroy = function(
+    filterMutationsToNode
+) {
     var snapshot = new dop.core.snapshot(this.mutations)
-    snapshot.emit(shallWeEmitToNode)
+    snapshot.emit(filterMutationsToNode)
     this.mutations = []
     return snapshot
 }

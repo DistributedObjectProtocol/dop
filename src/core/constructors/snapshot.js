@@ -17,9 +17,9 @@ dop.core.snapshot.prototype.redo = function() {
     }
 }
 
-dop.core.snapshot.prototype.emit = function(shallWeEmitToNode) {
+dop.core.snapshot.prototype.emit = function(filterMutationsToNode) {
     if (this.mutations.length > 0) {
-        dop.core.emitToObservers(this, shallWeEmitToNode)
+        dop.core.emitToObservers(this, filterMutationsToNode)
     }
 }
 

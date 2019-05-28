@@ -1,4 +1,4 @@
-dop.core.emitToObservers = function(snapshot, shallWeEmitToNode) {
+dop.core.emitToObservers = function(snapshot, filterMutationsToNode) {
     var mutations = snapshot.mutations,
         mutation,
         path_id,
@@ -75,7 +75,7 @@ dop.core.emitToObservers = function(snapshot, shallWeEmitToNode) {
             // We need to make sure that the observer still exists, because maybe has been removed after calling previous observers
             observer.callback(
                 mutations_by_observers[observer_id],
-                shallWeEmitToNode
+                filterMutationsToNode
             )
     }
 
