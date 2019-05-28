@@ -32,6 +32,50 @@ test('basic deep', async t => {
     close()
 })
 
+test('subscribe same object twice', async t => {
+    const { dopServer, nodeClient, close } = await connect(t)
+    const objectServer = dopServer.register({ hello: 'world' })
+    dopServer.onSubscribe(() => objectServer)
+    const objectClient = await nodeClient.subscribe()
+    const objectClient2 = await nodeClient.subscribe()
+    t.deepEqual(objectServer, objectClient)
+    t.equal(objectClient, objectClient2)
+    close()
+})
+
+test('subscribe same subobject twice', async t => {
+    const { dopServer, nodeClient, close } = await connect(t)
+    const objectServer = dopServer.register({
+        hello: 'world',
+        deep: { hola: 'mundo' }
+    })
+    dopServer.onSubscribe(() => objectServer.deep)
+    const objectClient = await nodeClient.subscribe()
+    const objectClient2 = await nodeClient.subscribe()
+    t.deepEqual(objectServer.deep, objectClient)
+    t.equal(objectClient, objectClient2)
+    close()
+})
+
+test('subscribe same object twice and then subscribe sub object', async t => {
+    const { dopServer, nodeClient, close } = await connect(t)
+    const objectServer = dopServer.register({
+        hello: 'world',
+        deep: { hola: 'mundo' }
+    })
+    dopServer.onSubscribe(() => objectServer)
+    const objectClient = await nodeClient.subscribe()
+    const objectClient2 = await nodeClient.subscribe()
+    t.deepEqual(objectServer, objectClient)
+    t.equal(objectClient, objectClient2)
+    dopServer.onSubscribe(() => objectServer.deep)
+    const objectClient3 = await nodeClient.subscribe()
+    t.deepEqual(objectServer.deep, objectClient3)
+    t.deepEqual(objectClient.deep, objectClient3)
+    t.notEqual(objectClient.deep, objectClient3)
+    close()
+})
+
 test('into()', async t => {
     const { dopServer, nodeClient, close } = await connect(t)
     const objectServer = { hello: 'world' }

@@ -21,7 +21,7 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
                     }
                     // Object already subscribed
                     else {
-                        response.push(object_path_id, object_path.slice(1))
+                        response.push(object_path_id)
                     }
 
                     dop.core.storeAndSendRequests(
