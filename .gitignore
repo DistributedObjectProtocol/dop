@@ -21,3 +21,4 @@ yarn.lock
 examples/drag/package-lock.json
 examples/todomvc/package-lock.json
 .vscode/launch.json
+*.tgz
