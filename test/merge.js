@@ -326,15 +326,16 @@ test('should skip merging when `object` and `source` are the same value', functi
     t.true(pass)
 })
 
-// test('should convert values to arrays when merging arrays of `source`', function(t) {
-//     var object = { a: { '1': 'y', b: 'z', length: 2 } },
-//         actual = merge(object, { a: ['x'] })
+test('should convert values to arrays when merging arrays of `source`', function(t) {
+    var object = { a: { '1': 'y', b: 'z', length: 2 } }
+    var actual = merge(object, { a: ['x'] })
+    var expected = { a: ['x', 'y'] }
 
-//     t.deepEqual(actual, { a: ['x', 'y'] })
+    t.deepEqual(actual, expected)
 
-//     actual = merge({ a: {} }, { a: [] })
-//     t.deepEqual(actual, { a: [] })
-// })
+    actual = merge({ a: {} }, { a: [] })
+    t.deepEqual(actual, { a: [] })
+})
 
 // test('should convert strings to arrays when merging arrays of `source`', function(t) {
 //     var object = { a: 'abcde' },
