@@ -1,74 +1,12 @@
 import test from 'ava'
-import { merge } from '../'
+import { forEachObject } from '../'
 
 // https://github.com/lodash/lodash/blob/master/test/merge.test.js
 test('should merge `source` into `object`', function(t) {
-    console.log(merge)
-    var names = {
-        characters: [{ name: 'barney' }, { name: 'fred' }]
-    }
-
-    var ages = {
-        characters: [{ age: 36 }, { age: 40 }]
-    }
-
-    var heights = {
-        characters: [{ height: '5\'4"' }, { height: '5\'5"' }]
-    }
-
-    var expected = {
-        characters: [
-            { name: 'barney', age: 36, height: '5\'4"' },
-            { name: 'fred', age: 40, height: '5\'5"' }
-        ]
-    }
-
-    t.deepEqual(merge(names, ages, heights), expected)
-})
-
-test.skip('should merge sources containing circular references', function(t) {
-    var object = {
-        foo: { a: 1 },
-        bar: { a: 2 }
-    }
-
-    var source = {
-        foo: { b: { c: { d: {} } } },
-        bar: {}
-    }
-
-    source.foo.b.c.d = source
-    source.bar.b = source.foo.b
-
-    var actual = merge(object, source)
-
-    t.notDeepEqual(actual.bar.b, actual.foo.b)
-    t.deepEqual(actual.foo.b.c.d, actual.foo.b.c.d.foo.b.c.d)
-})
-
-test('should work with four arguments', function(t) {
-    var expected = { a: 4 },
-        actual = merge({ a: 1 }, { a: 2 }, { a: 3 }, expected)
-
-    t.deepEqual(actual, expected)
-})
-
-test.skip('should merge onto function `object` values', function(t) {
-    function Foo() {}
-
-    var source = { a: 1 },
-        actual = merge(Foo, source)
-
-    t.deepEqual(actual, Foo)
-    t.deepEqual(Foo.a, 1)
-})
-
-test('should merge first source object properties to function', function(t) {
-    var fn = function() {},
-        object = { prop: {} },
-        actual = merge({ prop: fn }, object)
-
-    t.deepEqual(actual, object)
+    forEachObject({ a: { b: { c: { d: 1 } } } }, ({ path }) => {
+        console.log(path)
+    })
+    t.true(true)
 })
 
 // test('should merge first and second source object properties to function', function(t) {
