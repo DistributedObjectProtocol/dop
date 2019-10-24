@@ -1,7 +1,11 @@
 import test from 'ava'
 import { merge } from '../'
-import lodashStable from 'lodash' // https://github.com/lodash/lodash/blob/master/test/merge.test.js
+import _ from 'lodash' // https://github.com/lodash/lodash/blob/master/test/merge.test.js
 import R from 'ramda'
+
+// https://jsperf.com/merge-challenge
+// const merge = _.merge // This works :)
+// const merge = R.mergeDeepRight // Doesn't work
 
 test('should merge `source` into `object`', function(t) {
     var names = {
@@ -112,9 +116,9 @@ test('should assign non array/buffer/typed-array/plain-object source values dire
             new String(),
             new RegExp()
         ],
-        expected = lodashStable.map(values, () => true)
+        expected = _.map(values, () => true)
 
-    var actual = lodashStable.map(values, function(value) {
+    var actual = _.map(values, function(value) {
         var object = merge({}, { a: value, b: { c: value } })
         return object.a === value && object.b.c === value
     })
@@ -141,7 +145,7 @@ test('should not augment source objects', function(t) {
 
 test('should merge plain objects onto non-plain objects', function(t) {
     function Foo(object) {
-        lodashStable.assign(this, object)
+        _.assign(this, object)
     }
 
     var object = { a: 1 },
@@ -203,7 +207,7 @@ test('should convert strings to arrays when merging arrays of `source`', functio
     t.deepEqual(actual, { a: ['x', 'y', 'z'] })
 })
 
-test.only('checking different types', function(t) {
+test('checking different types', function(t) {
     const object = {
         string: 'string',
         boolean: true,
@@ -217,19 +221,16 @@ test.only('checking different types', function(t) {
         symbol: Symbol('sym'),
         date: new Date(),
         regexp: /molamazo/g,
+        f: () => {},
         function: function() {
             console.log(arguments)
         },
-        f: () => {},
-        b: 3,
-        c: 5,
         obj: { lolo: 111 },
         arr: [1, 2, 3, { La: 123 }],
         array: [567],
         arrobj: { 0: 1, 1: 2 },
         d: {
             a: 11,
-            b: 12,
             array: [1, 2, 3, { abc: 123 }],
             d: {
                 d1: 13,
@@ -239,13 +240,12 @@ test.only('checking different types', function(t) {
                         d221: 12,
                         d223: {
                             hola: 'hola',
-                            undefined: 'undefined'
+                            undefined: undefined
                         }
                     }
                 }
             },
             arrobj: ['a', 'b', 'c', 'd'],
-            f: 5,
             g: 123,
             d2: {
                 d22: {
@@ -260,10 +260,17 @@ test.only('checking different types', function(t) {
 
     var actual = merge({}, object)
     var actual_lodash = {}
-    lodashStable.merge(actual_lodash, object)
+    var actual_rambda = R.merge({}, object)
+    _.merge(actual_lodash, object)
     t.deepEqual(object, actual)
     t.deepEqual(object, actual_lodash)
-    t.deepEqual(object, R.merge({}, object))
+    t.deepEqual(object, actual_rambda)
+    t.not(object.obj, actual.obj)
+    t.not(object.obj, actual_lodash.obj)
+    // t.not(object.obj, actual_rambda.obj) // this fails because Rambda does not create new objects
+    t.not(object.obj, actual.arr)
+    t.not(object.arr, actual_lodash.arr)
+    // t.not(object.arr, actual_rambda.arr) // this fails because Rambda does not create new arrays
 })
 
 test.skip('should convert values to arrays when merging arrays of `source`', function(t) {
@@ -324,9 +331,9 @@ test.skip('should merge sources containing circular references', function(t) {
 
 //     var props = ['0', 'buffer', 'a'],
 //         values = [[{ a: 1 }], typedArray, { a: [1] }],
-//         expected = lodashStable.map(values, () => true)
+//         expected = _.map(values, () => true)
 
-//     var actual = lodashStable.map(values, function(value, index) {
+//     var actual = _.map(values, function(value, index) {
 //         var key = props[index],
 //             object = merge({}, { value: value }),
 //             subValue = value[key],
@@ -336,7 +343,7 @@ test.skip('should merge sources containing circular references', function(t) {
 //         return (
 //             newValue !== value &&
 //             newSubValue !== subValue &&
-//             lodashStable.isEqual(newValue, value)
+//             _.isEqual(newValue, value)
 //         )
 //     })
 
@@ -374,29 +381,29 @@ test.skip('should merge sources containing circular references', function(t) {
 //         ],
 //         buffer = ArrayBuffer && new ArrayBuffer(8)
 
-//     var expected = lodashStable.map(typedArrays, function(type, index) {
+//     var expected = _.map(typedArrays, function(type, index) {
 //         var array = arrays[index].slice()
 //         array[0] = 1
 //         return root[type] ? { value: array } : false
 //     })
 
-//     var actual = lodashStable.map(typedArrays, function(type) {
+//     var actual = _.map(typedArrays, function(type) {
 //         var Ctor = root[type]
 //         return Ctor ? merge({ value: new Ctor(buffer) }, { value: [1] }) : false
 //     })
 
-//     t.true(lodashStable.isArray(actual))
+//     t.true(_.isArray(actual))
 //     t.deepEqual(actual, expected)
 
-//     expected = lodashStable.map(typedArrays, function(type, index) {
+//     expected = _.map(typedArrays, function(type, index) {
 //         var array = arrays[index].slice()
 //         array.push(1)
 //         return root[type] ? { value: array } : false
 //     })
 
-//     actual = lodashStable.map(typedArrays, function(type, index) {
+//     actual = _.map(typedArrays, function(type, index) {
 //         var Ctor = root[type],
-//             array = lodashStable.range(arrays[index].length)
+//             array = _.range(arrays[index].length)
 
 //         array.push(1)
 //         return Ctor
@@ -404,7 +411,7 @@ test.skip('should merge sources containing circular references', function(t) {
 //             : false
 //     })
 
-//     t.true(lodashStable.isArray(actual))
+//     t.true(_.isArray(actual))
 //     t.deepEqual(actual, expected)
 // })
 
@@ -412,9 +419,9 @@ test.skip('should merge sources containing circular references', function(t) {
 //     var object1 = { el: document && document.createElement('div') },
 //         object2 = { el: document && document.createElement('div') },
 //         pairs = [[{}, object1], [object1, object2]],
-//         expected = lodashStable.map(pairs, () => true)
+//         expected = _.map(pairs, () => true)
 
-//     var actual = lodashStable.map(pairs, function(pair) {
+//     var actual = _.map(pairs, function(pair) {
 //         try {
 //             return merge(pair[0], pair[1]).el === pair[1].el
 //         } catch (e) {}
