@@ -1,6 +1,7 @@
 import resolve from 'rollup-plugin-node-resolve'
 import babel from 'rollup-plugin-babel'
 import commonjs from 'rollup-plugin-commonjs'
+import minify from 'rollup-plugin-babel-minify'
 import pkg from './package.json'
 
 export default [
@@ -10,15 +11,14 @@ export default [
         output: {
             name: 'dop',
             file: pkg.browser,
-            compact: true,
+            // compact: true,
             format: 'umd'
         },
         plugins: [
             resolve(), // so Rollup can find `ms`
-            babel({
-                exclude: 'node_modules/**'
-            }),
-            commonjs() // so Rollup can convert `ms` to an ES module
+            babel({ exclude: 'node_modules/**' }),
+            commonjs(), // so Rollup can convert `ms` to an ES module
+            minify()
         ]
     },
 
