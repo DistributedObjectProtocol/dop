@@ -3,7 +3,6 @@ import { merge } from '../'
 
 // https://github.com/lodash/lodash/blob/master/test/merge.test.js
 test('should merge `source` into `object`', function(t) {
-    console.log(merge)
     var names = {
         characters: [{ name: 'barney' }, { name: 'fred' }]
     }
@@ -53,7 +52,7 @@ test('should work with four arguments', function(t) {
     t.deepEqual(actual, expected)
 })
 
-test.skip('should merge onto function `object` values', function(t) {
+test('should merge onto function `object` values', function(t) {
     function Foo() {}
 
     var source = { a: 1 },
@@ -64,7 +63,6 @@ test.skip('should merge onto function `object` values', function(t) {
 })
 
 test('should merge first source object properties to function', function(t) {
-    console.log(merge)
     var fn = function() {},
         object = { prop: {} },
         actual = merge({ prop: fn }, object)
@@ -72,36 +70,36 @@ test('should merge first source object properties to function', function(t) {
     t.deepEqual(actual, object)
 })
 
-// test('should merge first and second source object properties to function', function(t) {
-//     var fn = function() {},
-//         object = { prop: {} },
-//         actual = merge({ prop: fn }, { prop: fn }, object)
+test('should merge first and second source object properties to function', function(t) {
+    var fn = function() {},
+        object = { prop: {} },
+        actual = merge({ prop: fn }, { prop: fn }, object)
 
-//     t.deepEqual(actual, object)
-// })
+    t.deepEqual(actual, object)
+})
 
-// test('should not merge onto function values of sources', function(t) {
-//     var source1 = { a: function() {} },
-//         source2 = { a: { b: 2 } },
-//         expected = { a: { b: 2 } },
-//         actual = merge({}, source1, source2)
+test('should not merge onto function values of sources', function(t) {
+    var source1 = { a: function() {} },
+        source2 = { a: { b: 2 } },
+        expected = { a: { b: 2 } },
+        actual = merge({}, source1, source2)
 
-//     t.deepEqual(actual, expected)
-//     assert.ok(!('b' in source1.a))
+    t.deepEqual(actual, expected)
+    t.true(!('b' in source1.a))
 
-//     actual = merge(source1, source2)
-//     t.deepEqual(actual, expected)
-// })
+    actual = merge(source1, source2)
+    t.deepEqual(actual, expected)
+})
 
-// test('should merge onto non-plain `object` values', function(t) {
-//     function Foo() {}
+test('should merge onto non-plain `object` values', function(t) {
+    function Foo() {}
 
-//     var object = new Foo(),
-//         actual = merge(object, { a: 1 })
+    var object = new Foo(),
+        actual = merge(object, { a: 1 })
 
-//     t.deepEqual(actual, object)
-//     t.deepEqual(object.a, 1)
-// })
+    t.deepEqual(actual, object)
+    t.deepEqual(object.a, 1)
+})
 
 // test('should treat sparse array sources as dense', function(t) {
 //     var array = [1]
@@ -112,7 +110,7 @@ test('should merge first source object properties to function', function(t) {
 
 //     expected[1] = undefined
 
-//     assert.ok('1' in actual)
+//     t.true('1' in actual)
 //     t.deepEqual(actual, expected)
 // })
 
@@ -122,19 +120,19 @@ test('should merge first source object properties to function', function(t) {
 //         expected = { '0': 1, '1': 2, '2': 3, '3': 4 },
 //         actual = merge(object1, object2)
 
-//     assert.ok(!('3' in args))
-//     assert.ok(!isArguments(actual.value))
+//     t.true(!('3' in args))
+//     t.true(!isArguments(actual.value))
 //     t.deepEqual(actual.value, expected)
 //     object1.value = args
 
 //     actual = merge(object2, object1)
-//     assert.ok(!isArguments(actual.value))
+//     t.true(!isArguments(actual.value))
 //     t.deepEqual(actual.value, expected)
 
 //     expected = { '0': 1, '1': 2, '2': 3 }
 
 //     actual = merge({}, object1)
-//     assert.ok(!isArguments(actual.value))
+//     t.true(!isArguments(actual.value))
 //     t.deepEqual(actual.value, expected)
 // })
 
@@ -168,7 +166,7 @@ test('should merge first source object properties to function', function(t) {
 //         return Ctor ? merge({ value: new Ctor(buffer) }, { value: [1] }) : false
 //     })
 
-//     assert.ok(lodashStable.isArray(actual))
+//     t.true(lodashStable.isArray(actual))
 //     t.deepEqual(actual, expected)
 
 //     expected = lodashStable.map(typedArrays, function(type, index) {
@@ -187,7 +185,7 @@ test('should merge first source object properties to function', function(t) {
 //             : false
 //     })
 
-//     assert.ok(lodashStable.isArray(actual))
+//     t.true(lodashStable.isArray(actual))
 //     t.deepEqual(actual, expected)
 // })
 
@@ -223,7 +221,7 @@ test('should merge first source object properties to function', function(t) {
 //         var buffer = new Buffer([1]),
 //             actual = merge({}, { value: buffer }).value
 
-//         assert.ok(lodashStable.isBuffer(actual))
+//         t.true(lodashStable.isBuffer(actual))
 //         t.deepEqual(actual[0], buffer[0])
 //         t.notDeepEqual(actual, buffer)
 //     }
@@ -279,11 +277,11 @@ test('should merge first source object properties to function', function(t) {
 //     var object = { a: 1 },
 //         actual = merge(new Foo(), object)
 
-//     assert.ok(actual instanceof Foo)
+//     t.true(actual instanceof Foo)
 //     t.deepEqual(actual, new Foo(object))
 
 //     actual = merge([new Foo()], [object])
-//     assert.ok(actual[0] instanceof Foo)
+//     t.true(actual[0] instanceof Foo)
 //     t.deepEqual(actual, [new Foo(object)])
 // })
 
@@ -324,7 +322,7 @@ test('should merge first source object properties to function', function(t) {
 //     })
 
 //     merge(object, object)
-//     assert.ok(pass)
+//     t.true(pass)
 // })
 
 // test('should convert values to arrays when merging arrays of `source`', function(t) {
