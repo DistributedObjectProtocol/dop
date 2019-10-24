@@ -1,6 +1,7 @@
 import test from 'ava'
 import { merge } from '../'
 import lodashStable from 'lodash' // https://github.com/lodash/lodash/blob/master/test/merge.test.js
+import R from 'ramda'
 
 test('should merge `source` into `object`', function(t) {
     var names = {
@@ -200,6 +201,69 @@ test('should convert strings to arrays when merging arrays of `source`', functio
         actual = merge(object, { a: ['x', 'y', 'z'] })
 
     t.deepEqual(actual, { a: ['x', 'y', 'z'] })
+})
+
+test.only('checking different types', function(t) {
+    const object = {
+        string: 'string',
+        boolean: true,
+        number: -123,
+        Infinity: -Infinity,
+        float: 1.234153454354341,
+        long: 12313214234312324353454534534,
+        null: null,
+        undefined: undefined,
+        NaN: NaN,
+        symbol: Symbol('sym'),
+        date: new Date(),
+        regexp: /molamazo/g,
+        function: function() {
+            console.log(arguments)
+        },
+        f: () => {},
+        b: 3,
+        c: 5,
+        obj: { lolo: 111 },
+        arr: [1, 2, 3, { La: 123 }],
+        array: [567],
+        arrobj: { 0: 1, 1: 2 },
+        d: {
+            a: 11,
+            b: 12,
+            array: [1, 2, 3, { abc: 123 }],
+            d: {
+                d1: 13,
+                d2: {
+                    d21: 123,
+                    d22: {
+                        d221: 12,
+                        d223: {
+                            hola: 'hola',
+                            undefined: 'undefined'
+                        }
+                    }
+                }
+            },
+            arrobj: ['a', 'b', 'c', 'd'],
+            f: 5,
+            g: 123,
+            d2: {
+                d22: {
+                    d222: 25,
+                    d223: {
+                        hola: 'mundo'
+                    }
+                }
+            }
+        }
+    }
+
+    var actual = merge({}, object)
+    var actual_lodash = {}
+    lodashStable.merge(actual_lodash, object)
+    t.deepEqual(object, actual)
+    t.deepEqual(object, actual_lodash)
+    t.deepEqual(object, R.merge({}, object))
 })
 
 test.skip('should convert values to arrays when merging arrays of `source`', function(t) {

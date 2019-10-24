@@ -1,6 +1,7 @@
 import { is, isPojoObject } from './is'
 import createCustomMerge from './createCustomMerge'
 
+// https://jsperf.com/merge-challenge
 export default createCustomMerge('merge', ({ origin, destiny, prop }) => {
     const origin_value = origin[prop]
     const destiny_value = destiny[prop]
