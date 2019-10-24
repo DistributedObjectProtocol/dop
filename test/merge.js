@@ -64,6 +64,7 @@ test.skip('should merge onto function `object` values', function(t) {
 })
 
 test('should merge first source object properties to function', function(t) {
+    console.log(merge)
     var fn = function() {},
         object = { prop: {} },
         actual = merge({ prop: fn }, object)
