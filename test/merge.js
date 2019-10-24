@@ -227,103 +227,104 @@ test('should assign non array/buffer/typed-array/plain-object source values dire
     t.deepEqual(actual, expected)
 })
 
-// test('should deep clone array/typed-array/plain-object source values', function(t) {
-//     var typedArray = Uint8Array ? new Uint8Array([1]) : { buffer: [1] }
+test.skip('should deep clone array/typed-array/plain-object source values', function(t) {
+    var typedArray = Uint8Array ? new Uint8Array([1]) : { buffer: [1] }
 
-//     var props = ['0', 'buffer', 'a'],
-//         values = [[{ a: 1 }], typedArray, { a: [1] }],
-//         expected = lodashStable.map(values, stubTrue)
+    var props = ['0', 'buffer', 'a'],
+        values = [[{ a: 1 }], typedArray, { a: [1] }],
+        expected = lodashStable.map(values, () => true)
 
-//     var actual = lodashStable.map(values, function(value, index) {
-//         var key = props[index],
-//             object = merge({}, { value: value }),
-//             subValue = value[key],
-//             newValue = object.value,
-//             newSubValue = newValue[key]
+    var actual = lodashStable.map(values, function(value, index) {
+        var key = props[index],
+            object = merge({}, { value: value }),
+            subValue = value[key],
+            newValue = object.value,
+            newSubValue = newValue[key]
 
-//         return (
-//             newValue !== value &&
-//             newSubValue !== subValue &&
-//             lodashStable.isEqual(newValue, value)
-//         )
-//     })
+        return (
+            newValue !== value &&
+            newSubValue !== subValue &&
+            lodashStable.isEqual(newValue, value)
+        )
+    })
 
-//     t.deepEqual(actual, expected)
-// })
+    t.deepEqual(actual, expected)
+})
 
-// test('should not augment source objects', function(t) {
-//     var source1 = { a: [{ a: 1 }] },
-//         source2 = { a: [{ b: 2 }] },
-//         actual = merge({}, source1, source2)
+test('should not augment source objects', function(t) {
+    var source1 = { a: [{ a: 1 }] },
+        source2 = { a: [{ b: 2 }] },
+        actual = merge({}, source1, source2)
 
-//     t.deepEqual(source1.a, [{ a: 1 }])
-//     t.deepEqual(source2.a, [{ b: 2 }])
-//     t.deepEqual(actual.a, [{ a: 1, b: 2 }])
+    t.deepEqual(source1.a, [{ a: 1 }])
+    t.deepEqual(source2.a, [{ b: 2 }])
+    t.deepEqual(actual.a, [{ a: 1, b: 2 }])
 
-//     var source1 = { a: [[1, 2, 3]] },
-//         source2 = { a: [[3, 4]] },
-//         actual = merge({}, source1, source2)
+    var source1 = { a: [[1, 2, 3]] },
+        source2 = { a: [[3, 4]] },
+        actual = merge({}, source1, source2)
 
-//     t.deepEqual(source1.a, [[1, 2, 3]])
-//     t.deepEqual(source2.a, [[3, 4]])
-//     t.deepEqual(actual.a, [[3, 4, 3]])
-// })
+    t.deepEqual(source1.a, [[1, 2, 3]])
+    t.deepEqual(source2.a, [[3, 4]])
+    t.deepEqual(actual.a, [[3, 4, 3]])
+})
 
-// test('should merge plain objects onto non-plain objects', function(t) {
-//     function Foo(object) {
-//         lodashStable.assign(this, object)
-//     }
+test('should merge plain objects onto non-plain objects', function(t) {
+    function Foo(object) {
+        lodashStable.assign(this, object)
+    }
 
-//     var object = { a: 1 },
-//         actual = merge(new Foo(), object)
+    var object = { a: 1 },
+        actual = merge(new Foo(), object)
 
-//     t.true(actual instanceof Foo)
-//     t.deepEqual(actual, new Foo(object))
+    t.true(actual instanceof Foo)
+    t.deepEqual(actual, new Foo(object))
 
-//     actual = merge([new Foo()], [object])
-//     t.true(actual[0] instanceof Foo)
-//     t.deepEqual(actual, [new Foo(object)])
-// })
+    actual = merge([new Foo()], [object])
+    t.true(actual[0] instanceof Foo)
+    t.deepEqual(actual, [new Foo(object)])
+})
 
-// test('should not overwrite existing values with `undefined` values of object sources', function(t) {
-//     var actual = merge({ a: 1 }, { a: undefined, b: undefined })
-//     t.deepEqual(actual, { a: 1, b: undefined })
-// })
+test('should not overwrite existing values with `undefined` values of object sources', function(t) {
+    var actual = merge({ a: 1 }, { a: undefined, b: undefined })
+    var expected = { a: 1, b: undefined }
+    t.deepEqual(actual, expected)
+})
 
-// test('should not overwrite existing values with `undefined` values of array sources', function(t) {
-//     var array = [1]
-//     array[2] = 3
+test('should not overwrite existing values with `undefined` values of array sources', function(t) {
+    var array = [1]
+    array[2] = 3
 
-//     var actual = merge([4, 5, 6], array),
-//         expected = [1, 5, 3]
+    var actual = merge([4, 5, 6], array),
+        expected = [1, 5, 3]
 
-//     t.deepEqual(actual, expected)
+    t.deepEqual(actual, expected)
 
-//     array = [1, , 3]
-//     array[1] = undefined
+    array = [1, , 3]
+    array[1] = undefined
 
-//     actual = merge([4, 5, 6], array)
-//     t.deepEqual(actual, expected)
-// })
+    actual = merge([4, 5, 6], array)
+    t.deepEqual(actual, expected)
+})
 
-// test('should skip merging when `object` and `source` are the same value', function(t) {
-//     var object = {},
-//         pass = true
+test('should skip merging when `object` and `source` are the same value', function(t) {
+    var object = {},
+        pass = true
 
-//     defineProperty(object, 'a', {
-//         configurable: true,
-//         enumerable: true,
-//         get: function() {
-//             pass = false
-//         },
-//         set: function() {
-//             pass = false
-//         }
-//     })
+    Object.defineProperty(object, 'a', {
+        configurable: true,
+        enumerable: true,
+        get: function() {
+            pass = false
+        },
+        set: function() {
+            pass = false
+        }
+    })
 
-//     merge(object, object)
-//     t.true(pass)
-// })
+    merge(object, object)
+    t.true(pass)
+})
 
 // test('should convert values to arrays when merging arrays of `source`', function(t) {
 //     var object = { a: { '1': 'y', b: 'z', length: 2 } },
@@ -346,7 +347,7 @@ test('should assign non array/buffer/typed-array/plain-object source values dire
 //     var object1 = { el: document && document.createElement('div') },
 //         object2 = { el: document && document.createElement('div') },
 //         pairs = [[{}, object1], [object1, object2]],
-//         expected = lodashStable.map(pairs, stubTrue)
+//         expected = lodashStable.map(pairs, ()=>true)
 
 //     var actual = lodashStable.map(pairs, function(pair) {
 //         try {

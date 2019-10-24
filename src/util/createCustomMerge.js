@@ -15,6 +15,8 @@ export default function createCustomMerge(function_name, mutator) {
             )
             // Recursion
             return merge.apply(this, args)
+        } else if (origin === destiny) {
+            return destiny
         } else {
             forEachObject(origin, mutator, destiny)
             return destiny

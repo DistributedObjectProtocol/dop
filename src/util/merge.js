@@ -9,8 +9,10 @@ export default createCustomMerge('merge', ({ origin, destiny, prop, path }) => {
         if (!destiny.hasOwnProperty(prop) || tof_origin != tof_destiny) {
             destiny[prop] = tof_origin == 'array' ? [] : {}
         }
+    } else if (tof_origin == 'undefined' && destiny.hasOwnProperty(prop)) {
+        // skipping
     } else {
         destiny[prop] = origin_value
-        return true // skiping
+        return true // skipping
     }
 })
