@@ -1,5 +1,5 @@
 import { is } from './is'
-import path from './path'
+import forEachObject from './forEachObject'
 
 export default function merge(destiny, origin) {
     const args = arguments
@@ -14,15 +14,14 @@ export default function merge(destiny, origin) {
         // Recursion
         return merge.apply(this, args)
     } else {
-        path(origin, mergeMutator, destiny)
+        forEachObject(origin, mergeMutator, destiny)
         return destiny
     }
 }
 
-function mergeMutator(origin, destiny, prop, path) {
+function mergeMutator({ origin, destiny, prop }) {
     const tof_origin = is(origin[prop])
     const tof_destiny = is(destiny[prop])
-    console.log({ origin: tof_origin, dest: tof_destiny })
     if (tof_origin == 'object' || tof_origin == 'array') {
         !destiny.hasOwnProperty(prop)
             ? (destiny[prop] = tof_origin == 'array' ? [] : {})
