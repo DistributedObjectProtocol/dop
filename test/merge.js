@@ -1,7 +1,7 @@
 import test from 'ava'
 import { merge } from '../'
+import lodashStable from 'lodash' // https://github.com/lodash/lodash/blob/master/test/merge.test.js
 
-// https://github.com/lodash/lodash/blob/master/test/merge.test.js
 test('should merge `source` into `object`', function(t) {
     var names = {
         characters: [{ name: 'barney' }, { name: 'fred' }]
@@ -114,118 +114,118 @@ test('should treat sparse array sources as dense', function(t) {
     t.deepEqual(actual, expected)
 })
 
-// test('should merge `arguments` objects', function(t) {
-//     var object1 = { value: args },
-//         object2 = { value: { '3': 4 } },
-//         expected = { '0': 1, '1': 2, '2': 3, '3': 4 },
-//         actual = merge(object1, object2)
+test.skip('should merge `arguments` objects', function(t) {
+    var object1 = { value: args },
+        object2 = { value: { '3': 4 } },
+        expected = { '0': 1, '1': 2, '2': 3, '3': 4 },
+        actual = merge(object1, object2)
 
-//     t.true(!('3' in args))
-//     t.true(!isArguments(actual.value))
-//     t.deepEqual(actual.value, expected)
-//     object1.value = args
+    t.true(!('3' in args))
+    t.true(!isArguments(actual.value))
+    t.deepEqual(actual.value, expected)
+    object1.value = args
 
-//     actual = merge(object2, object1)
-//     t.true(!isArguments(actual.value))
-//     t.deepEqual(actual.value, expected)
+    actual = merge(object2, object1)
+    t.true(!isArguments(actual.value))
+    t.deepEqual(actual.value, expected)
 
-//     expected = { '0': 1, '1': 2, '2': 3 }
+    expected = { '0': 1, '1': 2, '2': 3 }
 
-//     actual = merge({}, object1)
-//     t.true(!isArguments(actual.value))
-//     t.deepEqual(actual.value, expected)
-// })
+    actual = merge({}, object1)
+    t.true(!isArguments(actual.value))
+    t.deepEqual(actual.value, expected)
+})
 
-// test('should merge typed arrays', function(t) {
-//     var array1 = [0],
-//         array2 = [0, 0],
-//         array3 = [0, 0, 0, 0],
-//         array4 = [0, 0, 0, 0, 0, 0, 0, 0]
+test.skip('should merge typed arrays', function(t) {
+    var typedArrays = [
+        'Float32Array',
+        'Float64Array',
+        'Int8Array',
+        'Int16Array',
+        'Int32Array',
+        'Uint8Array',
+        'Uint8ClampedArray',
+        'Uint16Array',
+        'Uint32Array'
+    ]
 
-//     var arrays = [
-//             array2,
-//             array1,
-//             array4,
-//             array3,
-//             array2,
-//             array4,
-//             array4,
-//             array3,
-//             array2
-//         ],
-//         buffer = ArrayBuffer && new ArrayBuffer(8)
+    var array1 = [0],
+        array2 = [0, 0],
+        array3 = [0, 0, 0, 0],
+        array4 = [0, 0, 0, 0, 0, 0, 0, 0]
 
-//     var expected = lodashStable.map(typedArrays, function(type, index) {
-//         var array = arrays[index].slice()
-//         array[0] = 1
-//         return root[type] ? { value: array } : false
-//     })
+    var arrays = [
+            array2,
+            array1,
+            array4,
+            array3,
+            array2,
+            array4,
+            array4,
+            array3,
+            array2
+        ],
+        buffer = ArrayBuffer && new ArrayBuffer(8)
 
-//     var actual = lodashStable.map(typedArrays, function(type) {
-//         var Ctor = root[type]
-//         return Ctor ? merge({ value: new Ctor(buffer) }, { value: [1] }) : false
-//     })
+    var expected = lodashStable.map(typedArrays, function(type, index) {
+        var array = arrays[index].slice()
+        array[0] = 1
+        return root[type] ? { value: array } : false
+    })
 
-//     t.true(lodashStable.isArray(actual))
-//     t.deepEqual(actual, expected)
+    var actual = lodashStable.map(typedArrays, function(type) {
+        var Ctor = root[type]
+        return Ctor ? merge({ value: new Ctor(buffer) }, { value: [1] }) : false
+    })
 
-//     expected = lodashStable.map(typedArrays, function(type, index) {
-//         var array = arrays[index].slice()
-//         array.push(1)
-//         return root[type] ? { value: array } : false
-//     })
+    t.true(lodashStable.isArray(actual))
+    t.deepEqual(actual, expected)
 
-//     actual = lodashStable.map(typedArrays, function(type, index) {
-//         var Ctor = root[type],
-//             array = lodashStable.range(arrays[index].length)
+    expected = lodashStable.map(typedArrays, function(type, index) {
+        var array = arrays[index].slice()
+        array.push(1)
+        return root[type] ? { value: array } : false
+    })
 
-//         array.push(1)
-//         return Ctor
-//             ? merge({ value: array }, { value: new Ctor(buffer) })
-//             : false
-//     })
+    actual = lodashStable.map(typedArrays, function(type, index) {
+        var Ctor = root[type],
+            array = lodashStable.range(arrays[index].length)
 
-//     t.true(lodashStable.isArray(actual))
-//     t.deepEqual(actual, expected)
-// })
+        array.push(1)
+        return Ctor
+            ? merge({ value: array }, { value: new Ctor(buffer) })
+            : false
+    })
 
-// test('should assign `null` values', function(t) {
-//     var actual = merge({ a: 1 }, { a: null })
-//     t.deepEqual(actual.a, null)
-// })
+    t.true(lodashStable.isArray(actual))
+    t.deepEqual(actual, expected)
+})
 
-// test('should assign non array/buffer/typed-array/plain-object source values directly', function(t) {
-//     function Foo() {}
+test('should assign `null` values', function(t) {
+    var actual = merge({ a: 1 }, { a: null })
+    t.deepEqual(actual.a, null)
+})
 
-//     var values = [
-//             new Foo(),
-//             new Boolean(),
-//             new Date(),
-//             Foo,
-//             new Number(),
-//             new String(),
-//             new RegExp()
-//         ],
-//         expected = lodashStable.map(values, stubTrue)
+test('should assign non array/buffer/typed-array/plain-object source values directly', function(t) {
+    function Foo() {}
 
-//     var actual = lodashStable.map(values, function(value) {
-//         var object = merge({}, { a: value, b: { c: value } })
-//         return object.a === value && object.b.c === value
-//     })
+    var values = [
+            new Foo(),
+            new Boolean(),
+            new Date(),
+            Foo,
+            new Number(),
+            new String(),
+            new RegExp()
+        ],
+        expected = lodashStable.map(values, () => true)
 
-//     t.deepEqual(actual, expected)
-// })
-
-// test('should clone buffer source values', function(t) {
-//     if (Buffer) {
-//         var buffer = new Buffer([1]),
-//             actual = merge({}, { value: buffer }).value
-
-//         t.true(lodashStable.isBuffer(actual))
-//         t.deepEqual(actual[0], buffer[0])
-//         t.notDeepEqual(actual, buffer)
-//     }
-// })
+    var actual = lodashStable.map(values, function(value) {
+        var object = merge({}, { a: value, b: { c: value } })
+        return object.a === value && object.b.c === value
+    })
+    t.deepEqual(actual, expected)
+})
 
 // test('should deep clone array/typed-array/plain-object source values', function(t) {
 //     var typedArray = Uint8Array ? new Uint8Array([1]) : { buffer: [1] }
