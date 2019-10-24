@@ -1,4 +1,5 @@
 import { isObject } from './is'
+import forEach from './forEach'
 
 // https://jsperf.com/dop-foreachobject
 export default function forEachObject(origin, callback, destiny) {
@@ -16,10 +17,9 @@ function forEachObjectLoop(
     path,
     has_destiny
 ) {
-    for (const prop in origin) {
+    forEach(origin, (value_origin, prop) => {
         path.push(prop)
 
-        const value_origin = origin[prop]
         const skip = callback({ origin, destiny, prop, path })
 
         if (
@@ -42,5 +42,5 @@ function forEachObjectLoop(
         }
 
         path.pop()
-    }
+    })
 }

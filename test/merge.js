@@ -101,18 +101,18 @@ test('should merge onto non-plain `object` values', function(t) {
     t.deepEqual(object.a, 1)
 })
 
-// test('should treat sparse array sources as dense', function(t) {
-//     var array = [1]
-//     array[2] = 3
+test('should treat sparse array sources as dense', function(t) {
+    var array = [1]
+    array[2] = 3
 
-//     var actual = merge([], array),
-//         expected = array.slice()
+    var actual = merge([0], array),
+        expected = array.slice()
 
-//     expected[1] = undefined
+    expected[1] = undefined
 
-//     t.true('1' in actual)
-//     t.deepEqual(actual, expected)
-// })
+    t.true('1' in actual)
+    t.deepEqual(actual, expected)
+})
 
 // test('should merge `arguments` objects', function(t) {
 //     var object1 = { value: args },

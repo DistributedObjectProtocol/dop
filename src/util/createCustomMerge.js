@@ -1,7 +1,9 @@
 import forEachObject from './forEachObject'
+import createFunction from './createFunction'
 
-export default function createCustomMerge(mutator) {
-    return function merge(destiny, origin) {
+// https://stackoverflow.com/questions/5905492/dynamic-function-name-in-javascript
+export default function createCustomMerge(function_name, mutator) {
+    return createFunction(function_name, function merge(destiny, origin) {
         const args = arguments
         if (args.length > 2) {
             // Remove the destiny 2 arguments of the arguments and add thoose arguments as merged at the begining
@@ -17,5 +19,5 @@ export default function createCustomMerge(mutator) {
             forEachObject(origin, mutator, destiny)
             return destiny
         }
-    }
+    })
 }
