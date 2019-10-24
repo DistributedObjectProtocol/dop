@@ -18,7 +18,7 @@ export default [
             resolve(), // so Rollup can find `ms`
             babel({ exclude: 'node_modules/**' }),
             commonjs(), // so Rollup can convert `ms` to an ES module
-            minify()
+            minify({ comments: false })
         ]
     },
 
