@@ -1,24 +1,4 @@
-# Dependency directories
-node_modules/
-
-# Logs
-log
-logs
-*.log
-npm-debug.log*
-
-# IDE
-.idea
-
-# Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
-.grunt
-
-# Files
+.vscode
 dist
-testing/
+node_modules
 package-lock.json
-yarn.lock
-examples/drag/package-lock.json
-examples/todomvc/package-lock.json
-.vscode/launch.json
-*.tgz
