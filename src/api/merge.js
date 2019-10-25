@@ -1,4 +1,4 @@
-import { is, isPojoObject } from '../util/is'
+import { is, isPojo } from '../util/is'
 import createCustomMerge from '../util/createCustomMerge'
 
 // https://jsperf.com/merge-challenge
@@ -7,7 +7,7 @@ export default createCustomMerge('merge', ({ origin, destiny, prop }) => {
     const destiny_value = destiny[prop]
     const tof_origin = is(origin_value)
     const tof_destiny = is(destiny_value)
-    if (isPojoObject(origin_value)) {
+    if (isPojo(origin_value)) {
         if (!destiny.hasOwnProperty(prop) || tof_origin != tof_destiny) {
             // destiny[prop] = tof_origin == 'array' ? [] : {}
             if (tof_origin == 'array') {

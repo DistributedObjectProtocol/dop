@@ -39,6 +39,7 @@
         "babel-core": "^6.26.3",
         "babel-plugin-external-helpers": "^6.22.0",
         "babel-preset-env": "^1.7.0",
+        "ejson": "^2.2.0",
         "lodash": "^4.17.15",
         "ramda": "^0.26.1",
         "rollup": "^1.0.0",
@@ -51,7 +52,7 @@
         "build": "rollup -c",
         "dev": "rollup -c -w",
         "test": "ava --verbose",
-        "testing": "npm test -- --watch"
+        "testing": "npm test -- --watch test/djson.js"
     },
     "files": [
         "dist",

@@ -12,22 +12,28 @@ export function isObject(object) {
     return object !== null && typeof object == 'object'
 }
 
-export function isPojoObject(object) {
+export function isPojo(object) {
     if (!isObject(object)) return false
     const prototype = Object.getPrototypeOf(object)
     return prototype === Object.prototype || prototype === Array.prototype
 }
 
+export function isPojoObject(object) {
+    if (!isObject(object)) return false
+    const prototype = Object.getPrototypeOf(object)
+    return prototype === Object.prototype
+}
+
 // function Test() {}
-// console.log(isPojoObject({}))
-// console.log(isPojoObject([]))
-// console.log(isPojoObject(new Test()))
-// console.log(isPojoObject(new Error()))
-// console.log(isPojoObject(new Date()))
-// console.log(isPojoObject(null))
-// console.log(isPojoObject(Symbol('')))
-// console.log(isPojoObject(function() {}))
-// console.log(isPojoObject(1))
-// console.log(isPojoObject('s'))
-// console.log(isPojoObject(true))
-// console.log(isPojoObject(/a/))
+// console.log(isPojo({}))
+// console.log(isPojo([]))
+// console.log(isPojo(new Test()))
+// console.log(isPojo(new Error()))
+// console.log(isPojo(new Date()))
+// console.log(isPojo(null))
+// console.log(isPojo(Symbol('')))
+// console.log(isPojo(function() {}))
+// console.log(isPojo(1))
+// console.log(isPojo('s'))
+// console.log(isPojo(true))
+// console.log(isPojo(/a/))
