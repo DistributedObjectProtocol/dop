@@ -59,7 +59,7 @@ test("This should not be $escape'd because $delete has another valid prop 2", fu
     testAll(t, patch, expected)
 })
 
-test("This should not be $escape'd because $delete is not 0", function(t) {
+test("This should not be $escape'd because $delete is not 0 which means is an invalid type", function(t) {
     const patch = { user: { enzo: undefined, john: { $delete: 1 } } }
     const expected = { user: { enzo: { $delete: 0 }, john: { $delete: 1 } } }
     testAll(t, patch, expected)

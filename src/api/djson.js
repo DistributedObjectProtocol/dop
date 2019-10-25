@@ -2,16 +2,18 @@ import { isPojoObject } from '../util/is'
 
 const TYPES = {
     // $escape: {
-    //     stringify: value => {
-    //         $escape: value
-    //     }
+    //     //     stringify: value => {
+    //     //         $escape: value
+    //     //     }
     // },
     $delete: {
-        isValid: value => value === 0
+        stringify: value => ({ $delete: 0 }),
+        isValidToStringify: value => value === undefined,
+        isValidToParse: value => value === 0
     }
 }
 
-function isValidEscape(object) {
+function isValidToEscape(object) {
     if (!isPojoObject(object)) return
     let type_name
     for (const key in object) {
@@ -20,7 +22,17 @@ function isValidEscape(object) {
         }
         type_name = key
     }
-    return TYPES[type_name].isValid(object[type_name]) ? type_name : undefined
+    return TYPES[type_name].isValidToParse(object[type_name])
+        ? type_name
+        : undefined
+}
+
+function isValidToStringify(value) {
+    for (const type_name in TYPES) {
+        if (TYPES[type_name].isValidToStringify(value)) {
+            return type_name
+        }
+    }
 }
 
 function stringify(object) {
@@ -29,15 +41,15 @@ function stringify(object) {
         // console.log('--')
         // console.log(prop, value)
         // console.log('--')
+
         if (!escaped.has(value)) {
-            const type_name = isValidEscape(value)
-            if (type_name !== undefined) {
-                console.log('ESCAPE', type_name)
+            if (isValidToEscape(value) !== undefined) {
                 escaped.set(value, true)
                 return { $escape: value }
             }
-            if (value === undefined) {
-                return { $delete: 0 }
+            const type_name = isValidToStringify(value)
+            if (type_name !== undefined) {
+                return TYPES[type_name].stringify(value)
             }
         }
 
