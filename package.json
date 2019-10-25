@@ -1,8 +1,9 @@
 {
     "name": "dop",
-    "version": "1.0.0-rc4",
+    "version": "1.0.0-beta.0",
     "main": "dist/dop.js",
     "browser": "dist/dop.umd.js",
+    "module": "src/",
     "license": "MIT",
     "url": "http://www.distributedobjectprotocol.org",
     "repository": {
@@ -53,6 +54,7 @@
         "testing": "npm test -- --watch"
     },
     "files": [
-        "dist"
+        "dist",
+        "src"
     ]
 }

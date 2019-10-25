@@ -1,4 +1,5 @@
-import forEachObject from './util/forEachObject'
-import merge from './util/merge'
+import merge from './api/merge'
 
-export default { merge, forEachObject }
+const dop = { caca: 1, merge }
+
+export default dop

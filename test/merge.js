@@ -273,7 +273,7 @@ test('checking different types', function(t) {
     // t.not(object.arr, actual_rambda.arr) // this fails because Rambda does not create new arrays
 })
 
-test.skip('should convert values to arrays when merging arrays of `source`', function(t) {
+test('should convert values to arrays when merging arrays of `source`', function(t) {
     var object = { a: { '1': 'y', b: 'z', length: 2 } }
     var actual = merge(object, { a: ['x'] })
     var expected = { a: ['x', 'y'] }
