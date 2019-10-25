@@ -1,14 +1,16 @@
 import { isPojoObject } from '../util/is'
 
 const TYPES = {
-    // $escape: {
-    //     //     stringify: value => {
-    //     //         $escape: value
-    //     //     }
-    // },
+    $escape: {
+        //     //     stringify: value => {
+        //     //         $escape: value
+        //     //     }
+        isValidToStringify: value => false,
+        isValidToParse: value => true
+    },
     $delete: {
-        stringify: value => ({ $delete: 0 }),
         isValidToStringify: value => value === undefined,
+        stringify: value => ({ $delete: 0 }),
         isValidToParse: value => value === 0
     }
 }
@@ -38,11 +40,10 @@ function isValidToStringify(value) {
 function stringify(object) {
     const escaped = new Map()
     return JSON.stringify(object, function(prop, value) {
-        // console.log('--')
-        // console.log(prop, value)
-        // console.log('--')
-
-        if (!escaped.has(value)) {
+        if (value !== object && !escaped.has(value)) {
+            console.log('--')
+            console.log(prop, value)
+            console.log('--')
             if (isValidToEscape(value) !== undefined) {
                 escaped.set(value, true)
                 return { $escape: value }
