@@ -12,6 +12,11 @@ const TYPES = {
         isValidToStringify: value => value === undefined,
         stringify: value => ({ $delete: 0 }),
         isValidToParse: value => value === 0
+    },
+    $date: {
+        isValidToStringify: value => !isNaN(new Date(value).getDate()),
+        stringify: value => ({ $date: new Date(value).getTime() }),
+        isValidToParse: value => value === 0
     }
 }
 
@@ -39,18 +44,25 @@ function isValidToStringify(value) {
 
 function stringify(object) {
     const escaped = new Map()
+    const stringified = new Map()
     return JSON.stringify(object, function(prop, value) {
-        if (value !== object && !escaped.has(value)) {
-            console.log('--')
-            console.log(prop, value)
-            console.log('--')
+        if (
+            value !== object &&
+            !stringified.has(value) &&
+            !escaped.has(value)
+        ) {
+            // console.log('--')
+            // console.log(prop, value)
+            // console.log('--')
             if (isValidToEscape(value) !== undefined) {
                 escaped.set(value, true)
                 return { $escape: value }
             }
             const type_name = isValidToStringify(value)
             if (type_name !== undefined) {
-                return TYPES[type_name].stringify(value)
+                value = TYPES[type_name].stringify(value)
+                stringified.set(value, true)
+                return value
             }
         }
 
