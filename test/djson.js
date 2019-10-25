@@ -67,7 +67,7 @@ test("This should not be $escape'd because $delete is not 0 which means is an in
 })
 
 test.only('Escaping the $escape', function(t) {
-    const patch = { user: { born: new Date() } }
+    const patch = { user: { born: 1234 } }
     // const expected = { user: { $escape: { $delete: 0 } } }
     const djson = DJSON.stringify(patch)
     const ejson = EJSON.stringify(patch)

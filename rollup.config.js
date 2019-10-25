@@ -16,7 +16,10 @@ export default [
         },
         plugins: [
             resolve(), // so Rollup can find `ms`
-            babel({ exclude: 'node_modules/**' }),
+            babel({
+                exclude: 'node_modules/**',
+                plugins: ['transform-es2015-arrow-functions']
+            }),
             commonjs(), // so Rollup can convert `ms` to an ES module
             minify({ comments: false })
         ]
