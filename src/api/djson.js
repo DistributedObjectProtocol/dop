@@ -14,7 +14,7 @@ const TYPES = {
         isValidToParse: value => value === 0
     },
     $date: {
-        isValidToStringify: value => !isNaN(new Date(value).getDate()),
+        isValidToStringify: value => value instanceof Date,
         stringify: value => ({ $date: new Date(value).getTime() }),
         isValidToParse: value => value === 0
     }
