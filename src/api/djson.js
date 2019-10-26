@@ -1,4 +1,4 @@
-import { isPojoObject } from '../util/is'
+import { isPojoObject, isInteger } from '../util/is'
 
 const TYPES = {
     $escape: {
@@ -10,13 +10,13 @@ const TYPES = {
     },
     $delete: {
         isValidToStringify: value => value === undefined,
-        stringify: value => ({ $delete: 0 }),
-        isValidToParse: value => value === 0
+        isValidToParse: value => value === 0,
+        stringify: value => ({ $delete: 0 })
     },
     $date: {
         isValidToStringify: value => value instanceof Date, // JSON.stringify uses .toISOString() to serialize Date
-        stringify: value => ({ $date: new Date(value).getTime() }),
-        isValidToParse: value => value === 0
+        isValidToParse: value => isInteger(value),
+        stringify: value => ({ $date: new Date(value).getTime() })
     }
 }
 

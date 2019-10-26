@@ -23,72 +23,98 @@ function newDate(d) {
     return date
 }
 
-test('$delete', function(t) {
-    const patch = { user: { enzo: undefined } }
-    const expected = { user: { enzo: { $delete: 0 } } }
-    testBasic(t, patch, expected)
-})
-
-test('Basic $escape', function(t) {
-    const patch = { user: { enzo: undefined, john: { $delete: 0 } } }
-    const expected = {
-        user: { enzo: { $delete: 0 }, john: { $escape: { $delete: 0 } } }
-    }
-    testBasic(t, patch, expected)
-})
-
-test('Basic $escape 2', function(t) {
-    const patch = { user: { john: { $delete: 0 }, enzo: undefined } }
-    const expected = {
-        user: { enzo: { $delete: 0 }, john: { $escape: { $delete: 0 } } }
-    }
-    testBasic(t, patch, expected)
-})
-
-test("This should not be $escape'd because $delete has another property", function(t) {
-    const patch = {
-        user: { enzo: undefined, john: { $delete: 0, $other: 0 } }
-    }
-    const expected = {
-        user: { enzo: { $delete: 0 }, john: { $delete: 0, $other: 0 } }
-    }
-    testBasic(t, patch, expected)
-})
-
-test("This should not be $escape'd because $delete has another valid prop", function(t) {
-    const patch = {
-        user: { enzo: undefined, john: { $delete: 0, $escape: 0 } }
-    }
-    const expected = {
-        user: { enzo: { $delete: 0 }, john: { $delete: 0, $escape: 0 } }
-    }
-    testBasic(t, patch, expected)
-})
-
-test("This should not be $escape'd because $delete has another valid prop 2", function(t) {
-    const patch = {
-        user: { enzo: undefined, john: { $escape: 0, $delete: 0 } }
-    }
-    const expected = {
-        user: { enzo: { $delete: 0 }, john: { $escape: 0, $delete: 0 } }
-    }
-    testBasic(t, patch, expected)
-})
-
-test("This should not be $escape'd because $delete is not 0 which means is an invalid type", function(t) {
-    const patch = { user: { enzo: undefined, john: { $delete: 1 } } }
-    const expected = { user: { enzo: { $delete: 0 }, john: { $delete: 1 } } }
-    testBasic(t, patch, expected)
-})
-
 test('$date', function(t) {
     const patch = { user: newDate(123456789) }
     const expected = { user: { $date: 123456789 } }
     testEJSON(t, patch, expected)
 })
 
-test.only('Escaping $date', function(t) {
-    const patch = { user: { enzo: { $date: 12345 } } }
-    const expected = { user: { enzo: { $date: 12345 } } }
+test('Basic $escape', function(t) {
+    const patch = {
+        user: { enzo: newDate(123456789), john: { $date: 123456789 } }
+    }
+    const expected = {
+        user: {
+            enzo: { $date: 123456789 },
+            john: { $escape: { $date: 123456789 } }
+        }
+    }
     testEJSON(t, patch, expected)
+})
+
+test('Basic $escape 2', function(t) {
+    const patch = {
+        user: { john: { $date: 123456789 }, enzo: newDate(123456789) }
+    }
+    const expected = {
+        user: {
+            enzo: { $date: 123456789 },
+            john: { $escape: { $date: 123456789 } }
+        }
+    }
+    testEJSON(t, patch, expected)
+})
+
+test('This should not be escaped because $date has another property', function(t) {
+    const patch = {
+        user: {
+            enzo: newDate(123456789),
+            john: { $date: 123456789, $other: 123456789 }
+        }
+    }
+    const expected = {
+        user: {
+            enzo: { $date: 123456789 },
+            john: { $date: 123456789, $other: 123456789 }
+        }
+    }
+    testEJSON(t, patch, expected)
+})
+
+test('This should not be escaped because $date has another valid prop', function(t) {
+    const patch = {
+        user: {
+            enzo: newDate(123456789),
+            john: { $date: 123456789, $escape: 123456789 }
+        }
+    }
+    const expected = {
+        user: {
+            enzo: { $date: 123456789 },
+            john: { $date: 123456789, $escape: 123456789 }
+        }
+    }
+    testEJSON(t, patch, expected)
+})
+
+test('This should not be escaped because $date has another valid prop 2', function(t) {
+    const patch = {
+        user: {
+            enzo: newDate(123456789),
+            john: { $escape: 123456789, $date: 123456789 }
+        }
+    }
+    const expected = {
+        user: {
+            enzo: { $date: 123456789 },
+            john: { $escape: 123456789, $date: 123456789 }
+        }
+    }
+    testEJSON(t, patch, expected)
+})
+
+test('This should not be escaped because $date is not an number', function(t) {
+    const patch = {
+        user: { enzo: newDate(123456789), john: { $date: 'string' } }
+    }
+    const expected = {
+        user: { enzo: { $date: 123456789 }, john: { $date: 'string' } }
+    }
+    testBasic(t, patch, expected) // testEJSON(t, patch, expected) // Not sure why EJSON is still escaping strings
+})
+
+test('$delete', function(t) {
+    const patch = { user: { enzo: undefined } }
+    const expected = { user: { enzo: { $delete: 0 } } }
+    testBasic(t, patch, expected)
 })

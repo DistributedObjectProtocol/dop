@@ -23,6 +23,14 @@ export function isPojoObject(object) {
     return Object.getPrototypeOf(object) === Object.prototype
 }
 
+export function isInteger(number) {
+    return (
+        typeof number === 'number' &&
+        isFinite(number) &&
+        Math.floor(number) === number
+    )
+}
+
 // function Test() {}
 // console.log(isPojo({}))
 // console.log(isPojo([]))
