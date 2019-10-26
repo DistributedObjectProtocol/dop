@@ -1,4 +1,4 @@
-import { isPojoObject, isInteger } from '../util/is'
+import { isPojoObject } from '../util/is'
 
 const TYPES = {
     $escape: {
@@ -12,11 +12,6 @@ const TYPES = {
         isValidToStringify: value => value === undefined,
         isValidToParse: value => value === 0,
         stringify: value => ({ $delete: 0 })
-    },
-    $date: {
-        isValidToStringify: value => value instanceof Date, // JSON.stringify uses .toISOString() to serialize Date
-        isValidToParse: value => isInteger(value),
-        stringify: value => ({ $date: new Date(value).getTime() })
     }
 }
 
@@ -44,25 +39,15 @@ function isValidToStringify(value) {
 
 function stringify(object) {
     const escaped = new Map()
-    const stringified = new Map()
     return JSON.stringify(object, function(prop, value) {
-        if (
-            value !== object &&
-            !stringified.has(value) &&
-            !escaped.has(value)
-        ) {
-            // console.log('--')
-            // console.log(prop, value)
-            // console.log('--')
+        if (value !== object && !escaped.has(value)) {
             if (isValidToEscape(value) !== undefined) {
                 escaped.set(value, true)
                 return { $escape: value }
             }
             const type_name = isValidToStringify(value)
             if (type_name !== undefined) {
-                value = TYPES[type_name].stringify(value)
-                stringified.set(value, true)
-                return value
+                return TYPES[type_name].stringify(value)
             }
         }
 
@@ -70,6 +55,6 @@ function stringify(object) {
     })
 }
 
-const DJSON = { stringify }
+const DJSON = { stringify, TYPES }
 
 export default DJSON

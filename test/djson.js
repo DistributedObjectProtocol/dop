@@ -1,6 +1,19 @@
 import test from 'ava'
 import { DJSON } from '../'
 import EJSON from 'ejson'
+import { isInteger, newDate } from './utils'
+
+DJSON.TYPES.$date = {
+    isValidToStringify: value => value instanceof Date, // JSON.stringify uses .toISOString() to serialize Date
+    isValidToParse: value => isInteger(value),
+    stringify: value => ({ $date: new Date(value).getTime() })
+}
+
+DJSON.TYPES.$function = {
+    isValidToStringify: value => typeof value == 'function', // JSON.stringify uses .toISOString() to serialize Date
+    isValidToParse: value => isInteger(value),
+    stringify: value => ({ $function: { date: newDate(123456789) } })
+}
 
 function testBasic(t, patch, expected) {
     const string = DJSON.stringify(patch)
@@ -15,12 +28,6 @@ function testEJSON(t, patch, expected) {
     const parsed_ejson = JSON.parse(string_ejson)
     t.deepEqual(parsed, expected)
     t.deepEqual(parsed, parsed_ejson)
-}
-
-function newDate(d) {
-    const date = new Date(d)
-    date.toISOString = () => date
-    return date
 }
 
 test('$date', function(t) {
@@ -118,3 +125,11 @@ test('$delete', function(t) {
     const expected = { user: { enzo: { $delete: 0 } } }
     testBasic(t, patch, expected)
 })
+
+// test('$function', function(t) {
+//     const patch = { user: { enzo: () => {} } }
+//     const expected = {
+//         user: { enzo: { $function: { date: { $date: 123456789 } } } }
+//     }
+//     testBasic(t, patch, expected)
+// })
