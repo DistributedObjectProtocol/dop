@@ -4,6 +4,10 @@ export function is(value) {
     return typeof value
 }
 
+export function isFunction(f) {
+    return typeof f == 'function'
+}
+
 export function isArray(array) {
     return Array.isArray(array)
 }

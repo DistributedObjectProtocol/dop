@@ -1,4 +1,4 @@
-import { isPojoObject } from '../util/is'
+import { isPojoObject, isFunction } from '../util/is'
 
 const TYPES = {
     $escape: {
@@ -37,22 +37,28 @@ function isValidToStringify(value) {
     }
 }
 
-function stringify(object) {
+function stringify(object, replacer, space) {
     const escaped = new Map()
-    return JSON.stringify(object, function(prop, value) {
-        if (value !== object && !escaped.has(value)) {
-            if (isValidToEscape(value) !== undefined) {
-                escaped.set(value, true)
-                return { $escape: value }
+    return JSON.stringify(
+        object,
+        function(prop, value) {
+            if (value !== object && !escaped.has(value)) {
+                if (isValidToEscape(value) !== undefined) {
+                    escaped.set(value, true)
+                    value = { $escape: value }
+                }
+                const type_name = isValidToStringify(value)
+                if (type_name !== undefined) {
+                    value = TYPES[type_name].stringify(value)
+                }
             }
-            const type_name = isValidToStringify(value)
-            if (type_name !== undefined) {
-                return TYPES[type_name].stringify(value)
-            }
-        }
 
-        return value
-    })
+            return isFunction(replacer)
+                ? replacer.call(this, prop, value)
+                : value
+        },
+        space
+    )
 }
 
 const DJSON = { stringify, TYPES }
