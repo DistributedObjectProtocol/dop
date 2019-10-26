@@ -9,10 +9,10 @@ DJSON.TYPES.$date = {
     stringify: value => ({ $date: new Date(value).getTime() })
 }
 
-DJSON.TYPES.$function = {
+DJSON.TYPES.$nestedtype = {
     isValidToStringify: value => typeof value == 'function', // JSON.stringify uses .toISOString() to serialize Date
-    isValidToParse: value => isInteger(value),
-    stringify: value => ({ $function: { date: newDate(123456789) } })
+    isValidToParse: value => true,
+    stringify: value => ({ $nestedtype: { date: newDate(value()) } })
 }
 
 function testBasic(t, patch, expected) {
@@ -126,10 +126,30 @@ test('$delete', function(t) {
     testBasic(t, patch, expected)
 })
 
-// test('$function', function(t) {
-//     const patch = { user: { enzo: () => {} } }
-//     const expected = {
-//         user: { enzo: { $function: { date: { $date: 123456789 } } } }
-//     }
-//     testBasic(t, patch, expected)
-// })
+// this is experimental, not sure if the protocol should allow nested types
+// this is experimental, not sure if the protocol should allow nested types
+// this is experimental, not sure if the protocol should allow nested types
+test('$nestedtype', function(t) {
+    const patch = { user: () => 123456789 }
+    const expected = {
+        user: { $nestedtype: { date: { $date: 123456789 } } }
+    }
+    testBasic(t, patch, expected)
+})
+
+test('$nestedtype escaped', function(t) {
+    const patch = {
+        user: { $nestedtype: { date: { $date: 123456789 } } }
+    }
+    const expected = {
+        user: {
+            $escape: {
+                $nestedtype: { date: { $escape: { $date: 123456789 } } }
+            }
+        }
+    }
+    testBasic(t, patch, expected)
+})
+// this is experimental, not sure if the protocol should allow nested types
+// this is experimental, not sure if the protocol should allow nested types
+// this is experimental, not sure if the protocol should allow nested types
