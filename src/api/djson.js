@@ -2,20 +2,20 @@ import { isPojoObject, isFunction } from '../util/is'
 
 const TYPES = {
     $escape: {
-        //     //     stringify: value => {
-        //     //         $escape: value
-        //     //     }
         isValidToStringify: value => false,
-        isValidToParse: value => true
+        isValidToParse: value => true,
+        stringify: value => ({ $escape: value }),
+        parse: value => value
     },
     $delete: {
         isValidToStringify: value => value === undefined,
         isValidToParse: value => value === 0,
-        stringify: value => ({ $delete: 0 })
+        stringify: value => ({ $delete: 0 }),
+        parse: value => value
     }
 }
 
-function isValidToEscape(object) {
+function isValidToParse(object) {
     if (!isPojoObject(object)) return
     let type_name
     for (const key in object) {
@@ -43,9 +43,9 @@ function stringify(object, replacer, space) {
         object,
         function(prop, value) {
             if (value !== object && !escaped.has(value)) {
-                if (isValidToEscape(value) !== undefined) {
+                if (isValidToParse(value) !== undefined) {
                     escaped.set(value, true)
-                    value = { $escape: value }
+                    value = TYPES.$escape.stringify(value)
                 }
                 const type_name = isValidToStringify(value)
                 if (type_name !== undefined) {
@@ -61,6 +61,16 @@ function stringify(object, replacer, space) {
     )
 }
 
-const DJSON = { stringify, TYPES }
+function parse(text, reviver) {
+    return JSON.parse(text, function(prop, value) {
+        const type_name = isValidToParse(value)
+        if (type_name !== undefined) {
+            value = TYPES[type_name].parse(value[type_name])
+        }
+        return isFunction(reviver) ? reviver.call(this, prop, value) : value
+    })
+}
+
+const DJSON = { stringify, parse, TYPES }
 
 export default DJSON
