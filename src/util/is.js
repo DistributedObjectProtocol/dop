@@ -20,8 +20,7 @@ export function isPojo(object) {
 
 export function isPojoObject(object) {
     if (!isObject(object)) return false
-    const prototype = Object.getPrototypeOf(object)
-    return prototype === Object.prototype
+    return Object.getPrototypeOf(object) === Object.prototype
 }
 
 // function Test() {}

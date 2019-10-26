@@ -14,7 +14,7 @@ const TYPES = {
         isValidToParse: value => value === 0
     },
     $date: {
-        isValidToStringify: value => value instanceof Date,
+        isValidToStringify: value => value instanceof Date, // JSON.stringify uses .toISOString() to serialize Date
         stringify: value => ({ $date: new Date(value).getTime() }),
         isValidToParse: value => value === 0
     }
