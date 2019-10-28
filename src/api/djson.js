@@ -42,10 +42,11 @@ function stringify(object, replacer, space) {
                 if (isValidToParse(value, prop, this) !== undefined) {
                     escaped.set(value, true)
                     value = { $escape: value }
-                }
-                const type_name = isValidToStringify(value, prop, this)
-                if (type_name !== undefined) {
-                    value = TYPES[type_name].stringify(value, prop, this)
+                } else {
+                    const type_name = isValidToStringify(value, prop, this)
+                    if (type_name !== undefined) {
+                        value = TYPES[type_name].stringify(value, prop, this)
+                    }
                 }
             }
 
