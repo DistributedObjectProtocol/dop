@@ -1,40 +1,36 @@
 import { isPojoObject, isFunction } from '../util/is'
 
 const TYPES = {
-    $escape: {
-        isValidToStringify: value => false,
-        isValidToParse: value => true,
-        stringify: value => ({ $escape: value }),
-        parse: value => value
-    },
     $delete: {
         isValidToStringify: value => value === undefined,
-        isValidToParse: value => value === 0,
-        stringify: value => ({ $delete: 0 }),
-        parse: value => value
+        isValidToParse: value => value.$delete === 0,
+        stringify: value => ({ $delete: 0 })
+        // parse: value => value
     }
 }
 
-function isValidToParse(object) {
-    if (!isPojoObject(object)) return
+function isValidToStringify(value, prop, object) {
+    for (const type_name in TYPES) {
+        if (TYPES[type_name].isValidToStringify(value, prop, object)) {
+            return type_name
+        }
+    }
+}
+
+function isValidToParse(value, prop, object) {
+    if (!isPojoObject(value)) {
+        return
+    }
     let type_name
-    for (const key in object) {
+    for (const key in value) {
         if (!TYPES.hasOwnProperty(key) || type_name !== undefined) {
             return
         }
         type_name = key
     }
-    return TYPES[type_name].isValidToParse(object[type_name])
+    return TYPES[type_name].isValidToParse(value, prop, object)
         ? type_name
         : undefined
-}
-
-function isValidToStringify(value) {
-    for (const type_name in TYPES) {
-        if (TYPES[type_name].isValidToStringify(value)) {
-            return type_name
-        }
-    }
 }
 
 function stringify(object, replacer, space) {
@@ -43,13 +39,13 @@ function stringify(object, replacer, space) {
         object,
         function(prop, value) {
             if (value !== object && !escaped.has(value)) {
-                if (isValidToParse(value) !== undefined) {
+                if (isValidToParse(value, prop, this) !== undefined) {
                     escaped.set(value, true)
-                    value = TYPES.$escape.stringify(value)
+                    value = { $escape: value }
                 }
-                const type_name = isValidToStringify(value)
+                const type_name = isValidToStringify(value, prop, this)
                 if (type_name !== undefined) {
-                    value = TYPES[type_name].stringify(value)
+                    value = TYPES[type_name].stringify(value, prop, this)
                 }
             }
 
@@ -61,16 +57,16 @@ function stringify(object, replacer, space) {
     )
 }
 
-function parse(text, reviver) {
-    return JSON.parse(text, function(prop, value) {
-        const type_name = isValidToParse(value)
-        if (type_name !== undefined) {
-            value = TYPES[type_name].parse(value[type_name])
-        }
-        return isFunction(reviver) ? reviver.call(this, prop, value) : value
-    })
-}
+// function parse(text, reviver) {
+//     return JSON.parse(text, function(prop, value) {
+//         const type_name = isValidToParse(value)
+//         if (type_name !== undefined) {
+//             value = TYPES[type_name].parse(value[type_name])
+//         }
+//         return isFunction(reviver) ? reviver.call(this, prop, value) : value
+//     })
+// }
 
-const DJSON = { stringify, parse, TYPES }
+const DJSON = { stringify, TYPES }
 
 export default DJSON

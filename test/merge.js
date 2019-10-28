@@ -300,10 +300,10 @@ function run(merge, name) {
         t.deepEqual(object, actual_rambda)
         t.not(object.obj, actual.obj)
         t.not(object.obj, actual_lodash.obj)
-        // t.not(object.obj, actual_rambda.obj) // this fails because Rambda does not create new objects
+        // t.not(object.obj, actual_rambda.obj) // this fails because Rambda makes shallow copies of objects
         t.not(object.obj, actual.arr)
         t.not(object.arr, actual_lodash.arr)
-        // t.not(object.arr, actual_rambda.arr) // this fails because Rambda does not create new arrays
+        // t.not(object.arr, actual_rambda.arr) // this fails because Rambda makes shallow copies of arrays
     })
 
     test(
@@ -321,152 +321,152 @@ function run(merge, name) {
         }
     )
 
-    test.skip(
-        name + ': should merge sources containing circular references',
-        function(t) {
-            var object = {
-                foo: { a: 1 },
-                bar: { a: 2 }
-            }
+    // test.skip(
+    //     name + ': should merge sources containing circular references',
+    //     function(t) {
+    //         var object = {
+    //             foo: { a: 1 },
+    //             bar: { a: 2 }
+    //         }
 
-            var source = {
-                foo: { b: { c: { d: {} } } },
-                bar: {}
-            }
+    //         var source = {
+    //             foo: { b: { c: { d: {} } } },
+    //             bar: {}
+    //         }
 
-            source.foo.b.c.d = source
-            source.bar.b = source.foo.b
+    //         source.foo.b.c.d = source
+    //         source.bar.b = source.foo.b
 
-            var actual = merge(object, source)
+    //         var actual = merge(object, source)
 
-            t.notDeepEqual(actual.bar.b, actual.foo.b)
-            t.deepEqual(actual.foo.b.c.d, actual.foo.b.c.d.foo.b.c.d)
-        }
-    )
+    //         t.notDeepEqual(actual.bar.b, actual.foo.b)
+    //         t.deepEqual(actual.foo.b.c.d, actual.foo.b.c.d.foo.b.c.d)
+    //     }
+    // )
+
+    // test.skip(name + ': should merge `arguments` objects', function(t) {
+    //     var object1 = { value: args },
+    //         object2 = { value: { '3': 4 } },
+    //         expected = { '0': 1, '1': 2, '2': 3, '3': 4 },
+    //         actual = merge(object1, object2)
+
+    //     t.true(!('3' in args))
+    //     t.true(!isArguments(actual.value))
+    //     t.deepEqual(actual.value, expected)
+    //     object1.value = args
+
+    //     actual = merge(object2, object1)
+    //     t.true(!isArguments(actual.value))
+    //     t.deepEqual(actual.value, expected)
+
+    //     expected = { '0': 1, '1': 2, '2': 3 }
+
+    //     actual = merge({}, object1)
+    //     t.true(!isArguments(actual.value))
+    //     t.deepEqual(actual.value, expected)
+    // })
+
+    // test.skip(name + ': should deep clone array/typed-array/plain-object source values', function(t) {
+    //     var typedArray = Uint8Array ? new Uint8Array([1]) : { buffer: [1] }
+
+    //     var props = ['0', 'buffer', 'a'],
+    //         values = [[{ a: 1 }], typedArray, { a: [1] }],
+    //         expected = _.map(values, () => true)
+
+    //     var actual = _.map(values, function(value, index) {
+    //         var key = props[index],
+    //             object = merge({}, { value: value }),
+    //             subValue = value[key],
+    //             newValue = object.value,
+    //             newSubValue = newValue[key]
+
+    //         return (
+    //             newValue !== value &&
+    //             newSubValue !== subValue &&
+    //             _.isEqual(newValue, value)
+    //         )
+    //     })
+
+    //     t.deepEqual(actual, expected)
+    // })
+
+    // test.skip(name + ': should merge typed arrays', function(t) {
+    //     var typedArrays = [
+    //         'Float32Array',
+    //         'Float64Array',
+    //         'Int8Array',
+    //         'Int16Array',
+    //         'Int32Array',
+    //         'Uint8Array',
+    //         'Uint8ClampedArray',
+    //         'Uint16Array',
+    //         'Uint32Array'
+    //     ]
+
+    //     var array1 = [0],
+    //         array2 = [0, 0],
+    //         array3 = [0, 0, 0, 0],
+    //         array4 = [0, 0, 0, 0, 0, 0, 0, 0]
+
+    //     var arrays = [
+    //             array2,
+    //             array1,
+    //             array4,
+    //             array3,
+    //             array2,
+    //             array4,
+    //             array4,
+    //             array3,
+    //             array2
+    //         ],
+    //         buffer = ArrayBuffer && new ArrayBuffer(8)
+
+    //     var expected = _.map(typedArrays, function(type, index) {
+    //         var array = arrays[index].slice()
+    //         array[0] = 1
+    //         return root[type] ? { value: array } : false
+    //     })
+
+    //     var actual = _.map(typedArrays, function(type) {
+    //         var Ctor = root[type]
+    //         return Ctor ? merge({ value: new Ctor(buffer) }, { value: [1] }) : false
+    //     })
+
+    //     t.true(_.isArray(actual))
+    //     t.deepEqual(actual, expected)
+
+    //     expected = _.map(typedArrays, function(type, index) {
+    //         var array = arrays[index].slice()
+    //         array.push(1)
+    //         return root[type] ? { value: array } : false
+    //     })
+
+    //     actual = _.map(typedArrays, function(type, index) {
+    //         var Ctor = root[type],
+    //             array = _.range(arrays[index].length)
+
+    //         array.push(1)
+    //         return Ctor
+    //             ? merge({ value: array }, { value: new Ctor(buffer) })
+    //             : false
+    //     })
+
+    //     t.true(_.isArray(actual))
+    //     t.deepEqual(actual, expected)
+    // })
+
+    // test.skip(name + ': should not error on DOM elements', function(t) {
+    //     var object1 = { el: document && document.createElement('div') },
+    //         object2 = { el: document && document.createElement('div') },
+    //         pairs = [[{}, object1], [object1, object2]],
+    //         expected = _.map(pairs, () => true)
+
+    //     var actual = _.map(pairs, function(pair) {
+    //         try {
+    //             return merge(pair[0], pair[1]).el === pair[1].el
+    //         } catch (e) {}
+    //     })
+
+    //     t.deepEqual(actual, expected)
+    // })
 }
-
-// test.skip(name + ': should merge `arguments` objects', function(t) {
-//     var object1 = { value: args },
-//         object2 = { value: { '3': 4 } },
-//         expected = { '0': 1, '1': 2, '2': 3, '3': 4 },
-//         actual = merge(object1, object2)
-
-//     t.true(!('3' in args))
-//     t.true(!isArguments(actual.value))
-//     t.deepEqual(actual.value, expected)
-//     object1.value = args
-
-//     actual = merge(object2, object1)
-//     t.true(!isArguments(actual.value))
-//     t.deepEqual(actual.value, expected)
-
-//     expected = { '0': 1, '1': 2, '2': 3 }
-
-//     actual = merge({}, object1)
-//     t.true(!isArguments(actual.value))
-//     t.deepEqual(actual.value, expected)
-// })
-
-// test.skip(name + ': should deep clone array/typed-array/plain-object source values', function(t) {
-//     var typedArray = Uint8Array ? new Uint8Array([1]) : { buffer: [1] }
-
-//     var props = ['0', 'buffer', 'a'],
-//         values = [[{ a: 1 }], typedArray, { a: [1] }],
-//         expected = _.map(values, () => true)
-
-//     var actual = _.map(values, function(value, index) {
-//         var key = props[index],
-//             object = merge({}, { value: value }),
-//             subValue = value[key],
-//             newValue = object.value,
-//             newSubValue = newValue[key]
-
-//         return (
-//             newValue !== value &&
-//             newSubValue !== subValue &&
-//             _.isEqual(newValue, value)
-//         )
-//     })
-
-//     t.deepEqual(actual, expected)
-// })
-
-// test.skip(name + ': should merge typed arrays', function(t) {
-//     var typedArrays = [
-//         'Float32Array',
-//         'Float64Array',
-//         'Int8Array',
-//         'Int16Array',
-//         'Int32Array',
-//         'Uint8Array',
-//         'Uint8ClampedArray',
-//         'Uint16Array',
-//         'Uint32Array'
-//     ]
-
-//     var array1 = [0],
-//         array2 = [0, 0],
-//         array3 = [0, 0, 0, 0],
-//         array4 = [0, 0, 0, 0, 0, 0, 0, 0]
-
-//     var arrays = [
-//             array2,
-//             array1,
-//             array4,
-//             array3,
-//             array2,
-//             array4,
-//             array4,
-//             array3,
-//             array2
-//         ],
-//         buffer = ArrayBuffer && new ArrayBuffer(8)
-
-//     var expected = _.map(typedArrays, function(type, index) {
-//         var array = arrays[index].slice()
-//         array[0] = 1
-//         return root[type] ? { value: array } : false
-//     })
-
-//     var actual = _.map(typedArrays, function(type) {
-//         var Ctor = root[type]
-//         return Ctor ? merge({ value: new Ctor(buffer) }, { value: [1] }) : false
-//     })
-
-//     t.true(_.isArray(actual))
-//     t.deepEqual(actual, expected)
-
-//     expected = _.map(typedArrays, function(type, index) {
-//         var array = arrays[index].slice()
-//         array.push(1)
-//         return root[type] ? { value: array } : false
-//     })
-
-//     actual = _.map(typedArrays, function(type, index) {
-//         var Ctor = root[type],
-//             array = _.range(arrays[index].length)
-
-//         array.push(1)
-//         return Ctor
-//             ? merge({ value: array }, { value: new Ctor(buffer) })
-//             : false
-//     })
-
-//     t.true(_.isArray(actual))
-//     t.deepEqual(actual, expected)
-// })
-
-// test.skip(name + ': should not error on DOM elements', function(t) {
-//     var object1 = { el: document && document.createElement('div') },
-//         object2 = { el: document && document.createElement('div') },
-//         pairs = [[{}, object1], [object1, object2]],
-//         expected = _.map(pairs, () => true)
-
-//     var actual = _.map(pairs, function(pair) {
-//         try {
-//             return merge(pair[0], pair[1]).el === pair[1].el
-//         } catch (e) {}
-//     })
-
-//     t.deepEqual(actual, expected)
-// })

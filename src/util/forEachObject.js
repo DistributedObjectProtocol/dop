@@ -2,6 +2,7 @@ import { isObject } from './is'
 import forEach from './forEach'
 
 // https://jsperf.com/dop-foreachobject
+// https://2ality.com/2019/10/shared-mutable-state.html
 export default function forEachObject(origin, callback, destiny) {
     const circular = []
     const path = []

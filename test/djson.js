@@ -5,15 +5,15 @@ import { isInteger, newDate } from './utils'
 
 DJSON.TYPES.$date = {
     isValidToStringify: value => value instanceof Date, // JSON.stringify uses .toISOString() to serialize Date
-    isValidToParse: value => isInteger(value),
+    isValidToParse: value => isInteger(value.$date),
     stringify: value => ({ $date: new Date(value).getTime() })
 }
 
-DJSON.TYPES.$nestedtype = {
-    isValidToStringify: value => typeof value == 'function', // JSON.stringify uses .toISOString() to serialize Date
-    isValidToParse: value => true,
-    stringify: value => ({ $nestedtype: { date: newDate(value()) } })
-}
+// DJSON.TYPES.$nestedtype = {
+//     isValidToStringify: value => typeof value == 'function', // JSON.stringify uses .toISOString() to serialize Date
+//     isValidToParse: value => true,
+//     stringify: value => ({ $nestedtype: { date: newDate(value()) } })
+// }
 
 function testBasic(t, patch, expected) {
     const string = DJSON.stringify(patch)
@@ -30,13 +30,19 @@ function testEJSON(t, patch, expected) {
     t.deepEqual(parsed, parsed_ejson)
 }
 
+test('$delete', function(t) {
+    const patch = { user: { enzo: undefined } }
+    const expected = { user: { enzo: { $delete: 0 } } }
+    testBasic(t, patch, expected)
+})
+
 test('$date', function(t) {
     const patch = { user: newDate(123456789) }
     const expected = { user: { $date: 123456789 } }
     testEJSON(t, patch, expected)
 })
 
-test('Basic $escape', function(t) {
+test('$date $escape', function(t) {
     const patch = {
         user: { enzo: newDate(123456789), john: { $date: 123456789 } }
     }
@@ -49,7 +55,7 @@ test('Basic $escape', function(t) {
     testEJSON(t, patch, expected)
 })
 
-test('Basic $escape 2', function(t) {
+test('$date $escape 2', function(t) {
     const patch = {
         user: { john: { $date: 123456789 }, enzo: newDate(123456789) }
     }
@@ -120,12 +126,6 @@ test('This should not be escaped because $date is not an number', function(t) {
     testBasic(t, patch, expected) // testEJSON(t, patch, expected) // Not sure why EJSON is still escaping strings
 })
 
-test('$delete', function(t) {
-    const patch = { user: { enzo: undefined } }
-    const expected = { user: { enzo: { $delete: 0 } } }
-    testBasic(t, patch, expected)
-})
-
 test('Passing replacer', function(t) {
     const patch = { user: { deep: newDate(123456789) } }
     const expected = { user: { deep: { $date: 123456789 } } }
@@ -141,30 +141,30 @@ test('Passing replacer', function(t) {
     })
 })
 
-// this is experimental, not sure if the protocol should allow nested types
-// this is experimental, not sure if the protocol should allow nested types
-// this is experimental, not sure if the protocol should allow nested types
-test('$nestedtype', function(t) {
-    const patch = { user: () => 123456789 }
-    const expected = {
-        user: { $nestedtype: { date: { $date: 123456789 } } }
-    }
-    testBasic(t, patch, expected)
-})
+// // this is experimental, not sure if the protocol should allow nested types
+// // this is experimental, not sure if the protocol should allow nested types
+// // this is experimental, not sure if the protocol should allow nested types
+// test('$nestedtype', function(t) {
+//     const patch = { user: () => 123456789 }
+//     const expected = {
+//         user: { $nestedtype: { date: { $date: 123456789 } } }
+//     }
+//     testBasic(t, patch, expected)
+// })
 
-test('$nestedtype escaped', function(t) {
-    const patch = {
-        user: { $nestedtype: { date: { $date: 123456789 } } }
-    }
-    const expected = {
-        user: {
-            $escape: {
-                $nestedtype: { date: { $escape: { $date: 123456789 } } }
-            }
-        }
-    }
-    testBasic(t, patch, expected)
-})
-// this is experimental, not sure if the protocol should allow nested types
-// this is experimental, not sure if the protocol should allow nested types
-// this is experimental, not sure if the protocol should allow nested types
+// test('$nestedtype escaped', function(t) {
+//     const patch = {
+//         user: { $nestedtype: { date: { $date: 123456789 } } }
+//     }
+//     const expected = {
+//         user: {
+//             $escape: {
+//                 $nestedtype: { date: { $escape: { $date: 123456789 } } }
+//             }
+//         }
+//     }
+//     testBasic(t, patch, expected)
+// })
+// // this is experimental, not sure if the protocol should allow nested types
+// // this is experimental, not sure if the protocol should allow nested types
+// // this is experimental, not sure if the protocol should allow nested types
