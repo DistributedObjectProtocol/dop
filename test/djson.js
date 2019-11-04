@@ -5,7 +5,8 @@ import { isInteger, newDate } from './utils'
 
 DJSON.setType('$date', () => ({
     isValidToStringify: value => value instanceof Date, // JSON.stringify uses .toISOString() to serialize Date
-    isValidToParse: value => isInteger(value.$date),
+    isValidToParse: (value, prop) =>
+        prop !== '$escape' && isInteger(value.$date),
     stringify: value => ({ $date: new Date(value).getTime() }),
     parse: value => newDate(value.$date)
 }))
@@ -41,6 +42,19 @@ function testEJSON(t, patch, expected, recursive = true) {
 test('$delete', function(t) {
     const patch = { user: { enzo: undefined } }
     const expected = { user: { enzo: { $delete: 0 } } }
+    testBasic(t, patch, expected)
+})
+
+test('$delete $escape', function(t) {
+    const patch = {
+        user: { enzo: undefined, john: { $delete: 0 } }
+    }
+    const expected = {
+        user: {
+            enzo: { $delete: 0 },
+            john: { $escape: { $delete: 0 } }
+        }
+    }
     testBasic(t, patch, expected)
 })
 

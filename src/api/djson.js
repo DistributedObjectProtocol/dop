@@ -2,12 +2,33 @@ import createDJSON from '../util/createDJSON'
 
 const DJSON = createDJSON()
 
+const escape = '$escape'
+
+DJSON.setType(escape, ({ isValidToParse }) => {
+    const escaped = new Map()
+    return {
+        isValidToStringify: (value, prop, object) => {
+            if (!escaped.has(value)) {
+                const type_name = isValidToParse(value, prop, object)
+                if (type_name !== undefined) {
+                    escaped.set(value, true)
+                    return true
+                }
+            }
+            return false
+        },
+        isValidToParse: () => true,
+        stringify: value => ({ [escape]: value }),
+        parse: value => value[escape]
+    }
+})
+
 DJSON.setType('$delete', () => {
     const undefineds = []
     return {
         isValidToStringify: value => value === undefined,
-        isValidToParse: value => value.$delete === 0,
-        stringify: value => ({ $delete: 0 }),
+        isValidToParse: (value, prop) => prop !== escape && value.$delete === 0,
+        stringify: () => ({ $delete: 0 }),
         parse: (value, prop, object) => {
             undefineds.push({ prop, object })
             return value

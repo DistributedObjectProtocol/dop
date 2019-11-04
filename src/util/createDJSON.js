@@ -1,6 +1,6 @@
 import { isPojoObject, isFunction } from './is'
 
-export default function createDJSON(escape_key = '$escape') {
+export default function createDJSON() {
     const TYPES = {}
 
     function isValidToStringify(value, prop, object) {
@@ -28,23 +28,13 @@ export default function createDJSON(escape_key = '$escape') {
     }
 
     function stringify(object, replacer, space) {
-        const escaped = new Map()
         return JSON.stringify(
             object,
             function(prop, value) {
-                if (value !== object && !escaped.has(value)) {
-                    if (isValidToParse(value, prop, this) !== undefined) {
-                        escaped.set(value, true)
-                        value = { [escape_key]: value }
-                    } else {
-                        const type_name = isValidToStringify(value, prop, this)
-                        if (type_name !== undefined) {
-                            value = TYPES[type_name].stringify(
-                                value,
-                                prop,
-                                this
-                            )
-                        }
+                if (value !== object) {
+                    const type_name = isValidToStringify(value, prop, this)
+                    if (type_name !== undefined) {
+                        value = TYPES[type_name].stringify(value, prop, this)
                     }
                 }
 
@@ -58,17 +48,12 @@ export default function createDJSON(escape_key = '$escape') {
 
     function parse(text, reviver) {
         const parsed = JSON.parse(text, function(prop, value) {
-            if (
-                value.hasOwnProperty(escape_key) &&
-                Object.keys(value).length === 1
-            ) {
-                value = value[escape_key]
-            } else if (prop !== escape_key) {
-                const type_name = isValidToParse(value)
-                if (type_name !== undefined) {
-                    value = TYPES[type_name].parse(value, prop, this)
-                }
+            // if (prop !== '$escape') {
+            const type_name = isValidToParse(value, prop, this)
+            if (type_name !== undefined) {
+                value = TYPES[type_name].parse(value, prop, this)
             }
+            // }
             return isFunction(reviver) ? reviver.call(this, prop, value) : value
         })
 
