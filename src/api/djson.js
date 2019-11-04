@@ -1,8 +1,8 @@
 import createDJSON from '../util/createDJSON'
 
-const DJSON = createDJSON()
-
 const escape = '$escape'
+
+const DJSON = createDJSON({ skipParseProps: [escape] })
 
 DJSON.setType(escape, ({ isValidToParse }) => {
     const escaped = new Map()
@@ -27,7 +27,7 @@ DJSON.setType('$delete', () => {
     const undefineds = []
     return {
         isValidToStringify: value => value === undefined,
-        isValidToParse: (value, prop) => prop !== escape && value.$delete === 0,
+        isValidToParse: (value, prop) => value.$delete === 0,
         stringify: () => ({ $delete: 0 }),
         parse: (value, prop, object) => {
             undefineds.push({ prop, object })

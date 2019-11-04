@@ -1,6 +1,6 @@
 import { isPojoObject, isFunction } from './is'
 
-export default function createDJSON() {
+export default function createDJSON({ skipParseProps = [] }) {
     const TYPES = {}
 
     function isValidToStringify(value, prop, object) {
@@ -48,12 +48,12 @@ export default function createDJSON() {
 
     function parse(text, reviver) {
         const parsed = JSON.parse(text, function(prop, value) {
-            // if (prop !== '$escape') {
-            const type_name = isValidToParse(value, prop, this)
-            if (type_name !== undefined) {
-                value = TYPES[type_name].parse(value, prop, this)
+            if (!skipParseProps.includes(prop)) {
+                const type_name = isValidToParse(value, prop, this)
+                if (type_name !== undefined) {
+                    value = TYPES[type_name].parse(value, prop, this)
+                }
             }
-            // }
             return isFunction(reviver) ? reviver.call(this, prop, value) : value
         })
 

@@ -5,8 +5,7 @@ import { isInteger, newDate } from './utils'
 
 DJSON.setType('$date', () => ({
     isValidToStringify: value => value instanceof Date, // JSON.stringify uses .toISOString() to serialize Date
-    isValidToParse: (value, prop) =>
-        prop !== '$escape' && isInteger(value.$date),
+    isValidToParse: (value, prop) => isInteger(value.$date),
     stringify: value => ({ $date: new Date(value).getTime() }),
     parse: value => newDate(value.$date)
 }))
