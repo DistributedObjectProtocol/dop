@@ -16,32 +16,38 @@ DJSON.setType('$date', () => ({
 //     stringify: value => ({ $nestedtype: { date: newDate(value()) } })
 // }
 
-function testStringify(t, patch, expected) {
+function testBasic(t, patch, expected, recursive = true) {
     const string = DJSON.stringify(patch)
     const parsed = JSON.parse(string)
     t.deepEqual(parsed, expected)
+    if (recursive) {
+        testBasic(t, DJSON.parse(string), expected, false)
+    }
 }
 
-function testStringifyEJSON(t, patch, expected) {
+function testEJSON(t, patch, expected, recursive = true) {
     const string_djson = DJSON.stringify(patch)
     const string_ejson = EJSON.stringify(patch)
-    const parsed_djson = JSON.parse(string_djson)
-    const parsed_ejson = JSON.parse(string_ejson)
-    t.deepEqual(parsed_djson, expected)
-    t.deepEqual(parsed_djson, parsed_ejson)
-    // t.deepEqual(patch, EJSON.parse(string_ejson))
+    const parsed_json_djson = JSON.parse(string_djson)
+    const parsed_json_ejson = JSON.parse(string_ejson)
+    t.deepEqual(parsed_json_djson, expected)
+    t.deepEqual(parsed_json_djson, parsed_json_ejson)
+    if (recursive) {
+        testEJSON(t, DJSON.parse(string_djson), expected, false)
+        // testEJSON(t, EJSON.parse(string_ejson), expected, false)
+    }
 }
 
 test('$delete', function(t) {
     const patch = { user: { enzo: undefined } }
     const expected = { user: { enzo: { $delete: 0 } } }
-    testStringify(t, patch, expected)
+    testBasic(t, patch, expected)
 })
 
 test('$date', function(t) {
     const patch = { user: newDate(123456789) }
     const expected = { user: { $date: 123456789 } }
-    testStringifyEJSON(t, patch, expected)
+    testEJSON(t, patch, expected)
 })
 
 test('$date $escape', function(t) {
@@ -54,7 +60,7 @@ test('$date $escape', function(t) {
             john: { $escape: { $date: 123456789 } }
         }
     }
-    testStringifyEJSON(t, patch, expected)
+    testEJSON(t, patch, expected)
 })
 
 test('$date $escape 2', function(t) {
@@ -67,7 +73,7 @@ test('$date $escape 2', function(t) {
             john: { $escape: { $date: 123456789 } }
         }
     }
-    testStringifyEJSON(t, patch, expected)
+    testEJSON(t, patch, expected)
 })
 
 test('This should not be escaped because $date has another property', function(t) {
@@ -83,7 +89,7 @@ test('This should not be escaped because $date has another property', function(t
             john: { $date: 123456789, $other: 123456789 }
         }
     }
-    testStringifyEJSON(t, patch, expected)
+    testEJSON(t, patch, expected)
 })
 
 test('This should not be escaped because $date has another valid prop', function(t) {
@@ -99,7 +105,7 @@ test('This should not be escaped because $date has another valid prop', function
             john: { $date: 123456789, $escape: 123456789 }
         }
     }
-    testStringifyEJSON(t, patch, expected)
+    testEJSON(t, patch, expected)
 })
 
 test('This should not be escaped because $date has another valid prop 2', function(t) {
@@ -115,7 +121,7 @@ test('This should not be escaped because $date has another valid prop 2', functi
             john: { $escape: 123456789, $date: 123456789 }
         }
     }
-    testStringifyEJSON(t, patch, expected)
+    testEJSON(t, patch, expected)
 })
 
 test('This should not be escaped because $date is not an number', function(t) {
@@ -125,7 +131,7 @@ test('This should not be escaped because $date is not an number', function(t) {
     const expected = {
         user: { enzo: { $date: 123456789 }, john: { $date: 'string' } }
     }
-    testStringify(t, patch, expected) // testStringifyEJSON(t, patch, expected) // Not sure why EJSON is still escaping strings
+    testBasic(t, patch, expected) // testEJSON(t, patch, expected) // Not sure why EJSON is still escaping strings
 })
 
 test('Passing replacer', function(t) {
@@ -151,7 +157,7 @@ test('Passing replacer', function(t) {
 //     const expected = {
 //         user: { $nestedtype: { date: { $date: 123456789 } } }
 //     }
-//     testStringify(t, patch, expected)
+//     testBasic(t, patch, expected)
 // })
 
 // test('$nestedtype escaped', function(t) {
@@ -165,7 +171,7 @@ test('Passing replacer', function(t) {
 //             }
 //         }
 //     }
-//     testStringify(t, patch, expected)
+//     testBasic(t, patch, expected)
 // })
 // // this is experimental, not sure if the protocol should allow nested types
 // // this is experimental, not sure if the protocol should allow nested types
