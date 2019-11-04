@@ -4,8 +4,8 @@ const TYPES = {
     $delete: {
         isValidToStringify: value => value === undefined,
         isValidToParse: value => value.$delete === 0,
-        stringify: value => ({ $delete: 0 })
-        // parse: value => value
+        stringify: value => ({ $delete: 0 }),
+        parse: value => 'undefined'
     }
 }
 
@@ -58,16 +58,16 @@ function stringify(object, replacer, space) {
     )
 }
 
-// function parse(text, reviver) {
-//     return JSON.parse(text, function(prop, value) {
-//         const type_name = isValidToParse(value)
-//         if (type_name !== undefined) {
-//             value = TYPES[type_name].parse(value[type_name])
-//         }
-//         return isFunction(reviver) ? reviver.call(this, prop, value) : value
-//     })
-// }
+function parse(text, reviver) {
+    return JSON.parse(text, function(prop, value) {
+        const type_name = isValidToParse(value)
+        if (type_name !== undefined) {
+            value = TYPES[type_name].parse(value, prop, this)
+        }
+        return isFunction(reviver) ? reviver.call(this, prop, value) : value
+    })
+}
 
-const DJSON = { stringify, TYPES }
+const DJSON = { stringify, parse, TYPES }
 
 export default DJSON

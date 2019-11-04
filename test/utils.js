@@ -1,6 +1,7 @@
 function newDate(d = new Date().getDate()) {
     const date = new Date(d)
     date.toISOString = () => date
+    date.replace = () => date
     return date
 }
 

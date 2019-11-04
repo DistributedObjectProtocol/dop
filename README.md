@@ -1,16 +1,15 @@
-
 <p align="center"><a href="https://distributedobjectprotocol.org"><img width="200"src="https://distributedobjectprotocol.org/img/logo.svg"></a></p>
 
 <p align="center">
-    <a href="https://www.npmjs.com/package/dop"><img alt="npm version" src="https://img.shields.io/npm/v/dop.svg"></a>
-    <a href="https://travis-ci.org/DistributedObjectProtocol/dop"><img alt="Build Status" src="https://api.travis-ci.org/DistributedObjectProtocol/dop.svg?branch=master"></a>
-    <a href="https://www.npmjs.com/package/dop"><img alt="license" src="https://img.shields.io/npm/l/dop.svg"></a>
-    <a href="https://spectrum.chat/dop"><img alt="Join the community" src="https://withspectrum.github.io/badge/badge.svg"></a>
+    <a href="https://www.npmjs.com/package/dop"><img alt="npm version" src="https://img.shields.io/npm/v/dop?style=for-the-badge&labelColor=000000"></a>
+    <!-- <a href="https://travis-ci.org/DistributedObjectProtocol/dop"><img alt="Build Status" src="https://api.travis-ci.org/DistributedObjectProtocol/dop.svg?branch=master"></a> -->
+    <a href="https://www.npmjs.com/package/dop"><img alt="license" src="https://img.shields.io/npm/l/dop?style=for-the-badge&labelColor=000000"></a>
+    <!-- <a href="https://spectrum.chat/dop"><img alt="Join the community" src="https://withspectrum.github.io/badge/badge.svg"></a> -->
 </p>
 
 ## Distributed Object Protocol is for
 
-**State management**, Remote procedure calls, Reactive programming, 
+**State management**, Remote procedure calls, Reactive programming,
 Data sync, Pub/Sub, Optimistic updates, Time-travel debugging, Unidirectional data flow and **Real time apps**.
 
 This repository is the JavaScript implementation of the protocol that runs on node.js and Browsers.
@@ -38,13 +37,7 @@ console.log(objectFromServer.fullname) // > "John Doe"
 console.log(await objectFromServer.square(5)) // > 25
 ```-->
 
-
-
-
-
 Check the website for more detailed information [https://distributedobjectprotocol.org/](https://distributedobjectprotocol.org/)
-
-
 
 ## License
 
