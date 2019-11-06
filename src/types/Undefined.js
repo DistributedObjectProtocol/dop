@@ -36,7 +36,7 @@ export default function factoryUndefined() {
     return Undefined
 }
 
-// DJSON.setType('$delete', () => {
+// DJSON.addType('$delete', () => {
 //     const undefineds = []
 //     return {
 //         isValidToStringify: value => value === undefined,

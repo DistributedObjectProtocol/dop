@@ -34,10 +34,14 @@ export default function factoryDelete({ isValidToParse }) {
         escaped = new Map()
     }
 
+    Escape.skipParse = function(value, prop) {
+        return prop === key
+    }
+
     return Escape
 }
 
-// DJSON.setType(Escape.key, ({ isValidToParse }) => {
+// DJSON.addType(Escape.key, ({ isValidToParse }) => {
 //     let escaped
 //     return {
 //         isValidToStringify: (value, prop, object) => {

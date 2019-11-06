@@ -1,7 +1,8 @@
 import { isPojoObject, isFunction } from './is'
 
-export default function djsonFactory({ skipParseProps = [] }) {
+export default function djsonFactory() {
     const TYPES = {}
+    const keys = []
 
     function isValidToStringify(value, prop, object) {
         for (const type_name in TYPES) {
@@ -61,7 +62,13 @@ export default function djsonFactory({ skipParseProps = [] }) {
         runFunctionIfExists('beforeParse', text)
 
         const parsed = JSON.parse(text, function(prop, value) {
-            if (!skipParseProps.includes(prop)) {
+            if (
+                !keys.some(
+                    key =>
+                        isFunction(TYPES[key].skipParse) &&
+                        TYPES[key].skipParse(value, prop, this)
+                )
+            ) {
                 const type_name = isValidToParse(value, prop, this)
                 if (
                     type_name !== undefined &&
@@ -70,6 +77,7 @@ export default function djsonFactory({ skipParseProps = [] }) {
                     value = TYPES[type_name].parse(value, prop, this)
                 }
             }
+
             return isFunction(reviver) ? reviver.call(this, prop, value) : value
         })
 
@@ -78,7 +86,7 @@ export default function djsonFactory({ skipParseProps = [] }) {
         return parsed
     }
 
-    function setType(factory) {
+    function addType(factory) {
         const type = factory({
             TYPES,
             parse,
@@ -86,6 +94,7 @@ export default function djsonFactory({ skipParseProps = [] }) {
             isValidToParse,
             isValidToStringify
         })
+        keys.push(type.key)
         TYPES[type.key] = type
         return type
     }
@@ -98,5 +107,5 @@ export default function djsonFactory({ skipParseProps = [] }) {
         }
     }
 
-    return { stringify, parse, setType }
+    return { stringify, parse, addType }
 }
