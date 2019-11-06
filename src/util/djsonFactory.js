@@ -5,7 +5,8 @@ export default function djsonFactory({ skipParseProps = [] }) {
 
     function isValidToStringify(value, prop, object) {
         for (const type_name in TYPES) {
-            if (TYPES[type_name].isValidToStringify(value, prop, object)) {
+            const isValid = TYPES[type_name].isValidToStringify
+            if (isFunction(isValid) && isValid(value, prop, object)) {
                 return type_name
             }
         }
@@ -22,7 +23,8 @@ export default function djsonFactory({ skipParseProps = [] }) {
             }
             type_name = key
         }
-        return TYPES[type_name].isValidToParse(value, prop, object)
+        const isValid = TYPES[type_name].isValidToParse
+        return isFunction(isValid) && isValid(value, prop, object)
             ? type_name
             : undefined
     }
@@ -35,7 +37,10 @@ export default function djsonFactory({ skipParseProps = [] }) {
             function(prop, value) {
                 if (value !== object) {
                     const type_name = isValidToStringify(value, prop, this)
-                    if (type_name !== undefined) {
+                    if (
+                        type_name !== undefined &&
+                        isFunction(TYPES[type_name].stringify)
+                    ) {
                         value = TYPES[type_name].stringify(value, prop, this)
                     }
                 }
@@ -58,7 +63,10 @@ export default function djsonFactory({ skipParseProps = [] }) {
         const parsed = JSON.parse(text, function(prop, value) {
             if (!skipParseProps.includes(prop)) {
                 const type_name = isValidToParse(value, prop, this)
-                if (type_name !== undefined) {
+                if (
+                    type_name !== undefined &&
+                    isFunction(TYPES[type_name].parse)
+                ) {
                     value = TYPES[type_name].parse(value, prop, this)
                 }
             }
@@ -84,7 +92,7 @@ export default function djsonFactory({ skipParseProps = [] }) {
 
     function runFunctionIfExists(name, ...args) {
         for (const type_name in TYPES) {
-            if (typeof TYPES[type_name][name] == 'function') {
+            if (isFunction(TYPES[type_name][name])) {
                 TYPES[type_name][name](...args)
             }
         }
