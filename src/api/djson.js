@@ -5,7 +5,7 @@ const escape = '$escape'
 const DJSON = createDJSON({ skipParseProps: [escape] })
 
 DJSON.setType(escape, ({ isValidToParse }) => {
-    const escaped = new Map()
+    let escaped
     return {
         isValidToStringify: (value, prop, object) => {
             if (!escaped.has(value)) {
@@ -19,7 +19,8 @@ DJSON.setType(escape, ({ isValidToParse }) => {
         },
         isValidToParse: () => true,
         stringify: value => ({ [escape]: value }),
-        parse: value => value[escape]
+        parse: value => value[escape],
+        beforeStringify: () => (escaped = new Map())
     }
 })
 

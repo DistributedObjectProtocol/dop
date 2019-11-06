@@ -28,7 +28,9 @@ export default function createDJSON({ skipParseProps = [] }) {
     }
 
     function stringify(object, replacer, space) {
-        return JSON.stringify(
+        runFunctionIfExists('beforeStringify', object)
+
+        const stringified = JSON.stringify(
             object,
             function(prop, value) {
                 if (value !== object) {
@@ -44,9 +46,15 @@ export default function createDJSON({ skipParseProps = [] }) {
             },
             space
         )
+
+        runFunctionIfExists('afterStringify', object, stringified)
+
+        return stringified
     }
 
     function parse(text, reviver) {
+        runFunctionIfExists('beforeParse', text)
+
         const parsed = JSON.parse(text, function(prop, value) {
             if (!skipParseProps.includes(prop)) {
                 const type_name = isValidToParse(value, prop, this)
@@ -57,11 +65,7 @@ export default function createDJSON({ skipParseProps = [] }) {
             return isFunction(reviver) ? reviver.call(this, prop, value) : value
         })
 
-        for (const type_name in TYPES) {
-            if (typeof TYPES[type_name].afterParse == 'function') {
-                TYPES[type_name].afterParse(parsed)
-            }
-        }
+        runFunctionIfExists('afterParse', text, parsed)
 
         return parsed
     }
@@ -74,6 +78,14 @@ export default function createDJSON({ skipParseProps = [] }) {
             isValidToParse,
             isValidToStringify
         })
+    }
+
+    function runFunctionIfExists(name, ...args) {
+        for (const type_name in TYPES) {
+            if (typeof TYPES[type_name][name] == 'function') {
+                TYPES[type_name][name](...args)
+            }
+        }
     }
 
     return { stringify, parse, setType }

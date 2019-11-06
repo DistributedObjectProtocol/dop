@@ -1,23 +1,30 @@
-export const name = '$delete'
+export default function factoryDelete() {
+    const key = '$delete'
 
-export default function Delete() {
-    if (!(this instanceof Delete)) {
+    // Constructor/Creator
+    function Delete() {
+        if (!(this instanceof Delete)) {
+            return new Delete()
+        }
+    }
+
+    Delete.key = key
+
+    Delete.isValidToStringify = function(value) {
+        return value instanceof Delete
+    }
+
+    Delete.stringify = function() {
+        return { [key]: 0 }
+    }
+
+    Delete.isValidToParse = function(value) {
+        return value[key] === 0
+    }
+
+    Delete.parse = function() {
         return new Delete()
     }
-}
 
-export function isValidToStringify(value) {
-    return value instanceof Delete
-}
-
-export function stringify() {
-    return { [name]: 0 }
-}
-
-export function isValidToParse(value) {
-    return value[name] === 0
-}
-
-export function parse() {
-    return new Delete()
+    return Delete
 }

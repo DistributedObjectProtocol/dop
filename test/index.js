@@ -1,6 +1,8 @@
-var matches = require('tmatch')
+const { EJSON } = require('bson')
+const text = '{ "int32": { "$numberInt": "10" } }'
 
-const patch = { user: { $date: 123456789 } }
-const expected = { user: new Date() }
+// prints { int32: { [String: '10'] _bsontype: 'Int32', value: '10' } }
+console.log(EJSON.parse(text, { relaxed: false }))
 
-console.log(matches(patch, expected))
+// prints { int32: 10 }
+console.log(EJSON.parse(text))

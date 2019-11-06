@@ -1,10 +1,8 @@
-export const name = '$undefined'
+export const key = '$undefined'
 
 // Constructor/Creator
 export default function Undefined() {
-    if (!(this instanceof Undefined)) {
-        return new Undefined()
-    }
+    return undefined
 }
 
 const undefineds = []
@@ -14,11 +12,11 @@ export function isValidToStringify(value) {
 }
 
 export function isValidToParse(value) {
-    return value[name] === 0
+    return value[key] === 0
 }
 
 export function stringify() {
-    return { [name]: 0 }
+    return { [key]: 0 }
 }
 
 export function parse(value, prop, object) {
