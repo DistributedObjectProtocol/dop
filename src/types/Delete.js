@@ -18,12 +18,12 @@ export default function factoryDelete() {
 
     // Mandatory
     Delete.stringify = function() {
-        return { [key]: 0 }
+        return { [key]: 1 }
     }
 
     // Mandatory
     Delete.isValidToParse = function(value) {
-        return value[key] === 0
+        return value[key] === 1
     }
 
     // Mandatory
@@ -36,6 +36,8 @@ export default function factoryDelete() {
     // Delete.afterStringify = ()=>{}
     // Delete.beforeParse = ()=>{}
     // Delete.afterParse = ()=>{}
+    // Delete.skipStringify = ()=>{}
+    // Delete.skipParse = ()=>{}
 
     return Delete
 }

@@ -38,6 +38,10 @@ export default function factoryDelete({ isValidToParse }) {
         return prop === key
     }
 
+    // Escape.skipStringify = function(value, prop) {
+    //     return prop === key
+    // }
+
     return Escape
 }
 
