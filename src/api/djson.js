@@ -1,8 +1,13 @@
-import createDJSON from '../util/createDJSON'
+import djsonFactory from '../util/djsonFactory'
+import deleteFactory from '../types/Delete'
+import undefinedFactory from '../types/Undefined'
+
+const Delete = deleteFactory()
+const Undefined = undefinedFactory()
 
 const escape = '$escape'
 
-const DJSON = createDJSON({ skipParseProps: [escape] })
+const DJSON = djsonFactory({ skipParseProps: [escape] })
 
 DJSON.setType(escape, ({ isValidToParse }) => {
     let escaped
@@ -24,23 +29,6 @@ DJSON.setType(escape, ({ isValidToParse }) => {
     }
 })
 
-DJSON.setType('$delete', () => {
-    const undefineds = []
-    return {
-        isValidToStringify: value => value === undefined,
-        isValidToParse: (value, prop) => value.$delete === 0,
-        stringify: () => ({ $delete: 0 }),
-        parse: (value, prop, object) => {
-            undefineds.push({ prop, object })
-            return value
-        },
-        afterParse: parsed => {
-            while (undefineds.length > 0) {
-                const { object, prop } = undefineds.shift()
-                object[prop] = undefined
-            }
-        }
-    }
-})
+DJSON.setType(Undefined.key, () => Undefined)
 
 export default DJSON

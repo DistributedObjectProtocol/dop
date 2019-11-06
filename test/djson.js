@@ -38,20 +38,20 @@ function testEJSON(t, patch, expected, recursive = true) {
     }
 }
 
-test('$delete', function(t) {
+test('$undefined', function(t) {
     const patch = { user: { enzo: undefined } }
-    const expected = { user: { enzo: { $delete: 0 } } }
+    const expected = { user: { enzo: { $undefined: 0 } } }
     testBasic(t, patch, expected)
 })
 
-test('$delete $escape', function(t) {
+test('$undefined $escape', function(t) {
     const patch = {
-        user: { enzo: undefined, john: { $delete: 0 } }
+        user: { enzo: undefined, john: { $undefined: 0 } }
     }
     const expected = {
         user: {
-            enzo: { $delete: 0 },
-            john: { $escape: { $delete: 0 } }
+            enzo: { $undefined: 0 },
+            john: { $escape: { $undefined: 0 } }
         }
     }
     testBasic(t, patch, expected)

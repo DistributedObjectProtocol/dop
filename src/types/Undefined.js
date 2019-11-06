@@ -1,32 +1,87 @@
-export const key = '$undefined'
+export default function factoryUndefined() {
+    const key = '$undefined'
+    const undefineds = []
 
-// Constructor/Creator
-export default function Undefined() {
-    return undefined
-}
-
-const undefineds = []
-
-export function isValidToStringify(value) {
-    return value === undefined
-}
-
-export function isValidToParse(value) {
-    return value[key] === 0
-}
-
-export function stringify() {
-    return { [key]: 0 }
-}
-
-export function parse(value, prop, object) {
-    undefineds.push({ prop, object })
-    return value
-}
-
-export function afterParse() {
-    while (undefineds.length > 0) {
-        const { object, prop } = undefineds.shift()
-        object[prop] = undefined
+    // Constructor/Creator
+    function Undefined() {
+        return undefined
     }
+
+    Undefined.key = key
+
+    Undefined.isValidToStringify = function(value) {
+        return value === undefined
+    }
+
+    Undefined.stringify = function() {
+        return { [key]: 0 }
+    }
+
+    Undefined.isValidToParse = function(value) {
+        return value[key] === 0
+    }
+
+    Undefined.parse = function(value, prop, object) {
+        undefineds.push({ prop, object })
+        return value
+    }
+
+    Undefined.afterParse = function() {
+        while (undefineds.length > 0) {
+            const { object, prop } = undefineds.shift()
+            object[prop] = undefined
+        }
+    }
+
+    return Undefined
 }
+
+// export default function factoryUndefined() {
+//     const key = '$delete'
+
+//     // Constructor/Creator
+//     function Undefined() {
+//         if (!(this instanceof Undefined)) {
+//             return new Undefined()
+//         }
+//     }
+
+//     Undefined.key = key
+
+//     Undefined.isValidToStringify = function(value) {
+//         return value instanceof Undefined
+//     }
+
+//     Undefined.stringify = function() {
+//         return { [key]: 0 }
+//     }
+
+//     Undefined.isValidToParse = function(value) {
+//         return value[key] === 0
+//     }
+
+//     Undefined.parse = function() {
+//         return new Undefined()
+//     }
+
+//     return Undefined
+// }
+
+// DJSON.setType('$delete', () => {
+//     const undefineds = []
+//     return {
+//         isValidToStringify: value => value === undefined,
+//         isValidToParse: (value, prop) => value.$delete === 0,
+//         stringify: () => ({ $delete: 0 }),
+//         parse: (value, prop, object) => {
+//             undefineds.push({ prop, object })
+//             return value
+//         },
+//         afterParse: parsed => {
+//             while (undefineds.length > 0) {
+//                 const { object, prop } = undefineds.shift()
+//                 object[prop] = undefined
+//             }
+//         }
+//     }
+// })
