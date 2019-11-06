@@ -70,14 +70,16 @@ export default function djsonFactory({ skipParseProps = [] }) {
         return parsed
     }
 
-    function setType(name, creator) {
-        TYPES[name] = creator({
+    function setType(factory) {
+        const type = factory({
             TYPES,
             parse,
             stringify,
             isValidToParse,
             isValidToStringify
         })
+        TYPES[type.key] = type
+        return type
     }
 
     function runFunctionIfExists(name, ...args) {

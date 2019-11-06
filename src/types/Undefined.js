@@ -36,37 +36,6 @@ export default function factoryUndefined() {
     return Undefined
 }
 
-// export default function factoryUndefined() {
-//     const key = '$delete'
-
-//     // Constructor/Creator
-//     function Undefined() {
-//         if (!(this instanceof Undefined)) {
-//             return new Undefined()
-//         }
-//     }
-
-//     Undefined.key = key
-
-//     Undefined.isValidToStringify = function(value) {
-//         return value instanceof Undefined
-//     }
-
-//     Undefined.stringify = function() {
-//         return { [key]: 0 }
-//     }
-
-//     Undefined.isValidToParse = function(value) {
-//         return value[key] === 0
-//     }
-
-//     Undefined.parse = function() {
-//         return new Undefined()
-//     }
-
-//     return Undefined
-// }
-
 // DJSON.setType('$delete', () => {
 //     const undefineds = []
 //     return {

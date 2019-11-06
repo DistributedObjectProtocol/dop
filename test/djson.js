@@ -3,7 +3,8 @@ import { DJSON } from '../'
 import EJSON from 'ejson'
 import { isInteger, newDate } from './utils'
 
-DJSON.setType('$date', () => ({
+DJSON.setType(() => ({
+    key: '$date',
     isValidToStringify: value => value instanceof Date, // JSON.stringify uses .toISOString() to serialize Date
     isValidToParse: (value, prop) => isInteger(value.$date),
     stringify: value => ({ $date: new Date(value).getTime() }),
