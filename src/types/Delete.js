@@ -8,25 +8,20 @@ export default function factoryDelete() {
         }
     }
 
-    // Mandatory
     Delete.key = key
 
-    // Mandatory
     Delete.isValidToStringify = function(value) {
         return value instanceof Delete
     }
 
-    // Mandatory
     Delete.stringify = function() {
         return { [key]: 1 }
     }
 
-    // Mandatory
     Delete.isValidToParse = function(value) {
         return value[key] === 1
     }
 
-    // Mandatory
     Delete.parse = function() {
         return new Delete()
     }

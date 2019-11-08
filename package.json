@@ -52,7 +52,7 @@
         "build": "rollup -c",
         "dev": "rollup -c -w",
         "test": "ava --verbose",
-        "testing": "npm test -- --watch test/djson.js"
+        "testing": "npm test -- --watch"
     },
     "files": [
         "dist",

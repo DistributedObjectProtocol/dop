@@ -13,6 +13,25 @@ export default function djsonFactory() {
         }
     }
 
+    function stringifyRecursive(value, prop, object, index = 0) {
+        const key = keys[index]
+
+        // if (!types.hasOwnProperty(key)) {
+        if (index >= keys.length) {
+            return value
+        }
+
+        if (
+            isFunction(types[key].isValidToStringify) &&
+            isFunction(types[key].stringify) &&
+            types[key].isValidToStringify(value, prop, object)
+        ) {
+            value = types[key].stringify(value, prop, object)
+        }
+
+        return stringifyRecursive(value, prop, object, index + 1)
+    }
+
     function isValidToParse(value, prop, object) {
         if (!isPojoObject(value)) {
             return
@@ -36,18 +55,16 @@ export default function djsonFactory() {
         const stringified = JSON.stringify(
             object,
             function(prop, value) {
-                const key_name = isValidToStringify(value, prop, this)
-                if (
-                    value !== object &&
-                    key_name !== undefined &&
-                    isFunction(types[key_name].stringify) &&
-                    !keys.some(
-                        key =>
-                            isFunction(types[key].skipStringify) &&
-                            types[key].skipStringify(value, prop, this)
-                    )
-                ) {
-                    value = types[key_name].stringify(value, prop, this)
+                if (value !== object) {
+                    if (
+                        !keys.some(
+                            key =>
+                                isFunction(types[key].skipStringify) &&
+                                types[key].skipStringify(value, prop, this)
+                        )
+                    ) {
+                        value = stringifyRecursive(value, prop, this)
+                    }
                 }
 
                 return isFunction(replacer)
@@ -95,8 +112,10 @@ export default function djsonFactory() {
             isValidToParse,
             isValidToStringify
         })
-        keys.push(type.key)
+        if (types.hasOwnProperty(type.key))
+            throw type.key + ' already added as type'
         types[type.key] = type
+        keys.push(type.key)
         return type
     }
 
