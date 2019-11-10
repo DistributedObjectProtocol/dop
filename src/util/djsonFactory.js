@@ -1,17 +1,8 @@
-import { isPojoObject, isFunction } from './is'
+import { isFunction } from './is'
 
 export default function djsonFactory() {
     const types = {}
     const keys = []
-
-    function isValidToStringify(value, prop, object) {
-        for (const key in types) {
-            const isValid = types[key].isValidToStringify
-            if (isFunction(isValid) && isValid(value, prop, object)) {
-                return key
-            }
-        }
-    }
 
     function stringifyRecursive(value, prop, object, index = 0) {
         const key = keys[index]
@@ -21,32 +12,25 @@ export default function djsonFactory() {
             return value
         }
 
-        if (
-            isFunction(types[key].isValidToStringify) &&
-            isFunction(types[key].stringify) &&
-            types[key].isValidToStringify(value, prop, object)
-        ) {
+        if (isFunction(types[key].stringify)) {
             value = types[key].stringify(value, prop, object)
         }
 
         return stringifyRecursive(value, prop, object, index + 1)
     }
 
-    function isValidToParse(value, prop, object) {
-        if (!isPojoObject(value)) {
-            return
+    function parseRecursive(value, prop, object, index = 0) {
+        const key = keys[index]
+
+        if (index >= keys.length) {
+            return value
         }
-        let key_name
-        for (const key in value) {
-            if (!types.hasOwnProperty(key) || key_name !== undefined) {
-                return
-            }
-            key_name = key
+
+        if (isFunction(types[key].parse)) {
+            value = types[key].parse(value, prop, object)
         }
-        const isValid = types[key_name].isValidToParse
-        return isFunction(isValid) && isValid(value, prop, object)
-            ? key_name
-            : undefined
+
+        return parseRecursive(value, prop, object, index + 1)
     }
 
     function stringify(object, replacer, space) {
@@ -55,16 +39,14 @@ export default function djsonFactory() {
         const stringified = JSON.stringify(
             object,
             function(prop, value) {
-                if (value !== object) {
-                    if (
-                        !keys.some(
-                            key =>
-                                isFunction(types[key].skipStringify) &&
-                                types[key].skipStringify(value, prop, this)
-                        )
-                    ) {
-                        value = stringifyRecursive(value, prop, this)
-                    }
+                if (
+                    !keys.some(
+                        key =>
+                            isFunction(types[key].skipStringify) &&
+                            types[key].skipStringify(value, prop, this)
+                    )
+                ) {
+                    value = stringifyRecursive(value, prop, this)
                 }
 
                 return isFunction(replacer)
@@ -83,17 +65,14 @@ export default function djsonFactory() {
         runFunctionIfExists('beforeParse', text)
 
         const parsed = JSON.parse(text, function(prop, value) {
-            const key_name = isValidToParse(value, prop, this)
             if (
-                key_name !== undefined &&
-                isFunction(types[key_name].parse) &&
                 !keys.some(
                     key =>
                         isFunction(types[key].skipParse) &&
                         types[key].skipParse(value, prop, this)
                 )
             ) {
-                value = types[key_name].parse(value, prop, this)
+                value = parseRecursive(value, prop, this)
             }
 
             return isFunction(reviver) ? reviver.call(this, prop, value) : value
@@ -105,13 +84,7 @@ export default function djsonFactory() {
     }
 
     function addType(factory) {
-        const type = factory({
-            types,
-            parse,
-            stringify,
-            isValidToParse,
-            isValidToStringify
-        })
+        const type = factory({ types })
         if (types.hasOwnProperty(type.key))
             throw type.key + ' already added as type'
         types[type.key] = type

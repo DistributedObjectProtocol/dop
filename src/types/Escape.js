@@ -1,4 +1,4 @@
-export default function factoryDelete({ isValidToParse }) {
+export default function factoryDelete() {
     const key = '$escape'
     let escaped
 

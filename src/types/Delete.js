@@ -8,22 +8,17 @@ export default function factoryDelete() {
         }
     }
 
+    // Mandatory
     Delete.key = key
 
-    Delete.isValidToStringify = function(value) {
-        return value instanceof Delete
+    // Mandatory
+    Delete.stringify = function(value) {
+        return value instanceof Delete ? { [key]: 1 } : value
     }
 
-    Delete.stringify = function() {
-        return { [key]: 1 }
-    }
-
-    Delete.isValidToParse = function(value) {
-        return value[key] === 1
-    }
-
-    Delete.parse = function() {
-        return new Delete()
+    // Mandatory
+    Delete.parse = function(value) {
+        return value[key] === 1 ? new Delete() : value
     }
 
     // Optionals
