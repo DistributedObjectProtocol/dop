@@ -1,7 +1,13 @@
 import djsonFactory from './util/djsonFactory'
 import merge from './api/merge'
-import DJSON from './api/djson'
+import { DJSON, Escape, Delete } from './api/djson'
 
-const dop = { merge, DJSON, djsonFactory }
+const dop = {
+    merge,
+    djsonFactory,
+    DJSON,
+    Escape,
+    Delete
+}
 
 export default dop

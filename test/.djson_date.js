@@ -5,10 +5,9 @@ import { isInteger, newDate } from './utils'
 
 DJSON.addType(() => ({
     key: '$date',
-    isValidToStringify: value => value instanceof Date, // JSON.stringify uses .toISOString() to serialize Date
-    isValidToParse: (value, prop) => isInteger(value.$date),
-    stringify: value => ({ $date: new Date(value).getTime() }),
-    parse: value => newDate(value.$date)
+    stringify: value =>
+        value instanceof Date ? { $date: new Date(value).getTime() } : value,
+    parse: value => (isInteger(value.$date) ? newDate(value.$date) : value)
 }))
 
 // DJSON.TYPES.$nestedtype = {

@@ -1,46 +1,49 @@
-export default function factoryDelete() {
+import { isPojoObject } from '../util/is'
+
+export default function factoryDelete({ types, getUniqueKey }) {
     const key = '$escape'
-    let escaped
+    const escaped_parse = []
+    let escaped_stringify
 
     // Constructor/Creator
     function Escape() {}
 
     Escape.key = key
 
-    Escape.isValidToStringify = function(value, prop, object) {
-        if (!escaped.has(value)) {
-            const type_name = isValidToParse(value, prop, object)
-            if (type_name !== undefined) {
-                escaped.set(value, true)
-                return true
-            }
+    Escape.stringify = function(value, prop, object) {
+        if (!isPojoObject(value) || escaped_stringify.has(value)) {
+            return value
         }
-        return false
-    }
 
-    Escape.stringify = function(value) {
+        const unique_key = getUniqueKey(value)
+        if (unique_key === undefined) {
+            return value
+        }
+
+        escaped_stringify.set(value, true)
         return { [key]: value }
     }
 
-    Escape.isValidToParse = function() {
-        return true
-    }
-
-    Escape.parse = function(value) {
-        return value[key]
+    Escape.parse = function(value, prop, object) {
+        const unique_key = getUniqueKey(value)
+        if (unique_key === key) {
+            escaped_parse.push({ value, prop, object })
+            return {}
+        }
+        return value
     }
 
     Escape.beforeStringify = function() {
-        escaped = new Map()
+        escaped_stringify = new Map()
     }
 
-    Escape.skipParse = function(value, prop) {
-        return prop === key
+    Escape.afterParse = function(value, prop) {
+        console.log('afterParse', escaped_parse)
+        while (escaped_parse.length > 0) {
+            const { object, prop, value } = escaped_parse.shift()
+            object[prop] = value[key]
+        }
     }
-
-    // Escape.skipStringify = function(value, prop) {
-    //     return prop === key
-    // }
 
     return Escape
 }

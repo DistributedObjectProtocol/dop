@@ -26,8 +26,6 @@ export default function factoryDelete() {
     // Delete.afterStringify = ()=>{}
     // Delete.beforeParse = ()=>{}
     // Delete.afterParse = ()=>{}
-    // Delete.skipStringify = ()=>{}
-    // Delete.skipParse = ()=>{}
 
     return Delete
 }
