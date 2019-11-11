@@ -147,21 +147,6 @@ test('This should not be escaped because $date is not an number', function(t) {
     testBasic(t, patch, expected) // testEJSON(t, patch, expected) // Not sure why EJSON is still escaping strings
 })
 
-test('Passing replacer', function(t) {
-    const patch = { user: { deep: newDate(123456789) } }
-    const expected = { user: { deep: { $date: 123456789 } } }
-    DJSON.stringify(patch, function(prop, value) {
-        if (prop === 'user') {
-            t.is(value, patch.user)
-            t.is(this, patch)
-        }
-        if (prop === 'deep') {
-            t.deepEqual(value, expected.user.deep)
-        }
-        return value
-    })
-})
-
 // // this is experimental, not sure if the protocol should allow nested types
 // // this is experimental, not sure if the protocol should allow nested types
 // // this is experimental, not sure if the protocol should allow nested types

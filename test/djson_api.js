@@ -68,31 +68,46 @@ test('before and after', function(t) {
     t.is(i, 8)
 })
 
-test('skipping', function(t) {
-    let i = 0
-    DJSON.addType(() => ({
-        key: 'skipping',
-        skipStringify: () => {
-            i += 1
-            t.true(true)
-            return true
-        },
-        skipParse: () => {
-            i += 1
-            t.true(true)
-            return true
-        },
-        stringify: value => {
-            i += 1
-            t.true(false)
-            return value
-        },
-        parse: value => {
-            i += 1
-            t.true(false)
-            return value
+test('Passing replacer', function(t) {
+    const patch = { user: { deep: 123 } }
+    const expected = { user: { deep: 123 } }
+    DJSON.stringify(patch, function(prop, value) {
+        if (prop === 'user') {
+            t.is(value, patch.user)
+            t.is(this, patch)
         }
-    }))
-    DJSON.parse(DJSON.stringify({ value: 1 }))
-    t.is(i, 4)
+        if (prop === 'deep') {
+            t.deepEqual(value, expected.user.deep)
+        }
+        return value
+    })
 })
+
+// test.skip('skipping', function(t) {
+//     let i = 0
+//     DJSON.addType(() => ({
+//         key: 'skipping',
+//         skipStringify: () => {
+//             i += 1
+//             t.true(true)
+//             return true
+//         },
+//         skipParse: () => {
+//             i += 1
+//             t.true(true)
+//             return true
+//         },
+//         stringify: value => {
+//             i += 1
+//             t.true(false)
+//             return value
+//         },
+//         parse: value => {
+//             i += 1
+//             t.true(false)
+//             return value
+//         }
+//     }))
+//     DJSON.parse(DJSON.stringify({ value: 1 }))
+//     t.is(i, 4)
+// })
