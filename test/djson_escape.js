@@ -1,22 +1,21 @@
 import test from 'ava'
 import { DJSON } from '../'
 
-const SPECIALSTRING = 'SPECIALSTRING'
+const UNDEFINED = 'UNDEFINED' // fake undefined
 
 DJSON.addType(({ getUniqueKey }) => ({
-    key: '$specialstype',
+    key: '$undefined',
+    isValidToParse: (value, prop, object) => {
+        const unique_key = getUniqueKey(value)
+        return unique_key === '$undefined' && value.$undefined === 1
+    },
     stringify: (value, prop, object) => {
-        const unique_key = getUniqueKey(object)
-        return prop !== '$specialstype' &&
-            // unique_key !== undefined &&
-            value === SPECIALSTRING
-            ? { $specialstype: value }
-            : value
+        return value === UNDEFINED ? { $undefined: 1 } : value
     },
     parse: (value, prop) => {
         const unique_key = getUniqueKey(value)
-        return unique_key === '$specialstype' && prop !== '$escape'
-            ? value.$specialstype
+        return unique_key === '$undefined' && prop !== '$escape'
+            ? value.$undefined
             : value
     }
 }))
@@ -24,90 +23,71 @@ DJSON.addType(({ getUniqueKey }) => ({
 function testBasic(t, patch, expected, recursive = true) {
     const string = DJSON.stringify(patch)
     const jsonparsed = JSON.parse(string)
-    const parsed = DJSON.parse(string)
+    // const parsed = DJSON.parse(string)
     t.deepEqual(expected, jsonparsed)
-    if (recursive) {
-        return testBasic(t, parsed, expected, false)
-    }
-    return parsed
+    // t.deepEqual(patch, parsed)
 }
 
-test('basic', function(t) {
-    const patch = { user: { enzo: SPECIALSTRING } }
-    const expected = { user: { enzo: { $specialstype: SPECIALSTRING } } }
+test('Valid type', function(t) {
+    const patch = { convert: UNDEFINED }
+    const expected = { convert: { $undefined: 1 } }
     testBasic(t, patch, expected)
 })
 
-test('$escaping', function(t) {
-    const patch = {
-        user: {
-            enzo: SPECIALSTRING,
-            john: { $specialstype: SPECIALSTRING }
-        }
-    }
-    const expected = {
-        user: {
-            enzo: { $specialstype: SPECIALSTRING },
-            john: { $escape: { $specialstype: SPECIALSTRING } }
-        }
-    }
+test('Escape', function(t) {
+    const patch = { escape: { $undefined: 1 } }
+    const expected = { escape: { $escape: { $undefined: 1 } } }
     testBasic(t, patch, expected)
 })
 
-// test('This should not be escaped because $specialstype has another property', function(t) {
+test('Ignore', function(t) {
+    const patch = { ignore: { $undefined: 1, $other: 1 } }
+    const expected = { ignore: { $undefined: 1, $other: 1 } }
+    testBasic(t, patch, expected)
+})
+
+// test('$escaping', function(t) {
 //     const patch = {
-//         user: {
-//             // enzo: SPECIALSTRING,
-//             john: { $specialstype: SPECIALSTRING, $other: SPECIALSTRING }
-//         }
+//         convert: UNDEFINED,
+//         escape: { $undefined: UNDEFINED }
 //     }
 //     const expected = {
-//         user: {
-//             // enzo: { $specialstype: SPECIALSTRING },
-//             john: { $specialstype: SPECIALSTRING, $other: SPECIALSTRING }
-//         }
+//         convert: { $undefined: UNDEFINED },
+//         escape: { $escape: { $undefined: UNDEFINED } }
 //     }
 //     testBasic(t, patch, expected)
 // })
 
-// test('This should not be escaped because $specialstype has another valid prop', function(t) {
+// test('This should not be escaped because $undefined has another valid prop', function(t) {
 //     const patch = {
-//         user: {
-//             enzo: SPECIALSTRING,
-//             john: { $specialstype: SPECIALSTRING, $escape: SPECIALSTRING }
-//         }
+//             convert: UNDEFINED,
+//             escape: { $undefined: UNDEFINED, $escape: UNDEFINED }
 //     }
 //     const expected = {
-//         user: {
-//             enzo: { $specialstype: SPECIALSTRING },
-//             john: { $specialstype: SPECIALSTRING, $escape: SPECIALSTRING }
-//         }
+//             convert: { $undefined: UNDEFINED },
+//             escape: { $undefined: UNDEFINED, $escape: UNDEFINED }
 //     }
 //     testBasic(t, patch, expected)
 // })
 
-// test('This should not be escaped because $specialstype has another valid prop 2', function(t) {
+// test('This should not be escaped because $undefined has another valid prop 2', function(t) {
 //     const patch = {
-//         user: {
-//             enzo: SPECIALSTRING,
-//             john: { $escape: SPECIALSTRING, $specialstype: SPECIALSTRING }
-//         }
+//             convert: UNDEFINED,
+//             escape: { $escape: UNDEFINED, $undefined: UNDEFINED }
 //     }
 //     const expected = {
-//         user: {
-//             enzo: { $specialstype: SPECIALSTRING },
-//             john: { $escape: SPECIALSTRING, $specialstype: SPECIALSTRING }
-//         }
+//             convert: { $undefined: UNDEFINED },
+//             escape: { $escape: UNDEFINED, $undefined: UNDEFINED }
 //     }
 //     testBasic(t, patch, expected)
 // })
 
-// test('This should not be escaped because $specialstype is not an number', function(t) {
+// test('This should not be escaped because $undefined is not an number', function(t) {
 //     const patch = {
-//         user: { enzo: SPECIALSTRING, john: { $specialstype: 'string' } }
+//          convert: UNDEFINED, escape: { $undefined: 'string' }
 //     }
 //     const expected = {
-//         user: { enzo: { $specialstype: SPECIALSTRING }, john: { $specialstype: 'string' } }
+//          convert: { $undefined: UNDEFINED }, escape: { $undefined: 'string' }
 //     }
 //     testBasic(t, patch, expected) // testBasic(t, patch, expected) // Not sure why EJSON is still escaping strings
 // })

@@ -6,7 +6,7 @@ import deleteFactory from '../types/Delete'
 const DJSON = djsonFactory()
 
 const Escape = DJSON.addType(escapeFactory)
-const Delete = DJSON.addType(deleteFactory)
+// const Delete = DJSON.addType(deleteFactory)
 // const Undefined = DJSON.addType(undefinedFactory)
 
-export { DJSON, Escape, Delete }
+export { DJSON, Escape }
