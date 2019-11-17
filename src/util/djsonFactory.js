@@ -3,25 +3,19 @@ import { isFunction } from './is'
 export default function djsonFactory() {
     const types = {}
     const keys = []
-    let ignore
 
     function stringifyRecursive(value, prop, object, index = 0) {
         const key = keys[index]
         const type = types[key]
 
         // if (!types.hasOwnProperty(key)) {
-        if (index >= keys.length || ignore.has(object)) {
+        if (index >= keys.length) {
             return value
         }
 
-        if (isFunction(type.stringify)) {
-            const oldvalue = value
+        if (type.isValidToStringify(value, prop, object)) {
             value = type.stringify(value, prop, object)
-            if (oldvalue !== value) {
-                ignore.set(oldvalue, true) // to stop going deeply
-                ignore.set(value, true) // to stop going deeply
-                return value
-            }
+            return value
         }
 
         return stringifyRecursive(value, prop, object, index + 1)
@@ -35,8 +29,9 @@ export default function djsonFactory() {
             return value
         }
 
-        if (isFunction(type.parse)) {
+        if (type.isValidToParse(value, prop, object)) {
             value = type.parse(value, prop, object)
+            return value
         }
 
         return parseRecursive(value, prop, object, index + 1)
@@ -44,7 +39,6 @@ export default function djsonFactory() {
 
     function stringify(object, replacer, space) {
         runFunctionIfExists('beforeStringify', object)
-        ignore = new Map()
 
         const stringified = JSON.stringify(
             object,

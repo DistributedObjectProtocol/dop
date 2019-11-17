@@ -5,6 +5,9 @@ const UNDEFINED = 'UNDEFINED' // fake undefined
 
 DJSON.addType(({ getUniqueKey }) => ({
     key: '$undefined',
+    isValidToStringify: (value, prop, object) => {
+        return value === UNDEFINED
+    },
     isValidToParse: (value, prop, object) => {
         const unique_key = getUniqueKey(value)
         return unique_key === '$undefined' && value.$undefined === 1
