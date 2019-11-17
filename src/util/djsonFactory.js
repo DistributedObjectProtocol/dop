@@ -1,4 +1,5 @@
 import { isFunction } from './is'
+import { getUniqueKey } from './get'
 
 export default function djsonFactory() {
     const types = {}
@@ -82,17 +83,6 @@ export default function djsonFactory() {
                 types[key][name](...args)
             }
         })
-    }
-
-    function getUniqueKey(object) {
-        let key_name
-        for (const key in object) {
-            if (!types.hasOwnProperty(key) || key_name !== undefined) {
-                return
-            }
-            key_name = key
-        }
-        return key_name
     }
 
     return { stringify, parse, addType }

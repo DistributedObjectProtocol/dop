@@ -1,5 +1,3 @@
-// import { isPojoObject, isFunction } from '../util/is'
-
 export default function factoryEscape({ types, getUniqueKey }) {
     const key = '$escape'
     let escaped_stringify
@@ -12,15 +10,15 @@ export default function factoryEscape({ types, getUniqueKey }) {
 
     Escape.isValidToStringify = function(value, prop, object) {
         if (escaped_stringify.has(value)) return true
-        const type = types[getUniqueKey(value)]
+        const type = types[getUniqueKey(value, types)]
         return type !== undefined && type.isValidToParse(value, prop, object)
     }
 
     Escape.isValidToParse = function(value, prop, object) {
         if (escaped_parse.has(value)) return true
-        if (prop === key && key === getUniqueKey(object)) {
+        if (prop === key && key === getUniqueKey(object, types)) {
             escaped_parse.set(object, 1)
-            const type = types[getUniqueKey(value)]
+            const type = types[getUniqueKey(value, types)]
             return (
                 type !== undefined && type.isValidToParse(value, prop, object)
             )
@@ -28,14 +26,14 @@ export default function factoryEscape({ types, getUniqueKey }) {
         return false
     }
 
-    Escape.stringify = function(value, prop, object) {
+    Escape.stringify = function(value) {
         if (escaped_stringify.has(value)) return value
         escaped_stringify.set(value, 1)
         value = { [key]: value }
         return value
     }
 
-    Escape.parse = function(value, prop, object) {
+    Escape.parse = function(value) {
         return escaped_parse.has(value) ? value[key] : value
     }
 

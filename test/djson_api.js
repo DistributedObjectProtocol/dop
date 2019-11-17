@@ -3,48 +3,22 @@ import { djsonFactory } from '../'
 
 const DJSON = djsonFactory()
 
-test('stringifying', function(t) {
-    let i = 0
-    DJSON.addType(() => ({
-        key: 'stringifying',
-        stringify: (value, prop) => {
-            i += 1
-            return prop === 'testingStringify' ? String(value) : value
-        }
-    }))
-    const patch = { testingStringify: 1 }
-    const expected = { testingStringify: '1' }
-    const string = DJSON.stringify(patch)
-    const parsed = JSON.parse(string)
-    t.deepEqual(parsed, expected)
-    t.is(i, 2)
-})
-
-test('parsing', function(t) {
-    let i = 0
-    DJSON.addType(() => ({
-        key: 'parsing',
-        parse: (value, prop, object) => {
-            i += 1
-            return prop === 'number' ? Number(value) : value
-        }
-    }))
-    const expected = { number: 1 }
-    const parsed = DJSON.parse('{ "number": "1" }')
-    t.deepEqual(parsed, expected)
-    t.is(i, 2)
-})
-
 test('before and after', function(t) {
     let i = 0
     DJSON.addType(() => ({
         key: 'beforeandafter',
+        isValidToStringify: () => true,
+        isValidToParse: () => true,
         beforeStringify: () => {
             i += 1
             t.is(i, 1)
         },
         stringify: value => {
             i += 1
+            return value
+        },
+        parse: value => {
+            // i += 1
             return value
         },
         afterStringify: () => {
@@ -55,17 +29,13 @@ test('before and after', function(t) {
             i += 1
             t.is(i, 5)
         },
-        parse: value => {
-            i += 1
-            return value
-        },
         afterParse: () => {
             i += 1
-            t.is(i, 8)
+            t.is(i, 6)
         }
     }))
     DJSON.parse(DJSON.stringify({ value: 1 }))
-    t.is(i, 8)
+    t.is(i, 6)
 })
 
 test('Passing replacer', function(t) {
