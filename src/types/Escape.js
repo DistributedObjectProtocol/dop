@@ -1,9 +1,9 @@
-import { isPojoObject, isFunction } from '../util/is'
+// import { isPojoObject, isFunction } from '../util/is'
 
 export default function factoryEscape({ types, getUniqueKey }) {
     const key = '$escape'
-    const escaped_parse = []
     let escaped_stringify
+    let escaped_parse
 
     // Constructor/Creator
     function Escape() {}
@@ -17,6 +17,14 @@ export default function factoryEscape({ types, getUniqueKey }) {
     }
 
     Escape.isValidToParse = function(value, prop, object) {
+        if (escaped_parse.has(value)) return true
+        if (prop === key && key === getUniqueKey(object)) {
+            escaped_parse.set(object, 1)
+            const type = types[getUniqueKey(value)]
+            return (
+                type !== undefined && type.isValidToParse(value, prop, object)
+            )
+        }
         return false
     }
 
@@ -28,11 +36,15 @@ export default function factoryEscape({ types, getUniqueKey }) {
     }
 
     Escape.parse = function(value, prop, object) {
-        return value[$key]
+        return escaped_parse.has(value) ? value[key] : value
     }
 
     Escape.beforeStringify = function() {
         escaped_stringify = new Map()
+    }
+
+    Escape.beforeParse = function() {
+        escaped_parse = new Map()
     }
 
     return Escape

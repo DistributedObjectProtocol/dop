@@ -12,23 +12,20 @@ DJSON.addType(({ getUniqueKey }) => ({
         const unique_key = getUniqueKey(value)
         return unique_key === '$undefined' && value.$undefined === 1
     },
-    stringify: (value, prop, object) => {
-        return value === UNDEFINED ? { $undefined: 1 } : value
+    stringify: () => {
+        return { $undefined: 1 }
     },
-    parse: (value, prop) => {
-        const unique_key = getUniqueKey(value)
-        return unique_key === '$undefined' && prop !== '$escape'
-            ? value.$undefined
-            : value
+    parse: () => {
+        return UNDEFINED
     }
 }))
 
 function testBasic(t, patch, expected, recursive = true) {
     const string = DJSON.stringify(patch)
     const jsonparsed = JSON.parse(string)
-    // const parsed = DJSON.parse(string)
+    const parsed = DJSON.parse(string)
     t.deepEqual(expected, jsonparsed)
-    // t.deepEqual(patch, parsed)
+    t.deepEqual(patch, parsed)
 }
 
 test('Valid type', function(t) {
