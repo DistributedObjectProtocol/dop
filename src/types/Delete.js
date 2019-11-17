@@ -1,4 +1,4 @@
-export default function factoryDelete() {
+export default function factoryDelete({ types, getUniqueKey }) {
     const key = '$delete'
 
     // Constructor/Creator
@@ -12,13 +12,24 @@ export default function factoryDelete() {
     Delete.key = key
 
     // Mandatory
+    Delete.isValidToStringify = function(value) {
+        return value instanceof Delete
+    }
+
+    // Mandatory
     Delete.stringify = function(value) {
-        return value instanceof Delete ? { [key]: 1 } : value
+        return { [key]: 1 }
+    }
+
+    // Mandatory
+    Delete.isValidToParse = function(value) {
+        const unique_key = getUniqueKey(value, types)
+        return unique_key === key && value[key] === 1
     }
 
     // Mandatory
     Delete.parse = function(value) {
-        return value[key] === 1 ? new Delete() : value
+        return new Delete()
     }
 
     // Optionals
