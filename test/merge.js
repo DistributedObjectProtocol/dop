@@ -178,36 +178,6 @@ function run(merge, name) {
 
     test(
         name +
-            ': should not overwrite existing values with `undefined` values of object sources',
-        function(t) {
-            var actual = merge({ a: 1 }, { a: undefined, b: undefined })
-            var expected = { a: 1, b: undefined }
-            t.deepEqual(actual, expected)
-        }
-    )
-
-    test(
-        name +
-            ': should not overwrite existing values with `undefined` values of array sources',
-        function(t) {
-            var array = [1]
-            array[2] = 3
-
-            var actual = merge([4, 5, 6], array),
-                expected = [1, 5, 3]
-
-            t.deepEqual(actual, expected)
-
-            array = [1, , 3]
-            array[1] = undefined
-
-            actual = merge([4, 5, 6], array)
-            t.deepEqual(actual, expected)
-        }
-    )
-
-    test(
-        name +
             ': should skip merging when `object` and `source` are the same value',
         function(t) {
             var object = {},
@@ -306,20 +276,50 @@ function run(merge, name) {
         // t.not(object.arr, actual_rambda.arr) // this fails because Rambda makes shallow copies of arrays
     })
 
-    test(
-        name +
-            ': should convert values to arrays when merging arrays of `source`',
-        function(t) {
-            var object = { a: { '1': 'y', b: 'z', length: 2 } }
-            var actual = merge(object, { a: ['x'] })
-            var expected = { a: ['x', 'y'] }
+    // test.skip(
+    //     name +
+    //         ': should not overwrite existing values with `undefined` values of object sources',
+    //     function(t) {
+    //         var actual = merge({ a: 1 }, { a: undefined, b: undefined })
+    //         var expected = { a: 1, b: undefined }
+    //         t.deepEqual(actual, expected)
+    //     }
+    // )
 
-            t.deepEqual(actual, expected)
+    // test.skip(
+    //     name +
+    //         ': should not overwrite existing values with `undefined` values of array sources',
+    //     function(t) {
+    //         var array = [1]
+    //         array[2] = 3
 
-            actual = merge({ a: {} }, { a: [] })
-            t.deepEqual(actual, { a: [] })
-        }
-    )
+    //         var actual = merge([4, 5, 6], array),
+    //             expected = [1, 5, 3]
+
+    //         t.deepEqual(actual, expected)
+
+    //         array = [1, , 3]
+    //         array[1] = undefined
+
+    //         actual = merge([4, 5, 6], array)
+    //         t.deepEqual(actual, expected)
+    //     }
+    // )
+
+    // test.skip(
+    //     name +
+    //         ': should convert values to arrays when merging arrays of `source`',
+    //     function(t) {
+    //         var object = { a: { '1': 'y', b: 'z', length: 2 } }
+    //         var actual = merge(object, { a: ['x'] })
+    //         var expected = { a: ['x', 'y'] }
+
+    //         t.deepEqual(actual, expected)
+
+    //         actual = merge({ a: {} }, { a: [] })
+    //         t.deepEqual(actual, { a: [] })
+    //     }
+    // )
 
     // test.skip(
     //     name + ': should merge sources containing circular references',

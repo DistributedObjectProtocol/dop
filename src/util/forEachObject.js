@@ -4,19 +4,19 @@ import forEach from './forEach'
 // https://jsperf.com/dop-foreachobject
 // https://2ality.com/2019/10/shared-mutable-state.html
 export default function forEachObject(origin, callback, destiny) {
-    const circular = []
+    const circular = new Map()
     const path = []
     const has_destiny = isObject(destiny)
-    forEachObjectLoop(origin, destiny, callback, circular, path, has_destiny)
+    forEachObjectLoop(origin, destiny, callback, path, has_destiny, circular)
 }
 
 function forEachObjectLoop(
     origin,
     destiny,
     callback,
-    circular,
     path,
-    has_destiny
+    has_destiny,
+    circular
 ) {
     forEach(origin, (value_origin, prop) => {
         path.push(prop)
@@ -29,16 +29,16 @@ function forEachObjectLoop(
             value_origin !== origin &&
             // (!has_destiny ||
             //     (has_destiny && destiny[prop] !== undefined)) &&
-            circular.indexOf(value_origin) == -1
+            !circular.has(value_origin)
         ) {
-            circular.push(value_origin)
+            circular.set(value_origin, 1)
             forEachObjectLoop(
                 value_origin,
                 has_destiny ? destiny[prop] : undefined,
                 callback,
-                circular,
                 path,
-                has_destiny
+                has_destiny,
+                circular
             )
         }
 
