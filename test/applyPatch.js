@@ -3,19 +3,33 @@ import { applyPatch } from '../'
 
 // https://jsperf.com/merge-challenge
 
-test('different value', function(t) {
-    const object = { value: 1 }
-    const patch = { value: { deep: 1 } }
-    const expected = { value: { deep: 1 } }
+test('deep mutation', function(t) {
+    const object = { value: { deep: 'value' } }
+    const patch = { value: 556 }
+    const expected = { value: 556 }
 
     const { unpatch, mutations } = applyPatch(object, patch)
-
+    console.log(unpatch)
     console.log(mutations)
 
     t.deepEqual(object, expected)
     // t.deepEqual(patch, unpatch)
     // t.is(mutations.length, 0)
 })
+
+// test('deep mutation', function(t) {
+//     const object = { value: 1 }
+//     const patch = { value: { deep: 1 } }
+//     const expected = { value: { deep: 1 } }
+
+//     const { unpatch, mutations } = applyPatch(object, patch)
+
+//     console.log(mutations)
+
+//     t.deepEqual(object, expected)
+//     // t.deepEqual(patch, unpatch)
+//     // t.is(mutations.length, 0)
+// })
 
 // test('should work with four arguments', function(t) {
 //     var expected = { a: 4 },
