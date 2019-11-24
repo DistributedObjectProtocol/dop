@@ -33,7 +33,7 @@ function mergeMutator({ origin, destiny, prop }) {
         }
     } else {
         destiny[prop] = origin_value
-        return true // we dont go deeper
+        return false // we dont go deeper
     }
 }
 

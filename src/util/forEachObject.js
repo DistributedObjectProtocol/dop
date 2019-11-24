@@ -21,11 +21,11 @@ function forEachObjectLoop(
     forEach(origin, (value_origin, prop) => {
         path.push(prop)
 
-        const skip = callback({ origin, destiny, prop, path })
+        const go_deep = callback({ origin, destiny, prop, path })
 
         if (
             isObject(value_origin) &&
-            skip !== true &&
+            go_deep !== false &&
             value_origin !== origin &&
             // (!has_destiny ||
             //     (has_destiny && destiny[prop] !== undefined)) &&

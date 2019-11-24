@@ -5,7 +5,7 @@ export default function djsonFactory() {
     const types = {}
     const keys = []
 
-    function recursion(value, prop, object, isValid, func, index = 0) {
+    function recursion(value, prop, object, is_valid, func, index = 0) {
         const key = keys[index]
         const type = types[key]
 
@@ -14,13 +14,30 @@ export default function djsonFactory() {
             return value
         }
 
-        if (type[isValid](value, prop, object)) {
+        if (type[is_valid](value, prop, object)) {
             value = type[func](value, prop, object)
             return value
         }
 
-        return recursion(value, prop, object, isValid, func, index + 1)
+        return recursion(value, prop, object, is_valid, func, index + 1)
     }
+
+    // function patch(prop, destiny, origin, index = 0) {
+    //     const key = keys[index]
+    //     const type = types[key]
+
+    //     // if (!types.hasOwnProperty(key)) {
+    //     if (index >= keys.length) {
+    //         return value
+    //     }
+
+    //     if (type[is_valid](value, prop, object)) {
+    //         value = type[func](value, prop, object)
+    //         return value
+    //     }
+
+    //     return recursion(value, prop, object, is_valid, func, index + 1)
+    // }
 
     function stringify(object, replacer, space) {
         runFunctionIfExists('beforeStringify', object)
