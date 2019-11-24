@@ -5,7 +5,7 @@ export default function djsonFactory() {
     const types = {}
     const keys = []
 
-    function recursion(value, prop, object, is_valid, func, index = 0) {
+    function stringifyAndParse(value, prop, object, is_valid, func, index = 0) {
         const key = keys[index]
         const type = types[key]
 
@@ -15,29 +15,11 @@ export default function djsonFactory() {
         }
 
         if (type[is_valid](value, prop, object)) {
-            value = type[func](value, prop, object)
-            return value
+            return type[func](value, prop, object)
         }
 
-        return recursion(value, prop, object, is_valid, func, index + 1)
+        return stringifyAndParse(value, prop, object, is_valid, func, index + 1)
     }
-
-    // function patch(prop, destiny, origin, index = 0) {
-    //     const key = keys[index]
-    //     const type = types[key]
-
-    //     // if (!types.hasOwnProperty(key)) {
-    //     if (index >= keys.length) {
-    //         return value
-    //     }
-
-    //     if (type[is_valid](value, prop, object)) {
-    //         value = type[func](value, prop, object)
-    //         return value
-    //     }
-
-    //     return recursion(value, prop, object, is_valid, func, index + 1)
-    // }
 
     function stringify(object, replacer, space) {
         runFunctionIfExists('beforeStringify', object)
@@ -45,7 +27,7 @@ export default function djsonFactory() {
         const stringified = JSON.stringify(
             object,
             function(prop, value) {
-                value = recursion(
+                value = stringifyAndParse(
                     value,
                     prop,
                     this,
@@ -67,12 +49,38 @@ export default function djsonFactory() {
         runFunctionIfExists('beforeParse', text)
 
         const parsed = JSON.parse(text, function(prop, value) {
-            value = recursion(value, prop, this, 'isValidToParse', 'parse')
+            value = stringifyAndParse(
+                value,
+                prop,
+                this,
+                'isValidToParse',
+                'parse'
+            )
             return isFunction(reviver) ? reviver.call(this, prop, value) : value
         })
 
         runFunctionIfExists('afterParse', text, parsed)
         return parsed
+    }
+
+    function patch(value, prop, destiny, origin, path, index = 0) {
+        const key = keys[index]
+        const type = types[key]
+
+        if (index >= keys.length) {
+            const oldValue = destiny[prop]
+            destiny[prop] = value
+            return oldValue
+        }
+
+        if (
+            type.isValidToPatch !== undefined &&
+            type.isValidToPatch(value, prop, destiny, origin, path)
+        ) {
+            return type.patch(value, prop, destiny, origin)
+        }
+
+        return patch(value, prop, destiny, origin, path, index + 1)
     }
 
     function addType(factory) {
@@ -92,5 +100,5 @@ export default function djsonFactory() {
         })
     }
 
-    return { stringify, parse, addType }
+    return { stringify, parse, patch, addType }
 }

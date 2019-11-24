@@ -8,8 +8,8 @@ export default function applyPatchFactory(DJSON) {
         const mutations = []
         const unpatch = {}
 
-        function addMutation({ destiny, prop, path }) {
-            const oldValue = destiny[prop] // type.unpatch(destiny, prop)
+        function addMutation({ value, prop, destiny, origin, path }) {
+            const oldValue = DJSON.patch(value, prop, destiny, origin, path)
             setDeep(unpatch, path.slice(0), oldValue)
             mutations.push({
                 object: destiny,
@@ -30,17 +30,17 @@ export default function applyPatchFactory(DJSON) {
                         const tof_origin = is(origin_value)
                         const tof_destiny = is(destiny_value)
                         if (!destiny_has_prop || tof_origin != tof_destiny) {
-                            addMutation({ destiny, prop, path })
-                            destiny[prop] = merge(
+                            const value = merge(
                                 tof_origin == 'array' ? [] : {},
                                 origin_value
                             )
-                            return false // if true we dont go deeper
+                            addMutation({ value, prop, destiny, origin, path })
+                            return false // if false we dont go deeper
                         }
                     } else {
-                        addMutation({ destiny, prop, path })
-                        destiny[prop] = origin_value
-                        return false // if true we dont go deeper
+                        const value = origin_value
+                        addMutation({ value, prop, destiny, origin, path })
+                        return false // if false we dont go deeper
                     }
                 }
             },

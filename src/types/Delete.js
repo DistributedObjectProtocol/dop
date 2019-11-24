@@ -17,7 +17,7 @@ export default function factoryDelete({ types, getUniqueKey }) {
     }
 
     // Mandatory
-    Delete.stringify = function(value) {
+    Delete.stringify = function() {
         return { [key]: 1 }
     }
 
@@ -33,6 +33,23 @@ export default function factoryDelete({ types, getUniqueKey }) {
     }
 
     // Optionals
+    Delete.isValidToPatch = function(value, prop, destiny) {
+        return value instanceof Delete || !destiny.hasOwnProperty(prop)
+    }
+
+    Delete.patch = function(value, prop, destiny) {
+        const oldValue = !destiny.hasOwnProperty(prop)
+            ? new Delete()
+            : destiny[prop]
+
+        if (value instanceof Delete) {
+            delete destiny[prop]
+        } else {
+            destiny[prop] = value
+        }
+        return oldValue
+    }
+
     // Delete.beforeStringify = ()=>{}
     // Delete.afterStringify = ()=>{}
     // Delete.beforeParse = ()=>{}

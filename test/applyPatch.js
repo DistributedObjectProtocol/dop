@@ -1,35 +1,72 @@
 import test from 'ava'
-import { applyPatch } from '../'
+import { applyPatch, merge, Delete } from '../'
 
-// https://jsperf.com/merge-challenge
-
-test('deep mutation', function(t) {
-    const object = { value: { deep: 'value' } }
-    const patch = { value: 556 }
-    const expected = { value: 556 }
-
+function testUnpatch(t, object, patch, expected) {
+    const cloned = merge(Array.isArray(object) ? [] : {}, object)
     const { unpatch, mutations } = applyPatch(object, patch)
-    console.log(unpatch)
-    console.log(mutations)
-
     t.deepEqual(object, expected)
-    // t.deepEqual(patch, unpatch)
-    // t.is(mutations.length, 0)
+    applyPatch(object, unpatch)
+    t.deepEqual(object, cloned)
+    return { unpatch, mutations }
+}
+
+test('basic mutations', function(t) {
+    const func1 = () => {}
+    const func2 = () => {}
+    const object = { number: 1, bool: false, string: 'hello', func: func1 }
+    const patch = { number: 2, bool: true, string: 'world', func: func2 }
+    const expected = { number: 2, bool: true, string: 'world', func: func2 }
+
+    testUnpatch(t, object, patch, expected)
 })
 
-// test('deep mutation', function(t) {
-//     const object = { value: 1 }
-//     const patch = { value: { deep: 1 } }
-//     const expected = { value: { deep: 1 } }
+test('value didnt exists', function(t) {
+    const object = {}
+    const patch = { value: true }
+    const expected = { value: true }
 
-//     const { unpatch, mutations } = applyPatch(object, patch)
+    testUnpatch(t, object, patch, expected)
+})
 
-//     console.log(mutations)
+test('deletion', function(t) {
+    const object = { value: 12345 }
+    const patch = { value: Delete() }
+    const expected = {}
 
-//     t.deepEqual(object, expected)
-//     // t.deepEqual(patch, unpatch)
-//     // t.is(mutations.length, 0)
-// })
+    testUnpatch(t, object, patch, expected)
+})
+
+test('from deep to other', function(t) {
+    const object = { value: { more: false } }
+    const patch = { value: true }
+    const expected = { value: true }
+
+    testUnpatch(t, object, patch, expected)
+})
+
+test('deep value', function(t) {
+    const object = { value: { more: false } }
+    const patch = { value: { more: true } }
+    const expected = { value: { more: true } }
+
+    testUnpatch(t, object, patch, expected)
+})
+
+test('mutating multiple levels', function(t) {
+    const object = { value: { more: false }, other: false }
+    const patch = { value: { more: true }, other: true }
+    const expected = { value: { more: true }, other: true }
+
+    testUnpatch(t, object, patch, expected)
+})
+
+test('mutating multiple levels not defineds', function(t) {
+    const object = {}
+    const patch = { value: { more: true }, other: true }
+    const expected = { value: { more: true }, other: true }
+
+    testUnpatch(t, object, patch, expected)
+})
 
 // test('should work with four arguments', function(t) {
 //     var expected = { a: 4 },
