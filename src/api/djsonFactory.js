@@ -1,5 +1,5 @@
-import { isFunction } from './is'
-import { getUniqueKey } from './get'
+import { isFunction } from '../util/is'
+import { getUniqueKey } from '../util/get'
 
 export default function djsonFactory() {
     const types = {}

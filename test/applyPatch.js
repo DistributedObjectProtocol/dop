@@ -2,13 +2,15 @@ import test from 'ava'
 import { applyPatch, merge, Delete } from '../'
 
 function testUnpatch(t, object, patch, expected) {
-    const cloned = merge(Array.isArray(object) ? [] : {}, object)
+    const cloned = merge({}, object)
     const { unpatch, mutations } = applyPatch(object, patch)
     t.deepEqual(object, expected)
     applyPatch(object, unpatch)
     t.deepEqual(object, cloned)
     return { unpatch, mutations }
 }
+
+test.skip('syntax mutations', function(t) {})
 
 test('basic mutations', function(t) {
     const func1 = () => {}
@@ -67,13 +69,6 @@ test('mutating multiple levels not defineds', function(t) {
 
     testUnpatch(t, object, patch, expected)
 })
-
-// test('should work with four arguments', function(t) {
-//     var expected = { a: 4 },
-//         actual = merge({ a: 1 }, { a: 2 }, { a: 3 }, expected)
-
-//     t.deepEqual(actual, expected)
-// })
 
 // test('should merge onto function `object` values', function(t) {
 //     function Foo() {}
