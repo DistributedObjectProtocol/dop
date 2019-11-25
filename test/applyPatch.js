@@ -38,6 +38,20 @@ test('deletion', function(t) {
     testUnpatch(t, object, patch, expected)
 })
 
+test('patch new object should not be same object', function(t) {
+    function Foo() {}
+    const instance = new Foo()
+    instance.prop = 2
+
+    const object = { prop: 123 }
+    const patch = { prop: { deep: true } }
+    const expected = { prop: { deep: true } }
+
+    applyPatch(object, patch)
+    t.not(object.prop, patch.prop)
+    t.deepEqual(object, expected)
+})
+
 test('from deep to other', function(t) {
     const object = { value: { more: false } }
     const patch = { value: true }
@@ -70,53 +84,46 @@ test('mutating multiple levels not defineds', function(t) {
     testUnpatch(t, object, patch, expected)
 })
 
-// test('should merge onto function `object` values', function(t) {
-//     function Foo() {}
+test('function to object', function(t) {
+    const object = { prop: () => {} }
+    const patch = { prop: {} }
+    const expected = { prop: {} }
 
-//     var source = { a: 1 },
-//         actual = merge(Foo, source)
+    testUnpatch(t, object, patch, expected)
+})
 
-//     t.deepEqual(actual, Foo)
-//     t.deepEqual(Foo.a, 1)
-// })
+test('object to function', function(t) {
+    const f = () => {}
+    const object = { prop: {} }
+    const patch = { prop: f }
+    const expected = { prop: f }
 
-// test(
-//     'should merge first source object properties to function',
-//     function(t) {
-//         var fn = function() {},
-//             object = { prop: {} },
-//             actual = merge({ prop: fn }, object)
+    testUnpatch(t, object, patch, expected)
+})
 
-//         t.deepEqual(actual, object)
-//     }
-// )
+test('object to object/instance', function(t) {
+    function Foo() {}
+    const instance = new Foo()
+    instance.prop = 2
 
-// test(
-//     name +
-//         ': should merge first and second source object properties to function',
-//     function(t) {
-//         var fn = function() {},
-//             object = { prop: {} },
-//             actual = merge({ prop: fn }, { prop: fn }, object)
+    const object = { prop: instance }
+    const patch = { prop: { deep: true } }
+    const expected = { prop: { deep: true } }
 
-//         t.deepEqual(actual, object)
-//     }
-// )
+    testUnpatch(t, object, patch, expected)
+})
 
-// test('should not merge onto function values of sources', function(
-//     t
-// ) {
-//     var source1 = { a: function() {} },
-//         source2 = { a: { b: 2 } },
-//         expected = { a: { b: 2 } },
-//         actual = merge({}, source1, source2)
+test('object/instance to object', function(t) {
+    function Foo() {}
+    const instance = new Foo()
+    instance.prop = 2
 
-//     t.deepEqual(actual, expected)
-//     t.true(!('b' in source1.a))
+    const object = { prop: { deep: true } }
+    const patch = { prop: instance }
+    const expected = { prop: instance }
 
-//     actual = merge(source1, source2)
-//     t.deepEqual(actual, expected)
-// })
+    testUnpatch(t, object, patch, expected)
+})
 
 // test('should merge onto non-plain `object` values', function(t) {
 //     function Foo() {}
