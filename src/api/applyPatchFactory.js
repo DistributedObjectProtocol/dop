@@ -3,7 +3,7 @@ import { getNewPlain } from '../util/get'
 import { setDeep } from '../util/set'
 import forEachObject from '../util/forEachObject'
 
-export default function applyPatchFactory(DJSON) {
+export default function applyPatchFactory(patchFunction) {
     return function applyPatch(object, patch) {
         if (!isPlainObject(object) || !isPlainObject(patch)) {
             throw 'applyPatch only accepts plain objects'
@@ -13,7 +13,7 @@ export default function applyPatchFactory(DJSON) {
         const unpatch = {}
 
         function addMutation({ value, prop, destiny, origin, path }) {
-            const oldValue = DJSON.patch(value, prop, destiny, origin, path)
+            const oldValue = patchFunction(value, prop, destiny, origin, path)
             setDeep(unpatch, path.slice(0), oldValue)
             mutations.push({
                 object: destiny,

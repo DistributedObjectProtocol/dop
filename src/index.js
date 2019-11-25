@@ -8,7 +8,7 @@ import deleteFactory from './types/Delete'
 const DJSON = djsonFactory()
 const Escape = DJSON.addType(escapeFactory)
 const Delete = DJSON.addType(deleteFactory)
-const applyPatch = applyPatchFactory(DJSON)
+const applyPatch = applyPatchFactory(DJSON.patch)
 
 const dop = {
     merge,
