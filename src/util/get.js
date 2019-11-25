@@ -1,5 +1,5 @@
 import { is, isPojo } from './is'
-import merge from '../api/merge'
+import merge from './merge'
 
 export function getUniqueKey(object, objectList) {
     let key_name

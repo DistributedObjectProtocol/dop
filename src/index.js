@@ -1,4 +1,4 @@
-import merge from './api/merge'
+import merge from './util/merge'
 import applyPatchFactory from './api/applyPatchFactory'
 import djsonFactory from './api/djsonFactory'
 import escapeFactory from './types/Escape'

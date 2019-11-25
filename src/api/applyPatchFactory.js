@@ -1,8 +1,7 @@
-import { is, isPojo, isPojoObject } from '../util/is'
+import { isPojoObject } from '../util/is'
 import { getNewPojo } from '../util/get'
 import { setDeep } from '../util/set'
 import forEachObject from '../util/forEachObject'
-import merge from '../api/merge'
 
 export default function applyPatchFactory(DJSON) {
     return function applyPatch(object, patch) {
