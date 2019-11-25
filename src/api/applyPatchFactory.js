@@ -28,28 +28,17 @@ export default function applyPatchFactory(DJSON) {
             ({ origin, destiny, prop, path }) => {
                 const origin_value = origin[prop]
                 const destiny_value = destiny[prop]
-                const destiny_has_prop = destiny.hasOwnProperty(prop)
-                if (!destiny_has_prop || origin_value !== destiny_value) {
+                if (
+                    !destiny.hasOwnProperty(prop) ||
+                    (origin_value !== destiny_value &&
+                        !(
+                            isPojoObject(origin_value) &&
+                            isPojoObject(destiny_value)
+                        ))
+                ) {
                     const value = getNewPojo(origin_value)
                     addMutation({ value, prop, destiny, origin, path })
                     return false // if false we dont go deeper
-
-                    // if (isPojo(origin_value)) {
-                    //     const tof_origin = is(origin_value)
-                    //     const tof_destiny = is(destiny_value)
-                    //     if (!destiny_has_prop || tof_origin != tof_destiny) {
-                    //         const value = merge(
-                    //             tof_origin == 'array' ? [] : {},
-                    //             origin_value
-                    //         )
-                    //         addMutation({ value, prop, destiny, origin, path })
-                    //         return false // if false we dont go deeper
-                    //     }
-                    // } else {
-                    //     const value = origin_value
-                    //     addMutation({ value, prop, destiny, origin, path })
-                    //     return false // if false we dont go deeper
-                    // }
                 }
             },
             object

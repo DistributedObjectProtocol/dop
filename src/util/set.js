@@ -4,5 +4,8 @@ export function setDeep(unpatch, path, value) {
         unpatch[prop] = value
         return
     }
-    return setDeep((unpatch[prop] = {}), path, value)
+    if (!unpatch.hasOwnProperty(prop)) {
+        unpatch[prop] = {}
+    }
+    return setDeep(unpatch[prop], path, value)
 }

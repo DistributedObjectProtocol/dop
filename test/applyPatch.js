@@ -12,6 +12,14 @@ function testUnpatch(t, object, patch, expected) {
 
 test.skip('syntax mutations', function(t) {})
 
+test('basic mutation', function(t) {
+    const object = { number: 1 }
+    const patch = { number: 2 }
+    const expected = { number: 2 }
+
+    testUnpatch(t, object, patch, expected)
+})
+
 test('basic mutations', function(t) {
     const func1 = () => {}
     const func2 = () => {}
@@ -66,6 +74,16 @@ test('deep value', function(t) {
     const expected = { value: { more: true } }
 
     testUnpatch(t, object, patch, expected)
+})
+
+test('deep value should not create root object, just mutate the props', function(t) {
+    const object = { value: { a: 1 } }
+    const patch = { value: { a: 2, b: 3 } }
+    const expected = { value: { a: 2, b: 3 } }
+
+    const { unpatch, mutations } = testUnpatch(t, object, patch, expected)
+    t.is(mutations.length, 2)
+    t.deepEqual(unpatch, { value: { a: 1, b: unpatch.value.b } })
 })
 
 test('mutating multiple levels', function(t) {
