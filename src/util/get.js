@@ -1,4 +1,4 @@
-import { is, isPojo } from './is'
+import { is, isPlain } from './is'
 import merge from './merge'
 
 export function getUniqueKey(object, objectList) {
@@ -12,6 +12,6 @@ export function getUniqueKey(object, objectList) {
     return key_name
 }
 
-export function getNewPojo(value) {
-    return isPojo(value) ? merge(is(value) == 'array' ? [] : {}, value) : value
+export function getNewPlain(value) {
+    return isPlain(value) ? merge(is(value) == 'array' ? [] : {}, value) : value
 }

@@ -1,4 +1,4 @@
-import { is, isPojo } from '../util/is'
+import { is, isPlain } from '../util/is'
 import forEachObject from '../util/forEachObject'
 
 // https://jsperf.com/merge-challenge
@@ -27,7 +27,7 @@ function mergeMutator({ origin, destiny, prop }) {
     const destiny_value = destiny[prop]
     const tof_origin = is(origin_value)
     const tof_destiny = is(destiny_value)
-    if (isPojo(origin_value)) {
+    if (isPlain(origin_value)) {
         if (!destiny.hasOwnProperty(prop) || tof_origin != tof_destiny) {
             destiny[prop] = tof_origin == 'array' ? [] : {}
         }
@@ -42,7 +42,7 @@ function mergeMutator({ origin, destiny, prop }) {
 //     const destiny_value = destiny[prop]
 //     const tof_origin = is(origin_value)
 //     const tof_destiny = is(destiny_value)
-//     if (isPojo(origin_value)) {
+//     if (isPlain(origin_value)) {
 //         if (!destiny.hasOwnProperty(prop) || tof_origin != tof_destiny) {
 //             destiny[prop] = tof_origin == 'array' ? [] : {}
 //             if (tof_origin == 'array') {

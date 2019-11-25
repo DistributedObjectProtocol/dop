@@ -16,13 +16,13 @@ export function isObject(object) {
     return object !== null && typeof object == 'object'
 }
 
-export function isPojo(object) {
+export function isPlain(object) {
     if (!isObject(object)) return false
     const prototype = Object.getPrototypeOf(object)
     return prototype === Object.prototype || prototype === Array.prototype
 }
 
-export function isPojoObject(object) {
+export function isPlainObject(object) {
     if (!isObject(object)) return false
     return Object.getPrototypeOf(object) === Object.prototype
 }
@@ -36,15 +36,15 @@ export function isInteger(number) {
 }
 
 // function Test() {}
-// console.log(isPojo({}))
-// console.log(isPojo([]))
-// console.log(isPojo(new Test()))
-// console.log(isPojo(new Error()))
-// console.log(isPojo(new Date()))
-// console.log(isPojo(null))
-// console.log(isPojo(Symbol('')))
-// console.log(isPojo(function() {}))
-// console.log(isPojo(1))
-// console.log(isPojo('s'))
-// console.log(isPojo(true))
-// console.log(isPojo(/a/))
+// console.log(isPlain({}))
+// console.log(isPlain([]))
+// console.log(isPlain(new Test()))
+// console.log(isPlain(new Error()))
+// console.log(isPlain(new Date()))
+// console.log(isPlain(null))
+// console.log(isPlain(Symbol('')))
+// console.log(isPlain(function() {}))
+// console.log(isPlain(1))
+// console.log(isPlain('s'))
+// console.log(isPlain(true))
+// console.log(isPlain(/a/))

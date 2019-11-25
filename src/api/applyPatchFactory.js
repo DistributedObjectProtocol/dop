@@ -1,11 +1,11 @@
-import { isPojoObject } from '../util/is'
-import { getNewPojo } from '../util/get'
+import { isPlainObject } from '../util/is'
+import { getNewPlain } from '../util/get'
 import { setDeep } from '../util/set'
 import forEachObject from '../util/forEachObject'
 
 export default function applyPatchFactory(DJSON) {
     return function applyPatch(object, patch) {
-        if (!isPojoObject(object) || !isPojoObject(patch)) {
+        if (!isPlainObject(object) || !isPlainObject(patch)) {
             throw 'applyPatch only accepts plain objects'
         }
 
@@ -32,11 +32,11 @@ export default function applyPatchFactory(DJSON) {
                     !destiny.hasOwnProperty(prop) ||
                     (origin_value !== destiny_value &&
                         !(
-                            isPojoObject(origin_value) &&
-                            isPojoObject(destiny_value)
+                            isPlainObject(origin_value) &&
+                            isPlainObject(destiny_value)
                         ))
                 ) {
-                    const value = getNewPojo(origin_value)
+                    const value = getNewPlain(origin_value)
                     addMutation({ value, prop, destiny, origin, path })
                     return false // if false we dont go deeper
                 }
