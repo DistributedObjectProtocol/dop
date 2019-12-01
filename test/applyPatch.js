@@ -283,7 +283,7 @@ test('no mutations', function(t) {
     t.deepEqual(unpatch, {})
 })
 
-test('checking different types', function(t) {
+test('checking different types and mutating multiple deep values', function(t) {
     const object = {
         string: 'string',
         obj: { lolo: 213 },

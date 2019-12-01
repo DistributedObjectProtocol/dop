@@ -1,4 +1,5 @@
 import merge from './util/merge'
+import createStore from './api/createStore'
 import applyPatchFactory from './api/applyPatchFactory'
 import djsonFactory from './api/djsonFactory'
 import escapeFactory from './types/Escape'
@@ -12,6 +13,7 @@ const applyPatch = applyPatchFactory(DJSON.patch)
 
 const dop = {
     merge,
+    createStore,
     applyPatch,
     djsonFactory,
     DJSON,

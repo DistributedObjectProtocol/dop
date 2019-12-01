@@ -1,8 +1,38 @@
+import forEachObject from '../util/forEachObject'
+import { mergeMutator } from '../util/merge'
+
 function createStore(state) {
-    function getState() {}
+    const listeners = new Map()
+
+    function subscribe(listener, filter) {
+        const state_copy = {}
+        forEachObject(
+            state,
+            ({ origin, destiny, prop, path }) => {
+                return typeof filter !== 'function' ||
+                    filter({ origin, destiny, prop, path }) === true
+                    ? mergeMutator({ origin, destiny, prop })
+                    : false
+            },
+            state_copy
+        )
+
+        listeners.set(listener, filter)
+
+        return state_copy
+    }
+
     function applyPatch(patch) {}
-    function subscribe(listener, filter) {}
+
+    function unsubscribe(listener) {}
+
+    return {
+        state,
+        listeners,
+        subscribe,
+        applyPatch,
+        unsubscribe
+    }
 }
 
-const store = createStore()
-store.applyPatch({ arr: [123, 234] })
+export default createStore

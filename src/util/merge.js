@@ -1,5 +1,5 @@
-import { is, isPlain } from '../util/is'
-import forEachObject from '../util/forEachObject'
+import { is, isPlain } from './is'
+import forEachObject from './forEachObject'
 
 // https://jsperf.com/merge-challenge
 export default function merge(destiny, origin) {
@@ -22,7 +22,7 @@ export default function merge(destiny, origin) {
     }
 }
 
-function mergeMutator({ origin, destiny, prop }) {
+export function mergeMutator({ origin, destiny, prop }) {
     const origin_value = origin[prop]
     const destiny_value = destiny[prop]
     const tof_origin = is(origin_value)
@@ -43,11 +43,11 @@ function mergeMutator({ origin, destiny, prop }) {
 //     const tof_origin = is(origin_value)
 //     const tof_destiny = is(destiny_value)
 //     if (isPlain(origin_value)) {
-//         if (!destiny.hasOwnProperty(prop) || tof_origin != tof_destiny) {
-//             destiny[prop] = tof_origin == 'array' ? [] : {}
-//             if (tof_origin == 'array') {
+//         if (!destiny.hasOwnProperty(prop) || tof_origin !== tof_destiny) {
+//             destiny[prop] = tof_origin === 'array' ? [] : {}
+//             if (tof_origin === 'array') {
 //                 const array = []
-//                 if (tof_destiny == 'object') {
+//                 if (tof_destiny === 'object') {
 //                     Object.keys(destiny_value)
 //                         .filter(key => !isNaN(Number(key)))
 //                         .forEach(key => (array[key] = destiny_value[key]))
@@ -57,7 +57,7 @@ function mergeMutator({ origin, destiny, prop }) {
 //                 destiny[prop] = {}
 //             }
 //         }
-//     } else if (tof_origin == 'undefined' && destiny.hasOwnProperty(prop)) {
+//     } else if (tof_origin === 'undefined' && destiny.hasOwnProperty(prop)) {
 //         //skipping
 //     } else {
 //         destiny[prop] = origin_value
