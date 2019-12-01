@@ -63,5 +63,12 @@
             "!test/index.js",
             "!test/utils.js"
         ]
+    },
+    "prettier": {
+        "printWidth": 80,
+        "tabWidth": 4,
+        "semi": false,
+        "singleQuote": true,
+        "bracketSpacing": true
     }
 }
