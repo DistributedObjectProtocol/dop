@@ -4,13 +4,14 @@ import { setDeep } from '../util/set'
 import forEachObject from '../util/forEachObject'
 
 export default function applyPatchFactory(patchFunction) {
-    return function applyPatch(object, patch) {
+    return function applyPatch(object, patch, filter) {
         if (!isPlainObject(object) || !isPlainObject(patch)) {
             throw 'applyPatch only accepts plain objects'
         }
 
         const mutations = []
         const unpatch = {}
+        const has_filter = typeof filter === 'function'
 
         function addMutation({ value, prop, destiny, origin, path }) {
             const oldValue = patchFunction(value, prop, destiny, origin, path)
@@ -37,7 +38,12 @@ export default function applyPatchFactory(patchFunction) {
                         ))
                 ) {
                     const value = getNewPlain(origin_value)
-                    addMutation({ value, prop, destiny, origin, path })
+                    if (
+                        !has_filter ||
+                        filter({ value, prop, destiny, origin, path }) === true
+                    )
+                        addMutation({ value, prop, destiny, origin, path })
+
                     return false // if false we dont go deeper
                 }
             },

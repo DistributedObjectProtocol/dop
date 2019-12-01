@@ -1,9 +1,9 @@
 import test from 'ava'
 import { applyPatch, merge, Delete } from '../'
 
-function testUnpatch(t, object, patch, expected, reverse = true) {
+function testUnpatch(t, object, patch, expected, reverse = true, filter) {
     const cloned = merge({}, object)
-    const { unpatch, mutations } = applyPatch(object, patch)
+    const { unpatch, mutations } = applyPatch(object, patch, filter)
     t.deepEqual(object, expected)
     if (reverse) {
         applyPatch(object, unpatch)
@@ -371,4 +371,55 @@ test('checking different types and mutating multiple deep values', function(t) {
 
     const { mutations } = testUnpatch(t, object, patch, expected)
     t.is(mutations.length, 30)
+})
+
+test('filter must return true otherwise that mutation will be ignored', function(t) {
+    const patch = { a: 1, b: 2 }
+    const expected = {}
+    testUnpatch(t, {}, patch, expected, false, () => {})
+    testUnpatch(t, {}, patch, expected, false, () => false)
+    testUnpatch(t, {}, patch, expected, false, () => undefined)
+    testUnpatch(t, {}, patch, expected, false, () => 1)
+})
+
+test('filtering getState', function(t) {
+    const patch = { value: false, last: { deep: false } }
+
+    testUnpatch(
+        t,
+        {},
+        patch,
+        { last: { deep: false } },
+        false,
+        ({ prop }) => prop !== 'value'
+    )
+
+    testUnpatch(
+        t,
+        {},
+        patch,
+        { value: false },
+        false,
+        ({ prop }) => prop !== 'last'
+    )
+
+    testUnpatch(t, {}, patch, patch, false, ({ path }) => path.length === 1)
+
+    testUnpatch(
+        t,
+        { value: false, last: { deep: false } },
+        { value: true, last: { deep: true } },
+        { value: false, last: { deep: true } },
+        false,
+        ({ path }) => path.length === 2
+    )
+
+    testUnpatch(
+        t,
+        { value: false, last: { deep: false } },
+        { value: true, last: { deep: true } },
+        { value: true, last: { deep: false } },
+        false,
+        ({ path }) => path.length === 1
+    )
 })
