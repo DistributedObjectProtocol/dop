@@ -49,6 +49,6 @@ export default function applyPatchFactory(patchFunction) {
             },
             object
         )
-        return { mutations, unpatch }
+        return { object, unpatch, mutations }
     }
 }

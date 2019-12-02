@@ -3,7 +3,9 @@ import { applyPatch, merge, Delete } from '../'
 
 function testUnpatch(t, object, patch, expected, reverse = true, filter) {
     const cloned = merge({}, object)
-    const { unpatch, mutations } = applyPatch(object, patch, filter)
+    const result = applyPatch(object, patch, filter)
+    const { unpatch, mutations } = result
+    t.is(result.object, object)
     t.deepEqual(object, expected)
     if (reverse) {
         applyPatch(object, unpatch)

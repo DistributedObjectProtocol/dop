@@ -3,18 +3,29 @@ export default function createStoreFactory(applyPatchFunction) {
         const listeners = new Map()
 
         function getState(filter) {
-            const state_copy = {}
-            applyPatchFunction(state_copy, state, filter)
-            return state_copy
+            const { patch } = applyPatchFunction({}, state, filter)
+            return patch
         }
 
         function subscribe(listener, filter) {
-            listeners.set(listener, filter)
+            return listeners.set(listener, filter)
         }
 
-        function applyPatch(patch) {}
+        function unsubscribe(listener) {
+            return listeners.delete(listener)
+        }
 
-        function unsubscribe(listener) {}
+        function applyPatch(patch) {
+            const returns = []
+            const { object, unpatch, mutations } = applyPatchFunction(
+                state,
+                patch
+            )
+            listeners.forEach((filter, listener) => {
+                returns.push({ listener, patch: object, unpatch, mutations })
+            })
+            return returns
+        }
 
         return {
             state,
