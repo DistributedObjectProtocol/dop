@@ -9,3 +9,13 @@ export function setDeep(unpatch, path, value) {
     }
     return setDeep(unpatch[prop], path, value)
 }
+
+export function createPatchFromMutations(mutations) {
+    const patch = {}
+    const unpatch = {}
+    mutations.forEach(({ object, prop, path, oldValue }) => {
+        setDeep(patch, path.slice(0), object[prop])
+        setDeep(unpatch, path.slice(0), oldValue)
+    })
+    return { patch, unpatch }
+}

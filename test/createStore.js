@@ -11,10 +11,9 @@ test('createStore', function(t) {
 test('checking args of filter function in getState', function(t) {
     const store = createStore({ prop: true })
     store.getState(args => {
-        const { origin, destiny, prop, path } = args
-        t.is(args.hasOwnProperty('value'), true)
-        t.is(typeof origin, 'object')
-        t.is(typeof destiny, 'object')
+        const { object, prop, path } = args
+        t.is(args.hasOwnProperty('oldValue'), true)
+        t.is(typeof object, 'object')
         t.is(typeof prop, 'string')
         t.is(Array.isArray(path), true)
     })
@@ -65,3 +64,61 @@ test('applyPatch', function(t) {
     t.deepEqual(outputs[0].patch, patch)
     t.deepEqual(outputs[0].unpatch, { prop: false })
 })
+
+// function testFilter(t, object, patch, expected) {
+//     const result = applyPatch(object, patch)
+//     const { unpatch, mutations } = result
+//     t.is(result.object, object)
+//     t.deepEqual(object, expected)
+// }
+
+// test('filter must return true otherwise that mutation will be ignored', function(t) {
+//     const patch = { a: 1, b: 2 }
+//     const expected = {}
+//     testFilter(t, {}, patch, expected, false, () => {})
+//     testFilter(t, {}, patch, expected, false, () => false)
+//     testFilter(t, {}, patch, expected, false, () => undefined)
+//     testFilter(t, {}, patch, expected, false, () => 1)
+// })
+
+// test('filtering getState', function(t) {
+//     const patch = { value: false, last: { deep: false } }
+
+//     testFilter(
+//         t,
+//         {},
+//         patch,
+//         { last: { deep: false } },
+//         false,
+//         ({ prop }) => prop !== 'value'
+//     )
+
+//     testFilter(
+//         t,
+//         {},
+//         patch,
+//         { value: false },
+//         false,
+//         ({ prop }) => prop !== 'last'
+//     )
+
+//     testFilter(t, {}, patch, patch, false, ({ path }) => path.length === 1)
+
+//     testFilter(
+//         t,
+//         { value: false, last: { deep: false } },
+//         { value: true, last: { deep: true } },
+//         { value: false, last: { deep: true } },
+//         false,
+//         ({ path }) => path.length === 2
+//     )
+
+//     testFilter(
+//         t,
+//         { value: false, last: { deep: false } },
+//         { value: true, last: { deep: true } },
+//         { value: true, last: { deep: false } },
+//         false,
+//         ({ path }) => path.length === 1
+//     )
+// })

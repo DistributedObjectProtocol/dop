@@ -1,9 +1,18 @@
+import { createPatchFromMutations } from '../util/set'
+
 export default function createStoreFactory(applyPatchFunction) {
     return function createStore(state) {
         const listeners = new Map()
 
         function getState(filter) {
-            const { patch } = applyPatchFunction({}, state, filter)
+            const { patch, mutations } = applyPatchFunction({}, state)
+            const mutations_filtered =
+                typeof filter == 'function'
+                    ? mutations.filter(filter)
+                    : mutations
+            if (mutations.length !== mutations_filtered.length) {
+                return createPatchFromMutations(mutations_filtered).patch
+            }
             return patch
         }
 
@@ -17,12 +26,24 @@ export default function createStoreFactory(applyPatchFunction) {
 
         function applyPatch(patch) {
             const returns = []
-            const { object, unpatch, mutations } = applyPatchFunction(
-                state,
-                patch
-            )
+            const { mutations } = applyPatchFunction(state, patch)
             listeners.forEach((filter, listener) => {
-                returns.push({ listener, patch: object, unpatch, mutations })
+                const mutations_filtered =
+                    typeof filter == 'function'
+                        ? mutations.filter(filter)
+                        : mutations
+
+                if (mutations_filtered.length > 0) {
+                    const { patch, unpatch } = createPatchFromMutations(
+                        mutations_filtered
+                    )
+                    returns.push({
+                        listener,
+                        patch,
+                        unpatch,
+                        mutations: mutations_filtered
+                    })
+                }
             })
             return returns
         }
