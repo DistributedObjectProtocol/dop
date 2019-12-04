@@ -61,10 +61,3 @@ test('applyPatch', function(t) {
     t.deepEqual(outputs[0].patch, patch)
     t.deepEqual(outputs[0].unpatch, { prop: false })
 })
-
-// function testFilter(t, object, patch, expected) {
-//     const result = applyPatch(object, patch)
-//     const { unpatch, mutations } = result
-//     t.is(result.object, object)
-//     t.deepEqual(object, expected)
-// }

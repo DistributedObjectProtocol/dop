@@ -21,22 +21,20 @@ export default function createStoreFactory(applyPatchFunction) {
             const returns = []
             const { mutations } = applyPatchFunction(state, patch)
             listeners.forEach((filter, listener) => {
-                const mutations_filtered =
-                    typeof filter == 'function'
-                        ? mutations.filter(filter)
-                        : mutations
+                // const mutations_filtered =
+                //     typeof filter == 'function'
+                //         ? mutations.filter(filter)
+                //         : mutations
 
-                if (mutations_filtered.length > 0) {
-                    const { patch, unpatch } = createPatchFromMutations(
-                        mutations_filtered
-                    )
-                    returns.push({
-                        listener,
-                        patch,
-                        unpatch,
-                        mutations: mutations_filtered
-                    })
-                }
+                // if (mutations_filtered.length > 0) {
+                const { patch, unpatch } = createPatchFromMutations(mutations)
+                returns.push({
+                    listener,
+                    patch,
+                    unpatch,
+                    mutations
+                })
+                // }
             })
             return returns
         }
