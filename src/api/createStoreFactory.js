@@ -4,16 +4,9 @@ export default function createStoreFactory(applyPatchFunction) {
     return function createStore(state) {
         const listeners = new Map()
 
-        function getState(filter) {
-            const { patch, mutations } = applyPatchFunction({}, state)
-            const mutations_filtered =
-                typeof filter == 'function'
-                    ? mutations.filter(filter)
-                    : mutations
-            if (mutations.length !== mutations_filtered.length) {
-                return createPatchFromMutations(mutations_filtered).patch
-            }
-            return patch
+        function getState() {
+            const { object } = applyPatchFunction({}, state)
+            return object
         }
 
         function subscribe(listener, filter) {
