@@ -1,9 +1,9 @@
+import pkg from './package.json'
 // import resolve from 'rollup-plugin-node-resolve'
 // import babel from 'rollup-plugin-babel'
 // import commonjs from 'rollup-plugin-commonjs'
 import minify from 'rollup-plugin-babel-minify'
-import pkg from './package.json'
-import buble from 'rollup-plugin-buble'
+import buble from '@rollup/plugin-buble'
 
 export default [
     // browser-friendly UMD build
