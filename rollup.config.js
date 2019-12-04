@@ -1,8 +1,9 @@
-import resolve from 'rollup-plugin-node-resolve'
-import babel from 'rollup-plugin-babel'
-import commonjs from 'rollup-plugin-commonjs'
+// import resolve from 'rollup-plugin-node-resolve'
+// import babel from 'rollup-plugin-babel'
+// import commonjs from 'rollup-plugin-commonjs'
 import minify from 'rollup-plugin-babel-minify'
 import pkg from './package.json'
+import buble from 'rollup-plugin-buble'
 
 export default [
     // browser-friendly UMD build
@@ -15,12 +16,13 @@ export default [
             format: 'umd'
         },
         plugins: [
-            resolve(), // so Rollup can find `ms`
-            babel({
-                exclude: 'node_modules/**',
-                plugins: ['transform-es2015-arrow-functions']
-            }),
-            commonjs(), // so Rollup can convert `ms` to an ES module
+            // resolve(), // so Rollup can find `ms`
+            // babel({
+            //     exclude: 'node_modules/**',
+            //     plugins: ['transform-es2015-arrow-functions']
+            // }),
+            // commonjs(), // so Rollup can convert `ms` to an ES module
+            buble(),
             minify({ comments: false })
         ]
     },
