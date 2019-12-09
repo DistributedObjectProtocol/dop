@@ -22,7 +22,7 @@ export default function createStoreFactory(applyPatchFunction) {
             const { mutations } = applyPatchFunction(state, patch)
             listeners.forEach((filter, listener) => {
                 // const mutations_filtered =
-                //     typeof filter == 'function'
+                //     isFunction(filter)
                 //         ? mutations.filter(filter)
                 //         : mutations
 

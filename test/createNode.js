@@ -1,17 +1,15 @@
 import test from 'ava'
 import { createNode } from '../'
 
-test('createNode', function(t) {
+test('createNode', async t => {
     const server = createNode()
     server.ENV = 'SERVER'
     const client = createNode()
     client.ENV = 'CLIENT'
 
-    const channel_server = server.open(client.message, data => {})
-    channel_server(1, 2, 3, 4)
+    client.open(server.message, (a, b) => a * b)
+    const callClient = server.open(client.message, data => {})
+    const ten = await callClient(2, 5)
 
-    const channel_client = client.open(server.message, data => {})
-    channel_client(1, 2, 3, 4)
-
-    t.is(state, store.state)
+    t.is(ten, 10)
 })

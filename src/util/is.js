@@ -35,6 +35,10 @@ export function isInteger(number) {
     )
 }
 
+export function isString(string) {
+    return typeof string === 'string'
+}
+
 // function Test() {}
 // console.log(isPlain({}))
 // console.log(isPlain([]))
