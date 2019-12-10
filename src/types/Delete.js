@@ -1,4 +1,6 @@
-export default function factoryDelete({ types, getUniqueKey }) {
+import { getUniqueKey } from '../util/get'
+
+export default function factoryDelete({ types }) {
     const key = '$delete'
 
     // Constructor/Creator

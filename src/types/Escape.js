@@ -1,4 +1,6 @@
-export default function factoryEscape({ types, getUniqueKey }) {
+import { getUniqueKey } from '../util/get'
+
+export default function factoryEscape({ types }) {
     const key = '$escape'
     let escaped_stringify
     let escaped_parse

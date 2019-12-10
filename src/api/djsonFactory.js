@@ -84,7 +84,7 @@ export default function djsonFactory() {
     }
 
     function addType(factory) {
-        const type = factory({ types, getUniqueKey })
+        const type = factory({ types })
         if (types.hasOwnProperty(type.key))
             throw type.key + ' already added as type'
         types[type.key] = type

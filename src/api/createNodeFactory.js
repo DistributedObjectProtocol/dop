@@ -42,6 +42,8 @@ export default function createNodeFactory(DJSON) {
                     const [id, function_id, args] = DJSON.parse(msg)
                     if (isInteger(id)) {
                         const f = functions[function_id]
+
+                        // Request
                         if (id > 0 && isFunction(f)) {
                             localProcedureCall(
                                 f,
@@ -51,7 +53,10 @@ export default function createNodeFactory(DJSON) {
                                 error => api.send(DJSON.stringify([-id, error]))
                             )
                             return true
-                        } else if (id < 0 && requests.hasOwnProperty(id * -1)) {
+                        }
+
+                        // Response
+                        else if (id < 0 && requests.hasOwnProperty(id * -1)) {
                             const request_id = id * -1
                             const response_status = function_id
                             const req = requests[request_id]

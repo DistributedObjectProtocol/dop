@@ -3,7 +3,18 @@ import { DJSON } from '../'
 
 const UNDEFINED = 'UNDEFINED' // fake undefined
 
-DJSON.addType(({ types, getUniqueKey }) => ({
+function getUniqueKey(object, objectList) {
+    let key_name
+    for (const key in object) {
+        if (!objectList.hasOwnProperty(key) || key_name !== undefined) {
+            return
+        }
+        key_name = key
+    }
+    return key_name
+}
+
+DJSON.addType(({ types }) => ({
     key: '$undefined',
     isValidToStringify: (value, prop, object) => {
         return value === UNDEFINED
