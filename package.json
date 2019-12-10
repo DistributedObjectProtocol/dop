@@ -41,6 +41,7 @@
         "babel-plugin-external-helpers": "^6.22.0",
         "babel-preset-env": "^1.7.0",
         "ejson": "^2.2.0",
+        "esm": "^3.2.25",
         "lodash": "^4.17.15",
         "ramda": "^0.26.1",
         "rollup": "^1.0.0",
@@ -63,6 +64,9 @@
         "files": [
             "!test/index.js",
             "!test/utils.js"
+        ],
+        "require": [
+            "esm"
         ]
     },
     "prettier": {

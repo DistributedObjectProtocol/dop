@@ -1,5 +1,5 @@
 import test from 'ava'
-import { djsonFactory } from '../'
+import djsonFactory from '../src/api/djsonFactory'
 
 const DJSON = djsonFactory()
 

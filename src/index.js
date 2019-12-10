@@ -19,9 +19,7 @@ const dop = {
     applyPatch,
     createNode,
     createStore,
-    djsonFactory,
     DJSON,
-    Escape,
     Delete
 }
 
