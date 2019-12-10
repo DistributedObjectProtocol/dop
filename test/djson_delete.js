@@ -1,5 +1,5 @@
 import test from 'ava'
-import { DJSON, Delete } from '../'
+import { DJSON } from '../'
 
 function testBasic(t, patch, expected, recursive = true) {
     const string = DJSON.stringify(patch)
@@ -10,7 +10,7 @@ function testBasic(t, patch, expected, recursive = true) {
 }
 
 test('Valid type', function(t) {
-    const patch = { convert: Delete() }
+    const patch = { convert: DJSON.Delete() }
     const expected = { convert: { $delete: 1 } }
     testBasic(t, patch, expected)
 })

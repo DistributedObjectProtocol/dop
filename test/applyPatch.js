@@ -1,5 +1,5 @@
 import test from 'ava'
-import { applyPatch, merge, Delete } from '../'
+import { applyPatch, merge, DJSON } from '../'
 
 function testUnpatch(t, object, patch, expected, reverse = true) {
     const cloned = merge({}, object)
@@ -42,7 +42,7 @@ test('value didnt exists', function(t) {
 
 test('deletion', function(t) {
     const object = { value: 12345 }
-    const patch = { value: Delete() }
+    const patch = { value: DJSON.Delete() }
     const expected = {}
 
     testUnpatch(t, object, patch, expected)
