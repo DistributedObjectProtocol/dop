@@ -40,13 +40,14 @@ export default function createNodeFactory(DJSON) {
         function open(send, f) {
             const remote_function_id = remote_function_index++
             api.send = send
+            api.opened = true
             registerLocalFunction(f)
             return createRemoteFunction(remote_function_id)
         }
 
         function message(msg) {
             // Parsing messages
-            if (isString(msg) && msg[0] === '[') {
+            if (api.opened && isString(msg) && msg[0] === '[') {
                 // https://jsperf.com/slice-substr-substring-test
                 try {
                     let [id, function_id, args] = parse(msg, parseReplacer)
@@ -94,7 +95,9 @@ export default function createNodeFactory(DJSON) {
             return false
         }
 
-        function close() {}
+        function close() {
+            api.opened = false
+        }
 
         function stringifyReplacer(key, f) {
             if (Func.isValidToStringify(f)) {
@@ -118,7 +121,8 @@ export default function createNodeFactory(DJSON) {
         const api = {
             open,
             message,
-            close
+            close,
+            opened: false
         }
 
         return api
