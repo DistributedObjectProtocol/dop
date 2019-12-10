@@ -1,37 +1,63 @@
 import { isFunction, isInteger, isString, isArray } from '../util/is'
 
 export default function createNodeFactory(DJSON) {
+    const Func = DJSON.Function
     return function createNode() {
-        const functions = {}
         const requests = {}
+        const local_functions_id = {}
+        const local_functions_map = new Map()
+        const remote_functions_id = {}
+        // const remote_functions_map = new Map()
         let local_function_index = 0
         let remote_function_index = 0
         let request_id_index = 0
 
+        function stringifyReplacer(key, f) {
+            if (Func.isValidToStringify(f)) {
+                const function_id = local_functions_map.has(f)
+                    ? local_functions_map.get(f)
+                    : registerLocalFunction(f)
+                return Func.stringifyReplacer(function_id)
+            }
+            return f
+        }
+
+        function parseReplacer(key, value) {
+            if (Func.isValidToParse(value)) {
+                const function_id = value[Func.key]
+                const f = remote_functions_id[function_id]
+                return isFunction(f) ? f : createRemoteFunction(function_id)
+            }
+            return value
+        }
+
         function registerLocalFunction(f) {
             const function_id = local_function_index++
-            functions[function_id] = f
+            local_functions_id[function_id] = f
+            local_functions_map.set(f, function_id)
             return function_id
         }
 
-        function createRemoteFunction() {
-            const function_id = remote_function_index++
-            return function remoteFunction(...args) {
+        function createRemoteFunction(function_id) {
+            function remoteFunction(...args) {
                 const request_id = ++request_id_index
                 const data = [request_id, function_id]
                 const req = createRequest()
                 if (args.length > 0) data.push(args)
                 req.data = data
                 requests[request_id] = req
-                api.send(DJSON.stringify(data))
+                api.send(DJSON.stringify(data, stringifyReplacer))
                 return req
             }
+            remote_functions_id[function_id] = remoteFunction
+            return remoteFunction
         }
 
         function open(send, f) {
+            const remote_function_id = remote_function_index++
             api.send = send
             registerLocalFunction(f)
-            return createRemoteFunction()
+            return createRemoteFunction(remote_function_id)
         }
 
         function message(msg) {
@@ -39,9 +65,12 @@ export default function createNodeFactory(DJSON) {
             if (isString(msg) && msg[0] === '[') {
                 // https://jsperf.com/slice-substr-substring-test
                 try {
-                    const [id, function_id, args] = DJSON.parse(msg)
+                    const [id, function_id, args] = DJSON.parse(
+                        msg,
+                        parseReplacer
+                    )
                     if (isInteger(id)) {
-                        const f = functions[function_id]
+                        const f = local_functions_id[function_id]
 
                         // Request
                         if (id > 0 && isFunction(f)) {
@@ -49,8 +78,19 @@ export default function createNodeFactory(DJSON) {
                                 f,
                                 isArray(args) ? args : [],
                                 value =>
-                                    api.send(DJSON.stringify([-id, 0, value])),
-                                error => api.send(DJSON.stringify([-id, error]))
+                                    api.send(
+                                        DJSON.stringify(
+                                            [-id, 0, value],
+                                            stringifyReplacer
+                                        )
+                                    ),
+                                error =>
+                                    api.send(
+                                        DJSON.stringify(
+                                            [-id, error],
+                                            stringifyReplacer
+                                        )
+                                    )
                             )
                             return true
                         }
