@@ -2,6 +2,9 @@ import { isFunction, isInteger, isString, isArray } from '../util/is'
 
 export default function createNodeFactory(DJSON) {
     const Func = DJSON.Function
+    const stringify = DJSON.stringify
+    const parse = DJSON.parse
+
     return function createNode() {
         const requests = {}
         const local_functions_id = {}
@@ -11,25 +14,6 @@ export default function createNodeFactory(DJSON) {
         let local_function_index = 0
         let remote_function_index = 0
         let request_id_index = 0
-
-        function stringifyReplacer(key, f) {
-            if (Func.isValidToStringify(f)) {
-                const function_id = local_functions_map.has(f)
-                    ? local_functions_map.get(f)
-                    : registerLocalFunction(f)
-                return Func.stringifyReplacer(function_id)
-            }
-            return f
-        }
-
-        function parseReplacer(key, value) {
-            if (Func.isValidToParse(value)) {
-                const function_id = value[Func.key]
-                const f = remote_functions_id[function_id]
-                return isFunction(f) ? f : createRemoteFunction(function_id)
-            }
-            return value
-        }
 
         function registerLocalFunction(f) {
             const function_id = local_function_index++
@@ -46,7 +30,7 @@ export default function createNodeFactory(DJSON) {
                 if (args.length > 0) data.push(args)
                 req.data = data
                 requests[request_id] = req
-                api.send(DJSON.stringify(data, stringifyReplacer))
+                api.send(stringify(data, stringifyReplacer))
                 return req
             }
             remote_functions_id[function_id] = remoteFunction
@@ -65,33 +49,29 @@ export default function createNodeFactory(DJSON) {
             if (isString(msg) && msg[0] === '[') {
                 // https://jsperf.com/slice-substr-substring-test
                 try {
-                    const [id, function_id, args] = DJSON.parse(
-                        msg,
-                        parseReplacer
-                    )
+                    let [id, function_id, args] = parse(msg, parseReplacer)
                     if (isInteger(id)) {
                         const f = local_functions_id[function_id]
 
                         // Request
                         if (id > 0 && isFunction(f)) {
-                            localProcedureCall(
-                                f,
-                                isArray(args) ? args : [],
-                                value =>
-                                    api.send(
-                                        DJSON.stringify(
-                                            [-id, 0, value],
-                                            stringifyReplacer
-                                        )
-                                    ),
-                                error =>
-                                    api.send(
-                                        DJSON.stringify(
-                                            [-id, error],
-                                            stringifyReplacer
-                                        )
+                            const req = createRequest()
+                            req.node = api
+                            req.then(value =>
+                                api.send(
+                                    stringify(
+                                        [-id, 0, value],
+                                        stringifyReplacer
                                     )
+                                )
+                            ).catch(error =>
+                                api.send(
+                                    stringify([-id, error], stringifyReplacer)
+                                )
                             )
+                            args = isArray(args) ? args : []
+                            args.push(req)
+                            localProcedureCall(f, req, args)
                             return true
                         }
 
@@ -116,6 +96,25 @@ export default function createNodeFactory(DJSON) {
 
         function close() {}
 
+        function stringifyReplacer(key, f) {
+            if (Func.isValidToStringify(f)) {
+                const function_id = local_functions_map.has(f)
+                    ? local_functions_map.get(f)
+                    : registerLocalFunction(f)
+                return Func.stringifyReplacer(function_id)
+            }
+            return f
+        }
+
+        function parseReplacer(key, value) {
+            if (Func.isValidToParse(value)) {
+                const function_id = value[Func.key]
+                const f = remote_functions_id[function_id]
+                return isFunction(f) ? f : createRemoteFunction(function_id)
+            }
+            return value
+        }
+
         const api = {
             open,
             message,
@@ -138,12 +137,7 @@ function createRequest() {
     return promise
 }
 
-function localProcedureCall(f, args, resolve, reject) {
-    const req = createRequest()
-
-    req.then(resolve).catch(reject)
-    args.push(req)
-
+function localProcedureCall(f, req, args) {
     try {
         const output = f.apply(req, args)
         if (output !== req) {

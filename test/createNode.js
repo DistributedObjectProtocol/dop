@@ -5,12 +5,15 @@ test('Basic example', async t => {
     const server = createNode()
     const client = createNode()
 
+    // Client side
     const origin2 = client.open(server.message, (a, b, c, d, e, f) => {
         console.log({ c, d, e, f })
         t.is(c, e)
         t.is(origin2, f)
         return a * b
     })
+
+    // Server side
     const origin = () => {}
     const f = () => {}
     const callClient = server.open(client.message, origin)
