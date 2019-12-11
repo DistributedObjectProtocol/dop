@@ -1,4 +1,6 @@
-import { isFunction, isInteger, isString, isArray } from '../util/is'
+import { isFunction, isInteger, is, isArray } from '../util/is'
+import createRequest from '../util/createRequest'
+import localProcedureCall from '../util/localProcedureCall'
 
 export default function createNodeFactory(DJSON) {
     const Func = DJSON.Function
@@ -23,18 +25,20 @@ export default function createNodeFactory(DJSON) {
         }
 
         function createRemoteFunction(function_id) {
-            function remoteFunction(...args) {
+            function $remoteFunction(...args) {
                 const request_id = ++request_id_index
                 const data = [request_id, function_id]
                 const req = createRequest()
                 if (args.length > 0) data.push(args)
                 req.data = data
+                req.node = api
+                req.destroy = () => delete requests[request_id]
                 requests[request_id] = req
                 api.send(stringify(data, stringifyReplacer))
                 return req
             }
-            remote_functions_id[function_id] = remoteFunction
-            return remoteFunction
+            remote_functions_id[function_id] = $remoteFunction
+            return $remoteFunction
         }
 
         function open(send, f) {
@@ -46,51 +50,54 @@ export default function createNodeFactory(DJSON) {
         }
 
         function message(msg) {
-            // Parsing messages
-            if (api.opened && isString(msg) && msg[0] === '[') {
-                // https://jsperf.com/slice-substr-substring-test
+            const tof = is(msg)
+            if (
+                api.opened &&
+                ((tof == 'string' && msg[0] === '[') || tof == 'array')
+            ) {
                 try {
-                    let [id, function_id, args] = parse(msg, parseReplacer)
-                    if (isInteger(id)) {
-                        const f = local_functions_id[function_id]
+                    msg = tof == 'array' ? msg : parse(msg, parseReplacer)
+                } catch (e) {
+                    // Not valid array to parse
+                    return false
+                }
 
-                        // Request
-                        if (id > 0 && isFunction(f)) {
-                            const req = createRequest()
-                            req.node = api
-                            req.then(value =>
-                                api.send(
-                                    stringify(
-                                        [-id, 0, value],
-                                        stringifyReplacer
-                                    )
-                                )
-                            ).catch(error =>
-                                api.send(
-                                    stringify([-id, error], stringifyReplacer)
-                                )
-                            )
-                            args = isArray(args) ? args : []
-                            args.push(req)
-                            localProcedureCall(f, req, args)
-                            return true
-                        }
+                let [id, function_id, args] = msg
 
-                        // Response
-                        else if (id < 0 && requests.hasOwnProperty(id * -1)) {
-                            const request_id = id * -1
-                            const response_status = function_id
-                            const req = requests[request_id]
-                            if (response_status === 0) {
-                                req.resolve(args)
-                            } else {
-                                req.reject(response_status)
-                            }
-                            delete requests[request_id]
-                            return true
-                        }
+                if (isInteger(id)) {
+                    const f = local_functions_id[function_id]
+
+                    // Request
+                    if (id > 0 && isFunction(f)) {
+                        const req = createRequest()
+                        const response = [-id]
+                        req.node = api
+                        req.then(value => {
+                            response.push(0) // no errors
+                            if (value !== undefined) response.push(value)
+                            api.send(stringify(response, stringifyReplacer))
+                        }).catch(error => {
+                            response.push(error) // error
+                            api.send(stringify(response, stringifyReplacer))
+                        })
+                        args = isArray(args) ? args : []
+                        args.push(req)
+                        localProcedureCall(f, req, args)
+                        return true
                     }
-                } catch (e) {}
+
+                    // Response
+                    else if (id < 0 && requests.hasOwnProperty(id * -1)) {
+                        const request_id = id * -1
+                        const response_status = function_id
+                        const req = requests[request_id]
+                        response_status === 0
+                            ? req.resolve(args)
+                            : req.reject(response_status)
+                        req.destroy()
+                        return true
+                    }
+                }
             }
             return false
         }
@@ -126,41 +133,5 @@ export default function createNodeFactory(DJSON) {
         }
 
         return api
-    }
-}
-
-function createRequest() {
-    let resolve
-    let reject
-    const promise = new Promise((res, rej) => {
-        resolve = res
-        reject = rej
-    })
-    promise.resolve = resolve
-    promise.reject = reject
-    return promise
-}
-
-function localProcedureCall(f, req, args) {
-    try {
-        const output = f.apply(req, args)
-        if (output !== req) {
-            output instanceof Promise
-                ? output.then(req.resolve).catch(req.reject)
-                : req.resolve(output)
-        }
-    } catch (e) {
-        // https://airbrake.io/blog/nodejs-error-handling/nodejs-error-class-hierarchy
-        if (
-            e instanceof Error ||
-            (isFunction(AssertionError) && e instanceof AssertionError) ||
-            (isFunction(RangeError) && e instanceof RangeError) ||
-            (isFunction(ReferenceError) && e instanceof ReferenceError) ||
-            (isFunction(SyntaxError) && e instanceof SyntaxError) ||
-            (isFunction(TypeError) && e instanceof TypeError)
-        ) {
-            throw e
-        }
-        req.reject(e)
     }
 }

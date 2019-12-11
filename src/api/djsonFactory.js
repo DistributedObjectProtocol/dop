@@ -83,7 +83,7 @@ export default function djsonFactory() {
     }
 
     function addType(factory) {
-        const type = factory({ types })
+        const type = factory(api)
         if (types.hasOwnProperty(type.key))
             throw type.key + ' already added as type'
         types[type.key] = type
@@ -99,5 +99,6 @@ export default function djsonFactory() {
         })
     }
 
-    return { stringify, parse, patch, addType }
+    const api = { stringify, parse, patch, addType, types, keys }
+    return api
 }
