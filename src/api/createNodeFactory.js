@@ -26,21 +26,22 @@ export default function createNodeFactory(DJSON) {
         }
 
         function createRemoteFunction(function_id) {
-            // function $remoteFunction(...args) {
-            const f = {
-                [$DOP_REMOTE_FUNCTION](...args) {
-                    const request_id = ++request_id_index
-                    const data = [request_id, function_id]
-                    const req = createRequest()
-                    if (args.length > 0) data.push(args)
-                    req.data = data
-                    req.node = api
-                    req.destroy = () => delete requests[request_id]
-                    requests[request_id] = req
-                    api.send(stringify(data, stringifyReplacer))
-                    return req
-                }
-            }[$DOP_REMOTE_FUNCTION]
+            const f = (...args) => {
+                const request_id = ++request_id_index
+                const data = [request_id, function_id]
+                const req = createRequest()
+                if (args.length > 0) data.push(args)
+                req.data = data
+                req.node = api
+                req.destroy = () => delete requests[request_id]
+                requests[request_id] = req
+                api.send(stringify(data, stringifyReplacer))
+                return req
+            }
+            Object.defineProperty(f, 'name', {
+                value: $DOP_REMOTE_FUNCTION,
+                writable: false
+            })
             remote_functions_id[function_id] = f
             return f
         }
