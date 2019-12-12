@@ -16,10 +16,11 @@ export default function applyPatchFactory(patchFunction) {
             const oldValue = patchFunction(value, prop, destiny, origin, path)
             setDeep(unpatch, path.slice(0), oldValue)
             mutations.push({
+                // value,
+                oldValue,
                 object: destiny,
                 prop,
-                path: path.slice(0),
-                oldValue
+                path: path.slice(0)
             })
         }
 

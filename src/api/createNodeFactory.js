@@ -50,6 +50,7 @@ export default function createNodeFactory(DJSON) {
         }
 
         function message(msg) {
+            // console.log(api.ENV, msg)
             const tof = is(msg)
             if (
                 api.opened &&

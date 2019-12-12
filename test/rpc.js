@@ -101,6 +101,14 @@ const localFunctions = {
         return new Promise(function(resolve, reject) {
             resolve(Promise.reject('Error'))
         })
+    },
+
+    referenceError: function() {
+        functionThatDoesNotExists()
+    },
+
+    throwError: function() {
+        throw new Error('whatever')
     }
 }
 
@@ -261,3 +269,48 @@ test('Undefined', async function(t) {
         await localFunctions.undefinedPromise()
     )
 })
+
+test('throw "Error"', async function(t) {
+    try {
+        remoteFunctions.errorSync().catch(() => {})
+        t.true(true)
+    } catch (e) {
+        t.true(false)
+    }
+    try {
+        await remoteFunctions.errorSync()
+        t.true(false)
+    } catch (e) {
+        t.is(e, 'Error')
+    }
+})
+
+test('ReferenceError error', async function(t) {
+    try {
+        remoteFunctions.referenceError()
+        t.true(false)
+    } catch (e) {
+        t.true(e instanceof ReferenceError)
+    }
+    try {
+        await remoteFunctions.referenceError()
+        t.true(false)
+    } catch (e) {
+        t.true(e instanceof ReferenceError)
+    }
+})
+
+// test('throw new Error()', async function(t) {
+//     try {
+//         remoteFunctions.throwError()
+//         t.true(false)
+//     } catch (e) {
+//         t.true(e instanceof Error)
+//     }
+//     try {
+//         await remoteFunctions.throwError()
+//         t.true(false)
+//     } catch (e) {
+//         t.true(e instanceof Error)
+//     }
+// })
