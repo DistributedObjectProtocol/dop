@@ -6,6 +6,7 @@ export default function createNodeFactory(DJSON) {
     const Func = DJSON.Function
     const stringify = DJSON.stringify
     const parse = DJSON.parse
+    const $DOP_REMOTE_FUNCTION = '$DOP_REMOTE_FUNCTION'
 
     return function createNode() {
         const requests = {}
@@ -25,20 +26,23 @@ export default function createNodeFactory(DJSON) {
         }
 
         function createRemoteFunction(function_id) {
-            function $remoteFunction(...args) {
-                const request_id = ++request_id_index
-                const data = [request_id, function_id]
-                const req = createRequest()
-                if (args.length > 0) data.push(args)
-                req.data = data
-                req.node = api
-                req.destroy = () => delete requests[request_id]
-                requests[request_id] = req
-                api.send(stringify(data, stringifyReplacer))
-                return req
-            }
-            remote_functions_id[function_id] = $remoteFunction
-            return $remoteFunction
+            // function $remoteFunction(...args) {
+            const f = {
+                [$DOP_REMOTE_FUNCTION](...args) {
+                    const request_id = ++request_id_index
+                    const data = [request_id, function_id]
+                    const req = createRequest()
+                    if (args.length > 0) data.push(args)
+                    req.data = data
+                    req.node = api
+                    req.destroy = () => delete requests[request_id]
+                    requests[request_id] = req
+                    api.send(stringify(data, stringifyReplacer))
+                    return req
+                }
+            }[$DOP_REMOTE_FUNCTION]
+            remote_functions_id[function_id] = f
+            return f
         }
 
         function open(send, f) {
