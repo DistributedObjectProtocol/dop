@@ -13,9 +13,17 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Run AVA test",
+            "name": "AVA",
             "program": "${workspaceFolder}/node_modules/ava/profile.js",
             "args": ["${file}"],
+            "skipFiles": ["<node_internals>/**/*.js"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AVA defined",
+            "program": "${workspaceFolder}/node_modules/ava/profile.js",
+            "args": ["test/djson_escape.js"],
             "skipFiles": ["<node_internals>/**/*.js"]
         }
     ]

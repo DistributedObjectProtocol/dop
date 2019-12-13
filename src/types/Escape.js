@@ -31,8 +31,7 @@ export default function factoryEscape({ types }) {
     Escape.stringify = function(value) {
         if (escaped_stringify.has(value)) return value
         escaped_stringify.set(value, 1)
-        value = { [key]: value }
-        return value
+        return { [key]: value }
     }
 
     Escape.parse = function(value) {
