@@ -29,4 +29,5 @@ test('isRemoteFunction', async t => {
     t.is(callClient.name, '~dopRemoteFunction')
     t.true(isRemoteFunction(callClient))
     t.false(isRemoteFunction(() => {}))
+    t.false(isRemoteFunction('other'))
 })

@@ -44,17 +44,3 @@ export function isString(string) {
 export function isRemoteFunction(f) {
     return isFunction(f) && f.name === NAME_REMOTE_FUNCTION
 }
-
-// function Test() {}
-// console.log(isPlain({}))
-// console.log(isPlain([]))
-// console.log(isPlain(new Test()))
-// console.log(isPlain(new Error()))
-// console.log(isPlain(new Date()))
-// console.log(isPlain(null))
-// console.log(isPlain(Symbol('')))
-// console.log(isPlain(function() {}))
-// console.log(isPlain(1))
-// console.log(isPlain('s'))
-// console.log(isPlain(true))
-// console.log(isPlain(/a/))
