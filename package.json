@@ -36,18 +36,12 @@
     "devDependencies": {
         "@rollup/plugin-buble": "^0.20.0",
         "ava": "^2.4.0",
-        "babel-core": "^6.26.3",
-        "babel-plugin-external-helpers": "^6.22.0",
-        "babel-preset-env": "^1.7.0",
         "ejson": "^2.2.0",
         "esm": "^3.2.25",
         "lodash": "^4.17.15",
         "ramda": "^0.26.1",
         "rollup": "^1.0.0",
-        "rollup-plugin-babel": "^3.0.7",
-        "rollup-plugin-babel-minify": "^9.1.0",
-        "rollup-plugin-commonjs": "^9.2.0",
-        "rollup-plugin-node-resolve": "^4.0.0"
+        "rollup-plugin-babel-minify": "^9.1.0"
     },
     "scripts": {
         "build": "rollup -c",
