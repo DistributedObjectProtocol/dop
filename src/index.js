@@ -8,21 +8,24 @@ import deleteFactory from './types/Delete'
 import functionFactory from './types/Function'
 // import undefinedFactory from '../types/Undefined'
 
-const DJSON = djsonFactory()
-DJSON.Escape = DJSON.addType(escapeFactory)
-DJSON.Delete = DJSON.addType(deleteFactory)
-DJSON.Function = DJSON.addType(functionFactory)
+function factory() {
+    const DJSON = djsonFactory()
+    DJSON.Escape = DJSON.addType(escapeFactory)
+    DJSON.Delete = DJSON.addType(deleteFactory)
+    DJSON.Function = DJSON.addType(functionFactory)
 
-const applyPatch = applyPatchFactory(DJSON.patch)
-const createNode = createNodeFactory(DJSON)
-const createStore = createStoreFactory(applyPatch)
+    const applyPatch = applyPatchFactory(DJSON.patch)
+    const createNode = createNodeFactory(DJSON)
+    const createStore = createStoreFactory(applyPatch)
 
-const dop = {
-    merge,
-    applyPatch,
-    createNode,
-    createStore,
-    DJSON
+    return {
+        factory,
+        merge,
+        applyPatch,
+        createNode,
+        createStore,
+        DJSON
+    }
 }
 
-export default dop
+export default factory()
