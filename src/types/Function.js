@@ -1,5 +1,5 @@
 import { getUniqueKey } from '../util/get'
-import { isInteger } from '../util/is'
+import { isInteger, isFunction } from '../util/is'
 
 export default function factoryFunction({ types }) {
     const key = '$function'
@@ -12,7 +12,7 @@ export default function factoryFunction({ types }) {
 
     // Mandatory
     Func.isValidToStringify = function(value) {
-        return typeof value == 'function'
+        return isFunction(value)
     }
 
     // Mandatory

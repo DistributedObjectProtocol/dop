@@ -6,7 +6,7 @@ export default function createNodeFactory(DJSON) {
     const Func = DJSON.Function
     const stringify = DJSON.stringify
     const parse = DJSON.parse
-    const $DOP_REMOTE_FUNCTION = '$DOP_REMOTE_FUNCTION'
+    const name_remote_function = '$dopRemoteFunction'
 
     return function createNode() {
         const requests = {}
@@ -26,7 +26,7 @@ export default function createNodeFactory(DJSON) {
         }
 
         function createRemoteFunction(function_id) {
-            const f = (...args) => {
+            function f(...args) {
                 const request_id = ++request_id_index
                 const data = [request_id, function_id]
                 const req = createRequest()
@@ -39,7 +39,7 @@ export default function createNodeFactory(DJSON) {
                 return req
             }
             Object.defineProperty(f, 'name', {
-                value: $DOP_REMOTE_FUNCTION,
+                value: name_remote_function,
                 writable: false
             })
             remote_functions_id[function_id] = f
@@ -113,7 +113,8 @@ export default function createNodeFactory(DJSON) {
         }
 
         function stringifyReplacer(key, f) {
-            if (Func.isValidToStringify(f)) {
+            // if (Func.isValidToStringify(f) && f.name !== name_remote_function) {
+            if (Func.isValidToStringify(f) && f.name !== name_remote_function) {
                 const function_id = local_functions_map.has(f)
                     ? local_functions_map.get(f)
                     : registerLocalFunction(f)

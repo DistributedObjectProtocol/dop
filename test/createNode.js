@@ -17,7 +17,7 @@ test('Api', async t => {
         'send'
     ])
     t.is(server.send, client.message)
-    t.is(callClient.name, '$DOP_REMOTE_FUNCTION')
+    t.is(callClient.name, '$dopRemoteFunction')
     t.true(promise instanceof Promise)
     t.deepEqual(Object.keys(promise), [
         'resolve',
@@ -60,23 +60,25 @@ test('Passing same functions should not create a new one', async t => {
     callClient(repeated, repeated, receiveFromClient)
 })
 
-test.skip('Recursive functions as arguments', async t => {
+test('Sending remote functions must be ignored when stringify', async t => {
     const server = createNode()
     const client = createNode()
     server.ENV = 'SERVER'
     client.ENV = 'CLIENT'
 
     // server side
-    const callClient = server.open(client.message, f => {
-        // f(f)
-        return { callClient, f }
+    server.open(client.message, (...args) => {
+        t.is(args.length, 3)
+        t.is(args[0], null)
+        t.is(typeof args[1], 'function')
+        t.is(typeof args[2], 'object')
+        return args[1]
     })
 
     // client side
     const callServer = client.open(server.message)
-    const callServer2 = await callServer(callServer, callClient)
-    // const callServer3 = await callServer(callServer2)
-    // const callServer4 = await callServer(callServer3)
+    const resu = await callServer(callServer, () => {})
+    t.is(resu, null)
 })
 
 test('Testing messages', async t => {
