@@ -17,7 +17,6 @@ test('Api', async t => {
         'send'
     ])
     t.is(server.send, client.message)
-    t.is(callClient.name, '$dopRemoteFunction')
     t.true(promise instanceof Promise)
     t.deepEqual(Object.keys(promise), [
         'resolve',

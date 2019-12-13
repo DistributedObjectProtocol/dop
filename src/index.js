@@ -7,6 +7,7 @@ import escapeFactory from './types/Escape'
 import deleteFactory from './types/Delete'
 import functionFactory from './types/Function'
 // import undefinedFactory from '../types/Undefined'
+import { isRemoteFunction } from './util/is'
 
 function factory() {
     const DJSON = djsonFactory()
@@ -24,7 +25,8 @@ function factory() {
         applyPatch,
         createNode,
         createStore,
-        DJSON
+        DJSON,
+        isRemoteFunction
     }
 }
 

@@ -1,12 +1,12 @@
 import { isFunction, isInteger, is, isArray } from '../util/is'
 import createRequest from '../util/createRequest'
 import localProcedureCall from '../util/localProcedureCall'
+import { NAME_REMOTE_FUNCTION } from '../const'
 
 export default function createNodeFactory(DJSON) {
     const Func = DJSON.Function
     const stringify = DJSON.stringify
     const parse = DJSON.parse
-    const name_remote_function = '$dopRemoteFunction'
 
     return function createNode() {
         const requests = {}
@@ -39,7 +39,7 @@ export default function createNodeFactory(DJSON) {
                 return req
             }
             Object.defineProperty(f, 'name', {
-                value: name_remote_function,
+                value: NAME_REMOTE_FUNCTION,
                 writable: false
             })
             remote_functions_id[function_id] = f
@@ -113,8 +113,7 @@ export default function createNodeFactory(DJSON) {
         }
 
         function stringifyReplacer(key, f) {
-            // if (Func.isValidToStringify(f) && f.name !== name_remote_function) {
-            if (Func.isValidToStringify(f) && f.name !== name_remote_function) {
+            if (Func.isValidToStringify(f) && f.name !== NAME_REMOTE_FUNCTION) {
                 const function_id = local_functions_map.has(f)
                     ? local_functions_map.get(f)
                     : registerLocalFunction(f)
