@@ -50,21 +50,18 @@ export default function createNodeFactory(DJSON) {
             const remote_function_id = remote_function_index++
             api.send = send
             api.opened = true
-            registerLocalFunction(f)
+            if (isFunction(f)) registerLocalFunction(f)
             return createRemoteFunction(remote_function_id)
         }
 
         function message(msg) {
             // console.log(api.ENV, msg)
             const tof = is(msg)
-            if (
-                api.opened &&
-                ((tof == 'string' && msg[0] === '[') || tof == 'array')
-            ) {
+            if (api.opened && tof == 'string' && msg[0] === '[') {
                 try {
-                    msg = tof == 'array' ? msg : parse(msg, parseReplacer)
+                    msg = parse(msg, parseReplacer)
                 } catch (e) {
-                    // Not valid array to parse
+                    // Invalid array to parse
                     return false
                 }
 

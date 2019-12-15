@@ -19,7 +19,7 @@ export default function factoryEscape({ types }) {
     Escape.isValidToParse = function(value, prop, object) {
         if (escaped_parse.has(value)) return true
         if (prop === key && key === getUniqueKey(object, types)) {
-            escaped_parse.set(object, 1)
+            escaped_parse.add(object)
             const type = types[getUniqueKey(value, types)]
             return (
                 type !== undefined && type.isValidToParse(value, prop, object)
@@ -30,7 +30,7 @@ export default function factoryEscape({ types }) {
 
     Escape.stringify = function(value) {
         if (escaped_stringify.has(value)) return value
-        escaped_stringify.set(value, 1)
+        escaped_stringify.add(value)
         return { [key]: value }
     }
 
@@ -39,11 +39,11 @@ export default function factoryEscape({ types }) {
     }
 
     Escape.beforeStringify = function() {
-        escaped_stringify = new Map()
+        escaped_stringify = new Set()
     }
 
     Escape.beforeParse = function() {
-        escaped_parse = new Map()
+        escaped_parse = new Set()
     }
 
     return Escape

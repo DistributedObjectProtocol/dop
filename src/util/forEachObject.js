@@ -4,7 +4,7 @@ import forEach from './forEach'
 // https://jsperf.com/dop-foreachobject
 // https://2ality.com/2019/10/shared-mutable-state.html
 export default function forEachObject(origin, callback, destiny) {
-    const circular = new Map()
+    const circular = new Set()
     const path = []
     const has_destiny = isObject(destiny)
     forEachObjectLoop(origin, destiny, callback, path, has_destiny, circular)
@@ -31,7 +31,7 @@ function forEachObjectLoop(
             //     (has_destiny && destiny[prop] !== undefined)) &&
             !circular.has(value_origin)
         ) {
-            circular.set(value_origin, 1)
+            circular.add(value_origin)
             forEachObjectLoop(
                 value_origin,
                 has_destiny ? destiny[prop] : undefined,

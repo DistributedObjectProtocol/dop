@@ -3,9 +3,7 @@ export default function factoryUndefined() {
     const undefineds = []
 
     // Constructor/Creator
-    function Undefined() {
-        return undefined
-    }
+    function Undefined() {}
 
     Undefined.key = key
 
@@ -35,22 +33,3 @@ export default function factoryUndefined() {
 
     return Undefined
 }
-
-// DJSON.addType('$delete', () => {
-//     const undefineds = []
-//     return {
-//         isValidToStringify: value => value === undefined,
-//         isValidToParse: (value, prop) => value.$delete === 0,
-//         stringify: () => ({ $delete: 0 }),
-//         parse: (value, prop, object) => {
-//             undefineds.push({ prop, object })
-//             return value
-//         },
-//         afterParse: parsed => {
-//             while (undefineds.length > 0) {
-//                 const { object, prop } = undefineds.shift()
-//                 object[prop] = undefined
-//             }
-//         }
-//     }
-// })
