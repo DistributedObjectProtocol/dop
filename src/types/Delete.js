@@ -1,4 +1,5 @@
 import { getUniqueKey } from '../util/get'
+import { mergeMutator } from '../util/merge'
 
 const key = '$delete'
 
@@ -9,7 +10,7 @@ function Delete() {
     }
 }
 
-Delete.encode = function({ origin, destiny, prop, deeper }) {
+Delete.encode = function({ origin, destiny, prop }) {
     const value = origin[prop]
     if (value instanceof Delete) {
         destiny[prop] = { [key]: 1 }
@@ -18,11 +19,10 @@ Delete.encode = function({ origin, destiny, prop, deeper }) {
         destiny[prop] = { $escape: value }
         return false // we don't go deeper
     }
-    destiny[prop] = value
-    return deeper
+    return mergeMutator({ origin, destiny, prop })
 }
 
-Delete.decode = function({ origin, destiny, prop, deeper }) {
+Delete.decode = function({ origin, destiny, prop }) {
     const value = origin[prop]
     if (isValidToDecode({ value })) {
         destiny[prop] = new Delete()
@@ -34,8 +34,7 @@ Delete.decode = function({ origin, destiny, prop, deeper }) {
         destiny[prop] = value.$escape
         return false // we don't go deeper
     }
-    destiny[prop] = value
-    return deeper
+    return mergeMutator({ origin, destiny, prop })
 }
 
 // Delete.patch = function({ value, prop, destiny }) {

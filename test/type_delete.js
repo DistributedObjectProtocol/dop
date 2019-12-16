@@ -1,5 +1,5 @@
 import test from 'ava'
-import { TYPE, encode, decode } from '../'
+import { encode, decode, TYPE } from '../'
 
 const DELETE = TYPE.Delete()
 
@@ -78,18 +78,18 @@ test('This should not be escaped because $delete is not an number', function(t) 
     testBasic(t, patch, expected) // testBasic(t, patch, expected) // Not sure why EJSON is still escaping strings
 })
 
-// test('Parse alone', function(t) {
-//     const patch = {
-//         convert: { $delete: 1 },
-//         string: { $delete: 'string' },
-//         escape: { $escape: { $delete: 1 } },
-//         ignore: { $escape: { $delete: 1 }, two: { $delete: 1 } }
-//     }
-//     const expected = {
-//         convert: DELETE,
-//         string: { $delete: 'string' },
-//         escape: { $delete: 1 },
-//         ignore: { $escape: DELETE, two: DELETE }
-//     }
-//     t.deepEqual(decode(encode(patch)), expected) // testBasic(t, patch, expected) // Not sure why EJSON is still escaping strings
-// })
+test('Decode alone', function(t) {
+    const patch = {
+        convert: { $delete: 1 },
+        string: { $delete: 'string' },
+        escape: { $escape: { $delete: 1 } },
+        ignore: { $escape: { $delete: 1 }, two: { $delete: 1 } }
+    }
+    const expected = {
+        convert: DELETE,
+        string: { $delete: 'string' },
+        escape: { $delete: 1 },
+        ignore: { $escape: DELETE, two: DELETE }
+    }
+    t.deepEqual(decode(patch), expected)
+})

@@ -6,8 +6,8 @@ export default function converter(object, converters) {
         object,
         ({ origin, prop, destiny, path }) => {
             return converters.reduce(
-                (deeper, converterr) =>
-                    converterr({ origin, prop, destiny, path, deeper }),
+                (deeper, converter) =>
+                    converter({ origin, prop, destiny, path, deeper }),
                 true
             )
         },
