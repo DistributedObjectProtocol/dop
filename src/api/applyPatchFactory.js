@@ -3,7 +3,7 @@ import { getNewPlain } from '../util/get'
 import { setDeep } from '../util/set'
 import forEachObject from '../util/forEachObject'
 
-export default function applyPatchFactory(patchFunction) {
+export default function applyPatchFactory(patchers) {
     return function applyPatch(object, patch) {
         if (!isPlainObject(object) || !isPlainObject(patch)) {
             throw 'applyPatch only accepts plain objects'
@@ -12,8 +12,19 @@ export default function applyPatchFactory(patchFunction) {
         const mutations = []
         const unpatch = {}
 
-        function addMutation({ value, prop, destiny, origin, path }) {
-            const oldValue = patchFunction(value, prop, destiny, origin, path)
+        function addMutation({ oldValue, prop, origin, destiny, path }) {
+            oldValue = patchers.reduce(
+                (oldValue, patcher) =>
+                    patcher({
+                        value: destiny[prop],
+                        origin,
+                        prop,
+                        destiny,
+                        path,
+                        oldValue
+                    }),
+                oldValue
+            )
             setDeep(unpatch, path.slice(0), oldValue)
             mutations.push({
                 // value,
@@ -37,8 +48,9 @@ export default function applyPatchFactory(patchFunction) {
                             isPlainObject(destiny_value)
                         ))
                 ) {
-                    const value = getNewPlain(origin_value)
-                    addMutation({ value, prop, destiny, origin, path })
+                    const oldValue = destiny[prop]
+                    destiny[prop] = getNewPlain(origin_value)
+                    addMutation({ prop, destiny, origin, path, oldValue })
                     return false // if false we dont go deeper
                 }
             },
