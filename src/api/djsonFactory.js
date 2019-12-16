@@ -1,4 +1,5 @@
 import { isFunction } from '../util/is'
+import forEachObject from '../util/forEachObject'
 
 export default function djsonFactory() {
     const types = {}
@@ -20,46 +21,43 @@ export default function djsonFactory() {
         return stringifyAndParse(value, prop, object, is_valid, func, index + 1)
     }
 
-    function stringify(object, replacer, space) {
+    function stringify(object, replacer) {
         runFunctionIfExists('beforeStringify', object)
 
-        const stringified = JSON.stringify(
-            object,
-            function(prop, value) {
-                value = stringifyAndParse(
-                    value,
-                    prop,
-                    this,
-                    'isValidToStringify',
-                    'stringify'
-                )
-                return isFunction(replacer)
-                    ? replacer.call(this, prop, value)
-                    : value
-            },
-            space
-        )
+        forEachObject(object, ({ origin, prop }) => {
+            const value = stringifyAndParse(
+                origin[prop],
+                prop,
+                origin,
+                'isValidToStringify',
+                'stringify'
+            )
+            console.log({ value })
+            return isFunction(replacer)
+                ? replacer.call(origin, prop, value)
+                : value
+        })
 
-        runFunctionIfExists('afterStringify', object, stringified)
-        return stringified
+        runFunctionIfExists('afterStringify', object)
+        return object
     }
 
-    function parse(text, reviver) {
-        runFunctionIfExists('beforeParse', text)
-
-        const parsed = JSON.parse(text, function(prop, value) {
-            value = stringifyAndParse(
-                value,
+    function parse(object, reviver) {
+        runFunctionIfExists('beforeParse', object)
+        forEachObject(object, ({ origin, prop }) => {
+            const value = stringifyAndParse(
+                origin[prop],
                 prop,
-                this,
+                origin,
                 'isValidToParse',
                 'parse'
             )
-            return isFunction(reviver) ? reviver.call(this, prop, value) : value
+            return isFunction(reviver)
+                ? reviver.call(origin, prop, value)
+                : value
         })
-
-        runFunctionIfExists('afterParse', text, parsed)
-        return parsed
+        runFunctionIfExists('afterParse', object)
+        return object
     }
 
     function patch(value, prop, destiny, origin, path, index = 0) {

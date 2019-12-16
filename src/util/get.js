@@ -1,10 +1,10 @@
 import { is, isPlain } from './is'
 import merge from './merge'
 
-export function getUniqueKey(object, objectList) {
+export function getUniqueKey(object) {
     let key_name
     for (const key in object) {
-        if (!objectList.hasOwnProperty(key) || key_name !== undefined) {
+        if (key_name !== undefined) {
             return
         }
         key_name = key

@@ -1,16 +1,17 @@
 import test from 'ava'
-import { DJSON } from '../'
+import { encode, decode, TYPE } from '../'
 
 function testBasic(t, patch, expected, recursive = true) {
-    const string = DJSON.stringify(patch)
-    const jsonparsed = JSON.parse(string)
-    const parsed = DJSON.parse(string)
-    t.deepEqual(expected, jsonparsed)
-    t.deepEqual(patch, parsed)
+    const encoded = encode(patch)
+    const decoded = decode(encoded)
+    t.not(patch, encoded)
+    t.not(encoded, decoded)
+    t.deepEqual(expected, encoded)
+    t.deepEqual(patch, decoded)
 }
 
 test('Valid type', function(t) {
-    const patch = { convert: DJSON.Delete() }
+    const patch = { convert: TYPE.Delete() }
     const expected = { convert: { $delete: 1 } }
     testBasic(t, patch, expected)
 })

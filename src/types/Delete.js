@@ -1,61 +1,66 @@
 import { getUniqueKey } from '../util/get'
 
-export default function factoryDelete({ types }) {
-    const key = '$delete'
+const key = '$delete'
 
-    // Constructor/Creator
-    function Delete() {
-        if (!(this instanceof Delete)) {
-            return new Delete()
-        }
-    }
-
-    // Mandatory
-    Delete.key = key
-
-    // Mandatory
-    Delete.isValidToStringify = function(value) {
-        return value instanceof Delete
-    }
-
-    // Mandatory
-    Delete.stringify = function() {
-        return { [key]: 1 }
-    }
-
-    // Mandatory
-    Delete.isValidToParse = function(value) {
-        const unique_key = getUniqueKey(value, types)
-        return unique_key === key && value[key] === 1
-    }
-
-    // Mandatory
-    Delete.parse = function(value) {
+// Constructor/Creator
+function Delete() {
+    if (!(this instanceof Delete)) {
         return new Delete()
     }
+}
 
-    // Optionals
-    Delete.isValidToPatch = function(value, prop, destiny) {
-        return value instanceof Delete || !destiny.hasOwnProperty(prop)
+Delete.encode = function({ origin, destiny, prop, deeper }) {
+    const value = origin[prop]
+    if (value instanceof Delete) {
+        destiny[prop] = { [key]: 1 }
+        return false // we don't go deeper
+    } else if (isValidToDecode({ value })) {
+        destiny[prop] = { $escape: value }
+        return false // we don't go deeper
     }
+    destiny[prop] = value
+    return deeper
+}
 
-    Delete.patch = function(value, prop, destiny) {
-        const oldValue = !destiny.hasOwnProperty(prop)
-            ? new Delete()
-            : destiny[prop]
-
-        if (value instanceof Delete) {
-            delete destiny[prop]
-        } else {
-            destiny[prop] = value
-        }
-        return oldValue
+Delete.decode = function({ origin, destiny, prop, deeper }) {
+    const value = origin[prop]
+    if (isValidToDecode({ value })) {
+        destiny[prop] = new Delete()
+        return false // we don't go deeper
+    } else if (
+        isValidToEscape({ value }) &&
+        isValidToDecode({ value: value.$escape })
+    ) {
+        destiny[prop] = value.$escape
+        return false // we don't go deeper
     }
+    destiny[prop] = value
+    return deeper
+}
 
-    // Delete.beforeStringify = ()=>{}
-    // Delete.afterStringify = ()=>{}
-    // Delete.beforeParse = ()=>{}
-    // Delete.afterParse = ()=>{}
+// Delete.patch = function({ value, prop, destiny }) {
+//     if (value instanceof Delete || !destiny.hasOwnProperty(prop)) {
+//         const oldValue = !destiny.hasOwnProperty(prop)
+//             ? new Delete()
+//             : destiny[prop]
 
-    return Delete
+//         if (value instanceof Delete) {
+//             delete destiny[prop]
+//         } else {
+//             destiny[prop] = value
+//         }
+//         return oldValue
+//     }
+// }
+
+export default Delete
+
+function isValidToDecode({ value }) {
+    const unique_key = getUniqueKey(value)
+    return unique_key === key && value[key] === 1
+}
+
+function isValidToEscape({ value }) {
+    const unique_key = getUniqueKey(value)
+    return unique_key === '$escape'
 }
