@@ -1,3 +1,4 @@
+import merge from '../util/merge'
 import { createPatchFromMutations } from '../util/set'
 
 export default function createStoreFactory(applyPatchFunction) {
@@ -5,8 +6,7 @@ export default function createStoreFactory(applyPatchFunction) {
         const listeners = new Map()
 
         function getState() {
-            const { object } = applyPatchFunction({}, state)
-            return object
+            return merge({}, api.state)
         }
 
         function subscribe(listener, filter) {
@@ -19,7 +19,8 @@ export default function createStoreFactory(applyPatchFunction) {
 
         function applyPatch(patch) {
             const returns = []
-            const { mutations } = applyPatchFunction(state, patch)
+            const { mutations, result } = applyPatchFunction(api.state, patch)
+            api.state = result
             listeners.forEach((filter, listener) => {
                 // const mutations_filtered =
                 //     isFunction(filter)
@@ -39,7 +40,7 @@ export default function createStoreFactory(applyPatchFunction) {
             return returns
         }
 
-        return {
+        const api = {
             state,
             listeners,
             getState,
@@ -47,5 +48,7 @@ export default function createStoreFactory(applyPatchFunction) {
             applyPatch,
             unsubscribe
         }
+
+        return api
     }
 }

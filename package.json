@@ -55,7 +55,6 @@
     ],
     "ava": {
         "files": [
-            "!test/index.js",
             "!test/utils.js"
         ],
         "require": [

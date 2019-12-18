@@ -5,10 +5,12 @@ import { createNode, isRemoteFunction } from '../'
 const exported = [
     'factory',
     'merge',
+    'encode',
+    'decode',
     'applyPatch',
     'createNode',
     'createStore',
-    'DJSON',
+    'TYPE',
     'isRemoteFunction'
 ]
 

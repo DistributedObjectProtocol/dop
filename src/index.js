@@ -15,8 +15,8 @@ function factory() {
         converter(object, decoders)
 
     const applyPatch = applyPatchFactory(patchers)
-    const createNode = createNodeFactory(TYPE)
     const createStore = createStoreFactory(applyPatch)
+    const createNode = createNodeFactory(TYPE)
 
     return {
         factory,
