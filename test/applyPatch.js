@@ -1,65 +1,71 @@
 import test from 'ava'
-import { applyPatch, merge, TYPE } from '../'
+import { applyPatch, TYPE } from '../'
+import { getNewPlain } from '../src/util/get'
+import { isPlainObject } from '../src/util/is'
 
-function testUnpatch(t, object, patch, expected, reverse = true) {
-    const cloned = merge({}, object)
-    const result = applyPatch(object, patch)
-    const { unpatch, mutations } = result
-    t.is(result.object, object)
-    t.deepEqual(object, expected)
-    // if (reverse) {
-    //     applyPatch(object, unpatch)
-    //     t.deepEqual(object, cloned)
-    // }
+function testUnpatch(t, target, patch, expected, reverse = true) {
+    const cloned = getNewPlain(target)
+    const output = applyPatch(target, patch)
+    const { unpatch, mutations, result } = output
+    // console.log(result)
+    if (isPlainObject(result)) {
+        // t.is(target, result)
+    }
+    target = result
+    t.deepEqual(target, expected)
+    if (reverse) {
+        const output2 = applyPatch(target, unpatch)
+        t.deepEqual(output2.result, cloned)
+    }
     return { unpatch, mutations }
 }
 
 test('basic mutation', function(t) {
-    const object = { number: 1 }
+    const target = { number: 1 }
     const patch = { number: 2 }
     const expected = { number: 2 }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
 test('basic mutations', function(t) {
     const func1 = () => {}
     const func2 = () => {}
-    const object = { number: 1, bool: false, string: 'hello', func: func1 }
+    const target = { number: 1, bool: false, string: 'hello', func: func1 }
     const patch = { number: 2, bool: true, string: 'world', func: func2 }
     const expected = { number: 2, bool: true, string: 'world', func: func2 }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
 test('value didnt exists', function(t) {
-    const object = {}
+    const target = {}
     const patch = { value: true }
     const expected = { value: true }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
 test('deletion', function(t) {
-    const object = { value: 12345 }
+    const target = { value: 12345 }
     const patch = { value: TYPE.Delete() }
     const expected = {}
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
-test('patch new object should not be same object', function(t) {
-    const object = { prop: 123 }
+test('patch new target should not be same target', function(t) {
+    const target = { prop: 123 }
     const patch = { prop: { deep: true } }
     const expected = { prop: { deep: true } }
 
-    applyPatch(object, patch)
-    t.not(object.prop, patch.prop)
-    t.deepEqual(object, expected)
+    applyPatch(target, patch)
+    t.not(target.prop, patch.prop)
+    t.deepEqual(target, expected)
 })
 
 test('multiple mutations levels', function(t) {
-    const object = { value: false, prop: false, last: { value: false } }
+    const target = { value: false, prop: false, last: { value: false } }
     const patch = { value: true, prop: { deep: true }, last: { value: true } }
     const expected = {
         value: true,
@@ -67,66 +73,74 @@ test('multiple mutations levels', function(t) {
         last: { value: true }
     }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
 test('from deep to other', function(t) {
-    const object = { value: { more: false } }
+    const target = { value: { more: false } }
     const patch = { value: true }
     const expected = { value: true }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
 test('deep value', function(t) {
-    const object = { value: { more: false } }
+    const target = { value: { more: false } }
     const patch = { value: { more: true } }
     const expected = { value: { more: true } }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
-test('deep value should not create root object, just mutate the props', function(t) {
-    const object = { value: { a: 1 } }
+test('deep value should not create root target, just mutate the props', function(t) {
+    const target = { value: { a: 1 } }
     const patch = { value: { a: 2, b: 3 } }
     const expected = { value: { a: 2, b: 3 } }
 
-    const { unpatch, mutations } = testUnpatch(t, object, patch, expected)
+    const { unpatch, mutations } = testUnpatch(t, target, patch, expected)
     t.is(mutations.length, 2)
     t.deepEqual(unpatch, { value: { a: 1, b: unpatch.value.b } })
 })
 
 test('mutating multiple levels', function(t) {
-    const object = { value: { more: false }, other: false }
+    const target = { value: { more: false }, other: false }
     const patch = { value: { more: true }, other: true }
     const expected = { value: { more: true }, other: true }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
 test('mutating multiple levels not defineds', function(t) {
-    const object = {}
+    const target = {}
     const patch = { value: { more: true }, other: true }
     const expected = { value: { more: true }, other: true }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
-test('function to object', function(t) {
-    const object = { prop: () => {} }
+test('mutating multiple levels not defineds / inverted', function(t) {
+    const target = { value: { more: true }, other: true }
+    const patch = { value: TYPE.Delete(), other: TYPE.Delete() }
+    const expected = {}
+
+    testUnpatch(t, target, patch, expected)
+})
+
+test('function to target', function(t) {
+    const target = { prop: () => {} }
     const patch = { prop: {} }
     const expected = { prop: {} }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
-test('object to function', function(t) {
+test('target to function', function(t) {
     const f = () => {}
-    const object = { prop: {} }
+    const target = { prop: {} }
     const patch = { prop: f }
     const expected = { prop: f }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
 test('plain to noplain', function(t) {
@@ -134,11 +148,11 @@ test('plain to noplain', function(t) {
     const instance = new Foo()
     instance.prop = 2
 
-    const object = { prop: instance }
+    const target = { prop: instance }
     const patch = { prop: { deep: true } }
     const expected = { prop: { deep: true } }
 
-    const { mutations } = testUnpatch(t, object, patch, expected)
+    const { mutations } = testUnpatch(t, target, patch, expected)
     t.is(mutations.length, 1)
 })
 
@@ -147,15 +161,15 @@ test('noplain to plain', function(t) {
     const instance = new Foo()
     instance.prop = 2
 
-    const object = { prop: { deep: true } }
+    const target = { prop: { deep: true } }
     const patch = { prop: instance }
     const expected = { prop: instance }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
 test('syntax mutations', function(t) {
-    const object = {
+    const target = {
         value: false,
         prop: false,
         last: { value: false },
@@ -168,86 +182,125 @@ test('syntax mutations', function(t) {
         lastlast: true
     }
 
-    const { mutations } = applyPatch(object, patch)
+    const { mutations } = applyPatch(target, patch)
     t.is(mutations.length, 4)
     t.deepEqual(mutations[0], {
         prop: 'value',
         oldValue: false,
         path: ['value'],
-        object
+        object: target
     })
     t.deepEqual(mutations[1], {
         prop: 'prop',
         oldValue: false,
         path: ['prop'],
-        object
+        object: target
     })
     t.deepEqual(mutations[2], {
         prop: 'value',
         oldValue: false,
         path: ['last', 'value'],
-        object: object.last
+        object: target.last
     })
     t.deepEqual(mutations[3], {
         prop: 'lastlast',
         oldValue: { value: false },
         path: ['lastlast'],
-        object
+        object: target
     })
 })
 
-test('array', function(t) {
-    const object = { array: [0, 1, 2] }
+test('syntax mutations on top level', function(t) {
+    const target = {}
+    const patch = 'bar'
+
+    const { mutations } = applyPatch(target, patch)
+    t.is(mutations.length, 1)
+    t.deepEqual(mutations[0], {
+        prop: '',
+        oldValue: target,
+        path: [],
+        object: { '': patch }
+    })
+})
+
+test('syntax mutations when using delete', function(t) {
+    const target = {}
+    const patch = TYPE.Delete()
+
+    const { mutations } = applyPatch(target, patch)
+    t.is(mutations.length, 1)
+    t.deepEqual(mutations[0], {
+        prop: '',
+        oldValue: target,
+        path: [],
+        object: {}
+    })
+})
+
+test('Deep objects/array must be merged instead of referenced', function(t) {
+    const target = {}
+    const patch = { object: { a: true }, array: [{ b: true }] }
+    const { result } = applyPatch(target, patch)
+
+    t.deepEqual(result, patch)
+    t.not(result.object, patch.object)
+    t.not(result.array, patch.array)
+    t.not(result.array[0], patch.array[0])
+})
+
+test('Deep objects/array must be merged instead of referenced 2', function(t) {
+    const target = { array: [0, 1, 2] }
     const patch = { array: [3, 4] }
     const expected = { array: [3, 4] }
 
-    testUnpatch(t, object, patch, expected, false)
-    t.deepEqual(object.array, patch.array)
-    t.not(object.array, patch.array)
-    // console.log(object, patch)
+    testUnpatch(t, target, patch, expected, false)
+    t.deepEqual(target.array, patch.array)
+    t.not(target.array, patch.array)
+    // console.log(target, patch)
 })
 
 test('array complex', function(t) {
-    const object = { array: [0, 1, 2], string: 'yep', arrstr: [1, 2] }
+    const target = { array: [0, 1, 2], string: 'yep', arrstr: [1, 2] }
     const patch = { array: [3, 4], string: ['a', 'b'], arrstr: '12' }
     const expected = { array: [3, 4], string: ['a', 'b'], arrstr: '12' }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
-test('from object to array', function(t) {
-    const object = { objarr: { value: true } }
+test('from target to array', function(t) {
+    const target = { objarr: { value: true } }
     const patch = { objarr: [0, 1] }
     const expected = { objarr: [0, 1] }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
-test('from array to object', function(t) {
-    const object = { objarr: [0, 1] }
+test('from array to target', function(t) {
+    const target = { objarr: [0, 1] }
     const patch = { objarr: { value: true } }
     const expected = { objarr: { value: true } }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
 test('should assign `null` values', function(t) {
-    const object = { value: false }
+    const target = { value: false }
     const patch = { value: null }
     const expected = { value: null }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
 test('should assign `undefined` values', function(t) {
-    const object = { value: false }
+    const target = { value: false }
     const patch = { value: undefined, value2: undefined }
     const expected = { value: undefined, value2: undefined }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
-test('should assign non array/buffer/typed-array/plain-object source values directly', function(t) {
+test('should assign non array/buffer/typed-array/plain-target source values directly', function(t) {
     function Foo() {}
     const values = [
         new Foo(),
@@ -259,34 +312,34 @@ test('should assign non array/buffer/typed-array/plain-object source values dire
         new RegExp()
     ]
 
-    const object = {}
+    const target = {}
     const patch = { values: values }
     const expected = { values: values }
 
-    testUnpatch(t, object, patch, expected)
+    testUnpatch(t, target, patch, expected)
 })
 
-test('same patch as object generate no mutations', function(t) {
-    const object = { value: false }
+test('same patch as target generate no mutations', function(t) {
+    const target = { value: false }
     const expected = { value: false }
 
-    const { mutations, unpatch } = testUnpatch(t, object, object, expected)
+    const { mutations, unpatch } = testUnpatch(t, target, target, expected)
     t.is(mutations.length, 0)
     t.deepEqual(unpatch, {})
 })
 
 test('no mutations', function(t) {
-    const object = { value: false }
+    const target = { value: false }
     const patch = {}
     const expected = { value: false }
 
-    const { mutations, unpatch } = testUnpatch(t, object, patch, expected)
+    const { mutations, unpatch } = testUnpatch(t, target, patch, expected)
     t.is(mutations.length, 0)
     t.deepEqual(unpatch, {})
 })
 
 test('checking different types and mutating multiple deep values', function(t) {
-    const object = {
+    const target = {
         string: 'string',
         obj: { lolo: 213 },
         arr: [1, 2, 3, { La: 243534 }],
@@ -371,6 +424,143 @@ test('checking different types and mutating multiple deep values', function(t) {
     }
     const expected = { ...patch, string: 'string' }
 
-    const { mutations } = testUnpatch(t, object, patch, expected)
+    const { mutations } = testUnpatch(t, target, patch, expected)
     t.is(mutations.length, 30)
+})
+
+test('1 / https://tools.ietf.org/html/rfc7386 ', function(t) {
+    const target = { a: 'b' }
+    const patch = { a: 'c' }
+    const expected = { a: 'c' }
+
+    testUnpatch(t, target, patch, expected)
+})
+
+test('2 / https://tools.ietf.org/html/rfc7386 ', function(t) {
+    const target = { a: 'b' }
+    const patch = { b: 'c' }
+    const expected = { a: 'b', b: 'c' }
+
+    testUnpatch(t, target, patch, expected)
+})
+
+test('3 / https://tools.ietf.org/html/rfc7386 ', function(t) {
+    const target = { a: 'b' }
+    const patch = { a: TYPE.Delete() }
+    const expected = {}
+
+    testUnpatch(t, target, patch, expected)
+})
+
+test('4 / https://tools.ietf.org/html/rfc7386 ', function(t) {
+    const target = { a: 'b', b: 'c' }
+    const patch = { a: TYPE.Delete() }
+    const expected = { b: 'c' }
+
+    testUnpatch(t, target, patch, expected)
+})
+
+test('5 / https://tools.ietf.org/html/rfc7386 ', function(t) {
+    const target = { a: ['b'] }
+    const patch = { a: 'c' }
+    const expected = { a: 'c' }
+
+    testUnpatch(t, target, patch, expected)
+})
+
+test('6 / https://tools.ietf.org/html/rfc7386 ', function(t) {
+    const target = { a: 'c' }
+    const patch = { a: ['b'] }
+    const expected = { a: ['b'] }
+
+    testUnpatch(t, target, patch, expected)
+})
+
+test('7 / https://tools.ietf.org/html/rfc7386 ', function(t) {
+    const target = { a: { b: 'c' } }
+    const patch = { a: { b: 'd', c: TYPE.Delete() } }
+    const expected = { a: { b: 'd' } }
+
+    testUnpatch(t, target, patch, expected)
+})
+
+test('8 / https://tools.ietf.org/html/rfc7386 ', function(t) {
+    const target = { a: { b: 'c' } }
+    const patch = { a: [1] }
+    const expected = { a: [1] }
+
+    testUnpatch(t, target, patch, expected)
+})
+
+test('9 / https://tools.ietf.org/html/rfc7386 ', function(t) {
+    const target = ['a', 'b']
+    const patch = ['c', 'd']
+    const expected = ['c', 'd']
+
+    testUnpatch(t, target, patch, expected)
+})
+
+test('10 / https://tools.ietf.org/html/rfc7386 ', function(t) {
+    const target = { a: 'b' }
+    const patch = ['c']
+    const expected = ['c']
+
+    testUnpatch(t, target, patch, expected)
+})
+
+test('11 / https://tools.ietf.org/html/rfc7386 ', function(t) {
+    const target = { a: 'foo' }
+    const patch = null
+    const expected = null
+
+    testUnpatch(t, target, patch, expected)
+})
+
+test('12 / https://tools.ietf.org/html/rfc7386 ', function(t) {
+    const target = { a: 'foo' }
+    const patch = 'bar'
+    const expected = 'bar'
+
+    testUnpatch(t, target, patch, expected)
+})
+
+test('13 / https://tools.ietf.org/html/rfc7386 ', function(t) {
+    const target = { e: null }
+    const patch = { a: 1 }
+    const expected = { e: null, a: 1 }
+
+    testUnpatch(t, target, patch, expected)
+})
+
+test('13/b', function(t) {
+    const del = TYPE.Delete()
+    const target = { e: del }
+    const patch = { a: 1 }
+    const expected = { e: del, a: 1 }
+
+    testUnpatch(t, target, patch, expected)
+})
+test('13/c (not sure about this case)', function(t) {
+    const target = { e: TYPE.Delete() }
+    const patch = { a: 1, e: TYPE.Delete() }
+    const expected = { a: 1 }
+
+    // not sure about this case because the unpatch would result in {}
+    testUnpatch(t, target, patch, expected, false)
+})
+
+test('14 / https://tools.ietf.org/html/rfc7386 ', function(t) {
+    const target = [1, 2]
+    const patch = { a: 'b', c: TYPE.Delete() }
+    const expected = { a: 'b' }
+
+    testUnpatch(t, target, patch, expected)
+})
+
+test('15 / https://tools.ietf.org/html/rfc7386 ', function(t) {
+    const target = {}
+    const patch = { a: { bb: { ccc: TYPE.Delete() } } }
+    const expected = { a: { bb: {} } }
+
+    testUnpatch(t, target, patch, expected)
 })
