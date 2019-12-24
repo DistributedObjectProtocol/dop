@@ -78,15 +78,16 @@ test('Sending remote functions must be replaced as null', async t => {
     t.is(resu, null)
 })
 
-test.only('Testing messages', async t => {
+test('Testing messages', async t => {
     const server = createNode()
     const client = createNode()
+    server.ENV = 'SERVER'
+    client.ENV = 'CLIENT'
 
     client.open(
         msg => {
             t.deepEqual(msg, [-1, 0, 10])
-            console.log(msg, [-1, 0, 10])
-            // server.message(msg)
+            server.message(msg)
         },
         (a, b) => a * b
     )
@@ -95,9 +96,11 @@ test.only('Testing messages', async t => {
         client.message(msg)
     })
     const ten = await callClient(2, 5)
-
     t.is(ten, 10)
 })
 
 test.skip('Passing serializer and deserializer', async t => {})
-test.skip('Sending stub request', async t => {})
+test.skip('Using stub', async t => {})
+test.skip('Using destroy', async t => {})
+test.skip('Using resolve', async t => {})
+test.skip('Using reject', async t => {})

@@ -56,7 +56,6 @@ export default function createNodeFactory({ encoders, decoders }) {
         }
 
         function message(msg) {
-            // console.log(api.ENV, msg)
             if (api.opened) {
                 try {
                     msg = decode(deserialize(msg))
