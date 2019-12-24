@@ -1,41 +1,15 @@
 import { getUniqueKey } from '../util/get'
 import { isInteger, isFunction } from '../util/is'
+import { FUNCTION_KEY, ESCAPE_KEY } from '../const'
 
-export default function factoryFunction({ types }) {
-    const key = '$function'
+const Func = {}
 
-    // Constructor/Creator
-    function Func() {}
+Func.encode = function({ value, origin, destiny, prop }) {}
 
-    // Mandatory
-    Func.key = key
+Func.decode = function({ value, origin, destiny, prop }) {}
 
-    // Mandatory
-    Func.isValidToStringify = function(value) {
-        return isFunction(value)
-    }
+function isValidToDecode({ value }) {}
 
-    // Mandatory
-    Func.stringify = function(value) {
-        // We ignore this because will be replaced on createNode
-        return value
-    }
+function isValidToEscape({ value }) {}
 
-    // Mandatory
-    Func.isValidToParse = function(value) {
-        const unique_key = getUniqueKey(value, types)
-        return unique_key === key && isInteger(value[key])
-    }
-
-    // Mandatory
-    Func.parse = function(value) {
-        // We ignore this because will be replaced on createNode
-        return value
-    }
-
-    Func.stringifyReplacer = function(function_id) {
-        return { [key]: function_id }
-    }
-
-    return Func
-}
+export default Func

@@ -20,7 +20,7 @@
             "request": "launch",
             "name": "AVA specific",
             "program": "${workspaceFolder}/node_modules/ava/profile.js",
-            "args": ["test/djson_escape.js"],
+            "args": ["test/createNode.js"],
             "skipFiles": ["<node_internals>/**/*.js"]
         }
     ]

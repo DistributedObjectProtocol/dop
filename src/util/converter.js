@@ -1,10 +1,11 @@
 import forEachObject from '../util/forEachObject'
 import { mergeMutator } from '../util/merge'
+import { isArray } from '../util/is'
 
-export default function converter(object, converters) {
-    const destiny = {}
+export default function converter(origin, converters) {
+    const destiny = isArray(origin) ? [] : {}
     forEachObject(
-        object,
+        origin,
         ({ origin, prop, destiny, path }) => {
             const value = converters.reduce(
                 (value, converter) =>

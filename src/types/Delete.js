@@ -17,7 +17,7 @@ Delete.patch = function({ destiny, prop, oldValue, had_prop }) {
     return oldValue
 }
 
-Delete.encode = function({ value, origin, destiny, prop }) {
+Delete.encode = function({ value }) {
     if (value instanceof Delete) {
         return { [DELETE_KEY]: 1 } // we don't go deeper
     } else if (isValidToDecode({ value })) {
@@ -26,7 +26,7 @@ Delete.encode = function({ value, origin, destiny, prop }) {
     return value
 }
 
-Delete.decode = function({ value, origin, destiny, prop }) {
+Delete.decode = function({ value }) {
     if (isValidToDecode({ value })) {
         return new Delete()
     } else if (

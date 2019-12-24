@@ -1,14 +1,15 @@
-import { isFunction, isInteger, is, isArray } from '../util/is'
+import { isFunction, isInteger, isArray } from '../util/is'
 import createRequest from '../util/createRequest'
 import localProcedureCall from '../util/localProcedureCall'
+import converter from '../util/converter'
 import { NAME_REMOTE_FUNCTION } from '../const'
+import { getUniqueKey } from '../util/get'
 
-export default function createNodeFactory(DJSON) {
-    const Func = DJSON.Function
-    const stringify = DJSON.stringify
-    const parse = DJSON.parse
-
-    return function createNode() {
+export default function createNodeFactory({ encoders, decoders }) {
+    return function createNode({
+        serialize = v => v,
+        deserialize = v => v
+    } = {}) {
         const requests = {}
         const local_functions_id = {}
         const local_functions_map = new Map()
@@ -35,7 +36,7 @@ export default function createNodeFactory(DJSON) {
                 req.node = api
                 req.destroy = () => delete requests[request_id]
                 requests[request_id] = req
-                api.send(stringify(data, stringifyReplacer))
+                api.send(serialize(encode(data)))
                 return req
             }
             Object.defineProperty(f, 'name', {
@@ -56,12 +57,11 @@ export default function createNodeFactory(DJSON) {
 
         function message(msg) {
             // console.log(api.ENV, msg)
-            const tof = is(msg)
-            if (api.opened && tof == 'string' && msg[0] === '[') {
+            if (api.opened) {
                 try {
-                    msg = parse(msg, parseReplacer)
+                    msg = decode(deserialize(msg))
                 } catch (e) {
-                    // Invalid array to parse
+                    // Invalid array to deserialize or decode
                     return false
                 }
 
@@ -78,10 +78,10 @@ export default function createNodeFactory(DJSON) {
                         req.then(value => {
                             response.push(0) // no errors
                             if (value !== undefined) response.push(value)
-                            api.send(stringify(response, stringifyReplacer))
+                            api.send(serialize(encode(response)))
                         }).catch(error => {
                             response.push(error) // error
-                            api.send(stringify(response, stringifyReplacer))
+                            api.send(serialize(encode(response)))
                         })
                         args = isArray(args) ? args : []
                         args.push(req)
@@ -109,23 +109,33 @@ export default function createNodeFactory(DJSON) {
             api.opened = false
         }
 
-        function stringifyReplacer(key, f) {
-            if (Func.isValidToStringify(f) && f.name !== NAME_REMOTE_FUNCTION) {
-                const function_id = local_functions_map.has(f)
-                    ? local_functions_map.get(f)
-                    : registerLocalFunction(f)
-                return Func.stringifyReplacer(function_id)
+        function encode(object) {
+            const encodeFunction = ({ value }) => {
+                if (isFunction(value)) {
+                    if (value.name === NAME_REMOTE_FUNCTION) return null
+                    const function_id = local_functions_map.has(value)
+                        ? local_functions_map.get(value)
+                        : registerLocalFunction(value)
+                    return { ['$function']: function_id }
+                }
+                return value
             }
-            return f
+            return converter(object, encoders.concat(encodeFunction))
         }
 
-        function parseReplacer(key, value) {
-            if (Func.isValidToParse(value)) {
-                const function_id = value[Func.key]
-                const f = remote_functions_id[function_id]
-                return isFunction(f) ? f : createRemoteFunction(function_id)
+        function decode(object) {
+            const decodeFunction = ({ value }) => {
+                if (
+                    getUniqueKey(value) === '$function' &&
+                    isInteger(value['$function'])
+                ) {
+                    const function_id = value['$function']
+                    const f = remote_functions_id[function_id]
+                    return isFunction(f) ? f : createRemoteFunction(function_id)
+                }
+                return value
             }
-            return value
+            return converter(object, decoders.concat(decodeFunction))
         }
 
         const api = {

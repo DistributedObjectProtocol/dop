@@ -47,7 +47,7 @@ test('Passing same functions should not create a new one', async t => {
     const callServer = client.open(
         server.message,
         (repeated1, repeated2, callserverasargument) => {
-            t.is(repeated2, repeated2)
+            t.is(repeated1, repeated2)
             t.is(callServer, callserverasargument)
         }
     )
@@ -59,11 +59,9 @@ test('Passing same functions should not create a new one', async t => {
     callClient(repeated, repeated, receiveFromClient)
 })
 
-test('Sending remote functions must be ignored when stringify', async t => {
+test('Sending remote functions must be replaced as null', async t => {
     const server = createNode()
     const client = createNode()
-    server.ENV = 'SERVER'
-    client.ENV = 'CLIENT'
 
     // server side
     server.open(client.message, (...args) => {
@@ -80,22 +78,26 @@ test('Sending remote functions must be ignored when stringify', async t => {
     t.is(resu, null)
 })
 
-test('Testing messages', async t => {
+test.only('Testing messages', async t => {
     const server = createNode()
     const client = createNode()
 
     client.open(
         msg => {
-            t.is(msg, '[-1,0,10]')
-            server.message(msg)
+            t.deepEqual(msg, [-1, 0, 10])
+            console.log(msg, [-1, 0, 10])
+            // server.message(msg)
         },
         (a, b) => a * b
     )
     const callClient = server.open(msg => {
-        t.is(msg, '[1,0,[2,5]]')
+        t.deepEqual(msg, [1, 0, [2, 5]])
         client.message(msg)
     })
     const ten = await callClient(2, 5)
 
     t.is(ten, 10)
 })
+
+test.skip('Passing serializer and deserializer', async t => {})
+test.skip('Sending stub request', async t => {})

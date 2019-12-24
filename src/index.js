@@ -9,14 +9,14 @@ import Delete from './types/Delete'
 function factory() {
     const TYPE = { Delete }
     const patchers = [Delete.patch]
-    const encode = (object, encoders = [Delete.encode]) =>
-        converter(object, encoders)
-    const decode = (object, decoders = [Delete.decode]) =>
-        converter(object, decoders)
+    const encoders = [Delete.encode]
+    const decoders = [Delete.decode]
+    const encode = (object, list = encoders) => converter(object, list)
+    const decode = (object, list = decoders) => converter(object, list)
 
     const applyPatch = applyPatchFactory(patchers)
     const createStore = createStoreFactory(applyPatch)
-    const createNode = createNodeFactory(TYPE)
+    const createNode = createNodeFactory({ encoders, decoders })
 
     return {
         factory,

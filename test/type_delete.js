@@ -78,6 +78,12 @@ test('This should not be escaped because $delete is not an number', function(t) 
     testBasic(t, patch, expected) // testBasic(t, patch, expected) // Not sure why EJSON is still escaping strings
 })
 
+test('Invalid format, should not be escaped', function(t) {
+    const patch = { convert: { $delete: 0 } }
+    const expected = { convert: { $delete: 0 } }
+    testBasic(t, patch, expected)
+})
+
 test('Decode alone', function(t) {
     const patch = {
         convert: { $delete: 1 },

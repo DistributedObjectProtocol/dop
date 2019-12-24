@@ -28,8 +28,8 @@ export default function applyPatchFactory(patchers) {
 
                     destiny[prop] = isPlainObject(origin_value) // immutable
                         ? applyPatch({}, origin_value).result
-                        : isArray(origin_value) // Shall we merge arrays or just copy? Don't know
-                        ? merge([], origin_value)
+                        : isArray(origin_value)
+                        ? merge([], origin_value) // Shall we merge arrays or just copy? Don't know
                         : origin_value
 
                     oldValue = patchers.reduce(
