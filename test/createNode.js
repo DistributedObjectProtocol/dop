@@ -16,8 +16,6 @@ test('Api', async t => {
         'opened',
         'send'
     ])
-    t.is(server.send, client.message)
-    t.true(promise instanceof Promise)
     t.deepEqual(Object.keys(promise), [
         'resolve',
         'reject',
@@ -25,7 +23,12 @@ test('Api', async t => {
         'node',
         'destroy'
     ])
+    t.true(promise instanceof Promise)
+    t.is(server.send, client.message)
     t.is(promise.node, server)
+    t.is(typeof promise.resolve, 'function')
+    t.is(typeof promise.reject, 'function')
+    t.is(typeof promise.destroy, 'function')
 })
 
 test('Checking api req', async t => {
@@ -81,8 +84,6 @@ test('Sending remote functions must be replaced as null', async t => {
 test('Testing messages', async t => {
     const server = createNode()
     const client = createNode()
-    server.ENV = 'SERVER'
-    client.ENV = 'CLIENT'
 
     client.open(
         msg => {
@@ -99,8 +100,33 @@ test('Testing messages', async t => {
     t.is(ten, 10)
 })
 
+test('Escaping $function', async t => {
+    const server = createNode()
+    const client = createNode()
+
+    // server side
+    server.open(
+        msg => {
+            t.deepEqual(msg, [-1, 0, { $escape: { $function: 1 } }])
+            client.message(msg)
+        },
+        arg => {
+            t.deepEqual(arg, { $function: 0 })
+            return { $function: 1 }
+        }
+    )
+
+    // client side
+    const callServer = client.open(msg => {
+        t.deepEqual(msg, [1, 0, [{ $escape: { $function: 0 } }]])
+        server.message(msg)
+    })
+    const resu = await callServer({ $function: 0 })
+    t.deepEqual(resu, { $function: 1 })
+})
+
 test.skip('Passing serializer and deserializer', async t => {})
-test.skip('Using stub', async t => {})
 test.skip('Using destroy', async t => {})
 test.skip('Using resolve', async t => {})
 test.skip('Using reject', async t => {})
+test.skip('Using stub', async t => {})

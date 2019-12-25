@@ -3,7 +3,7 @@ import createRequest from '../util/createRequest'
 import localProcedureCall from '../util/localProcedureCall'
 import converter from '../util/converter'
 import { NAME_REMOTE_FUNCTION } from '../const'
-import { getUniqueKey } from '../util/get'
+import Func from '../types/Function'
 
 export default function createNodeFactory({ encoders, decoders }) {
     return function createNode({
@@ -109,32 +109,29 @@ export default function createNodeFactory({ encoders, decoders }) {
         }
 
         function encode(object) {
-            const encodeFunction = ({ value }) => {
-                if (isFunction(value)) {
-                    if (value.name === NAME_REMOTE_FUNCTION) return null
-                    const function_id = local_functions_map.has(value)
-                        ? local_functions_map.get(value)
-                        : registerLocalFunction(value)
-                    return { ['$function']: function_id }
-                }
-                return value
-            }
-            return converter(object, encoders.concat(encodeFunction))
+            return converter(
+                object,
+                encoders.concat(({ value }) =>
+                    Func.encode({
+                        value,
+                        local_functions_map,
+                        registerLocalFunction
+                    })
+                )
+            )
         }
 
         function decode(object) {
-            const decodeFunction = ({ value }) => {
-                if (
-                    getUniqueKey(value) === '$function' &&
-                    isInteger(value['$function'])
-                ) {
-                    const function_id = value['$function']
-                    const f = remote_functions_id[function_id]
-                    return isFunction(f) ? f : createRemoteFunction(function_id)
-                }
-                return value
-            }
-            return converter(object, decoders.concat(decodeFunction))
+            return converter(
+                object,
+                decoders.concat(({ value }) =>
+                    Func.decode({
+                        value,
+                        remote_functions_id,
+                        createRemoteFunction
+                    })
+                )
+            )
         }
 
         const api = {
