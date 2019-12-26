@@ -8,7 +8,7 @@ test('createStore', function(t) {
     t.is(state, store.state)
 })
 
-test('getState gets a copy', function(t) {
+test('getState gets a deep copy', function(t) {
     const state = { prop: true }
     const store = createStore(state)
 

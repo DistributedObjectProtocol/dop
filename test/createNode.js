@@ -5,30 +5,27 @@ test('Api', async t => {
     const server = createNode()
     const client = createNode()
 
-    client.open(server.message)
+    client.open(server.message, (a, b, req) => {
+        t.is(a, 2)
+        t.is(b, 5)
+        t.true(req instanceof Promise)
+        t.deepEqual(Object.keys(req).length, 3)
+        t.is(req.node, client)
+        t.is(typeof req.resolve, 'function')
+        t.is(typeof req.reject, 'function')
+    })
     const callClient = server.open(client.message)
     const promise = callClient(2, 5)
 
-    t.deepEqual(Object.keys(server), [
-        'open',
-        'message',
-        'close',
-        'opened',
-        'send'
-    ])
-    t.deepEqual(Object.keys(promise), [
-        'resolve',
-        'reject',
-        'data',
-        'node',
-        'destroy'
-    ])
+    t.deepEqual(Object.keys(server).length, 6)
+
+    t.deepEqual(Object.keys(promise).length, 5)
     t.true(promise instanceof Promise)
     t.is(server.send, client.message)
     t.is(promise.node, server)
     t.is(typeof promise.resolve, 'function')
     t.is(typeof promise.reject, 'function')
-    t.is(typeof promise.destroy, 'function')
+    t.is(typeof promise.at, 'number')
 })
 
 test('Checking api req', async t => {
@@ -40,6 +37,38 @@ test('Checking api req', async t => {
     })
     const callServer = client.open(server.message)
     callServer()
+})
+
+test('Calling a defined function .message must return true', async t => {
+    const server = createNode()
+    const client = createNode()
+    const callClient = server.open(client.message, () => {})
+    const callServer = client.open(msg => {
+        t.is(server.message(msg), true)
+    })
+    callServer()
+})
+
+test('Calling a not defined function .message must return false', async t => {
+    const server = createNode()
+    const client = createNode()
+    const callClient = server.open(client.message)
+    const callServer = client.open(msg => {
+        t.is(server.message(msg), false)
+    })
+    callServer()
+})
+
+test('Response (reject or resolve must delete request)', async t => {
+    const server = createNode()
+    const client = createNode()
+    server.open(client.message, v => {})
+    const callServer = client.open(server.message)
+    t.is(Object.keys(client.requests).length, 0)
+    callServer().then(v => {
+        t.is(Object.keys(client.requests).length, 0)
+    })
+    t.is(Object.keys(client.requests).length, 1)
 })
 
 test('Passing same functions should not create a new one', async t => {
@@ -125,8 +154,59 @@ test('Escaping $function', async t => {
     t.deepEqual(resu, { $function: 1 })
 })
 
-test.skip('Passing serializer and deserializer', async t => {})
-test.skip('Using destroy', async t => {})
-test.skip('Using resolve', async t => {})
-test.skip('Using reject', async t => {})
+test('Passing serializer and deserializer', async t => {
+    const server = createNode({
+        serialize: JSON.stringify,
+        deserialize: JSON.parse
+    })
+    const client = createNode({
+        serialize: JSON.stringify,
+        deserialize: JSON.parse
+    })
+
+    client.open(
+        msg => {
+            t.is(msg, JSON.stringify([-1, 0, 10]))
+            server.message(msg)
+        },
+        (a, b) => a * b
+    )
+    const callClient = server.open(msg => {
+        t.is(msg, JSON.stringify([1, 0, [2, 5]]))
+        client.message(msg)
+    })
+    const ten = await callClient(2, 5)
+    t.is(ten, 10)
+})
+
+test('Using resolve', async t => {
+    const server = createNode()
+    const client = createNode()
+    server.open(client.message)
+    t.is(Object.keys(client.requests).length, 0)
+    const callServer = client.open(server.message)
+    const req = callServer()
+    t.is(Object.keys(client.requests).length, 1)
+    req.then(value => {
+        t.is(value, 'resolved')
+    })
+    req.resolve('resolved')
+    t.is(Object.keys(client.requests).length, 0)
+})
+
+test('Using reject', async t => {
+    const server = createNode()
+    const client = createNode()
+    server.open(client.message)
+    t.is(Object.keys(client.requests).length, 0)
+    const callServer = client.open(server.message)
+    const req = callServer()
+    t.is(Object.keys(client.requests).length, 1)
+    req.catch(error => {
+        t.is(error, 'rejected')
+    })
+    req.reject('rejected')
+    t.is(Object.keys(client.requests).length, 0)
+})
+
 test.skip('Using stub', async t => {})

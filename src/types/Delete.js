@@ -1,7 +1,7 @@
-import { DELETE_KEY, ESCAPE_KEY } from '../const'
+import { ESCAPE_KEY, DELETE_KEY } from '../const'
 import { getUniqueKey } from '../util/get'
 
-function Delete() {
+export default function Delete() {
     if (!(this instanceof Delete)) {
         return new Delete()
     }
@@ -45,5 +45,3 @@ function isValidToDecode({ value }) {
 function isValidToEscape({ value }) {
     return getUniqueKey(value) === ESCAPE_KEY
 }
-
-export default Delete

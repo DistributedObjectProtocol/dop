@@ -31,10 +31,18 @@ export default function createNodeFactory({ encoders, decoders }) {
                 const request_id = ++request_id_index
                 const data = [request_id, function_id]
                 const req = createRequest()
+                const { resolve, reject } = req
+                const re = (f, value) => {
+                    f(value)
+                    delete requests[request_id]
+                    return req
+                }
                 if (args.length > 0) data.push(args)
                 req.data = data
                 req.node = api
-                req.destroy = () => delete requests[request_id]
+                req.at = new Date().getTime()
+                req.resolve = value => re(resolve, value)
+                req.reject = error => re(reject, error)
                 requests[request_id] = req
                 api.send(serialize(encode(data)))
                 return req
@@ -65,6 +73,7 @@ export default function createNodeFactory({ encoders, decoders }) {
                 }
 
                 let [id, function_id, args] = msg
+                const response_id = -id
 
                 if (isInteger(id)) {
                     const f = local_functions_id[function_id]
@@ -72,7 +81,7 @@ export default function createNodeFactory({ encoders, decoders }) {
                     // Request
                     if (id > 0 && isFunction(f)) {
                         const req = createRequest()
-                        const response = [-id]
+                        const response = [response_id]
                         req.node = api
                         req.then(value => {
                             response.push(0) // no errors
@@ -89,14 +98,12 @@ export default function createNodeFactory({ encoders, decoders }) {
                     }
 
                     // Response
-                    else if (id < 0 && requests.hasOwnProperty(id * -1)) {
-                        const request_id = id * -1
+                    else if (id < 0 && requests.hasOwnProperty(response_id)) {
                         const response_status = function_id
-                        const req = requests[request_id]
+                        const req = requests[response_id]
                         response_status === 0
                             ? req.resolve(args)
                             : req.reject(response_status)
-                        req.destroy()
                         return true
                     }
                 }
@@ -138,7 +145,8 @@ export default function createNodeFactory({ encoders, decoders }) {
             open,
             message,
             close,
-            opened: false
+            opened: false,
+            requests
         }
 
         return api

@@ -1,8 +1,8 @@
+import { ESCAPE_KEY, FUNCTION_KEY, NAME_REMOTE_FUNCTION } from '../const'
 import { getUniqueKey } from '../util/get'
 import { isInteger, isFunction } from '../util/is'
-import { FUNCTION_KEY, ESCAPE_KEY, NAME_REMOTE_FUNCTION } from '../const'
 
-const Func = {}
+export default function Func() {}
 
 Func.encode = function({ value, local_functions_map, registerLocalFunction }) {
     if (isFunction(value)) {
@@ -43,5 +43,3 @@ function isValidToDecode({ value }) {
 function isValidToEscape({ value }) {
     return getUniqueKey(value) === ESCAPE_KEY
 }
-
-export default Func
