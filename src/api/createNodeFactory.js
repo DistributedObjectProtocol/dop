@@ -27,27 +27,38 @@ export default function createNodeFactory({ encoders, decoders }) {
         }
 
         function createRemoteFunction(function_id) {
-            function f(...args) {
-                const request_id = ++request_id_index
+            const makeCall = (request_id, args) => {
                 const data = [request_id, function_id]
+                if (args.length > 0) data.push(args)
+                api.send(serialize(encode(data)))
+                return data
+            }
+            const f = (...args) => {
+                const request_id = ++request_id_index
                 const req = createRequest()
                 const { resolve, reject } = req
-                const re = (f, value) => {
+                const resolveOrReject = (f, value) => {
                     f(value)
                     delete requests[request_id]
                     return req
                 }
-                if (args.length > 0) data.push(args)
-                req.data = data
+                req.data = makeCall(request_id, args)
                 req.node = api
                 req.at = new Date().getTime()
-                req.resolve = value => re(resolve, value)
-                req.reject = error => re(reject, error)
+                req.resolve = value => resolveOrReject(resolve, value)
+                req.reject = error => resolveOrReject(reject, error)
                 requests[request_id] = req
-                api.send(serialize(encode(data)))
                 return req
             }
+            f.stub = (...args) => {
+                makeCall(0, args)
+            }
+
             Object.defineProperty(f, 'name', {
+                value: NAME_REMOTE_FUNCTION,
+                writable: false
+            })
+            Object.defineProperty(f.stub, 'name', {
                 value: NAME_REMOTE_FUNCTION,
                 writable: false
             })
@@ -78,22 +89,32 @@ export default function createNodeFactory({ encoders, decoders }) {
                 if (isInteger(id)) {
                     const f = local_functions_id[function_id]
 
-                    // Request
-                    if (id > 0 && isFunction(f)) {
-                        const req = createRequest()
-                        const response = [response_id]
-                        req.node = api
-                        req.then(value => {
-                            response.push(0) // no errors
-                            if (value !== undefined) response.push(value)
-                            api.send(serialize(encode(response)))
-                        }).catch(error => {
-                            response.push(error) // error
-                            api.send(serialize(encode(response)))
-                        })
-                        args = isArray(args) ? args : []
-                        args.push(req)
-                        localProcedureCall(f, req, args)
+                    if (id > -1 && isFunction(f)) {
+                        args = isArray(msg[2]) ? msg[2] : []
+
+                        // Request without response
+                        if (id === 0) {
+                            const req = { node: api }
+                            args.push(req)
+                            f.apply(req, args)
+                        }
+
+                        // Request
+                        else {
+                            const req = createRequest()
+                            const response = [response_id]
+                            req.node = api
+                            req.then(value => {
+                                response.push(0) // no errors
+                                if (value !== undefined) response.push(value)
+                                api.send(serialize(encode(response)))
+                            }).catch(error => {
+                                response.push(error) // error
+                                api.send(serialize(encode(response)))
+                            })
+                            args.push(req)
+                            localProcedureCall(f, req, args)
+                        }
                         return true
                     }
 

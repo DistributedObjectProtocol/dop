@@ -39,6 +39,22 @@ test('Checking api req', async t => {
     callServer()
 })
 
+test('Callback pattern example', async t => {
+    const server = createNode()
+    const client = createNode()
+
+    // server side
+    server.open(client.message, (a, b, callback) => {
+        callback(a * b)
+    })
+
+    // client side
+    const callServer = client.open(server.message)
+    callServer(3, 3, value => {
+        t.is(value, 9)
+    })
+})
+
 test('Calling a defined function .message must return true', async t => {
     const server = createNode()
     const client = createNode()
@@ -209,4 +225,34 @@ test('Using reject', async t => {
     t.is(Object.keys(client.requests).length, 0)
 })
 
-test.skip('Using stub', async t => {})
+test('Using stub', async t => {
+    const server = createNode()
+    const client = createNode()
+    server.open(client.message, (...args) => {
+        t.is(args.length, 1)
+        t.deepEqual(Object.keys(args[0]), ['node'])
+    })
+    const callServer = client.open(server.message)
+    t.is(Object.keys(client.requests).length, 0)
+    t.is(callServer.stub(), undefined)
+    t.is(Object.keys(client.requests).length, 0)
+})
+
+test('Sending remote stub functions must be replaced as null', async t => {
+    const server = createNode()
+    const client = createNode()
+
+    // server side
+    server.open(client.message, (...args) => {
+        t.is(args.length, 3)
+        t.is(args[0], null)
+        t.is(typeof args[1], 'function')
+        t.is(typeof args[2], 'object')
+        return args[1]
+    })
+
+    // client side
+    const callServer = client.open(server.message)
+    const resu = await callServer(callServer.stub, () => {})
+    t.is(resu, null)
+})
