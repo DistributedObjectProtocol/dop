@@ -25,7 +25,7 @@ test('Api', async t => {
     t.is(promise.node, server)
     t.is(typeof promise.resolve, 'function')
     t.is(typeof promise.reject, 'function')
-    t.is(typeof promise.at, 'number')
+    t.is(typeof promise.createdAt, 'number')
 })
 
 test('Checking api req', async t => {

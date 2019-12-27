@@ -42,10 +42,30 @@ test('unsubscribe', function(t) {
     t.false(store.listeners.has(listener))
 })
 
-test('applyPatch', function(t) {
+test('patch', function(t) {
     const state = { prop: false }
     const store = createStore(state)
     const patch = { prop: true }
+    const listener = p => {}
+    store.subscribe(listener)
+    const outputs = store.patch(patch)
+    t.true(Array.isArray(outputs))
+    t.is(outputs.length, 1)
+    t.is(outputs[0].listener, listener)
+    t.not(outputs[0].patch, patch)
+    t.deepEqual(outputs[0].patch, patch)
+    t.deepEqual(outputs[0].unpatch, { prop: false })
+    t.true(Array.isArray(outputs[0].mutations))
+
+    const { unpatch, mutations } = outputs
+    t.deepEqual(unpatch, { prop: false })
+    t.true(Array.isArray(mutations))
+    t.deepEqual(mutations, outputs[0].mutations)
+})
+
+test('patchAndEmit', function(t) {
+    const store = createStore({ prop: false })
+    const patch = { prop: true, newprop: true }
     const toreturnfromlistener = {}
     const listener = p => {
         t.not(p, patch)
@@ -53,11 +73,21 @@ test('applyPatch', function(t) {
         return toreturnfromlistener
     }
     store.subscribe(listener)
-    const outputs = store.applyPatch(patch)
+    const outputs = store.patchAndEmit(patch)
     t.true(Array.isArray(outputs))
     t.is(outputs.length, 1)
-    t.is(outputs[0].listener, listener)
-    t.not(outputs[0].patch, patch)
-    t.deepEqual(outputs[0].patch, patch)
-    t.deepEqual(outputs[0].unpatch, { prop: false })
+    t.is(outputs[0], toreturnfromlistener)
+})
+
+test('subscribe filter', function(t) {
+    const store = createStore({ prop: false })
+    const patch = { prop: true, newprop: true }
+    const filter = mutation => {
+        return mutation.prop !== 'newprop'
+    }
+    store.subscribe(() => {}, filter)
+    const [output] = store.patch(patch)
+    t.not(output.patch, patch)
+    t.deepEqual(output.patch, { prop: true })
+    t.deepEqual(output.unpatch, { prop: false })
 })

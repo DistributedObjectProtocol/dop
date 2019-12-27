@@ -1,5 +1,6 @@
 import merge from '../util/merge'
 import { createPatchFromMutations } from '../util/set'
+import { isFunction } from '../util/is'
 
 export default function createStoreFactory(applyPatchFunction) {
     return function createStore(state) {
@@ -17,27 +18,34 @@ export default function createStoreFactory(applyPatchFunction) {
             return listeners.delete(listener)
         }
 
-        function applyPatch(patch) {
-            const returns = []
-            const { mutations, result } = applyPatchFunction(api.state, patch)
+        function patch(patch) {
+            const outputs = []
+            let { mutations, result, unpatch } = applyPatchFunction(
+                api.state,
+                patch
+            )
+            outputs.mutations = mutations
+            outputs.unpatch = unpatch
             api.state = result
-            listeners.forEach((filter, listener) => {
-                // const mutations_filtered =
-                //     isFunction(filter)
-                //         ? mutations.filter(filter)
-                //         : mutations
 
-                // if (mutations_filtered.length > 0) {
+            listeners.forEach((filter, listener) => {
+                mutations = isFunction(filter)
+                    ? mutations.filter(filter)
+                    : mutations
+
                 const { patch, unpatch } = createPatchFromMutations(mutations)
-                returns.push({
+                outputs.push({
                     listener,
                     patch,
                     unpatch,
                     mutations
                 })
-                // }
             })
-            return returns
+            return outputs
+        }
+
+        function patchAndEmit(p) {
+            return patch(p).map(({ listener, patch }) => listener(patch))
         }
 
         const api = {
@@ -45,8 +53,9 @@ export default function createStoreFactory(applyPatchFunction) {
             listeners,
             getState,
             subscribe,
-            applyPatch,
-            unsubscribe
+            unsubscribe,
+            patch,
+            patchAndEmit
         }
 
         return api
