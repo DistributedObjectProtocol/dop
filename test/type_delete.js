@@ -1,6 +1,7 @@
 import test from 'ava'
-import { encode, decode, TYPE } from '../'
-
+import { applyPatch, encode, decode, TYPE } from '../'
+import { getNewPlain } from '../src/util/get'
+import { isPlainObject } from '../src/util/is'
 const DELETE = TYPE.Delete()
 
 function testBasic(t, patch, expected, recursive = true) {
@@ -10,6 +11,23 @@ function testBasic(t, patch, expected, recursive = true) {
     t.deepEqual(patch, decoded)
     t.not(patch, encoded)
     t.not(encoded, decoded)
+}
+
+function testUnpatch(t, target, patch, expected, reverse = true) {
+    const cloned = getNewPlain(target)
+    const output = applyPatch(target, patch)
+    const { unpatch, mutations, result } = output
+    // console.log(result)
+    if (isPlainObject(result)) {
+        // t.is(target, result)
+    }
+    target = result
+    t.deepEqual(target, expected)
+    if (reverse) {
+        const output2 = applyPatch(target, unpatch)
+        t.deepEqual(output2.result, cloned)
+    }
+    return { unpatch, mutations }
 }
 
 test('Valid type', function(t) {
@@ -98,4 +116,12 @@ test('Decode alone', function(t) {
         ignore: { $escape: DELETE, two: DELETE }
     }
     t.deepEqual(decode(patch), expected)
+})
+
+test('patch', function(t) {
+    const target = { value: 12345 }
+    const patch = { value: TYPE.Delete() }
+    const expected = {}
+
+    testUnpatch(t, target, patch, expected)
 })
