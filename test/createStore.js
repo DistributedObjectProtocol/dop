@@ -82,12 +82,13 @@ test('patchAndEmit', function(t) {
 test('subscribe filter', function(t) {
     const store = createStore({ prop: false })
     const patch = { prop: true, newprop: true }
-    const filter = mutation => {
-        return mutation.prop !== 'newprop'
-    }
+    const filter = mutation => mutation.prop !== 'newprop'
     store.subscribe(() => {}, filter)
-    const [output] = store.patch(patch)
+    const result = store.patch(patch)
+    const [output] = result
     t.not(output.patch, patch)
     t.deepEqual(output.patch, { prop: true })
     t.deepEqual(output.unpatch, { prop: false })
+    t.is(output.mutations.length, 1)
+    t.is(result.mutations.length, 2)
 })

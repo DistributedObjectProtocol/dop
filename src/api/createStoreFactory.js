@@ -41,6 +41,7 @@ export default function createStoreFactory(applyPatchFunction) {
                     mutations
                 })
             })
+
             return outputs
         }
 
