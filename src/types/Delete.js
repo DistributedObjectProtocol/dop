@@ -19,7 +19,7 @@ Delete.patch = function({ destiny, prop, oldValue, had_prop }) {
 
 Delete.encode = function({ value }) {
     if (value instanceof Delete) {
-        return { [DELETE_KEY]: 1 } // we don't go deeper
+        return { [DELETE_KEY]: 0 } // we don't go deeper
     } else if (isValidToDecode({ value })) {
         return { [ESCAPE_KEY]: value } // we don't go deeper
     }
@@ -39,7 +39,7 @@ Delete.decode = function({ value }) {
 }
 
 function isValidToDecode({ value }) {
-    return getUniqueKey(value) === DELETE_KEY && value[DELETE_KEY] === 1
+    return getUniqueKey(value) === DELETE_KEY && value[DELETE_KEY] === 0
 }
 
 function isValidToEscape({ value }) {
