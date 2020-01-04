@@ -136,3 +136,19 @@ test('testing that last test works correctly without replace', function(t) {
     t.is(copyvalue, target.value)
     t.deepEqual(copyvalue, target.value)
 })
+
+test('replace array', function(t) {
+    const target = { value: { a: 1, b: 2 } }
+    const patch = TYPE.Replace([1, 2])
+    const expected = [1, 2]
+
+    testUnpatch(t, target, patch, expected)
+})
+
+test('same behavior as replace array', function(t) {
+    const target = { value: { a: 1, b: 2 } }
+    const patch = [1, 2]
+    const expected = [1, 2]
+
+    testUnpatch(t, target, patch, expected)
+})
