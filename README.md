@@ -17,8 +17,6 @@
 
 Distributed Object Protocol is a thin layer on top of your data network that helps you communicate server and clients (nodes) using [RPCs](https://en.wikipedia.org/wiki/Remote_procedure_call). It is also a pattern that makes easy update, mutate or even sync the state of your App using [JSON Merge Patch](https://tools.ietf.org/html/rfc7386).
 
-This repository is the JavaScript implementation of the protocol that runs on node.js and Browsers.
-
 ## Quick example using RPCs with WebSockets
 
 ```js
@@ -46,7 +44,7 @@ wss.on('connection', ws => {
 // Client (Browser)
 import { createNode } from 'dop'
 const ws = new WebSocket('ws://localhost:8080')
-const server = dop.createNode()
+const server = createNode()
 
 ws.onopen = async () => {
     const getOperations = server.open(msg => ws.send(JSON.stringify(msg)))
