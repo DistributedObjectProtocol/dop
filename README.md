@@ -1,5 +1,3 @@
-<!-- <p align="center"><a href="https://distributedobjectprotocol.org"><img width="200"src="https://distributedobjectprotocol.org/img/logo.svg"></a></p> -->
-
 <div align="center">
 
 <p align="center"><a href="https://distributedobjectprotocol.org"><img width="200"src="https://distributedobjectprotocol.org/img/logo.svg"></a></p>
@@ -25,7 +23,7 @@ const { createNode } = require('dop')
 const WebSocket = require('ws')
 const wss = new WebSocket.Server({ port: 8080 })
 
-function getOperations() {
+function getCalculator() {
     return {
         sum: (a, b) => a + b,
         multiply: (a, b) => a * b
@@ -34,7 +32,7 @@ function getOperations() {
 
 wss.on('connection', ws => {
     const client = createNode()
-    client.open(msg => ws.send(JSON.stringify(msg)), getOperations)
+    client.open(msg => ws.send(JSON.stringify(msg)), getCalculator)
     ws.on('message', msg => client.message(JSON.parse(msg)))
     ws.on('close', client.close)
 })
@@ -47,8 +45,8 @@ const ws = new WebSocket('ws://localhost:8080')
 const server = createNode()
 
 ws.onopen = async () => {
-    const getOperations = server.open(msg => ws.send(JSON.stringify(msg)))
-    const { sum, multiply } = await getOperations()
+    const getCalculator = server.open(msg => ws.send(JSON.stringify(msg)))
+    const { sum, multiply } = await getCalculator()
     const result1 = await sum(5, 5)
     const result2 = await multiply(5, 5)
     console.log(result1, result2) // 10, 25
@@ -57,7 +55,7 @@ ws.onmessage = msg => server.message(JSON.parse(msg.data))
 ws.onclose = server.close
 ```
 
-Check the website for more detailed information [https://distributedobjectprotocol.org/](https://distributedobjectprotocol.org/)
+Check the website for more info [https://distributedobjectprotocol.org/](https://distributedobjectprotocol.org/)
 
 ## License
 
