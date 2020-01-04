@@ -170,31 +170,6 @@ test('Escaping $function', async t => {
     t.deepEqual(resu, { $function: 1 })
 })
 
-test('Passing serializer and deserializer', async t => {
-    const server = createNode({
-        serialize: JSON.stringify,
-        deserialize: JSON.parse
-    })
-    const client = createNode({
-        serialize: JSON.stringify,
-        deserialize: JSON.parse
-    })
-
-    client.open(
-        msg => {
-            t.is(msg, JSON.stringify([-1, 0, 10]))
-            server.message(msg)
-        },
-        (a, b) => a * b
-    )
-    const callClient = server.open(msg => {
-        t.is(msg, JSON.stringify([1, 0, [2, 5]]))
-        client.message(msg)
-    })
-    const ten = await callClient(2, 5)
-    t.is(ten, 10)
-})
-
 test('Using resolve', async t => {
     const server = createNode()
     const client = createNode()

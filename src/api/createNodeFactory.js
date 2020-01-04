@@ -6,10 +6,7 @@ import { NAME_REMOTE_FUNCTION } from '../const'
 import Func from '../types/Function'
 
 export default function createNodeFactory({ encoders, decoders }) {
-    return function createNode({
-        serialize = v => v,
-        deserialize = v => v
-    } = {}) {
+    return function createNode() {
         const requests = {}
         const local_functions_id = {}
         const local_functions_map = new Map()
@@ -30,7 +27,7 @@ export default function createNodeFactory({ encoders, decoders }) {
             const makeCall = (request_id, args) => {
                 const data = [request_id, function_id]
                 if (args.length > 0) data.push(args)
-                api.send(serialize(encode(data)))
+                api.send(encode(data))
                 return data
             }
             const f = (...args) => {
@@ -77,9 +74,9 @@ export default function createNodeFactory({ encoders, decoders }) {
         function message(msg) {
             if (api.opened) {
                 try {
-                    msg = decode(deserialize(msg))
+                    msg = decode(msg)
                 } catch (e) {
-                    // Invalid array to deserialize or decode
+                    // Invalid array to de or decode
                     return false
                 }
 
@@ -107,10 +104,10 @@ export default function createNodeFactory({ encoders, decoders }) {
                             req.then(value => {
                                 response.push(0) // no errors
                                 if (value !== undefined) response.push(value)
-                                api.send(serialize(encode(response)))
+                                api.send(encode(response))
                             }).catch(error => {
                                 response.push(error) // error
-                                api.send(serialize(encode(response)))
+                                api.send(encode(response))
                             })
                             args.push(req)
                             localProcedureCall(f, req, args)

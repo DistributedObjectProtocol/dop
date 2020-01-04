@@ -1,41 +1,63 @@
+<!-- <p align="center"><a href="https://distributedobjectprotocol.org"><img width="200"src="https://distributedobjectprotocol.org/img/logo.svg"></a></p> -->
+
+<div align="center">
+
 <p align="center"><a href="https://distributedobjectprotocol.org"><img width="200"src="https://distributedobjectprotocol.org/img/logo.svg"></a></p>
 
-<p align="center">
-    <a href="https://www.npmjs.com/package/dop"><img alt="npm version" src="https://img.shields.io/npm/v/dop?style=for-the-badge&labelColor=000000"></a>
-    <!-- <a href="https://travis-ci.org/DistributedObjectProtocol/dop"><img alt="Build Status" src="https://api.travis-ci.org/DistributedObjectProtocol/dop.svg?branch=master"></a> -->
-    <a href="https://www.npmjs.com/package/dop"><img alt="license" src="https://img.shields.io/npm/l/dop?style=for-the-badge&labelColor=000000"></a>
-    <!-- <a href="https://spectrum.chat/dop"><img alt="Join the community" src="https://withspectrum.github.io/badge/badge.svg"></a> -->
-</p>
+[![npm](https://img.shields.io/npm/v/dop?style=flat-square)](https://www.npmjs.com/package/dop)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/dop?style=flat-square)](https://bundlephobia.com/result?p=dop)
+[![Build Status](https://api.travis-ci.org/DistributedObjectProtocol/dop.svg?branch=master&style=flat-square)](https://travis-ci.org/DistributedObjectProtocol/dop)
+![GitHub](https://img.shields.io/github/license/artalar/reatom?style=flat-square)
 
-## Distributed Object Protocol is for
+<a href="https://distributedobjectprotocol.org">https://distributedobjectprotocol.org/</a>
+<br/>
+<br/>
 
-**State management**, Remote procedure calls, Reactive programming,
-Data sync, Pub/Sub, Optimistic updates, Time-travel debugging, Unidirectional data flow and **Real time apps**.
+</div>
+
+Distributed Object Protocol is a thin layer on top of your data network that helps you communicate server and clients (nodes) using [RPCs](https://en.wikipedia.org/wiki/Remote_procedure_call). It is also a pattern that makes easy update, mutate or even sync the state of your App using [JSON Merge Patch](https://tools.ietf.org/html/rfc7386).
 
 This repository is the JavaScript implementation of the protocol that runs on node.js and Browsers.
 
-<!--
-## Connecting two nodes
+## Quick example using RPCs with WebSockets
 
 ```js
 // Server (node.js)
-const dop = require('dop')
-const object = dop.register({
-    fullname: 'John Doe',
-    square: number => number * number
+const { createNode } = require('dop')
+const WebSocket = require('ws')
+const wss = new WebSocket.Server({ port: 8080 })
+
+function getOperations() {
+    return {
+        sum: (a, b) => a + b,
+        multiply: (a, b) => a * b
+    }
+}
+
+wss.on('connection', ws => {
+    const client = createNode()
+    client.open(msg => ws.send(JSON.stringify(msg)), getOperations)
+    ws.on('message', msg => client.message(JSON.parse(msg)))
+    ws.on('close', client.close)
 })
-dop.listen() // WebSockets on port 4444 (https://github.com/websockets/ws)
-dop.onSubscribe(() => object)
 ```
 
 ```js
-// Client (browser)
-import dop from 'dop'
-const server = dop.connect() // Native WebSockets 'ws://localhost:4444'
-const objectFromServer = await server.subscribe()
-console.log(objectFromServer.fullname) // > "John Doe"
-console.log(await objectFromServer.square(5)) // > 25
-```-->
+// Client (Browser)
+import { createNode } from 'dop'
+const ws = new WebSocket('ws://localhost:8080')
+const server = dop.createNode()
+
+ws.onopen = async () => {
+    const getOperations = server.open(msg => ws.send(JSON.stringify(msg)))
+    const { sum, multiply } = await getOperations()
+    const result1 = await sum(5, 5)
+    const result2 = await multiply(5, 5)
+    console.log(result1, result2) // 10, 25
+}
+ws.onmessage = msg => server.message(JSON.parse(msg.data))
+ws.onclose = server.close
+```
 
 Check the website for more detailed information [https://distributedobjectprotocol.org/](https://distributedobjectprotocol.org/)
 
