@@ -8,7 +8,7 @@
 ![GitHub](https://img.shields.io/github/license/artalar/reatom?style=flat-square)
 
 <br/>
-<a href="https://distributedobjectprotocol.org">https://distributedobjectprotocol.org/</a>
+<a href="https://distributedobjectprotocol.org/guide/javascript">https://distributedobjectprotocol.org/</a>
 <br/>
 <br/>
 
@@ -56,7 +56,7 @@ ws.onmessage = msg => server.message(JSON.parse(msg.data))
 ws.onclose = server.close
 ```
 
-Check the website for more info [https://distributedobjectprotocol.org/](https://distributedobjectprotocol.org/)
+Check the website for more info [https://distributedobjectprotocol.org/](https://distributedobjectprotocol.org/guide/javascript)
 
 ## License
 
