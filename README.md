@@ -1,5 +1,5 @@
 
-<p align="center"><a href="https://distributedobjectprotocol.org"><img width="200"src="https://distributedobjectprotocol.org/img/logo.svg"></a></p>
+<p align="center"><a href="https://distributedobjectprotocol.org"><img width="200" src="https://distributedobjectprotocol.org/img/logo.svg"></a></p>
 
 <p align="center">
     <a href="https://www.npmjs.com/package/dop"><img alt="npm version" src="https://img.shields.io/npm/v/dop.svg"></a>
