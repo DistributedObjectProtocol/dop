@@ -7,6 +7,7 @@
 [![Build Status](https://api.travis-ci.org/DistributedObjectProtocol/dop.svg?branch=master&style=flat-square)](https://travis-ci.org/DistributedObjectProtocol/dop)
 ![GitHub](https://img.shields.io/github/license/artalar/reatom?style=flat-square)
 
+<br/>
 <a href="https://distributedobjectprotocol.org">https://distributedobjectprotocol.org/</a>
 <br/>
 <br/>
