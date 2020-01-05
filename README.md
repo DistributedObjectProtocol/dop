@@ -1,6 +1,6 @@
 <div align="center">
 
-<p align="center"><a href="https://distributedobjectprotocol.org"><img width="200" src="https://distributedobjectprotocol.org/img/logo.svg"></a></p>
+<p align="center"><a href="https://distributedobjectprotocol.org"><img width="200"  src="https://distributedobjectprotocol.org/img/logo.svg"></a></p>
 
 [![npm](https://img.shields.io/npm/v/dop?style=flat-square)](https://www.npmjs.com/package/dop)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/dop?style=flat-square)](https://bundlephobia.com/result?p=dop)
