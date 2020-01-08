@@ -114,13 +114,14 @@ test('patch', function(t) {
 })
 
 test('patch should replace the complete object', function(t) {
+    const obj_to_replace = { a: 1, b: 3 }
     const target = { value: { a: 1, b: 2 } }
-    const patch = { value: TYPE.Replace({ a: 1, b: 3 }) }
+    const patch = { value: TYPE.Replace(obj_to_replace) }
     const expected = { value: { a: 1, b: 3 } }
-
     const copyvalue = target.value
 
     testUnpatch(t, target, patch, expected)
+    t.is(obj_to_replace, target.value)
     t.not(copyvalue, target.value)
     t.deepEqual(copyvalue, target.value)
 })

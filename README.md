@@ -14,7 +14,7 @@
 
 </div>
 
-Distributed Object Protocol is a thin layer on top of your data network that helps you communicate server and clients (nodes) using [RPCs](https://en.wikipedia.org/wiki/Remote_procedure_call). It is also a pattern that makes easy update, mutate or even sync the state of your App using [JSON Merge Patch](https://tools.ietf.org/html/rfc7386).
+Distributed Object Protocol is a thin layer on top of your data network that helps you communicate server and clients (nodes) using [RPCs](https://en.wikipedia.org/wiki/Remote_procedure_call). It is also a pattern that makes easy update, mutate or even sync the state of your App using [Patches](https://tools.ietf.org/html/rfc7386).
 
 ## Quick example using RPCs with WebSockets
 
