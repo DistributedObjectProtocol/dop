@@ -8,13 +8,13 @@ test('createStore', function(t) {
     t.is(state, store.state)
 })
 
-test('getState gets a deep copy', function(t) {
-    const state = { prop: true }
-    const store = createStore(state)
+// test('getState gets a deep copy', function(t) {
+//     const state = { prop: true }
+//     const store = createStore(state)
 
-    t.not(state, store.getState())
-    t.deepEqual(state, store.getState())
-})
+//     t.not(state, store.getState())
+//     t.deepEqual(state, store.getState())
+// })
 
 test('subscribe', function(t) {
     const state = { prop: true }
@@ -42,13 +42,13 @@ test('unsubscribe', function(t) {
     t.false(store.listeners.has(listener))
 })
 
-test('patch', function(t) {
+test('applyPatch', function(t) {
     const state = { prop: false }
     const store = createStore(state)
     const patch = { prop: true }
     const listener = p => {}
     store.subscribe(listener)
-    const outputs = store.patch(patch)
+    const outputs = store.applyPatch(patch)
     t.true(Array.isArray(outputs))
     t.is(outputs.length, 1)
     t.is(outputs[0].listener, listener)
@@ -63,28 +63,28 @@ test('patch', function(t) {
     t.deepEqual(mutations, outputs[0].mutations)
 })
 
-test('patchAndEmit', function(t) {
-    const store = createStore({ prop: false })
-    const patch = { prop: true, newprop: true }
-    const toreturnfromlistener = {}
-    const listener = p => {
-        t.not(p, patch)
-        t.deepEqual(p, patch)
-        return toreturnfromlistener
-    }
-    store.subscribe(listener)
-    const outputs = store.patchAndEmit(patch)
-    t.true(Array.isArray(outputs))
-    t.is(outputs.length, 1)
-    t.is(outputs[0], toreturnfromlistener)
-})
+// test('patchAndEmit', function(t) {
+//     const store = createStore({ prop: false })
+//     const patch = { prop: true, newprop: true }
+//     const toreturnfromlistener = {}
+//     const listener = p => {
+//         t.not(p, patch)
+//         t.deepEqual(p, patch)
+//         return toreturnfromlistener
+//     }
+//     store.subscribe(listener)
+//     const outputs = store.patchAndEmit(patch)
+//     t.true(Array.isArray(outputs))
+//     t.is(outputs.length, 1)
+//     t.is(outputs[0], toreturnfromlistener)
+// })
 
 test('subscribe filter', function(t) {
     const store = createStore({ prop: false })
     const patch = { prop: true, newprop: true }
     const filter = mutation => mutation.prop !== 'newprop'
     store.subscribe(() => {}, filter)
-    const result = store.patch(patch)
+    const result = store.applyPatch(patch)
     const [output] = result
     t.not(output.patch, patch)
     t.deepEqual(output.patch, { prop: true })

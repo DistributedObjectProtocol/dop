@@ -6,19 +6,15 @@ export default function createStoreFactory(applyPatchFunction) {
     return function createStore(state) {
         const listeners = new Map()
 
-        function getState() {
-            return merge({}, api.state)
-        }
-
         function subscribe(listener, filter) {
-            return listeners.set(listener, filter)
+            listeners.set(listener, filter)
         }
 
         function unsubscribe(listener) {
-            return listeners.delete(listener)
+            listeners.delete(listener)
         }
 
-        function patch(patch) {
+        function applyPatch(patch) {
             const outputs = []
             let { mutations, result, unpatch } = applyPatchFunction(
                 api.state,
@@ -45,18 +41,12 @@ export default function createStoreFactory(applyPatchFunction) {
             return outputs
         }
 
-        function patchAndEmit(p) {
-            return patch(p).map(({ listener, patch }) => listener(patch))
-        }
-
         const api = {
             state,
             listeners,
-            getState,
             subscribe,
             unsubscribe,
-            patch,
-            patchAndEmit
+            applyPatch
         }
 
         return api

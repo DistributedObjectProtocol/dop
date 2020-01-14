@@ -24,12 +24,9 @@ const { createNode } = require('dop')
 const WebSocket = require('ws')
 const wss = new WebSocket.Server({ port: 8080 })
 
-function getCalculator() {
-    return {
-        sum: (a, b) => a + b,
-        multiply: (a, b) => a * b
-    }
-}
+const sum = (a, b) => a + b
+const multiply = (a, b) => a * b
+const getCalculator = () => ({ sum, multiply })
 
 wss.on('connection', ws => {
     const client = createNode()
