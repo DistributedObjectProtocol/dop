@@ -145,29 +145,29 @@ test('Testing messages', async t => {
     t.is(ten, 10)
 })
 
-test('Escaping $function', async t => {
+test('Escaping $f', async t => {
     const server = createNode()
     const client = createNode()
 
     // server side
     server.open(
         msg => {
-            t.deepEqual(msg, [-1, 0, { $escape: { $function: 1 } }])
+            t.deepEqual(msg, [-1, 0, { $escape: { $f: 1 } }])
             client.message(msg)
         },
         arg => {
-            t.deepEqual(arg, { $function: 0 })
-            return { $function: 1 }
+            t.deepEqual(arg, { $f: 0 })
+            return { $f: 1 }
         }
     )
 
     // client side
     const callServer = client.open(msg => {
-        t.deepEqual(msg, [1, 0, [{ $escape: { $function: 0 } }]])
+        t.deepEqual(msg, [1, 0, [{ $escape: { $f: 0 } }]])
         server.message(msg)
     })
-    const resu = await callServer({ $function: 0 })
-    t.deepEqual(resu, { $function: 1 })
+    const resu = await callServer({ $f: 0 })
+    t.deepEqual(resu, { $f: 1 })
 })
 
 test('Using resolve', async t => {
