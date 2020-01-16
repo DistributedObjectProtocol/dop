@@ -2,16 +2,15 @@ import { isFunction, isInteger, isArray } from '../util/is'
 import createRequest from '../util/createRequest'
 import localProcedureCall from '../util/localProcedureCall'
 import converter from '../util/converter'
-import { NAME_REMOTE_FUNCTION } from '../const'
 import Func from '../types/Function'
 
 export default function createNodeFactory({ encoders, decoders }) {
     return function createNode() {
         const requests = {}
         const local_functions_id = {}
-        const local_functions_map = new Map()
+        const local_functions = new Map()
         const remote_functions_id = {}
-        // const remote_functions_map = new Map()
+        const remote_functions = new Set()
         let local_function_index = 0
         let remote_function_index = 0
         let request_id_index = 0
@@ -19,7 +18,7 @@ export default function createNodeFactory({ encoders, decoders }) {
         function registerLocalFunction(f) {
             const function_id = local_function_index++
             local_functions_id[function_id] = f
-            local_functions_map.set(f, function_id)
+            local_functions.set(f, function_id)
             return function_id
         }
 
@@ -51,14 +50,8 @@ export default function createNodeFactory({ encoders, decoders }) {
                 makeCall(0, args)
             }
 
-            Object.defineProperty(f, 'name', {
-                value: NAME_REMOTE_FUNCTION,
-                writable: false
-            })
-            Object.defineProperty(f.stub, 'name', {
-                value: NAME_REMOTE_FUNCTION,
-                writable: false
-            })
+            remote_functions.add(f)
+            remote_functions.add(f.stub)
             remote_functions_id[function_id] = f
             return f
         }
@@ -139,7 +132,8 @@ export default function createNodeFactory({ encoders, decoders }) {
                 encoders.concat(({ value }) =>
                     Func.encode({
                         value,
-                        local_functions_map,
+                        remote_functions,
+                        local_functions,
                         registerLocalFunction
                     })
                 )
@@ -164,7 +158,8 @@ export default function createNodeFactory({ encoders, decoders }) {
             message,
             close,
             opened: false,
-            requests
+            requests,
+            remote_functions // Exposing this can be used to know if a function is a remote function
         }
 
         return api

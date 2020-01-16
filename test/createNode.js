@@ -17,7 +17,7 @@ test('Api', async t => {
     const callClient = server.open(client.message)
     const promise = callClient(2, 5)
 
-    t.deepEqual(Object.keys(server).length, 6)
+    t.deepEqual(Object.keys(server).length, 7)
 
     t.deepEqual(Object.keys(promise).length, 5)
     t.true(promise instanceof Promise)
@@ -107,7 +107,7 @@ test('Passing same functions should not create a new one', async t => {
     callClient(repeated, repeated, receiveFromClient)
 })
 
-test('Sending remote functions must be replaced as null', async t => {
+test('Sending remote functions that is from the same node must be replaced as null', async t => {
     const server = createNode()
     const client = createNode()
 
@@ -213,7 +213,7 @@ test('Using stub', async t => {
     t.is(Object.keys(client.requests).length, 0)
 })
 
-test('Sending remote stub functions must be replaced as null', async t => {
+test('Sending remote stub functions that is from the same node must be replaced as null', async t => {
     const server = createNode()
     const client = createNode()
 
@@ -230,4 +230,29 @@ test('Sending remote stub functions must be replaced as null', async t => {
     const callServer = client.open(server.message)
     const resu = await callServer(callServer.stub, () => {})
     t.is(resu, null)
+})
+
+test('Calling functions from client to server with another node in the middle', async t => {
+    const server = createNode()
+    const middleServer = createNode()
+    const middleClient = createNode()
+    const client = createNode()
+
+    // server side
+    server.open(middleServer.message, () => ({
+        multiply: (a, b) => a * b
+    }))
+
+    // middle side
+    const callServer = middleServer.open(server.message)
+    const objectServer = await callServer()
+    middleClient.open(client.message, () => ({
+        multiply: objectServer.multiply
+    }))
+
+    // client
+    const callMiddle = client.open(middleClient.message)
+    const objectMiddle = await callMiddle()
+    const result = await objectMiddle.multiply(5, 5)
+    t.is(result, 25)
 })

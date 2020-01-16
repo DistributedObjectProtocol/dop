@@ -1,6 +1,6 @@
 import test from 'ava'
 import dop from '../'
-import { createNode, isRemoteFunction } from '../'
+import { createNode } from '../'
 
 const exported = [
     'factory',
@@ -10,8 +10,7 @@ const exported = [
     'applyPatch',
     'createNode',
     'createStore',
-    'TYPE',
-    'isRemoteFunction'
+    'TYPE'
 ]
 
 test('Checking exported params', function(t) {
@@ -27,8 +26,9 @@ test('Checking factory', function(t) {
 
 test('isRemoteFunction', async t => {
     const node = createNode()
+    const { remote_functions } = node
+    const isRemoteFunction = f => remote_functions.has(f)
     const callClient = node.open()
-    t.is(callClient.name, '~dopRemoteFunction')
     t.true(isRemoteFunction(callClient))
     t.false(isRemoteFunction(() => {}))
     t.false(isRemoteFunction('other'))

@@ -1,6 +1,5 @@
 import merge from './util/merge'
 import converter from './util/converter'
-import { isRemoteFunction } from './util/is'
 import createNodeFactory from './api/createNodeFactory'
 import createStoreFactory from './api/createStoreFactory'
 import applyPatchFactory from './api/applyPatchFactory'
@@ -27,8 +26,7 @@ function factory() {
         applyPatch,
         createNode,
         createStore,
-        TYPE,
-        isRemoteFunction
+        TYPE
     }
 }
 

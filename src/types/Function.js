@@ -1,14 +1,19 @@
-import { ESCAPE_KEY, FUNCTION_KEY, NAME_REMOTE_FUNCTION } from '../const'
+import { ESCAPE_KEY, FUNCTION_KEY } from '../const'
 import { getUniqueKey } from '../util/get'
 import { isInteger, isFunction } from '../util/is'
 
 export default function Func() {}
 
-Func.encode = function({ value, local_functions_map, registerLocalFunction }) {
+Func.encode = function({
+    value,
+    remote_functions,
+    local_functions,
+    registerLocalFunction
+}) {
     if (isFunction(value)) {
-        if (value.name === NAME_REMOTE_FUNCTION) return null
-        const function_id = local_functions_map.has(value)
-            ? local_functions_map.get(value)
+        if (remote_functions.has(value)) return null
+        const function_id = local_functions.has(value)
+            ? local_functions.get(value)
             : registerLocalFunction(value)
         return { [FUNCTION_KEY]: function_id }
     } else if (isValidToDecode({ value })) {

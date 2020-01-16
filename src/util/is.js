@@ -1,5 +1,3 @@
-import { NAME_REMOTE_FUNCTION } from '../const'
-
 export function is(value) {
     if (value === null) return 'null'
     if (isArray(value)) return 'array'
@@ -39,8 +37,4 @@ export function isInteger(number) {
 
 export function isString(string) {
     return typeof string === 'string'
-}
-
-export function isRemoteFunction(f) {
-    return isFunction(f) && f.name === NAME_REMOTE_FUNCTION
 }
