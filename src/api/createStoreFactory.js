@@ -7,7 +7,7 @@ export default function createStoreFactory(applyPatchFunction) {
 
         function subscribe(listener, filter) {
             listeners.set(listener, filter)
-            return () => unsubscribe(listener) //This has become kind of standard
+            return () => unsubscribe(listener) // This has become a kind of standard
         }
 
         function unsubscribe(listener) {

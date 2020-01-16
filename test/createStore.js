@@ -104,3 +104,22 @@ test('subscribe filter', function(t) {
     t.is(output.mutations.length, 1)
     t.is(result.mutations.length, 2)
 })
+
+test('subscribe output of applyPatch must return same length that listeners', function(t) {
+    const store = createStore({ prop: false })
+    const patch = { prop: true, newprop: true }
+    store.subscribe(
+        () => {},
+        () => true
+    )
+    store.subscribe(
+        () => {},
+        () => false
+    )
+    const output = store.applyPatch(patch)
+    t.is(output.length, 2)
+    t.deepEqual(output[0].patch, patch)
+    t.deepEqual(output[1].patch, {})
+    t.deepEqual(output[0].mutations.length, 2)
+    t.deepEqual(output[1].mutations.length, 0)
+})
