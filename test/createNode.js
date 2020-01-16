@@ -233,14 +233,19 @@ test('Sending remote stub functions that is from the same node must be replaced 
 })
 
 test('Calling functions from client to server with another node in the middle', async t => {
+    // connection 1
     const server = createNode()
     const middleServer = createNode()
+    // connection 2
     const middleClient = createNode()
     const client = createNode()
 
     // server side
     server.open(middleServer.message, () => ({
-        multiply: (a, b) => a * b
+        multiply: (a, b) => ({
+            sum: (c, d) => c + d,
+            value: a * b
+        })
     }))
 
     // middle side
@@ -250,9 +255,11 @@ test('Calling functions from client to server with another node in the middle', 
         multiply: objectServer.multiply
     }))
 
-    // client
+    // client side
     const callMiddle = client.open(middleClient.message)
     const objectMiddle = await callMiddle()
-    const result = await objectMiddle.multiply(5, 5)
-    t.is(result, 25)
+    const { value, sum } = await objectMiddle.multiply(5, 5)
+    t.is(value, 25)
+    const result = await sum(5, 5)
+    t.is(result, 10)
 })
