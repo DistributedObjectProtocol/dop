@@ -30,6 +30,18 @@ test('subscribe', function(t) {
     t.is(store.listeners.get(listener), undefined)
 })
 
+test('unsubscribe from subscribe', function(t) {
+    const state = { prop: true }
+    const store = createStore(state)
+    const listener = () => {}
+    const unsubscribe = store.subscribe(listener)
+    t.true(store.listeners.has(listener))
+    t.is(store.listeners.size, 1)
+    unsubscribe()
+    t.is(store.listeners.size, 0)
+    t.false(store.listeners.has(listener))
+})
+
 test('unsubscribe', function(t) {
     const state = { prop: true }
     const store = createStore(state)

@@ -328,6 +328,28 @@ test('same patch as target generate no mutations', function(t) {
     t.deepEqual(unpatch, {})
 })
 
+test('same array as patch generate no mutations even if we mutate target object', function(t) {
+    const target = { array: [1, 2, 3] }
+    const original = target.array
+    original.push(4)
+    const patch = { array: target.array }
+    const expected = { array: [1, 2, 3, 4] }
+    const { mutations, unpatch } = testUnpatch(t, target, patch, expected)
+    t.is(mutations.length, 0)
+    t.deepEqual(unpatch, {})
+    t.is(target.array, original)
+})
+
+test('slice array as patch generate mutation', function(t) {
+    const target = { array: [1, 2, 3] }
+    const original = target.array
+    const patch = { array: target.array.slice(0).concat(4) }
+    const expected = { array: [1, 2, 3, 4] }
+    const { mutations, unpatch } = testUnpatch(t, target, patch, expected)
+    t.is(mutations.length, 1)
+    t.not(target.array, original)
+})
+
 test('no mutations', function(t) {
     const target = { value: false }
     const patch = {}

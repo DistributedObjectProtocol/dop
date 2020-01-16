@@ -1,4 +1,3 @@
-import merge from '../util/merge'
 import { createPatchFromMutations } from '../util/set'
 import { isFunction } from '../util/is'
 
@@ -8,6 +7,7 @@ export default function createStoreFactory(applyPatchFunction) {
 
         function subscribe(listener, filter) {
             listeners.set(listener, filter)
+            return () => unsubscribe(listener) //This has become kind of standard
         }
 
         function unsubscribe(listener) {
@@ -27,7 +27,7 @@ export default function createStoreFactory(applyPatchFunction) {
             listeners.forEach((filter, listener) => {
                 mutations = isFunction(filter)
                     ? mutations.filter(filter)
-                    : mutations
+                    : mutations //.slice(0)
 
                 const { patch, unpatch } = createPatchFromMutations(mutations)
                 outputs.push({
