@@ -110,16 +110,16 @@ test('subscribe output of applyPatch must return same length that listeners', fu
     const patch = { prop: true, newprop: true }
     store.subscribe(
         () => {},
-        () => true
+        () => false
     )
     store.subscribe(
         () => {},
-        () => false
+        () => true
     )
     const output = store.applyPatch(patch)
     t.is(output.length, 2)
-    t.deepEqual(output[0].patch, patch)
-    t.deepEqual(output[1].patch, {})
-    t.deepEqual(output[0].mutations.length, 2)
-    t.deepEqual(output[1].mutations.length, 0)
+    t.deepEqual(output[0].patch, {})
+    t.deepEqual(output[1].patch, patch)
+    t.deepEqual(output[0].mutations.length, 0)
+    t.deepEqual(output[1].mutations.length, 2)
 })

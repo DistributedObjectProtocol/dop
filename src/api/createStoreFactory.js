@@ -16,7 +16,7 @@ export default function createStoreFactory(applyPatchFunction) {
 
         function applyPatch(patch) {
             const outputs = []
-            let { mutations, result, unpatch } = applyPatchFunction(
+            const { mutations, result, unpatch } = applyPatchFunction(
                 api.state,
                 patch
             )
@@ -25,16 +25,16 @@ export default function createStoreFactory(applyPatchFunction) {
             api.state = result
 
             listeners.forEach((filter, listener) => {
-                mutations = isFunction(filter)
+                const mts = isFunction(filter)
                     ? mutations.filter(filter)
                     : mutations //.slice(0)
 
-                const { patch, unpatch } = createPatchFromMutations(mutations)
+                const { patch, unpatch } = createPatchFromMutations(mts)
                 outputs.push({
                     listener,
                     patch,
                     unpatch,
-                    mutations
+                    mutations: mts
                 })
             })
 
