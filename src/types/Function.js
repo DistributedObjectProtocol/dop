@@ -28,8 +28,8 @@ Func.decode = function({ value, remote_functions_id, createRemoteFunction }) {
         isInteger(value[FUNCTION_KEY])
     ) {
         const function_id = value[FUNCTION_KEY]
-        const f = remote_functions_id[function_id]
-        return isFunction(f) ? f : createRemoteFunction(function_id)
+        const fn = remote_functions_id[function_id]
+        return isFunction(fn) ? fn : createRemoteFunction(function_id)
     } else if (
         isValidToEscape({ value }) &&
         isValidToDecode({ value: value[ESCAPE_KEY] })

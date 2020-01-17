@@ -1,6 +1,6 @@
-export default function localProcedureCall(f, req, args) {
+export default function localProcedureCall(fn, req, args) {
     try {
-        const output = f.apply(req, args)
+        const output = fn.apply(req, args)
         if (output !== req) {
             output instanceof Promise
                 ? output.then(req.resolve).catch(req.reject)

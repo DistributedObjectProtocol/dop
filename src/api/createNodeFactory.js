@@ -15,10 +15,10 @@ export default function createNodeFactory({ encoders, decoders }) {
         let remote_function_index = 0
         let request_id_index = 0
 
-        function registerLocalFunction(f) {
+        function registerLocalFunction(fn) {
             const function_id = local_function_index++
-            local_functions_id[function_id] = f
-            local_functions.set(f, function_id)
+            local_functions_id[function_id] = fn
+            local_functions.set(fn, function_id)
             return function_id
         }
 
@@ -29,12 +29,12 @@ export default function createNodeFactory({ encoders, decoders }) {
                 api.send(encode(data))
                 return data
             }
-            const f = (...args) => {
+            const fn = (...args) => {
                 const request_id = ++request_id_index
                 const req = createRequest()
                 const { resolve, reject } = req
-                const resolveOrReject = (f, value) => {
-                    f(value)
+                const resolveOrReject = (fn, value) => {
+                    fn(value)
                     delete requests[request_id]
                     return req
                 }
@@ -46,21 +46,21 @@ export default function createNodeFactory({ encoders, decoders }) {
                 requests[request_id] = req
                 return req
             }
-            f.stub = (...args) => {
+            fn.stub = (...args) => {
                 makeCall(0, args)
             }
 
-            remote_functions.add(f)
-            remote_functions.add(f.stub)
-            remote_functions_id[function_id] = f
-            return f
+            remote_functions.add(fn)
+            remote_functions.add(fn.stub)
+            remote_functions_id[function_id] = fn
+            return fn
         }
 
-        function open(send, f) {
+        function open(send, fn) {
             const remote_function_id = remote_function_index++
             api.send = send
             api.opened = true
-            if (isFunction(f)) registerLocalFunction(f)
+            if (isFunction(fn)) registerLocalFunction(fn)
             return createRemoteFunction(remote_function_id)
         }
 
@@ -77,16 +77,16 @@ export default function createNodeFactory({ encoders, decoders }) {
                 const response_id = -id
 
                 if (isInteger(id)) {
-                    const f = local_functions_id[function_id]
+                    const fn = local_functions_id[function_id]
 
-                    if (id > -1 && isFunction(f)) {
+                    if (id > -1 && isFunction(fn)) {
                         args = isArray(msg[2]) ? msg[2] : []
 
                         // Request without response
                         if (id === 0) {
                             const req = { node: api }
                             args.push(req)
-                            f.apply(req, args)
+                            fn.apply(req, args)
                         }
 
                         // Request
@@ -103,7 +103,7 @@ export default function createNodeFactory({ encoders, decoders }) {
                                 api.send(encode(response))
                             })
                             args.push(req)
-                            localProcedureCall(f, req, args)
+                            localProcedureCall(fn, req, args)
                         }
                         return true
                     }

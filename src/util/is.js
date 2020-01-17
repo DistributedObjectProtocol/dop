@@ -4,8 +4,8 @@ export function is(value) {
     return typeof value
 }
 
-export function isFunction(f) {
-    return typeof f == 'function'
+export function isFunction(fn) {
+    return typeof fn == 'function'
 }
 
 export function isArray(array) {
