@@ -1,6 +1,7 @@
 import { ESCAPE_KEY, FUNCTION_KEY } from '../const'
 import { getUniqueKey } from '../util/get'
 import { isInteger, isFunction } from '../util/is'
+import { isValidToDecode, isValidToEscape } from '../util/isValid'
 
 export default function Func() {}
 
@@ -16,7 +17,7 @@ Func.encode = function({
             ? local_functions.get(value)
             : registerLocalFunction(value)
         return { [FUNCTION_KEY]: function_id }
-    } else if (isValidToDecode({ value })) {
+    } else if (isValidToDecode({ value, key: FUNCTION_KEY })) {
         return { [ESCAPE_KEY]: value } // we don't go deeper
     }
     return value
@@ -32,19 +33,9 @@ Func.decode = function({ value, remote_functions_id, createRemoteFunction }) {
         return isFunction(fn) ? fn : createRemoteFunction(function_id)
     } else if (
         isValidToEscape({ value }) &&
-        isValidToDecode({ value: value[ESCAPE_KEY] })
+        isValidToDecode({ value: value[ESCAPE_KEY], key: FUNCTION_KEY })
     ) {
         return value[ESCAPE_KEY]
     }
     return value
-}
-
-function isValidToDecode({ value }) {
-    return (
-        getUniqueKey(value) === FUNCTION_KEY && isInteger(value[FUNCTION_KEY])
-    )
-}
-
-function isValidToEscape({ value }) {
-    return getUniqueKey(value) === ESCAPE_KEY
 }

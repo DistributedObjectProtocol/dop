@@ -16,7 +16,6 @@ function testUnpatch(t, target, patch, expected, reverse = true) {
     const cloned = getNewPlain(target)
     const output = applyPatch(target, patch)
     const { unpatch, mutations, result } = output
-    console.log({ result, cloned })
     if (isPlainObject(result)) {
         t.is(target, result)
     }

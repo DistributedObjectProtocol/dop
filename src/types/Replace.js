@@ -1,5 +1,5 @@
 import { ESCAPE_KEY, REPLACE_KEY } from '../const'
-import { getUniqueKey } from '../util/get'
+import { isValidToDecode, isValidToEscape } from '../util/isValid'
 
 export default function Replace(value) {
     if (!(this instanceof Replace)) {
@@ -18,30 +18,20 @@ Replace.patch = function({ origin, destiny, prop, oldValue }) {
 Replace.encode = function({ value }) {
     if (value instanceof Replace) {
         return { [REPLACE_KEY]: value.value } // we don't go deeper
-    } else if (isValidToDecode({ value })) {
+    } else if (isValidToDecode({ value, key: REPLACE_KEY })) {
         return { [ESCAPE_KEY]: value } // we don't go deeper
     }
     return value
 }
 
 Replace.decode = function({ value }) {
-    if (isValidToDecode({ value })) {
+    if (isValidToDecode({ value, key: REPLACE_KEY })) {
         return new Replace(value[REPLACE_KEY])
     } else if (
         isValidToEscape({ value }) &&
-        isValidToDecode({ value: value[ESCAPE_KEY] })
+        isValidToDecode({ value: value[ESCAPE_KEY], key: REPLACE_KEY })
     ) {
         return value[ESCAPE_KEY]
     }
     return value
-}
-
-function isValidToDecode({ value }) {
-    return (
-        getUniqueKey(value) === REPLACE_KEY && value.hasOwnProperty(REPLACE_KEY)
-    )
-}
-
-function isValidToEscape({ value }) {
-    return getUniqueKey(value) === ESCAPE_KEY
 }

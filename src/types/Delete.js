@@ -1,5 +1,6 @@
 import { ESCAPE_KEY, DELETE_KEY } from '../const'
 import { getUniqueKey } from '../util/get'
+import { isValidToEscape } from '../util/isValid'
 
 export default function Delete() {
     if (!(this instanceof Delete)) {
@@ -40,8 +41,4 @@ Delete.decode = function({ value }) {
 
 function isValidToDecode({ value }) {
     return getUniqueKey(value) === DELETE_KEY && value[DELETE_KEY] === 0
-}
-
-function isValidToEscape({ value }) {
-    return getUniqueKey(value) === ESCAPE_KEY
 }
