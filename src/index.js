@@ -10,8 +10,8 @@ import Splice from './types/Splice'
 function factory() {
     const TYPE = { Delete, Replace, Splice }
     const patchers = [Delete.patch, Replace.patch, Splice.patch]
-    const encoders = [Delete.encode, Replace.encode]
-    const decoders = [Delete.decode, Replace.decode]
+    const encoders = [Delete.encode, Replace.encode, Splice.encode]
+    const decoders = [Delete.decode, Replace.decode, Splice.decode]
     const encode = (object, list = encoders) => converter(object, list)
     const decode = (object, list = decoders) => converter(object, list)
 
