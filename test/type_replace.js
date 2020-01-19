@@ -105,7 +105,7 @@ test('Decode alone', function(t) {
     t.deepEqual(decode(patch), expected)
 })
 
-test('patch', function(t) {
+test('patch array', function(t) {
     const target = { value: { a: 1, b: 2 } }
     const patch = { value: TYPE.Replace([1, 2, 3]) }
     const expected = { value: [1, 2, 3] }
@@ -113,23 +113,30 @@ test('patch', function(t) {
     testUnpatch(t, target, patch, expected)
 })
 
-test('patch should replace the complete object', function(t) {
-    const obj_to_replace = { a: 1, b: 3 }
+test('patch object', function(t) {
     const target = { value: { a: 1, b: 2 } }
-    const patch = { value: TYPE.Replace(obj_to_replace) }
-    const expected = { value: { a: 1, b: 3 } }
-    const copyvalue = target.value
+    const patch = { value: TYPE.Replace({ c: 3 }) }
+    const expected = { value: { c: 3 } }
 
     testUnpatch(t, target, patch, expected)
+})
+
+test('patch should replace the complete object', function(t) {
+    const obj_to_replace = { c: 3 }
+    const target = { value: { a: 1, b: 2 } }
+    const patch = { value: TYPE.Replace(obj_to_replace) }
+    const expected = { value: { c: 3 } }
+    const copyvalue = target.value
+
+    testUnpatch(t, target, patch, expected, false)
     t.is(obj_to_replace, target.value)
     t.not(copyvalue, target.value)
-    t.deepEqual(copyvalue, target.value)
 })
 
 test('testing that last test works correctly without replace', function(t) {
     const target = { value: { a: 1, b: 2 } }
-    const patch = { value: { a: 1, b: 3 } }
-    const expected = { value: { a: 1, b: 3 } }
+    const patch = { value: { c: 3 } }
+    const expected = { value: { a: 1, b: 2, c: 3 } }
 
     const copyvalue = target.value
 

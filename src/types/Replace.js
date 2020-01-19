@@ -10,7 +10,8 @@ export default function Replace(value) {
 
 Replace.patch = function({ origin, destiny, prop, oldValue }) {
     if (origin[prop] instanceof Replace) {
-        destiny[prop] = destiny[prop].value
+        destiny[prop] = origin[prop].value
+        return new Replace(oldValue)
     }
     return oldValue
 }
