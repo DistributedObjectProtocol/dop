@@ -5,10 +5,11 @@ import createStoreFactory from './api/createStoreFactory'
 import applyPatchFactory from './api/applyPatchFactory'
 import Delete from './types/Delete'
 import Replace from './types/Replace'
+import Splice from './types/Splice'
 
 function factory() {
-    const TYPE = { Delete, Replace }
-    const patchers = [Delete.patch, Replace.patch]
+    const TYPE = { Delete, Replace, Splice }
+    const patchers = [Delete.patch, Replace.patch, Splice.patch]
     const encoders = [Delete.encode, Replace.encode]
     const decoders = [Delete.decode, Replace.decode]
     const encode = (object, list = encoders) => converter(object, list)

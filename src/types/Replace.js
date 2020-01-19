@@ -8,8 +8,8 @@ export default function Replace(value) {
     this.value = value
 }
 
-Replace.patch = function({ destiny, prop, oldValue }) {
-    if (destiny[prop] instanceof Replace) {
+Replace.patch = function({ origin, destiny, prop, oldValue }) {
+    if (origin[prop] instanceof Replace) {
         destiny[prop] = destiny[prop].value
     }
     return oldValue
