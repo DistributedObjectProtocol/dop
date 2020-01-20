@@ -22,6 +22,9 @@ export default function createNodeFactory({ encoders, decoders }) {
         }
 
         function createRemoteFunction(function_id) {
+            if (remote_functions.size / 2 >= max_remote_functions) {
+                return null
+            }
             const makeCall = (request_id, args) => {
                 const data = [request_id, function_id]
                 if (args.length > 0) data.push(args)

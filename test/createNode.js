@@ -264,17 +264,30 @@ test('Calling functions from client to server with another node in the middle', 
     t.is(result, 10)
 })
 
-test.skip('Limiting remote functions', async t => {
-    const server = createNode()
+test('Limiting remote functions', async t => {
+    const server = createNode({ max_remote_functions: 3 })
     const client = createNode()
-    server.open(client.message, f => {
-        console.log(f)
+    server.open(client.message, (fn, isLast) => {
+        if (isLast) t.is(fn, null)
+        else t.is(typeof fn, 'function')
     })
     const callServer = client.open(server.message)
     t.is(server.remote_functions.size, 2)
+    await callServer(() => {}, false)
+    t.is(server.remote_functions.size, 4)
+    await callServer(() => {}, false)
+    t.is(server.remote_functions.size, 6)
+    await callServer(() => {}, true)
+    t.is(server.remote_functions.size, 6)
+})
+
+test('Limiting remote functions to 0', async t => {
+    const server = createNode({ max_remote_functions: 0 })
+    const client = createNode({ max_remote_functions: 1 })
+    const callClient = server.open(client.message, fn => fn)
+    const callServer = client.open(server.message, fn => fn)
     await callServer(() => {})
-    // await callServer(() => {})
-    // await callServer(() => {})
-    t.is(server.remote_functions.size, 2)
-    // console.log(server.remote_functions)
+    t.is(callClient, null)
+    t.is(server.remote_functions.size, 0)
+    t.is(client.remote_functions.size, 2)
 })
