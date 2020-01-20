@@ -9,13 +9,13 @@ Func.encode = function({
     value,
     remote_functions,
     local_functions,
-    registerLocalFunction
+    registerLocalFunctionFromEncode
 }) {
     if (isFunction(value)) {
         if (remote_functions.has(value)) return null
         const function_id = local_functions.has(value)
             ? local_functions.get(value)
-            : registerLocalFunction(value)
+            : registerLocalFunctionFromEncode(value)
         return { [FUNCTION_KEY]: function_id }
     } else if (isValidToDecode({ value, key: FUNCTION_KEY })) {
         return { [ESCAPE_KEY]: value } // we don't go deeper

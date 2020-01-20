@@ -5,7 +5,7 @@ import converter from '../util/converter'
 import Func from '../types/Function'
 
 export default function createNodeFactory({ encoders, decoders }) {
-    return function createNode() {
+    return function createNode({ max_remote_functions = Infinity } = {}) {
         const requests = {}
         const local_functions_id = {}
         const local_functions = new Map()
@@ -15,8 +15,7 @@ export default function createNodeFactory({ encoders, decoders }) {
         let remote_function_index = 0
         let request_id_index = 0
 
-        function registerLocalFunction(fn) {
-            const function_id = local_function_index++
+        function registerLocalFunction(fn, function_id) {
             local_functions_id[function_id] = fn
             local_functions.set(fn, function_id)
             return function_id
@@ -58,9 +57,10 @@ export default function createNodeFactory({ encoders, decoders }) {
 
         function open(send, fn) {
             const remote_function_id = remote_function_index++
+            const local_function_id = local_function_index++
             api.send = send
             api.opened = true
-            if (isFunction(fn)) registerLocalFunction(fn)
+            if (isFunction(fn)) registerLocalFunction(fn, local_function_id)
             return createRemoteFunction(remote_function_id)
         }
 
@@ -69,7 +69,7 @@ export default function createNodeFactory({ encoders, decoders }) {
                 try {
                     msg = decode(msg)
                 } catch (e) {
-                    // Invalid array to de or decode
+                    // Invalid array to decode
                     return false
                 }
 
@@ -126,6 +126,10 @@ export default function createNodeFactory({ encoders, decoders }) {
             api.opened = false
         }
 
+        function registerLocalFunctionFromEncode(fn) {
+            return registerLocalFunction(fn, local_function_index++)
+        }
+
         function encode(object) {
             return converter(
                 object,
@@ -134,7 +138,7 @@ export default function createNodeFactory({ encoders, decoders }) {
                         value,
                         remote_functions,
                         local_functions,
-                        registerLocalFunction
+                        registerLocalFunctionFromEncode
                     })
                 )
             )

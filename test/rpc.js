@@ -115,7 +115,9 @@ const localFunctions = {
 const server = createNode()
 const client = createNode()
 let remoteFunctions
-client.open(server.message, r => (remoteFunctions = r))
+client.open(server.message, r => {
+    remoteFunctions = r
+})
 const callClient = server.open(client.message)
 callClient(localFunctions)
 

@@ -263,3 +263,18 @@ test('Calling functions from client to server with another node in the middle', 
     const result = await sum(5, 5)
     t.is(result, 10)
 })
+
+test.skip('Limiting remote functions', async t => {
+    const server = createNode()
+    const client = createNode()
+    server.open(client.message, f => {
+        console.log(f)
+    })
+    const callServer = client.open(server.message)
+    t.is(server.remote_functions.size, 2)
+    await callServer(() => {})
+    // await callServer(() => {})
+    // await callServer(() => {})
+    t.is(server.remote_functions.size, 2)
+    // console.log(server.remote_functions)
+})
