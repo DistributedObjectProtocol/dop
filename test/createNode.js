@@ -285,9 +285,16 @@ test('Limiting remote functions to 0', async t => {
     const server = createNode({ max_remote_functions: 0 })
     const client = createNode({ max_remote_functions: 1 })
     const callClient = server.open(client.message, fn => fn)
-    const callServer = client.open(server.message, fn => fn)
-    await callServer(() => {})
     t.is(callClient, null)
+    const callServer = client.open(server.message)
+    await callServer(() => {})
     t.is(server.remote_functions.size, 0)
     t.is(client.remote_functions.size, 2)
+    await callServer(() => {})
+    t.is(client.remote_functions.size, 2)
+
+    // faking calls
+    t.is(server.message([111, 0]), true)
+    t.is(server.message([222, 1]), false)
+    t.is(client.message([222, 0]), false)
 })
