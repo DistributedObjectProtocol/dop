@@ -27,7 +27,7 @@ export default function createStoreFactory(applyPatchFunction) {
             listeners.forEach((filter, listener) => {
                 const mts = isFunction(filter)
                     ? mutations.filter(filter)
-                    : mutations //.slice(0)
+                    : mutations.slice(0)
 
                 const { patch, unpatch } = createPatchFromMutations(mts)
                 outputs.push({
