@@ -12,6 +12,7 @@ export default function applyPatchFactory(patchers) {
 
         forEachObject(
             patch_root,
+            target_root,
             ({ origin, destiny, prop, path }) => {
                 const origin_value = origin[prop]
                 const destiny_value = destiny[prop]
@@ -24,7 +25,7 @@ export default function applyPatchFactory(patchers) {
                             isPlainObject(destiny_value)
                         ))
                 ) {
-                    let oldValue = destiny[prop]
+                    let oldValue = destiny_value
 
                     destiny[prop] = isPlainObject(origin_value) // immutable
                         ? applyPatch({}, origin_value).result
@@ -44,6 +45,7 @@ export default function applyPatchFactory(patchers) {
                             }),
                         oldValue
                     )
+
                     setDeep(unpatch_root, path.slice(0), oldValue)
                     mutations.push({
                         oldValue,
@@ -54,8 +56,7 @@ export default function applyPatchFactory(patchers) {
 
                     return false // we dont go deeper
                 }
-            },
-            target_root
+            }
         )
 
         return {

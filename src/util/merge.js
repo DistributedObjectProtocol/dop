@@ -17,7 +17,7 @@ export default function merge(destiny, origin) {
     } else if (origin === destiny) {
         return destiny
     } else {
-        forEachObject(origin, mergeMutator, destiny)
+        forEachObject(origin, destiny, mergeMutator)
         return destiny
     }
 }

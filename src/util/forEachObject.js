@@ -3,45 +3,17 @@ import forEach from './forEach'
 
 // https://jsperf.com/dop-foreachobject
 // https://2ality.com/2019/10/shared-mutable-state.html
-export default function forEachObject(origin, callback, destiny) {
-    const circular = new Set()
-    const path = []
-    const has_destiny = isObject(destiny)
-    forEachObjectLoop(origin, destiny, callback, path, has_destiny, circular)
+export default function forEachObject(origin, destiny, mutator) {
+    forEachObjectLoop(origin, destiny, mutator, [])
 }
 
-function forEachObjectLoop(
-    origin,
-    destiny,
-    callback,
-    path,
-    has_destiny,
-    circular
-) {
+function forEachObjectLoop(origin, destiny, mutator, path) {
     forEach(origin, (value_origin, prop) => {
         path.push(prop)
-
-        const go_deep = callback({ origin, destiny, prop, path })
-
-        if (
-            isObject(value_origin) &&
-            go_deep !== false &&
-            value_origin !== origin &&
-            // (!has_destiny ||
-            //     (has_destiny && destiny[prop] !== undefined)) &&
-            !circular.has(value_origin)
-        ) {
-            circular.add(value_origin)
-            forEachObjectLoop(
-                value_origin,
-                has_destiny ? destiny[prop] : undefined,
-                callback,
-                path,
-                has_destiny,
-                circular
-            )
+        const shallWeGoDown = mutator({ origin, destiny, prop, path })
+        if (shallWeGoDown !== false && isObject(value_origin)) {
+            forEachObjectLoop(value_origin, destiny[prop], mutator, path)
         }
-
         path.pop()
     })
 }

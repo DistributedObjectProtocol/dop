@@ -4,28 +4,24 @@ import { isArray } from '../util/is'
 
 export default function converter(origin, converters) {
     const destiny = isArray(origin) ? [] : {}
-    forEachObject(
-        origin,
-        ({ origin, prop, destiny, path }) => {
-            const value = converters.reduce(
-                (value, converter) =>
-                    converter({
-                        value,
-                        origin,
-                        destiny,
-                        prop,
-                        path
-                    }),
-                origin[prop]
-            )
-            if (origin[prop] !== value) {
-                destiny[prop] = value
-                return false // we don't go deeper
-            } else {
-                return mergeMutator({ origin, destiny, prop })
-            }
-        },
-        destiny
-    )
+    forEachObject(origin, destiny, ({ origin, prop, destiny, path }) => {
+        const value = converters.reduce(
+            (value, converter) =>
+                converter({
+                    value,
+                    origin,
+                    destiny,
+                    prop,
+                    path
+                }),
+            origin[prop]
+        )
+        if (origin[prop] !== value) {
+            destiny[prop] = value
+            return false // we don't go deeper
+        } else {
+            return mergeMutator({ origin, destiny, prop })
+        }
+    })
     return destiny
 }
