@@ -10,6 +10,7 @@ const exported = [
     'applyPatch',
     'createNode',
     'createStore',
+    'addType',
     'TYPE'
 ]
 

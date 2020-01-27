@@ -1,5 +1,6 @@
 import merge from './util/merge'
 import converter from './util/converter'
+import { isFunction } from './util/is'
 import createNodeFactory from './api/createNodeFactory'
 import createStoreFactory from './api/createStoreFactory'
 import applyPatchFactory from './api/applyPatchFactory'
@@ -14,6 +15,11 @@ function factory() {
     const decoders = [Delete.decode, Replace.decode]
     const encode = (object, list = encoders) => converter(object, list)
     const decode = (object, list = decoders) => converter(object, list)
+    const addType = ({ patch, encode, decode }) => {
+        if (isFunction(patch)) patchers.push(patch)
+        if (isFunction(encode)) encoders.push(encode)
+        if (isFunction(decode)) decoders.push(decode)
+    }
 
     const applyPatch = applyPatchFactory(patchers)
     const createStore = createStoreFactory(applyPatch)
@@ -27,6 +33,7 @@ function factory() {
         applyPatch,
         createNode,
         createStore,
+        addType,
         TYPE
     }
 }
