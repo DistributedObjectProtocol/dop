@@ -1,10 +1,6 @@
 <div align="center">
 
-<<<<<<< HEAD
-<p align="center"><a href="https://distributedobjectprotocol.org"><img src="https://distributedobjectprotocol.org/img/logo.svg"  width="200"></a></p>
-=======
 <p align="center"><a href="https://distributedobjectprotocol.org"><img width="200" src="https://distributedobjectprotocol.org/img/logo.svg"></a></p>
->>>>>>> c9645bcc9606371ea0c2ddc3831cd776ceedbf82
 
 [![npm](https://img.shields.io/npm/v/dop?style=flat-square)](https://www.npmjs.com/package/dop)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/dop?style=flat-square)](https://bundlephobia.com/result?p=dop)
