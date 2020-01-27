@@ -1,6 +1,6 @@
 import test from 'ava'
 import { applyPatch, encode, decode, addType } from '../'
-import Splice from '../src/types/splice'
+import Splice from '../src/types/Splice'
 import { getNewPlain } from '../src/util/get'
 import { isPlainObject } from '../src/util/is'
 
