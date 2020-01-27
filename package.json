@@ -1,6 +1,6 @@
 {
     "name": "dop",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "main": "dist/dop.js",
     "browser": "dist/dop.umd.js",
     "license": "MIT",
@@ -33,6 +33,7 @@
     "dependencies": {},
     "devDependencies": {
         "@rollup/plugin-buble": "^0.20.0",
+        "@rollup/plugin-json": "^4.0.1",
         "ava": "^2.4.0",
         "ejson": "^2.2.0",
         "esm": "^3.2.25",

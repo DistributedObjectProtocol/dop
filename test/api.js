@@ -3,6 +3,7 @@ import dop from '../'
 import { createNode } from '../'
 
 const exported = [
+    'version',
     'factory',
     'merge',
     'encode',

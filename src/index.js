@@ -1,3 +1,4 @@
+import { version } from '../package.json'
 import merge from './util/merge'
 import converter from './util/converter'
 import { isFunction } from './util/is'
@@ -26,6 +27,7 @@ function factory() {
     const createNode = createNodeFactory({ encoders, decoders })
 
     return {
+        version,
         factory,
         merge,
         encode,
