@@ -5,7 +5,6 @@
 [![npm](https://img.shields.io/npm/v/dop?style=flat-square)](https://www.npmjs.com/package/dop)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/dop?style=flat-square)](https://bundlephobia.com/result?p=dop)
 [![Build Status](https://api.travis-ci.org/DistributedObjectProtocol/dop.svg?branch=master&style=flat-square)](https://travis-ci.org/DistributedObjectProtocol/dop)
-![GitHub](https://img.shields.io/github/license/artalar/reatom?style=flat-square)
 [![Join the community](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/dop)
 
 <br/>
