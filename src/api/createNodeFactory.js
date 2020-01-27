@@ -5,7 +5,11 @@ import converter from '../util/converter'
 import Func from '../types/Function'
 
 export default function createNodeFactory({ encoders, decoders }) {
-    return function createNode({ max_remote_functions = Infinity } = {}) {
+    return function createNode({
+        serialize = JSON.stringify,
+        deserialize = JSON.parse,
+        max_remote_functions = Infinity
+    } = {}) {
         const requests = {}
         const local_functions_id = {}
         const local_functions = new Map()
@@ -61,72 +65,66 @@ export default function createNodeFactory({ encoders, decoders }) {
         function open(send, fn) {
             const remote_function_id = remote_function_index++
             const local_function_id = local_function_index++
-            api.send = send
-            api.opened = true
+            api.send = msg => send(serialize(msg))
             if (isFunction(fn)) registerLocalFunction(fn, local_function_id)
             return createRemoteFunction(remote_function_id)
         }
 
         function message(msg) {
-            if (api.opened) {
-                try {
-                    msg = decode(msg)
-                } catch (e) {
-                    // Invalid array to decode
-                    return false
+            msg = deserialize(msg)
+            try {
+                msg = decode(msg)
+            } catch (e) {
+                // Invalid array to decode
+                return false
+            }
+
+            let [id, function_id, args] = msg
+            const response_id = -id
+
+            if (isInteger(id)) {
+                const fn = local_functions_id[function_id]
+
+                if (id > -1 && isFunction(fn)) {
+                    args = isArray(msg[2]) ? msg[2] : []
+
+                    // Request without response
+                    if (id === 0) {
+                        const req = { node: api }
+                        args.push(req)
+                        fn.apply(req, args)
+                    }
+
+                    // Request
+                    else {
+                        const req = createRequest()
+                        const response = [response_id]
+                        req.node = api
+                        req.then(value => {
+                            response.push(0) // no errors
+                            if (value !== undefined) response.push(value)
+                            api.send(encode(response))
+                        }).catch(error => {
+                            response.push(error) // error
+                            api.send(encode(response))
+                        })
+                        args.push(req)
+                        localProcedureCall(fn, req, args)
+                    }
+                    return true
                 }
 
-                let [id, function_id, args] = msg
-                const response_id = -id
-
-                if (isInteger(id)) {
-                    const fn = local_functions_id[function_id]
-
-                    if (id > -1 && isFunction(fn)) {
-                        args = isArray(msg[2]) ? msg[2] : []
-
-                        // Request without response
-                        if (id === 0) {
-                            const req = { node: api }
-                            args.push(req)
-                            fn.apply(req, args)
-                        }
-
-                        // Request
-                        else {
-                            const req = createRequest()
-                            const response = [response_id]
-                            req.node = api
-                            req.then(value => {
-                                response.push(0) // no errors
-                                if (value !== undefined) response.push(value)
-                                api.send(encode(response))
-                            }).catch(error => {
-                                response.push(error) // error
-                                api.send(encode(response))
-                            })
-                            args.push(req)
-                            localProcedureCall(fn, req, args)
-                        }
-                        return true
-                    }
-
-                    // Response
-                    else if (id < 0 && requests.hasOwnProperty(response_id)) {
-                        const response_status = function_id
-                        const req = requests[response_id]
-                        response_status === 0
-                            ? req.resolve(args)
-                            : req.reject(response_status)
-                        return true
-                    }
+                // Response
+                else if (id < 0 && requests.hasOwnProperty(response_id)) {
+                    const response_status = function_id
+                    const req = requests[response_id]
+                    response_status === 0
+                        ? req.resolve(args)
+                        : req.reject(response_status)
+                    return true
                 }
             }
             return false
-        }
-
-        function close() {
-            api.opened = false
         }
 
         function registerLocalFunctionFromEncode(fn) {
@@ -163,8 +161,6 @@ export default function createNodeFactory({ encoders, decoders }) {
         const api = {
             open,
             message,
-            close,
-            opened: false,
             requests,
             remote_functions // Exposing this can be used to know if a function is a remote function
         }

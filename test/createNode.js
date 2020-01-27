@@ -17,12 +17,12 @@ test('Api', async t => {
     const callClient = server.open(client.message)
     const promise = callClient(2, 5)
 
-    t.deepEqual(Object.keys(server).length, 7)
+    t.deepEqual(Object.keys(server).length, 5)
 
     t.deepEqual(Object.keys(promise).length, 5)
     t.true(promise instanceof Promise)
-    t.is(server.send, client.message)
     t.is(promise.node, server)
+    t.is(typeof server.send, 'function')
     t.is(typeof promise.resolve, 'function')
     t.is(typeof promise.reject, 'function')
     t.is(typeof promise.createdAt, 'number')
@@ -127,8 +127,9 @@ test('Sending remote functions that is from the same node must be replaced as nu
 })
 
 test('Testing messages', async t => {
-    const server = createNode()
-    const client = createNode()
+    const serdes = { serialize: m => m, deserialize: m => m }
+    const server = createNode(serdes)
+    const client = createNode(serdes)
 
     client.open(
         msg => {
@@ -146,8 +147,9 @@ test('Testing messages', async t => {
 })
 
 test('Escaping $f', async t => {
-    const server = createNode()
-    const client = createNode()
+    const serdes = { serialize: m => m, deserialize: m => m }
+    const server = createNode(serdes)
+    const client = createNode(serdes)
 
     // server side
     server.open(
@@ -294,7 +296,7 @@ test('Limiting remote functions to 0', async t => {
     t.is(client.remote_functions.size, 2)
 
     // faking calls
-    t.is(server.message([111, 0]), true)
-    t.is(server.message([222, 1]), false)
-    t.is(client.message([222, 0]), false)
+    t.is(server.message(JSON.stringify([111, 0])), true)
+    t.is(server.message(JSON.stringify([222, 1])), false)
+    t.is(client.message(JSON.stringify([222, 0])), false)
 })

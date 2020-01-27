@@ -14,44 +14,11 @@
 
 </div>
 
-Distributed Object Protocol is a thin layer on top of your data network that helps you communicate server and clients (nodes) using [RPCs](https://en.wikipedia.org/wiki/Remote_procedure_call). It is also a pattern that makes easy update, mutate or even sync the state of your App using [Patches](https://github.com/DistributedObjectProtocol/protocol#Patches).
+**Distributed Object Protocol** is a thin layer on top of your data network that helps you communicate server and clients (nodes) using [RPCs](https://en.wikipedia.org/wiki/Remote_procedure_call). It is also a pattern that makes easy update, mutate or even sync the state of your App using [Patches](https://github.com/DistributedObjectProtocol/protocol#Patches).
 
-## Quick example using RPCs with WebSockets
+## RPCs with WebSockets
 
-```js
-// Server (node.js)
-const { createNode } = require('dop')
-const WebSocket = require('ws')
-const wss = new WebSocket.Server({ port: 8080 })
-
-const sum = (a, b) => a + b
-const multiply = (a, b) => a * b
-const getCalculator = () => ({ sum, multiply })
-
-wss.on('connection', ws => {
-    const client = createNode()
-    client.open(msg => ws.send(JSON.stringify(msg)), getCalculator)
-    ws.on('message', msg => client.message(JSON.parse(msg)))
-    ws.on('close', client.close)
-})
-```
-
-```js
-// Client (Browser)
-import { createNode } from 'dop'
-const ws = new WebSocket('ws://localhost:8080')
-const server = createNode()
-
-ws.onopen = async () => {
-    const getCalculator = server.open(msg => ws.send(JSON.stringify(msg)))
-    const { sum, multiply } = await getCalculator()
-    const result1 = await sum(5, 5)
-    const result2 = await multiply(5, 5)
-    console.log(result1, result2) // 10, 25
-}
-ws.onmessage = msg => server.message(JSON.parse(msg.data))
-ws.onclose = server.close
-```
+image
 
 Check the website for more info [https://distributedobjectprotocol.org/](https://distributedobjectprotocol.org/guide/javascript)
 

@@ -11,9 +11,8 @@ function forEachObjectLoop(origin, destiny, mutator, path) {
     forEach(origin, (value_origin, prop) => {
         path.push(prop)
         const shallWeGoDown = mutator({ origin, destiny, prop, path })
-        if (shallWeGoDown !== false && isObject(value_origin)) {
+        if (shallWeGoDown !== false && isObject(value_origin))
             forEachObjectLoop(value_origin, destiny[prop], mutator, path)
-        }
         path.pop()
     })
 }
