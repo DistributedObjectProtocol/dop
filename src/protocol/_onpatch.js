@@ -1,9 +1,9 @@
 dop.protocol._onpatch = function(node, request_id, request, response) {
     var rejection = response[0],
-        object_id = request[2],
-        object_node = dop.data.object[object_id].node[node.token],
+        object_id_owner = request[2],
+        subscriber = node.subscriber[object_id_owner],
         version = request[3],
-        pending_list = object_node.pending,
+        pending_list = subscriber.pending,
         promise = request.promise,
         index = 0,
         total = pending_list.length,
@@ -22,7 +22,7 @@ dop.protocol._onpatch = function(node, request_id, request, response) {
                 else
                     dop.protocol.patchSend(
                         node,
-                        object_id,
+                        object_id_owner,
                         version_item,
                         pending_list[index][1]
                     )

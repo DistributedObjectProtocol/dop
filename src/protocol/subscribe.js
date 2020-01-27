@@ -10,6 +10,6 @@ dop.protocol.subscribe = function(node, params) {
         delete request.promise.into
         return request.promise
     }
-    dop.core.storeSendMessages(node, request)
+    dop.core.storeAndSendRequests(node, request)
     return request.promise
 }

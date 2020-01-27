@@ -13,10 +13,14 @@ dop.core.proxyObjectHandler = {
             typeof property == 'string' &&
             property !== dop.cons.DOP &&
             object[property] !== Array.prototype[property]
-        )
-            dop.data.gets_paths.push(
-                dop.getObjectPath(object, false).concat(property)
-            )
+        ) {
+            var index = dop.data.gets_paths.length - 1
+            dop.data.gets_paths[index].push({
+                object: object,
+                property: property,
+                path: dop.getObjectPath(object, false).concat(property)
+            })
+        }
 
         return object[property]
     }

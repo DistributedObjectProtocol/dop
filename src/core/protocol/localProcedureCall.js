@@ -21,6 +21,19 @@ dop.core.localProcedureCall = function(
                 : req.resolve(output)
         }
     } catch (e) {
+        // https://airbrake.io/blog/nodejs-error-handling/nodejs-error-class-hierarchy
+        if (
+            e instanceof Error ||
+            (typeof AssertionError == 'function' &&
+                e instanceof AssertionError) ||
+            (typeof RangeError == 'function' && e instanceof RangeError) ||
+            (typeof ReferenceError == 'function' &&
+                e instanceof ReferenceError) ||
+            (typeof SyntaxError == 'function' && e instanceof SyntaxError) ||
+            (typeof TypeError == 'function' && e instanceof TypeError)
+        ) {
+            throw e
+        }
         req.reject(e)
     }
 }

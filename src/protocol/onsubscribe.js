@@ -7,35 +7,41 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
             params,
             function resolve(value) {
                 if (dop.isPojoObject(value)) {
-                    var object = dop.register(value),
-                        object_root = dop.getObjectRoot(object),
-                        object_path = dop.getObjectPath(object),
-                        object_id = object_path[0],
-                        response = dop.core.createResponse(request_id, 0)
-
+                    var response = dop.core.createResponse(request_id, 0)
+                    var object = dop.register(value)
+                    var object_path_id = dop.getObjectPathId(object)
                     // New object
-                    if (dop.core.registerSubscriber(node, object_root))
-                        response.push(object_id, object_root)
+                    if (node.subscriber[object_path_id] === undefined) {
+                        dop.core.registerSubscriber(
+                            node,
+                            object,
+                            object_path_id
+                        )
+                        response.push(object_path_id, object)
+                    }
                     // Object already subscribed
-                    else response.push(object_id, object_path.slice(1))
+                    else {
+                        response.push(object_path_id)
+                    }
 
-                    dop.core.storeSendMessages(
+                    dop.core.storeAndSendRequests(
                         node,
                         response,
                         dop.encodeFunction
                     )
-                    return object
-                } else if (value === undefined)
+                } else if (value === undefined) {
                     return Promise.reject(
                         dop.core.error.reject_remote.OBJECT_NOT_FOUND
                     )
+                }
                 // http://www.2ality.com/2016/03/promise-rejections-vs-exceptions.html
                 // http://stackoverflow.com/questions/41254636/catch-an-error-inside-of-promise-resolver
-                else
+                else {
                     dop.util.invariant(
                         false,
-                        'dop.onsubscribe callback must return or resolve a regular object'
+                        'dop.onSubscribe callback must return or resolve a regular object'
                     )
+                }
             },
             reject,
             function(req) {
@@ -43,11 +49,13 @@ dop.protocol.onsubscribe = function(node, request_id, request) {
                 return req
             }
         )
-    } else reject(dop.core.error.reject_remote.OBJECT_NOT_FOUND)
+    } else {
+        reject(dop.core.error.reject_remote.OBJECT_NOT_FOUND)
+    }
 
     function reject(error) {
         var response = dop.core.createResponse(request_id)
         error instanceof Error ? console.log(error.stack) : response.push(error)
-        dop.core.storeSendMessages(node, response, JSON.stringify)
+        dop.core.storeAndSendRequests(node, response, JSON.stringify)
     }
 }

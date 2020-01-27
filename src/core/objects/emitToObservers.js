@@ -1,5 +1,6 @@
-dop.core.emitToObservers = function(mutations) {
-    var mutation,
+dop.core.emitToObservers = function(snapshot, filterMutationsToNode) {
+    var mutations = snapshot.mutations,
+        mutation,
         path_id,
         observer_id,
         mutations_by_observers = {},
@@ -16,18 +17,12 @@ dop.core.emitToObservers = function(mutations) {
         path_id = mutation.path_id
         path = mutation.path
 
-        if (
-            !mutations_with_subscribers &&
-            isObject(dop.data.object[dop.getObjectId(mutation.object)])
-        )
-            mutations_with_subscribers = true
-
-        // .observers
+        // .observers_object
         if (
             data_path[path_id] !== undefined &&
-            data_path[path_id].observers !== undefined
+            data_path[path_id].observers_object !== undefined
         ) {
-            for (observer_id in data_path[path_id].observers) {
+            for (observer_id in data_path[path_id].observers_object) {
                 if (mutations_by_observers[observer_id] === undefined)
                     mutations_by_observers[observer_id] = []
                 mutations_by_observers[observer_id].push(mutation)
@@ -78,7 +73,10 @@ dop.core.emitToObservers = function(mutations) {
         var observer = dop.data.observers[observer_id]
         if (observer !== undefined)
             // We need to make sure that the observer still exists, because maybe has been removed after calling previous observers
-            observer.callback(mutations_by_observers[observer_id])
+            observer.callback(
+                mutations_by_observers[observer_id],
+                filterMutationsToNode
+            )
     }
 
     return mutations_with_subscribers

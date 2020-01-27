@@ -1,24 +1,31 @@
-dop.core.node = function Node() {
+dop.core.node = function Node(transport) {
     // Inherit emitter
     dop.util.merge(this, new dop.util.emitter()) //https://jsperf.com/inheritance-call-vs-object-assign
+    this.transport = transport
     this.connected = false
     this.request_inc = 1
     this.requests = {}
-    this.message_queue = [] // Response / Request / instrunctions queue
+    this.request_queue = [] // [<request>, <wrapper>]
     this.subscriber = {}
     this.owner = {}
-    // Generating token
-    do {
-        this.token = dop.util.uuid()
-    } while (typeof dop.data.node[this.token] == 'object')
+    // this.sends_queue = []
 }
 
 dop.core.node.prototype.send = function(message) {
-    this.emit(dop.cons.SEND, message)
+    return this.sendSocket(message)
+    // if (
+    //     this.status !== dop.cons.NODE_STATUS_CONNECTED ||
+    //     this.sends_queue.length > 0 ||
+    //     this.sendSocket(message) === false
+    // ) {
+    //     this.sends_queue.push(message)
+    //     return false
+    // }
+    // return true
 }
 
 dop.core.node.prototype.disconnect = function() {
-    this.emit(dop.cons.DISCONNECT)
+    return this.disconnectSocket()
 }
 
 dop.core.node.prototype.subscribe = function() {

@@ -1,10 +1,10 @@
 var regexpdate = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/,
     regexpsplit = /\/(.+)\/([gimuy]{0,5})/
 
-dop.core.decode = function(property, value, node, undefineds) {
+dop.core.decode = function(property, value, undefineds) {
     if (typeof value == 'string') {
         if (value == dop.protocol.instructionsPatchs.function)
-            return dop.core.createRemoteFunction(node)
+            return dop.core.createRemoteFunction()
 
         if (
             value == dop.protocol.instructionsPatchs.undefined &&

@@ -11,7 +11,7 @@ var dop = {
         node: {},
 
         object_inc: 1,
-        object: {},
+        // object: {},
 
         collectors: [],
 
@@ -26,8 +26,9 @@ var dop = {
 
         path: {
             // "1.thepath.value": {
-                // observers: {},
+                // observers_object: {},
                 // observers_prop: {},
+                // observers_all: {},
                 // interceptors: {},
                 // interceptors_prop: {},
                 // computeds: [],
@@ -44,15 +45,19 @@ var dop = {
 
     // Constants
     cons: {
-        TOKEN: '~TOKEN_DOP',
         DOP: '~DOP',
-        // CONNECT: '~CONNECT',
-        SEND: '~SEND',
-        DISCONNECT: '~DISCONNECT',
+        TOKEN_LENGTH: 32,        
         REMOTE_FUNCTION: '$DOP_REMOTE_FUNCTION',
         REMOTE_FUNCTION_UNSETUP: '$DOP_REMOTE_FUNCTION_UNSETUP',
         BROADCAST_FUNCTION: '$DOP_BROADCAST_FUNCTION',
         COMPUTED_FUNCTION: '$DOP_COMPUTED_FUNCTION',
+
+        // NODE_STATUS_CONNECTED: 'CONNECTED', // CONNECTED
+        // NODE_STATUS_DISCONNECTED: 'DISCONNECTED', // DISCONNECTED, can't be reconnected
+
+        ON_CONNECT: 'connect',
+        ON_MESSAGE: 'message',
+        ON_DISCONNECT: 'disconnect',
     }
 
 }; 

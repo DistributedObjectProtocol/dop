@@ -1,12 +1,10 @@
 module.exports = function(grunt) {
-
-    var dop = 'dop.js';
-    var dopnodejs = 'dop.nodejs.js';
-    var dopmin = 'dop.min.js';
+    var dop = 'dop.js'
+    var dopnodejs = 'dop.nodejs.js'
+    var dopmin = 'dop.min.js'
 
     // Project configuration.
     grunt.initConfig({
-
         pkg: grunt.file.readJSON('package.json'),
 
         watch: {
@@ -14,30 +12,28 @@ module.exports = function(grunt) {
                 files: ['src/**', 'package.json'],
                 tasks: ['default'],
                 options: {
-                    spawn: false,
-                },
-            },
+                    spawn: false
+                }
+            }
         },
-
-
 
         copy: {
             main: {
                 src: 'node_modules/dop-transports/connect/websocket.js',
-                dest: 'src/env/browser/websocket.js',
-            },
+                dest: 'src/env/browser/websocket.js'
+            }
         },
 
         concat: {
             options: {
-                banner: '/*\n' +
-                ' * dop@<%= pkg.version %>\n' +
-                ' * www.distributedobjectprotocol.org\n' +
-                ' * (c) 2018 Josema Gonzalez\n' +
-                ' * MIT License.\n' +
-                ' */\n',
+                banner:
+                    '/*\n' +
+                    ' * dop@<%= pkg.version %>\n' +
+                    ' * www.distributedobjectprotocol.org\n' +
+                    ' * MIT License.\n' +
+                    ' */\n',
                 process: function(src, filepath) {
-                    return '\n//////////  ' + filepath + '\n' + src + '\n\n\n';
+                    return '\n//////////  ' + filepath + '\n' + src + '\n\n\n'
                 }
             },
             nodejs: {
@@ -51,7 +47,7 @@ module.exports = function(grunt) {
                     'src/node/*',
                     'src/umd.js'
                 ],
-                dest: 'dist/'+dopnodejs
+                dest: 'dist/' + dopnodejs
             },
             browser: {
                 src: [
@@ -64,30 +60,30 @@ module.exports = function(grunt) {
                     'src/node/*',
                     'src/umd.js'
                 ],
-                dest: 'dist/'+dop
+                dest: 'dist/' + dop
             }
         },
-
 
         'string-replace': {
             dist: {
                 files: {
-                    'dist/': ['dist/'+dop,'dist/'+dopnodejs],
+                    'dist/': ['dist/' + dop, 'dist/' + dopnodejs]
                 },
                 options: {
-                    replacements: [{
-                        pattern: /{{VERSION}}/ig,
-                        replacement: '<%= pkg.version %>'
-                    }]
+                    replacements: [
+                        {
+                            pattern: /{{VERSION}}/gi,
+                            replacement: '<%= pkg.version %>'
+                        }
+                    ]
                 }
             }
         },
 
-
         uglify: {
             build: {
-                src: 'dist/'+dop,
-                dest: 'dist/'+dopmin
+                src: 'dist/' + dop,
+                dest: 'dist/' + dopmin
             },
             options: {
                 banner: '/* dop - (c) 2018 Josema Gonzalez - MIT Licensed */\n'
@@ -116,7 +112,7 @@ module.exports = function(grunt) {
                     {
                         expand: true,
                         flatten: true,
-                        src: 'dist/'+dopmin,
+                        src: 'dist/' + dopmin,
                         dest: 'dist'
                     }
                 ]
@@ -130,28 +126,27 @@ module.exports = function(grunt) {
             },
             dist: {
                 files: {
-                    'dist/dop.min.opt.js': 'dist/'+dopmin
+                    'dist/dop.min.opt.js': 'dist/' + dopmin
                 }
             }
         }
+    })
 
-    });
+    grunt.loadNpmTasks('grunt-contrib-copy')
+    grunt.loadNpmTasks('grunt-contrib-concat')
+    grunt.loadNpmTasks('grunt-contrib-uglify')
+    grunt.loadNpmTasks('grunt-contrib-watch')
+    grunt.loadNpmTasks('grunt-replace')
+    grunt.loadNpmTasks('grunt-optimize-js')
+    grunt.loadNpmTasks('grunt-string-replace')
 
-
-
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-replace');
-    grunt.loadNpmTasks('grunt-optimize-js');
-    grunt.loadNpmTasks('grunt-string-replace');
-
-
-    var tasks = ['copy', 'concat:nodejs', 'concat:browser', 'string-replace', 'uglify',  /*'replace', 'optimize-js'*/];
-    if (grunt.option('build') === undefined)
-        tasks.push('watch');
-    grunt.registerTask('default', tasks);
-
-
-};
+    var tasks = [
+        'copy',
+        'concat:nodejs',
+        'concat:browser',
+        'string-replace',
+        'uglify' /*'replace', 'optimize-js'*/
+    ]
+    if (grunt.option('build') === undefined) tasks.push('watch')
+    grunt.registerTask('default', tasks)
+}

@@ -11,15 +11,13 @@ dop.core.updateComputed = function(computed_id, computed, context, old_value) {
         total2
 
     // Running function and saving paths from getters
-    dop.data.gets_collecting = true
+    var stopCollector = dop.core.collectGettersPaths()
     value = computed.function.call(context, old_value)
-    dop.data.gets_collecting = false
-    derived_paths = dop.data.gets_paths
-    dop.data.gets_paths = []
+    derived_paths = stopCollector()
 
     // Generating and storing paths ids
     for (total = derived_paths.length; index < total; ++index) {
-        derived_path = derived_paths[index]
+        derived_path = derived_paths[index].path
         derived_pathid = ''
         for (
             index2 = 0, total2 = derived_path.length;
