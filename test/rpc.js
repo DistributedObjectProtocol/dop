@@ -109,6 +109,18 @@ const localFunctions = {
 
     throwError: function() {
         throw new Error('whatever')
+    },
+
+    throwUndefined: function() {
+        throw undefined
+    },
+
+    throwNull: function() {
+        throw null
+    },
+
+    throwZero: function() {
+        throw 0
     }
 }
 
@@ -302,17 +314,62 @@ test('ReferenceError error', async function(t) {
     }
 })
 
-// test('throw new Error()', async function(t) {
-//     try {
-//         remoteFunctions.throwError()
-//         t.true(false)
-//     } catch (e) {
-//         t.true(e instanceof Error)
-//     }
-//     try {
-//         await remoteFunctions.throwError()
-//         t.true(false)
-//     } catch (e) {
-//         t.true(e instanceof Error)
-//     }
-// })
+test('throw new Error()', async function(t) {
+    try {
+        localFunctions.throwError()
+        t.true(false)
+    } catch (e) {
+        t.true(e instanceof Error)
+    }
+    try {
+        await remoteFunctions.throwError()
+        t.true(false)
+    } catch (e) {
+        t.true(e instanceof Error)
+    }
+})
+
+test('throwUndefined', async function(t) {
+    try {
+        localFunctions.throwUndefined()
+        t.true(false)
+    } catch (e) {
+        t.is(e, undefined)
+    }
+    try {
+        await remoteFunctions.throwUndefined()
+        t.true(false)
+    } catch (e) {
+        t.is(e, null)
+    }
+})
+
+test('throwNull', async function(t) {
+    try {
+        localFunctions.throwNull()
+        t.true(false)
+    } catch (e) {
+        t.is(e, null)
+    }
+    try {
+        await remoteFunctions.throwNull()
+        t.true(false)
+    } catch (e) {
+        t.is(e, null)
+    }
+})
+
+test('throwZero', async function(t) {
+    try {
+        localFunctions.throwZero()
+        t.true(false)
+    } catch (e) {
+        t.is(e, 0)
+    }
+    try {
+        await remoteFunctions.throwZero('lel')
+        t.true(false)
+    } catch (e) {
+        t.is(e, null)
+    }
+})

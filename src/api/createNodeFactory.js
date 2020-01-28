@@ -72,12 +72,8 @@ export default function createNodeFactory({ encoders, decoders }) {
 
         function message(msg) {
             msg = deserialize(msg)
-            try {
-                msg = decode(msg)
-            } catch (e) {
-                // Invalid array to decode
-                return false
-            }
+            if (!isArray(msg)) return false
+            msg = decode(msg)
 
             let [id, function_id, args] = msg
             const response_id = -id
@@ -105,7 +101,7 @@ export default function createNodeFactory({ encoders, decoders }) {
                             if (value !== undefined) response.push(value)
                             api.send(encode(response))
                         }).catch(error => {
-                            response.push(error) // error
+                            response.push(error === 0 ? null : error)
                             api.send(encode(response))
                         })
                         args.push(req)
