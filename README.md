@@ -58,14 +58,13 @@ const { createStore } = require('dop')
 const store = createStore({ players: 0 })
 
 function subscribeToServerStore(listener) {
-    const { state } = store
     // Incrementing number of player as a patch
-    const listeners = store.applyPatch({ players: state.players + 1 })
+    const listeners = store.applyPatch({ players: store.state.players + 1 })
     // We emit the patch to all the subscribers
     listeners.forEach(({ listener, patch }) => listener(patch))
     // Here we subscribe our client
     store.subscribe(listener)
-    return state
+    return store.state
 }
 ```
 
