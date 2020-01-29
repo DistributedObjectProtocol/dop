@@ -16,7 +16,7 @@
 
 **Distributed Object Protocol** is a thin layer on top of your data network that helps you communicate server and clients (nodes) using [RPCs](https://en.wikipedia.org/wiki/Remote_procedure_call). It is also a pattern that makes easy update, mutate or even sync the state of your App using [Patches](https://github.com/DistributedObjectProtocol/protocol#Patches).
 
-## Quick example using RPCs with WebSockets
+# Quick example connecting nodes and using RPCs with WebSockets
 
 ```js
 // Server
@@ -47,6 +47,43 @@ ws.on('open', async () => {
     console.log(result1, result2) // 10, 9
 })
 ws.on('message', server.message)
+```
+
+# Quick example using Stores and Patches
+
+```js
+// Server
+const { createStore } = require('dop')
+
+const store = createStore({ players: 0 })
+
+function subscribeToServerStore(listener) {
+    const { state } = store
+    // Incrementing number of player as a patch
+    const listeners = store.applyPatch({ players: state.players + 1 })
+    // We emit the patch to all the subscribers
+    listeners.forEach(({ listener, patch }) => listener(patch))
+    // Here we subscribe our client
+    store.subscribe(listener)
+    return state
+}
+```
+
+```js
+// Client
+const { createStore } = require('dop')
+
+// Getting the current state of the server and subscribing to it
+const state = await subscribeToServerStore(onPatch)
+// Creates a local store where our UX components can subscribe to
+const store = createStore(state)
+
+function onPatch(patch) {
+    // Applying patch from the server
+    const listeners = store.applyPatch(patch)
+    // We emit the patch to subscribers. Like React components.
+    listeners.forEach(({ listener, patch }) => listener(patch))
+}
 ```
 
 Check the website for more info [https://distributedobjectprotocol.org/](https://distributedobjectprotocol.org/guide/javascript)
