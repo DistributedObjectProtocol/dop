@@ -1,24 +1,6 @@
 import test from 'ava'
 import { applyPatch, TYPE } from '../'
-import { getNewPlain } from '../src/util/get'
-import { isPlainObject } from '../src/util/is'
-
-function testUnpatch(t, target, patch, expected, reverse = true) {
-    const cloned = getNewPlain(target)
-    const output = applyPatch(target, patch)
-    const { unpatch, mutations, result } = output
-    // console.log(result)
-    if (isPlainObject(result)) {
-        // t.is(target, result)
-    }
-    target = result
-    t.deepEqual(target, expected)
-    if (reverse) {
-        const output2 = applyPatch(target, unpatch)
-        t.deepEqual(output2.result, cloned)
-    }
-    return { unpatch, mutations }
-}
+import { testUnpatch } from './utils'
 
 test('basic mutation', function(t) {
     const target = { number: 1 }

@@ -1,35 +1,9 @@
 import test from 'ava'
-import { applyPatch, encode, decode, addType } from '../'
+import { addType } from '../'
 import Splice from '../src/types/Splice'
-import { getNewPlain } from '../src/util/get'
-import { isPlainObject } from '../src/util/is'
+import { testBasic, testUnpatch } from './utils'
 
 addType(Splice)
-
-function testBasic(t, patch, expected) {
-    const encoded = encode(patch)
-    const decoded = decode(encoded)
-    t.deepEqual(expected, encoded)
-    t.deepEqual(patch, decoded)
-    t.not(patch, encoded)
-    t.not(encoded, decoded)
-}
-
-function testUnpatch(t, target, patch, expected, reverse = true) {
-    const cloned = getNewPlain(target)
-    const output = applyPatch(target, patch)
-    const { unpatch, mutations, result } = output
-    if (isPlainObject(result)) {
-        t.is(target, result)
-    }
-    target = result
-    t.deepEqual(target, expected)
-    if (reverse) {
-        const output2 = applyPatch(target, unpatch)
-        t.deepEqual(output2.result, cloned)
-    }
-    return { unpatch, mutations }
-}
 
 test('Valid type', function(t) {
     const patch = { convert: Splice(0, 1, 'world') }
