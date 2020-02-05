@@ -1,7 +1,9 @@
 import pkg from './package.json'
-import minify from 'rollup-plugin-babel-minify'
+// import minify from 'rollup-plugin-babel-minify'
+import { uglify } from 'rollup-plugin-uglify'
 import buble from '@rollup/plugin-buble'
 import json from '@rollup/plugin-json'
+import dop from './src/index'
 
 export default [
     // dop.js
@@ -19,6 +21,14 @@ export default [
     {
         input: 'src/index',
         output: { name: 'dop', file: pkg.browser, format: 'umd' },
-        plugins: [json(), buble(), minify({ comments: false })]
+        plugins: [
+            json(),
+            buble(),
+            uglify({
+                mangle: {
+                    reserved: Object.keys(dop.TYPE)
+                }
+            })
+        ]
     }
 ]

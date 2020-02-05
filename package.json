@@ -1,6 +1,6 @@
 {
     "name": "dop",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "main": "dist/dop.js",
     "browser": "dist/dop.umd.js",
     "license": "MIT",
@@ -40,7 +40,7 @@
         "lodash": "^4.17.15",
         "ramda": "^0.26.1",
         "rollup": "^1.0.0",
-        "rollup-plugin-babel-minify": "^9.1.0"
+        "rollup-plugin-uglify": "^6.0.4"
     },
     "scripts": {
         "build": "rollup -c",
