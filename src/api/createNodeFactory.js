@@ -19,7 +19,7 @@ export default function createNodeFactory({ encoders, decoders }) {
         let remote_function_index = 0
         let request_id_index = 0
 
-        function registerLocalFunction(fn, function_id) {
+        function registerLocalFunction(function_id, fn) {
             local_functions_id[function_id] = fn
             local_functions.set(fn, function_id)
             return function_id
@@ -66,7 +66,7 @@ export default function createNodeFactory({ encoders, decoders }) {
             const remote_function_id = remote_function_index++
             const local_function_id = local_function_index++
             api.send = msg => send(serialize(msg))
-            if (isFunction(fn)) registerLocalFunction(fn, local_function_id)
+            if (isFunction(fn)) registerLocalFunction(local_function_id, fn)
             return createRemoteFunction(remote_function_id)
         }
 
@@ -124,7 +124,7 @@ export default function createNodeFactory({ encoders, decoders }) {
         }
 
         function registerLocalFunctionFromEncode(fn) {
-            return registerLocalFunction(fn, local_function_index++)
+            return registerLocalFunction(local_function_index++, fn)
         }
 
         function encode(object) {
