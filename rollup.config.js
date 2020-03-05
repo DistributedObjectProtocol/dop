@@ -6,6 +6,15 @@ import json from '@rollup/plugin-json'
 import dop from './src/index'
 
 export default [
+    // // module/
+    // {
+    //     input: 'src/index',
+    //     external: ['ms'],
+    //     preserveModules: true,
+    //     output: [{ dir: './module', format: 'es' }],
+    //     plugins: [json(), buble()]
+    // },
+
     // dop.js
     {
         input: 'src/index',

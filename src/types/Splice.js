@@ -15,8 +15,9 @@ Splice.patch = function({ origin, destiny, prop, oldValue }) {
     if (isArray(oldValue) && origin_value instanceof Splice) {
         destiny[prop] = oldValue
         const { args } = origin_value
+        const first = args[0] < 0 ? oldValue.length - args[0] : args[0]
         const spliced = oldValue.splice.apply(oldValue, args)
-        const inverted = [args[0], args.length - 2].concat(spliced)
+        const inverted = [first, args.length - 2].concat(spliced)
         return Splice.apply(null, inverted)
     }
     return oldValue
