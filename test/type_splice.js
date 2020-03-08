@@ -51,7 +51,7 @@ test('adding', function(t) {
     testUnpatch(t, target, patch, expected)
 })
 
-test('negative (not supported yet)', function(t) {
+test('negative', function(t) {
     const target = { array: ['angel', 'clown', 'mandarin', 'sturgeon'] }
     const patch = { array: Splice(-2, 1) }
     const expected = { array: ['angel', 'clown', 'sturgeon'] }
@@ -64,15 +64,13 @@ function testAgainstNative(t, original, params) {
 
     const target = original.slice(0)
     const patch = Splice.apply(null, params)
-    // console.log(original, params)
+    // console.log({ original, params })
     const { unpatch } = applyPatch(target, patch)
     t.deepEqual(target, native)
-    // console.log(target)
+    // console.log({ result: target })
     applyPatch(target, unpatch)
     t.deepEqual(target, original)
-
-    // console.log(original)
-    // console.log(target)
+    // console.log({ result: target })
 }
 
 test('1/ vs Array.splice', function(t) {
@@ -89,30 +87,110 @@ test('2/ vs Array.splice', function(t) {
 
 test('3/ vs Array.splice', function(t) {
     const original = ['angel', 'clown', 'mandarin', 'sturgeon']
-    const params = [1, 1]
+    const params = [0, -1]
     testAgainstNative(t, original, params)
 })
 
 test('4/ vs Array.splice', function(t) {
     const original = ['angel', 'clown', 'mandarin', 'sturgeon']
-    const params = [-1, 0]
+    const params = [1, 0]
     testAgainstNative(t, original, params)
 })
-
 test('5/ vs Array.splice', function(t) {
     const original = ['angel', 'clown', 'mandarin', 'sturgeon']
-    const params = [-1, 1]
+    const params = [1, 1]
     testAgainstNative(t, original, params)
 })
-
 test('6/ vs Array.splice', function(t) {
     const original = ['angel', 'clown', 'mandarin', 'sturgeon']
-    const params = [-1, -1]
+    const params = [1, -1]
     testAgainstNative(t, original, params)
 })
 
 test('7/ vs Array.splice', function(t) {
     const original = ['angel', 'clown', 'mandarin', 'sturgeon']
+    const params = [-1, 0]
+    testAgainstNative(t, original, params)
+})
+
+test('8/ vs Array.splice', function(t) {
+    const original = ['angel', 'clown', 'mandarin', 'sturgeon']
+    const params = [-1, 1]
+    testAgainstNative(t, original, params)
+})
+
+test('9/ vs Array.splice', function(t) {
+    const original = ['angel', 'clown', 'mandarin', 'sturgeon']
     const params = [-1, -1]
+    testAgainstNative(t, original, params)
+})
+
+test('10/ vs Array.splice', function(t) {
+    const original = ['angel', 'clown', 'mandarin', 'sturgeon']
+    const params = [0, 0, 'last']
+    testAgainstNative(t, original, params)
+})
+
+test('11/ vs Array.splice', function(t) {
+    const original = ['angel', 'clown', 'mandarin', 'sturgeon']
+    const params = [0, 1, 'last']
+    testAgainstNative(t, original, params)
+})
+
+test('12/ vs Array.splice', function(t) {
+    const original = ['angel', 'clown', 'mandarin', 'sturgeon']
+    const params = [0, -1, 'last']
+    testAgainstNative(t, original, params)
+})
+
+test('13/ vs Array.splice', function(t) {
+    const original = ['angel', 'clown', 'mandarin', 'sturgeon']
+    const params = [1, 0, 'last']
+    testAgainstNative(t, original, params)
+})
+test('14/ vs Array.splice', function(t) {
+    const original = ['angel', 'clown', 'mandarin', 'sturgeon']
+    const params = [1, 1, 'last']
+    testAgainstNative(t, original, params)
+})
+test('15/ vs Array.splice', function(t) {
+    const original = ['angel', 'clown', 'mandarin', 'sturgeon']
+    const params = [1, -1, 'last']
+    testAgainstNative(t, original, params)
+})
+
+test('16/ vs Array.splice', function(t) {
+    const original = ['angel', 'clown', 'mandarin', 'sturgeon']
+    const params = [-1, 0, 'last']
+    testAgainstNative(t, original, params)
+})
+
+test('17/ vs Array.splice', function(t) {
+    const original = ['angel', 'clown', 'mandarin', 'sturgeon']
+    const params = [-1, 1, 'last']
+    testAgainstNative(t, original, params)
+})
+
+test('18/ vs Array.splice', function(t) {
+    const original = ['angel', 'clown', 'mandarin', 'sturgeon']
+    const params = [-1, -1, 'last']
+    testAgainstNative(t, original, params)
+})
+
+test('19/ vs Array.splice', function(t) {
+    const original = ['angel', 'clown', 'mandarin', 'sturgeon']
+    const params = [-2, 0, 'last', 'prelast']
+    testAgainstNative(t, original, params)
+})
+
+test('20/ vs Array.splice', function(t) {
+    const original = ['angel', 'clown', 'mandarin', 'sturgeon']
+    const params = [-2, 1, 'last', 'prelast']
+    testAgainstNative(t, original, params)
+})
+
+test('21/ vs Array.splice', function(t) {
+    const original = ['angel', 'clown', 'mandarin', 'sturgeon']
+    const params = [-2, -1, 'last', 'prelast']
     testAgainstNative(t, original, params)
 })
