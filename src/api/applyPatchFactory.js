@@ -25,15 +25,13 @@ export default function applyPatchFactory(patchers) {
                             isPlainObject(destiny_value)
                         ))
                 ) {
-                    let oldValue = destiny_value
-
-                    destiny[prop] = isPlainObject(origin_value) // immutable
+                    // This is where the merge with plain objects happen
+                    destiny[prop] = isPlainObject(origin_value)
                         ? applyPatch({}, origin_value).result
-                        : isArray(origin_value)
-                        ? merge([], origin_value) // Shall we merge arrays or just copy? Don't know
                         : origin_value
 
-                    oldValue = patchers.reduce(
+                    // Applying patches
+                    const oldValue = patchers.reduce(
                         (oldValue, p) =>
                             p({
                                 origin,
@@ -43,7 +41,7 @@ export default function applyPatchFactory(patchers) {
                                 oldValue,
                                 had_prop
                             }),
-                        oldValue
+                        destiny_value
                     )
 
                     setDeep(unpatch_root, path.slice(0), oldValue)

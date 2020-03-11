@@ -5,6 +5,7 @@ import { isFunction } from './util/is'
 import createNodeFactory from './api/createNodeFactory'
 import createStoreFactory from './api/createStoreFactory'
 import applyPatchFactory from './api/applyPatchFactory'
+import Array from './types/Array'
 import Delete from './types/Delete'
 import Replace from './types/Replace'
 // import Splice from './types/Splice'
@@ -24,6 +25,7 @@ function factory() {
         if (isFunction(decode)) decoders.push(decode)
     }
 
+    addType(Array)
     addType(Delete)
     addType(Replace)
 
