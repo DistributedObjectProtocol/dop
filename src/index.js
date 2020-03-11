@@ -7,7 +7,7 @@ import createStoreFactory from './api/createStoreFactory'
 import applyPatchFactory from './api/applyPatchFactory'
 import Delete from './types/Delete'
 import Replace from './types/Replace'
-// import Splice from './types/Splice'
+import Splice from './types/Splice'
 
 function factory() {
     const patchers = []
@@ -26,6 +26,7 @@ function factory() {
 
     addType(Delete)
     addType(Replace)
+    addType(Splice)
 
     return {
         version,
@@ -37,7 +38,7 @@ function factory() {
         createNode,
         createStore,
         addType,
-        TYPE: { Delete, Replace }
+        TYPE: { Delete, Replace, Splice }
     }
 }
 

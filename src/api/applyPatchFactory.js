@@ -41,7 +41,8 @@ export default function applyPatchFactory(patchers) {
                                 prop,
                                 path,
                                 oldValue,
-                                had_prop
+                                had_prop,
+                                applyPatch
                             }),
                         oldValue
                     )
