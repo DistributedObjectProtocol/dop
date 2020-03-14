@@ -21,24 +21,24 @@ Delete.patch = function({ origin, destiny, prop, oldValue, had_prop }) {
 Delete.encode = function({ value }) {
     if (value instanceof Delete || value === Delete) {
         return { [DELETE_KEY]: 0 } // we don't go deeper
-    } else if (isValidToDecode({ value })) {
+    } else if (isValidToDecodeDelete({ value })) {
         return { [ESCAPE_KEY]: value } // we don't go deeper
     }
     return value
 }
 
 Delete.decode = function({ value }) {
-    if (isValidToDecode({ value })) {
+    if (isValidToDecodeDelete({ value })) {
         return new Delete()
     } else if (
         isValidToEscape({ value }) &&
-        isValidToDecode({ value: value[ESCAPE_KEY] })
+        isValidToDecodeDelete({ value: value[ESCAPE_KEY] })
     ) {
         return value[ESCAPE_KEY]
     }
     return value
 }
 
-function isValidToDecode({ value }) {
+function isValidToDecodeDelete({ value }) {
     return getUniqueKey(value) === DELETE_KEY && value[DELETE_KEY] === 0
 }

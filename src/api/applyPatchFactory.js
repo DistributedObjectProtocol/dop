@@ -45,6 +45,7 @@ export default function applyPatchFactory(patchers) {
                         destiny_value
                     )
 
+                    // if (destiny[prop] !== oldValue) {
                     setDeep(unpatch_root, path.slice(0), oldValue)
                     mutations.push({
                         oldValue,
@@ -52,6 +53,7 @@ export default function applyPatchFactory(patchers) {
                         prop,
                         path: path.slice(1)
                     })
+                    // }
 
                     return false // we dont go deeper
                 }

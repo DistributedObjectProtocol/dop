@@ -9,6 +9,7 @@ import Array from './types/Array'
 import Delete from './types/Delete'
 import Replace from './types/Replace'
 import Splice from './types/Splice'
+import Inner from './types/Inner'
 
 function factory() {
     const patchers = []
@@ -29,6 +30,7 @@ function factory() {
     addType(Delete)
     addType(Replace)
     addType(Splice)
+    addType(Inner)
 
     return {
         version,
@@ -40,7 +42,12 @@ function factory() {
         createNode,
         createStore,
         addType,
-        TYPE: { Delete, Replace, Splice }
+        TYPE: {
+            Delete,
+            Replace,
+            Splice,
+            Inner
+        }
     }
 }
 

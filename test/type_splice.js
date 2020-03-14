@@ -21,11 +21,21 @@ test('Ignore', function(t) {
     testBasic(t, patch, expected)
 })
 
+// test('Patching a non array must do nothing', function(t) {
+//     const target = { array: 1234 }
+//     const patch = { array: TYPE.Splice({ 0: 'b' }) }
+//     const expected = { array: 1234 }
+//     const { mutations } = testUnpatch(t, target, patch, expected)
+//     t.is(mutations.length, 0)
+// })
+
 test('removing and adding', function(t) {
     const target = { array: ['a', 'b', 'c'] }
     const patch = { array: TYPE.Splice(0, 1, 'd') }
     const expected = { array: ['d', 'b', 'c'] }
-    testUnpatch(t, target, patch, expected)
+    const { mutations } = testUnpatch(t, target, patch, expected)
+    console.log(mutations)
+    t.is(mutations.length, 1)
 })
 
 test('removing', function(t) {

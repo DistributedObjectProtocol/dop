@@ -39,7 +39,7 @@ function testUnpatch(t, target, patch, expected, reverse = true) {
         const output2 = applyPatch(target, unpatch)
         t.deepEqual(output2.result, cloned)
     }
-    return { unpatch, mutations }
+    return { unpatch, mutations, result }
 }
 
 module.exports = { newDate, isInteger, testBasic, testUnpatch }
