@@ -1,7 +1,6 @@
-import { isPlainObject, isArray } from '../util/is'
+import { isPlainObject } from '../util/is'
 import { setDeep } from '../util/set'
 import forEachObject from '../util/forEachObject'
-import merge from '../util/merge'
 
 export default function applyPatchFactory(patchers) {
     return function applyPatch(target, patch) {
@@ -45,17 +44,18 @@ export default function applyPatchFactory(patchers) {
                         destiny_value
                     )
 
-                    // if (destiny[prop] !== oldValue) {
-                    setDeep(unpatch_root, path.slice(0), oldValue)
-                    mutations.push({
-                        oldValue,
-                        object: destiny,
-                        prop,
-                        path: path.slice(1)
-                    })
-                    // }
+                    // We register the mutation if oldValue is different to the new value
+                    if (destiny[prop] !== oldValue) {
+                        setDeep(unpatch_root, path.slice(0), oldValue)
+                        mutations.push({
+                            oldValue,
+                            object: destiny,
+                            prop,
+                            path: path.slice(1)
+                        })
+                    }
 
-                    return false // we dont go deeper
+                    return false // we don't go deeper
                 }
             }
         )

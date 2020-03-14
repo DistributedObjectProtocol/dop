@@ -32,18 +32,26 @@ test('API', function(t) {
     const target = { array: ['a'] }
     const patch = { array: TYPE.Inner({ 1: 'b' }) }
     const expected = { array: ['a', 'b'] }
-    const { unpatch, result } = testUnpatch(t, target, patch, expected)
+    const { unpatch, result, mutations } = testUnpatch(
+        t,
+        target,
+        patch,
+        expected
+    )
+    t.is(mutations.length, 1)
     t.is(result.array, target.array)
     t.true(unpatch.array instanceof TYPE.Inner)
     t.deepEqual(unpatch.array.patch, { '1': undefined, length: 1 })
 })
 
-// test('Patching a non array must do nothing', function(t) {
-//     const target = { array: 1234 }
-//     const patch = { array: TYPE.Inner({ 0: 'b' }) }
-//     const expected = { array: 1234 }
-//     testUnpatch(t, target, patch, expected)
-// })
+test('Patching a non array must do nothing', function(t) {
+    const target = { array: 1234 }
+    const patch = { array: TYPE.Inner({ 0: 'b' }) }
+    const expected = { array: 1234 }
+    testUnpatch(t, target, patch, expected)
+    const { mutations } = testUnpatch(t, target, patch, expected)
+    t.is(mutations.length, 0)
+})
 
 test('Editing top level', function(t) {
     const target = { array: ['a', 'b', 'c'] }

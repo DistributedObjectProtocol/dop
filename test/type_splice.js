@@ -21,13 +21,29 @@ test('Ignore', function(t) {
     testBasic(t, patch, expected)
 })
 
-// test('Patching a non array must do nothing', function(t) {
-//     const target = { array: 1234 }
-//     const patch = { array: TYPE.Splice({ 0: 'b' }) }
-//     const expected = { array: 1234 }
-//     const { mutations } = testUnpatch(t, target, patch, expected)
-//     t.is(mutations.length, 0)
-// })
+test('API', function(t) {
+    const target = { array: ['a'] }
+    const patch = { array: TYPE.Splice(1, 0, 'b') }
+    const expected = { array: ['a', 'b'] }
+    const { unpatch, result, mutations } = testUnpatch(
+        t,
+        target,
+        patch,
+        expected
+    )
+    t.is(mutations.length, 1)
+    t.is(result.array, target.array)
+    t.true(unpatch.array instanceof TYPE.Splice)
+    t.deepEqual(unpatch.array.args, [1, 1])
+})
+
+test('Patching a non array must do nothing', function(t) {
+    const target = { array: 1234 }
+    const patch = { array: TYPE.Splice({ 0: 'b' }) }
+    const expected = { array: 1234 }
+    const { mutations } = testUnpatch(t, target, patch, expected)
+    t.is(mutations.length, 0)
+})
 
 test('removing and adding', function(t) {
     const target = { array: ['a', 'b', 'c'] }

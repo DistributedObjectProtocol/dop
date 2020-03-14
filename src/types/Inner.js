@@ -14,24 +14,25 @@ export default function Inner(patch) {
 
 Inner.patch = function({ origin, destiny, prop, oldValue, applyPatch }) {
     const origin_value = origin[prop]
-    if (isArray(oldValue) && origin_value instanceof Inner) {
-        const patches = origin_value.patch
-        const unpatches = {}
-        const length = oldValue.length
-        for (const key in patches) {
-            const patched = applyPatch(oldValue[key], patches[key])
-            if (oldValue[key] !== patched.result) {
-                oldValue[key] = patched.result
-                unpatches[key] = patched.unpatch
-            }
-        }
-        if (oldValue.length !== length) {
-            unpatches.length = length
-        }
-
+    if (origin_value instanceof Inner) {
         destiny[prop] = oldValue
-        // console.log({ result: oldValue, unpatches })
-        return new Inner(unpatches)
+        if (isArray(oldValue)) {
+            const patches = origin_value.patch
+            const unpatches = {}
+            const length = oldValue.length
+            for (const key in patches) {
+                const patched = applyPatch(oldValue[key], patches[key])
+                if (oldValue[key] !== patched.result) {
+                    oldValue[key] = patched.result
+                    unpatches[key] = patched.unpatch
+                }
+            }
+            if (oldValue.length !== length) {
+                unpatches.length = length
+            }
+            // console.log({ result: oldValue, unpatches })
+            return new Inner(unpatches)
+        }
     }
     return oldValue
 }
