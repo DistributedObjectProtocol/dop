@@ -50,7 +50,6 @@ test('removing and adding', function(t) {
     const patch = { array: TYPE.Splice(0, 1, 'd') }
     const expected = { array: ['d', 'b', 'c'] }
     const { mutations } = testUnpatch(t, target, patch, expected)
-    console.log(mutations)
     t.is(mutations.length, 1)
 })
 

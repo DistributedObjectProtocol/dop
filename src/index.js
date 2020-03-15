@@ -17,9 +17,9 @@ function factory() {
     const encoders = []
     const decoders = []
     const encode = (object, params = {}, list = encoders) =>
-        converter(object, params, list)
+        converter(object, merge(params, { encode }), list)
     const decode = (object, params = {}, list = decoders) =>
-        converter(object, params, list)
+        converter(object, merge(params, { decode }), list)
     const applyPatch = applyPatchFactory(patchers)
     const createStore = createStoreFactory(applyPatch)
     const createNode = createNodeFactory({ encode, decode })

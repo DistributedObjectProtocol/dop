@@ -8,7 +8,7 @@ test('Valid type', function(t) {
     testBasic(t, patch, expected)
 })
 
-test.skip('Sub Types', function(t) {
+test('Sub Types', function(t) {
     const patch = { convert: TYPE.Inner({ 0: { a: TYPE.Delete() } }) }
     const expected = { convert: { $i: { 0: { a: { $d: 0 } } } } }
     testBasic(t, patch, expected)

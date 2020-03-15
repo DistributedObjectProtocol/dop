@@ -1,5 +1,5 @@
 import forEachObject from '../util/forEachObject'
-import { mergeMutator } from '../util/merge'
+import merge, { mergeMutator } from '../util/merge'
 import { isArray } from '../util/is'
 
 export default function converter(origin, params, converters) {
@@ -8,7 +8,7 @@ export default function converter(origin, params, converters) {
         const value = converters.reduce(
             (value, converter) =>
                 converter(
-                    Object.assign(
+                    merge(
                         {
                             value,
                             origin,

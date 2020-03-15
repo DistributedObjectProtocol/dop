@@ -40,18 +40,18 @@ Inner.patch = function({ origin, destiny, prop, oldValue, applyPatch }) {
     return oldValue
 }
 
-Inner.encode = function({ value, ...args }) {
+Inner.encode = function({ value, encode }) {
     if (value instanceof Inner) {
-        return { [INNER_KEY]: value.patch }
+        return { [INNER_KEY]: encode(value.patch) }
     } else if (isValidToDecodeInner({ value })) {
         return { [ESCAPE_KEY]: value }
     }
     return value
 }
 
-Inner.decode = function({ value }) {
+Inner.decode = function({ value, decode }) {
     if (isValidToDecodeInner({ value })) {
-        return new Inner(value[INNER_KEY])
+        return new Inner(decode(value[INNER_KEY]))
     } else if (
         isValidToEscape({ value }) &&
         isValidToDecodeInner({ value: value[ESCAPE_KEY] })
