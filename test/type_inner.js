@@ -8,9 +8,15 @@ test('Valid type', function(t) {
     testEncodeDecode(t, patch, expected)
 })
 
-test('Sub Types', function(t) {
+test('Sub Delete', function(t) {
     const patch = { convert: TYPE.Inner({ 0: { a: TYPE.Delete() } }) }
     const expected = { convert: { $i: { 0: { a: { $d: 0 } } } } }
+    testEncodeDecode(t, patch, expected)
+})
+
+test('Sub Inner', function(t) {
+    const patch = { convert: TYPE.Inner({ 0: { a: TYPE.Inner({ 0: 'b' }) } }) }
+    const expected = { convert: { $i: { 0: { a: { $i: { 0: 'b' } } } } } }
     testEncodeDecode(t, patch, expected)
 })
 
@@ -73,16 +79,35 @@ test('Editing subobjects', function(t) {
     testPatchUnpatch(t, target, patch, expected)
 })
 
-test('Extending subobjects', function(t) {
-    const target = { array: [{ a: true }] }
-    const patch = { array: TYPE.Inner({ 0: { b: true } }) }
-    const expected = { array: [{ a: true, b: true }] }
-    testPatchUnpatch(t, target, patch, expected)
-})
-
-test('Deleting subobjects', function(t) {
+test('Deleting subobject', function(t) {
     const target = { array: [{ a: true }] }
     const patch = { array: TYPE.Inner({ 0: { a: TYPE.Delete() } }) }
     const expected = { array: [{}] }
     testPatchUnpatch(t, target, patch, expected)
+})
+
+test('Updating sub-subarray', function(t) {
+    const target = { array: [{ subarray: ['a'] }] }
+    const array = target.array
+    const subarray = target.array[0].subarray
+    const patch = {
+        array: TYPE.Inner({ 0: { subarray: TYPE.Inner({ 0: 'b' }) } })
+    }
+    const expected = { array: [{ subarray: ['b'] }] }
+    testPatchUnpatch(t, target, patch, expected)
+    t.is(array, target.array)
+    t.is(subarray, target.array[0].subarray)
+})
+
+test('Replacing sub-subarray', function(t) {
+    const target = { array: [{ subarray: ['a'] }] }
+    const array = target.array
+    const subarray = target.array[0].subarray
+    const patch = {
+        array: TYPE.Inner({ 0: { subarray: ['b', 'c'] } })
+    }
+    const expected = { array: [{ subarray: ['b', 'c'] }] }
+    testPatchUnpatch(t, target, patch, expected)
+    t.is(array, target.array)
+    t.not(subarray, target.array[0].subarray)
 })

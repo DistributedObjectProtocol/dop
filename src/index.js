@@ -5,6 +5,7 @@ import { isFunction } from './util/is'
 import createNodeFactory from './api/createNodeFactory'
 import createStoreFactory from './api/createStoreFactory'
 import applyPatchFactory from './api/applyPatchFactory'
+
 import Function from './types/Function'
 import Array from './types/Array'
 import Delete from './types/Delete'

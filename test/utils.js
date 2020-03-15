@@ -17,13 +17,15 @@ function isInteger(number) {
     )
 }
 
-function testEncodeDecode(t, patch, expected, recursive = true) {
+function testEncodeDecode(t, patch, expected, reverse = true) {
     const encoded = encode(patch)
-    const decoded = decode(encoded)
     t.deepEqual(expected, encoded)
-    t.deepEqual(patch, decoded)
     t.not(patch, encoded)
-    t.not(encoded, decoded)
+    if (reverse) {
+        const decoded = decode(encoded)
+        t.deepEqual(patch, decoded)
+        t.not(encoded, decoded)
+    }
 }
 
 function testPatchUnpatch(t, target, patch, expected, reverse = true) {
