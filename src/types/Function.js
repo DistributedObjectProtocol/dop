@@ -3,9 +3,9 @@ import { getUniqueKey } from '../util/get'
 import { isInteger, isFunction } from '../util/is'
 import { isValidToDecode, isValidToEscape } from '../util/isValid'
 
-export default function Func() {}
+export default function Function() {}
 
-Func.encode = function({
+Function.encode = function({
     value,
     remote_functions,
     local_functions,
@@ -23,7 +23,11 @@ Func.encode = function({
     return value
 }
 
-Func.decode = function({ value, remote_functions_id, createRemoteFunction }) {
+Function.decode = function({
+    value,
+    remote_functions_id,
+    createRemoteFunction
+}) {
     if (
         getUniqueKey(value) === FUNCTION_KEY &&
         isInteger(value[FUNCTION_KEY])

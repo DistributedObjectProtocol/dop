@@ -1,10 +1,8 @@
 import { isFunction, isInteger, isArray } from '../util/is'
 import createRequest from '../util/createRequest'
 import localProcedureCall from '../util/localProcedureCall'
-import converter from '../util/converter'
-import Func from '../types/Function'
 
-export default function createNodeFactory({ encoders, decoders }) {
+export default function createNodeFactory({ encode, decode }) {
     return function createNode({
         serialize = JSON.stringify,
         deserialize = JSON.parse,
@@ -19,6 +17,17 @@ export default function createNodeFactory({ encoders, decoders }) {
         let remote_function_index = 0
         let request_id_index = 0
 
+        // encode / decode params
+        const encode_params = {
+            remote_functions,
+            local_functions,
+            registerLocalFunctionFromEncode
+        }
+        const decode_params = {
+            remote_functions_id,
+            createRemoteFunction
+        }
+
         function registerLocalFunction(function_id, fn) {
             local_functions_id[function_id] = fn
             local_functions.set(fn, function_id)
@@ -32,7 +41,7 @@ export default function createNodeFactory({ encoders, decoders }) {
             const makeCall = (request_id, args) => {
                 const data = [request_id, function_id]
                 if (args.length > 0) data.push(args)
-                api.send(encode(data))
+                api.send(encode(data, encode_params))
                 return data
             }
             const fn = (...args) => {
@@ -73,7 +82,7 @@ export default function createNodeFactory({ encoders, decoders }) {
         function message(msg) {
             msg = deserialize(msg)
             if (!isArray(msg)) return false
-            msg = decode(msg)
+            msg = decode(msg, decode_params)
 
             let [id, function_id, args] = msg
             const response_id = -id
@@ -99,10 +108,10 @@ export default function createNodeFactory({ encoders, decoders }) {
                         req.then(value => {
                             response.push(0) // no errors
                             if (value !== undefined) response.push(value)
-                            api.send(encode(response))
+                            api.send(encode(response, encode_params))
                         }).catch(error => {
                             response.push(error === 0 ? null : error)
-                            api.send(encode(response))
+                            api.send(encode(response, encode_params))
                         })
                         args.push(req)
                         localProcedureCall(fn, req, args)
@@ -125,33 +134,6 @@ export default function createNodeFactory({ encoders, decoders }) {
 
         function registerLocalFunctionFromEncode(fn) {
             return registerLocalFunction(local_function_index++, fn)
-        }
-
-        function encode(object) {
-            return converter(
-                object,
-                encoders.concat(({ value }) =>
-                    Func.encode({
-                        value,
-                        remote_functions,
-                        local_functions,
-                        registerLocalFunctionFromEncode
-                    })
-                )
-            )
-        }
-
-        function decode(object) {
-            return converter(
-                object,
-                decoders.concat(({ value }) =>
-                    Func.decode({
-                        value,
-                        remote_functions_id,
-                        createRemoteFunction
-                    })
-                )
-            )
         }
 
         const api = {

@@ -41,7 +41,6 @@ Inner.patch = function({ origin, destiny, prop, oldValue, applyPatch }) {
 }
 
 Inner.encode = function({ value, ...args }) {
-    console.log(args)
     if (value instanceof Inner) {
         return { [INNER_KEY]: value.patch }
     } else if (isValidToDecodeInner({ value })) {

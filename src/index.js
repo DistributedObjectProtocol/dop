@@ -5,6 +5,7 @@ import { isFunction } from './util/is'
 import createNodeFactory from './api/createNodeFactory'
 import createStoreFactory from './api/createStoreFactory'
 import applyPatchFactory from './api/applyPatchFactory'
+import Function from './types/Function'
 import Array from './types/Array'
 import Delete from './types/Delete'
 import Replace from './types/Replace'
@@ -15,17 +16,20 @@ function factory() {
     const patchers = []
     const encoders = []
     const decoders = []
-    const encode = (object, list = encoders) => converter(object, list)
-    const decode = (object, list = decoders) => converter(object, list)
+    const encode = (object, params = {}, list = encoders) =>
+        converter(object, params, list)
+    const decode = (object, params = {}, list = decoders) =>
+        converter(object, params, list)
     const applyPatch = applyPatchFactory(patchers)
     const createStore = createStoreFactory(applyPatch)
-    const createNode = createNodeFactory({ encoders, decoders })
+    const createNode = createNodeFactory({ encode, decode })
     const addType = ({ patch, encode, decode }) => {
         if (isFunction(patch)) patchers.push(patch)
         if (isFunction(encode)) encoders.push(encode)
         if (isFunction(decode)) decoders.push(decode)
     }
 
+    addType(Function)
     addType(Array)
     addType(Delete)
     addType(Replace)
