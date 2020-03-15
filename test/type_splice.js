@@ -1,31 +1,31 @@
 import test from 'ava'
 import { applyPatch } from '../'
 import { TYPE } from '../'
-import { testBasic, testUnpatch } from './utils'
+import { testEncodeDecode, testPatchUnpatch } from './utils'
 
 test('Valid type', function(t) {
     const patch = { convert: TYPE.Splice(0, 1, 'world') }
     const expected = { convert: { $s: [0, 1, 'world'] } }
-    testBasic(t, patch, expected)
+    testEncodeDecode(t, patch, expected)
 })
 
 test('Escape', function(t) {
     const patch = { escape: { $s: [0, 1] } }
     const expected = { escape: { $escape: { $s: [0, 1] } } }
-    testBasic(t, patch, expected)
+    testEncodeDecode(t, patch, expected)
 })
 
 test('Ignore', function(t) {
     const patch = { ignore: { $s: { a: 2 } } }
     const expected = { ignore: { $s: { a: 2 } } }
-    testBasic(t, patch, expected)
+    testEncodeDecode(t, patch, expected)
 })
 
 test('API', function(t) {
     const target = { array: ['a'] }
     const patch = { array: TYPE.Splice(1, 0, 'b') }
     const expected = { array: ['a', 'b'] }
-    const { unpatch, result, mutations } = testUnpatch(
+    const { unpatch, result, mutations } = testPatchUnpatch(
         t,
         target,
         patch,
@@ -41,7 +41,7 @@ test('Patching a non array must do nothing', function(t) {
     const target = { array: 1234 }
     const patch = { array: TYPE.Splice({ 0: 'b' }) }
     const expected = { array: 1234 }
-    const { mutations } = testUnpatch(t, target, patch, expected)
+    const { mutations } = testPatchUnpatch(t, target, patch, expected)
     t.is(mutations.length, 0)
 })
 
@@ -49,7 +49,7 @@ test('removing and adding', function(t) {
     const target = { array: ['a', 'b', 'c'] }
     const patch = { array: TYPE.Splice(0, 1, 'd') }
     const expected = { array: ['d', 'b', 'c'] }
-    const { mutations } = testUnpatch(t, target, patch, expected)
+    const { mutations } = testPatchUnpatch(t, target, patch, expected)
     t.is(mutations.length, 1)
 })
 
@@ -57,28 +57,28 @@ test('removing', function(t) {
     const target = { array: ['a', 'b', 'c'] }
     const patch = { array: TYPE.Splice(0, 1) }
     const expected = { array: ['b', 'c'] }
-    testUnpatch(t, target, patch, expected)
+    testPatchUnpatch(t, target, patch, expected)
 })
 
 test('removing middle', function(t) {
     const target = { array: ['a', 'b', 'c'] }
     const patch = { array: TYPE.Splice(1, 1) }
     const expected = { array: ['a', 'c'] }
-    testUnpatch(t, target, patch, expected)
+    testPatchUnpatch(t, target, patch, expected)
 })
 
 test('adding', function(t) {
     const target = { array: ['a', 'b', 'c'] }
     const patch = { array: TYPE.Splice(3, 0, 'd') }
     const expected = { array: ['a', 'b', 'c', 'd'] }
-    testUnpatch(t, target, patch, expected)
+    testPatchUnpatch(t, target, patch, expected)
 })
 
 test('negative', function(t) {
     const target = { array: ['angel', 'clown', 'mandarin', 'sturgeon'] }
     const patch = { array: TYPE.Splice(-2, 1) }
     const expected = { array: ['angel', 'clown', 'sturgeon'] }
-    testUnpatch(t, target, patch, expected, false)
+    testPatchUnpatch(t, target, patch, expected, false)
 })
 
 function testAgainstNative(t, original, params) {

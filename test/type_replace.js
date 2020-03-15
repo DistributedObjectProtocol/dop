@@ -1,23 +1,23 @@
 import test from 'ava'
 import { decode, TYPE } from '../'
-import { testBasic, testUnpatch } from './utils'
+import { testEncodeDecode, testPatchUnpatch } from './utils'
 
 test('Valid type', function(t) {
     const patch = { convert: TYPE.Replace({ hello: 'world' }) }
     const expected = { convert: { $r: { hello: 'world' } } }
-    testBasic(t, patch, expected)
+    testEncodeDecode(t, patch, expected)
 })
 
 test('Escape', function(t) {
     const patch = { escape: { $r: 1 } }
     const expected = { escape: { $escape: { $r: 1 } } }
-    testBasic(t, patch, expected)
+    testEncodeDecode(t, patch, expected)
 })
 
 test('Ignore', function(t) {
     const patch = { ignore: { $r: 1, $other: 1 } }
     const expected = { ignore: { $r: 1, $other: 1 } }
-    testBasic(t, patch, expected)
+    testEncodeDecode(t, patch, expected)
 })
 
 test('$escaping', function(t) {
@@ -29,7 +29,7 @@ test('$escaping', function(t) {
         convert: { $r: [1, 2, 3] },
         escape: { $escape: { $r: 1 } }
     }
-    testBasic(t, patch, expected)
+    testEncodeDecode(t, patch, expected)
 })
 
 test('This should not be escaped because $r has another valid prop', function(t) {
@@ -41,7 +41,7 @@ test('This should not be escaped because $r has another valid prop', function(t)
         convert: { $r: [1, 2, 3] },
         ignored: { $r: [1, 2, 3], $escape: [1, 2, 3] }
     }
-    testBasic(t, patch, expected)
+    testEncodeDecode(t, patch, expected)
 })
 
 test('This should not be escaped because $r has another valid prop 2', function(t) {
@@ -53,7 +53,7 @@ test('This should not be escaped because $r has another valid prop 2', function(
         convert: { $r: [1, 2, 3] },
         escape: { $escape: [1, 2, 3], $r: { $r: [1, 2, 3] } }
     }
-    testBasic(t, patch, expected)
+    testEncodeDecode(t, patch, expected)
 })
 
 test('Decode alone', function(t) {
@@ -83,7 +83,7 @@ test('patch array', function(t) {
     const patch = { value: TYPE.Replace([1, 2, 3]) }
     const expected = { value: [1, 2, 3] }
 
-    testUnpatch(t, target, patch, expected)
+    testPatchUnpatch(t, target, patch, expected)
 })
 
 test('patch object', function(t) {
@@ -91,7 +91,7 @@ test('patch object', function(t) {
     const patch = { value: TYPE.Replace({ c: 3 }) }
     const expected = { value: { c: 3 } }
 
-    testUnpatch(t, target, patch, expected)
+    testPatchUnpatch(t, target, patch, expected)
 })
 
 test('patch should replace the complete object', function(t) {
@@ -101,7 +101,7 @@ test('patch should replace the complete object', function(t) {
     const expected = { value: { c: 3 } }
     const copyvalue = target.value
 
-    testUnpatch(t, target, patch, expected, false)
+    testPatchUnpatch(t, target, patch, expected, false)
     t.is(obj_to_replace, target.value)
     t.not(copyvalue, target.value)
 })
@@ -113,7 +113,7 @@ test('testing that last test works correctly without replace', function(t) {
 
     const copyvalue = target.value
 
-    testUnpatch(t, target, patch, expected)
+    testPatchUnpatch(t, target, patch, expected)
     t.is(copyvalue, target.value)
     t.deepEqual(copyvalue, target.value)
 })
@@ -123,7 +123,7 @@ test('replace array', function(t) {
     const patch = TYPE.Replace([1, 2])
     const expected = [1, 2]
 
-    testUnpatch(t, target, patch, expected)
+    testPatchUnpatch(t, target, patch, expected)
 })
 
 test('same behavior as replace array', function(t) {
@@ -131,5 +131,5 @@ test('same behavior as replace array', function(t) {
     const patch = [1, 2]
     const expected = [1, 2]
 
-    testUnpatch(t, target, patch, expected)
+    testPatchUnpatch(t, target, patch, expected)
 })

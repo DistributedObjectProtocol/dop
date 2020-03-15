@@ -17,7 +17,7 @@ function isInteger(number) {
     )
 }
 
-function testBasic(t, patch, expected, recursive = true) {
+function testEncodeDecode(t, patch, expected, recursive = true) {
     const encoded = encode(patch)
     const decoded = decode(encoded)
     t.deepEqual(expected, encoded)
@@ -26,7 +26,7 @@ function testBasic(t, patch, expected, recursive = true) {
     t.not(encoded, decoded)
 }
 
-function testUnpatch(t, target, patch, expected, reverse = true) {
+function testPatchUnpatch(t, target, patch, expected, reverse = true) {
     const cloned = getNewPlain(target)
     const output = applyPatch(target, patch)
     const { unpatch, mutations, result } = output
@@ -42,4 +42,4 @@ function testUnpatch(t, target, patch, expected, reverse = true) {
     return { unpatch, mutations, result }
 }
 
-module.exports = { newDate, isInteger, testBasic, testUnpatch }
+module.exports = { newDate, isInteger, testEncodeDecode, testPatchUnpatch }
