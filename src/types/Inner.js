@@ -22,7 +22,10 @@ Inner.patch = function({ origin, destiny, prop, oldValue, applyPatch }) {
             const length = oldValue.length
             for (const key in patches) {
                 const patched = applyPatch(oldValue[key], patches[key])
-                if (oldValue[key] !== patched.result) {
+                if (
+                    oldValue[key] !== patched.result ||
+                    isPlainObject(patches[key])
+                ) {
                     oldValue[key] = patched.result
                     unpatches[key] = patched.unpatch
                 }
@@ -37,7 +40,8 @@ Inner.patch = function({ origin, destiny, prop, oldValue, applyPatch }) {
     return oldValue
 }
 
-Inner.encode = function({ value }) {
+Inner.encode = function({ value, ...args }) {
+    console.log(args)
     if (value instanceof Inner) {
         return { [INNER_KEY]: value.patch }
     } else if (isValidToDecodeInner({ value })) {

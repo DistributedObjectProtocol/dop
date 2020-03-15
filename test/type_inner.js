@@ -8,6 +8,12 @@ test('Valid type', function(t) {
     testBasic(t, patch, expected)
 })
 
+test.only('Sub Types', function(t) {
+    const patch = { convert: TYPE.Inner({ 0: { a: TYPE.Delete() } }) }
+    const expected = { convert: { $i: { 0: { a: { $d: 0 } } } } }
+    testBasic(t, patch, expected)
+})
+
 test('Escape', function(t) {
     const patch = { escape: { $i: { 1: 2 } } }
     const expected = { escape: { $escape: { $i: { 1: 2 } } } }
@@ -57,5 +63,26 @@ test('Editing top level', function(t) {
     const target = { array: ['a', 'b', 'c'] }
     const patch = { array: TYPE.Inner({ 0: 'A', 3: 'd' }) }
     const expected = { array: ['A', 'b', 'c', 'd'] }
+    testUnpatch(t, target, patch, expected)
+})
+
+test('Editing subobjects', function(t) {
+    const target = { array: [{ a: false }] }
+    const patch = { array: TYPE.Inner({ 0: { a: true } }) }
+    const expected = { array: [{ a: true }] }
+    testUnpatch(t, target, patch, expected)
+})
+
+test('Extending subobjects', function(t) {
+    const target = { array: [{ a: true }] }
+    const patch = { array: TYPE.Inner({ 0: { b: true } }) }
+    const expected = { array: [{ a: true, b: true }] }
+    testUnpatch(t, target, patch, expected)
+})
+
+test('Deleting subobjects', function(t) {
+    const target = { array: [{ a: true }] }
+    const patch = { array: TYPE.Inner({ 0: { a: TYPE.Delete() } }) }
+    const expected = { array: [{}] }
     testUnpatch(t, target, patch, expected)
 })
