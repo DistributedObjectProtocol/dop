@@ -2,6 +2,7 @@ import { ESCAPE_KEY, INNER_KEY } from '../const'
 import { isValidToEscape } from '../util/isValid'
 import { isArray, isPlainObject } from '../util/is'
 import { getUniqueKey } from '../util/get'
+import Delete from './Delete'
 
 export default function Inner(patch) {
     if (!isPlainObject(patch))
@@ -27,7 +28,10 @@ Inner.patch = function({ origin, destiny, prop, oldValue, applyPatch }) {
                     isPlainObject(patches[key])
                 ) {
                     oldValue[key] = patched.result
-                    unpatches[key] = patched.unpatch
+                    unpatches[key] =
+                        patched.unpatch === undefined
+                            ? Delete()
+                            : patched.unpatch
                 }
             }
             if (oldValue.length !== length) {

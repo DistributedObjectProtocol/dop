@@ -17,12 +17,22 @@ function isInteger(number) {
     )
 }
 
-function testEncodeDecode(t, patch, expected, reverse = true) {
-    const encoded = encode(patch)
+function serializeDeserialize(patch, serialize = true) {
+    return serialize ? JSON.parse(JSON.stringify(patch)) : patch
+}
+
+function testEncodeDecode(
+    t,
+    patch,
+    expected,
+    reverse = true,
+    serialize = true
+) {
+    const encoded = serializeDeserialize(encode(patch), serialize)
     t.deepEqual(expected, encoded)
     t.not(patch, encoded)
     if (reverse) {
-        const decoded = decode(encoded)
+        const decoded = decode(serializeDeserialize(encoded, serialize))
         t.deepEqual(patch, decoded)
         t.not(encoded, decoded)
     }

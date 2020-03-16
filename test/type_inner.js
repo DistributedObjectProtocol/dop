@@ -53,7 +53,7 @@ test('API', function(t) {
     t.is(mutations.length, 1)
     t.is(result.array, target.array)
     t.true(unpatch.array instanceof TYPE.Inner)
-    t.deepEqual(unpatch.array.patch, { '1': undefined, length: 1 })
+    t.deepEqual(unpatch.array.patch, { '1': TYPE.Delete(), length: 1 })
 })
 
 test('Patching a non array must do nothing', function(t) {
@@ -110,4 +110,31 @@ test('Replacing sub-subarray', function(t) {
     testPatchUnpatch(t, target, patch, expected)
     t.is(array, target.array)
     t.not(subarray, target.array[0].subarray)
+})
+
+test('Pushing subobjects', function(t) {
+    const target = ['A']
+    const patch = TYPE.Inner({ 2: { a: true } })
+    const expected = ['A', undefined, { a: true }]
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('Editing subobject and creating a new one', function(t) {
+    const target = [{ a: false }]
+    const patch = TYPE.Inner({ 0: { a: true }, 1: { b: true } })
+    const expected = [{ a: true }, { b: true }]
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('Encoding unpatch', function(t) {
+    const target = [{ a: false }]
+    const patch = TYPE.Inner({ 0: { a: true }, 1: { b: true } })
+    const expected = [{ a: true }, { b: true }]
+    const { unpatch } = testPatchUnpatch(t, target, patch, expected)
+    // console.log(unpatch.patch[1])
+    testEncodeDecode(t, unpatch.patch, {
+        '0': { a: false },
+        '1': { $d: 0 },
+        length: 1
+    })
 })
