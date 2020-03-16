@@ -22,16 +22,14 @@ Inner.patch = function({ origin, destiny, prop, oldValue, applyPatch }) {
             const unpatches = {}
             const length = oldValue.length
             for (const key in patches) {
+                const had_prop = oldValue.hasOwnProperty(key)
                 const patched = applyPatch(oldValue[key], patches[key])
                 if (
                     oldValue[key] !== patched.result ||
                     isPlainObject(patches[key])
                 ) {
                     oldValue[key] = patched.result
-                    unpatches[key] =
-                        patched.unpatch === undefined
-                            ? Delete()
-                            : patched.unpatch
+                    unpatches[key] = had_prop ? patched.unpatch : Delete()
                 }
             }
             if (oldValue.length !== length) {
