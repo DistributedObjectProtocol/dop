@@ -168,25 +168,25 @@ test('syntax mutations', function(t) {
     t.is(mutations.length, 4)
     t.deepEqual(mutations[0], {
         prop: 'value',
-        oldValue: false,
+        old_value: false,
         path: ['value'],
         object: target
     })
     t.deepEqual(mutations[1], {
         prop: 'prop',
-        oldValue: false,
+        old_value: false,
         path: ['prop'],
         object: target
     })
     t.deepEqual(mutations[2], {
         prop: 'value',
-        oldValue: false,
+        old_value: false,
         path: ['last', 'value'],
         object: target.last
     })
     t.deepEqual(mutations[3], {
         prop: 'lastlast',
-        oldValue: { value: false },
+        old_value: { value: false },
         path: ['lastlast'],
         object: target
     })
@@ -200,7 +200,7 @@ test('syntax mutations on top level', function(t) {
     t.is(mutations.length, 1)
     t.deepEqual(mutations[0], {
         prop: '',
-        oldValue: target,
+        old_value: target,
         path: [],
         object: { '': patch }
     })
@@ -214,7 +214,7 @@ test('syntax mutations when using delete', function(t) {
     t.is(mutations.length, 1)
     t.deepEqual(mutations[0], {
         prop: '',
-        oldValue: target,
+        old_value: target,
         path: [],
         object: {}
     })

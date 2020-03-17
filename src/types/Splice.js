@@ -10,21 +10,21 @@ export default function Splice(...args) {
     this.args = args
 }
 
-Splice.patch = function({ origin, destiny, prop, oldValue }) {
+Splice.patch = function({ origin, destiny, prop, old_value }) {
     const origin_value = origin[prop]
     if (origin_value instanceof Splice) {
-        destiny[prop] = oldValue
-        if (isArray(oldValue)) {
+        destiny[prop] = old_value
+        if (isArray(old_value)) {
             const { args } = origin_value
             if (args[0] < 0) {
-                args[0] = oldValue.length + args[0]
+                args[0] = old_value.length + args[0]
             }
-            const spliced = oldValue.splice.apply(oldValue, args)
+            const spliced = old_value.splice.apply(old_value, args)
             const inverted = [args[0], args.length - 2].concat(spliced)
             return Splice.apply(null, inverted)
         }
     }
-    return oldValue
+    return old_value
 }
 
 Splice.encode = function({ value }) {

@@ -30,25 +30,25 @@ export default function applyPatchFactory(patchers) {
                         : origin_value
 
                     // Applying patches
-                    const oldValue = patchers.reduce(
-                        (oldValue, p) =>
+                    const old_value = patchers.reduce(
+                        (old_value, p) =>
                             p({
                                 origin,
                                 destiny,
                                 prop,
                                 path,
-                                oldValue,
+                                old_value,
                                 had_prop,
                                 applyPatch
                             }),
                         destiny_value
                     )
 
-                    // We register the mutation if oldValue is different to the new value
-                    if (destiny[prop] !== oldValue) {
-                        setDeep(unpatch_root, path.slice(0), oldValue)
+                    // We register the mutation if old_value is different to the new value
+                    if (destiny[prop] !== old_value) {
+                        setDeep(unpatch_root, path.slice(0), old_value)
                         mutations.push({
-                            oldValue,
+                            old_value,
                             object: destiny,
                             prop,
                             path: path.slice(1)

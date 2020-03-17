@@ -8,14 +8,14 @@ export default function Delete() {
     }
 }
 
-Delete.patch = function({ origin, destiny, prop, oldValue, had_prop }) {
+Delete.patch = function({ origin, destiny, prop, old_value, had_prop }) {
     if (origin[prop] instanceof Delete || origin[prop] === Delete) {
         delete destiny[prop]
     }
     if (!had_prop) {
-        oldValue = new Delete()
+        old_value = new Delete()
     }
-    return oldValue
+    return old_value
 }
 
 Delete.encode = function({ value }) {

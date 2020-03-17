@@ -13,33 +13,33 @@ export default function Inner(patch) {
     this.patch = patch
 }
 
-Inner.patch = function({ origin, destiny, prop, oldValue, applyPatch }) {
+Inner.patch = function({ origin, destiny, prop, old_value, applyPatch }) {
     const origin_value = origin[prop]
     if (origin_value instanceof Inner) {
-        destiny[prop] = oldValue
-        if (isArray(oldValue)) {
+        destiny[prop] = old_value
+        if (isArray(old_value)) {
             const patches = origin_value.patch
             const unpatches = {}
-            const length = oldValue.length
+            const length = old_value.length
             for (const key in patches) {
-                const had_prop = oldValue.hasOwnProperty(key)
-                const patched = applyPatch(oldValue[key], patches[key])
+                const had_prop = old_value.hasOwnProperty(key)
+                const patched = applyPatch(old_value[key], patches[key])
                 if (
-                    oldValue[key] !== patched.result ||
+                    old_value[key] !== patched.result ||
                     isPlainObject(patches[key])
                 ) {
-                    oldValue[key] = patched.result
+                    old_value[key] = patched.result
                     unpatches[key] = had_prop ? patched.unpatch : Delete()
                 }
             }
-            if (oldValue.length !== length) {
+            if (old_value.length !== length) {
                 unpatches.length = length
             }
-            // console.log({ result: oldValue, unpatches })
+            // console.log({ result: old_value, unpatches })
             return new Inner(unpatches)
         }
     }
-    return oldValue
+    return old_value
 }
 
 Inner.encode = function({ value, encode }) {
