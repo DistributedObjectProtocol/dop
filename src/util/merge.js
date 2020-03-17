@@ -1,5 +1,5 @@
-import { is, isPlain } from './is'
 import forEachObject from './forEachObject'
+import { is, isPlain } from './is'
 
 // https://jsperf.com/merge-challenge
 export default function merge(destiny, origin) {
