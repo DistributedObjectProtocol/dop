@@ -10,12 +10,12 @@ export default function Splice(...args) {
     this.args = args
 }
 
-Splice.patch = function({ origin, destiny, prop, old_value }) {
-    const origin_value = origin[prop]
-    if (origin_value instanceof Splice) {
-        destiny[prop] = old_value
+Splice.patch = function({ patch, target, prop, old_value }) {
+    const patch_value = patch[prop]
+    if (patch_value instanceof Splice) {
+        target[prop] = old_value
         if (isArray(old_value)) {
-            const { args } = origin_value
+            const { args } = patch_value
             if (args[0] < 0) {
                 args[0] = old_value.length + args[0]
             }

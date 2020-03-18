@@ -8,9 +8,9 @@ export default function Delete() {
     }
 }
 
-Delete.patch = function({ origin, destiny, prop, old_value, had_prop }) {
-    if (origin[prop] instanceof Delete || origin[prop] === Delete) {
-        delete destiny[prop]
+Delete.patch = function({ patch, target, prop, old_value, had_prop }) {
+    if (patch[prop] instanceof Delete || patch[prop] === Delete) {
+        delete target[prop]
     }
     if (!had_prop) {
         old_value = new Delete()

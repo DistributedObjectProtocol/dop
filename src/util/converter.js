@@ -11,8 +11,8 @@ export default function converter(origin, params, converters) {
                     merge(
                         {
                             value,
-                            origin,
-                            destiny,
+                            patch: origin,
+                            target: destiny,
                             prop,
                             path
                         },

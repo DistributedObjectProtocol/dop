@@ -33,8 +33,8 @@ export default function applyPatchFactory(patchers) {
                     const old_value = patchers.reduce(
                         (old_value, p) =>
                             p({
-                                origin,
-                                destiny,
+                                patch: origin,
+                                target: destiny,
                                 prop,
                                 path,
                                 old_value,

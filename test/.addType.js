@@ -11,10 +11,10 @@ function Push(...elements) {
     }
     this.elements = elements
 }
-Push.patch = function({ origin, destiny, prop, old_value }) {
-    const originValue = origin[prop]
+Push.patch = function({ patch, target, prop, old_value }) {
+    const originValue = patch[prop]
     if (isArray(old_value) && originValue instanceof Push) {
-        destiny[prop] = old_value
+        target[prop] = old_value
         return Push.apply(null, originValue.elements)
     }
     return old_value

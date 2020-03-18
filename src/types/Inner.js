@@ -13,12 +13,12 @@ export default function Inner(patch) {
     this.patch = patch
 }
 
-Inner.patch = function({ origin, destiny, prop, old_value, applyPatch }) {
-    const origin_value = origin[prop]
-    if (origin_value instanceof Inner) {
-        destiny[prop] = old_value
+Inner.patch = function({ patch, target, prop, old_value, applyPatch }) {
+    const patch_value = patch[prop]
+    if (patch_value instanceof Inner) {
+        target[prop] = old_value
         if (isArray(old_value)) {
-            const patches = origin_value.patch
+            const patches = patch_value.patch
             const unpatches = {}
             const length = old_value.length
             for (const key in patches) {
