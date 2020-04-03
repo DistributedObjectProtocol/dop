@@ -1,11 +1,11 @@
 import test from 'ava'
-import { merge } from '../'
+import dop from '../'
 import _ from 'lodash' // https://github.com/lodash/lodash/blob/master/test/merge.test.js
 import R from 'ramda'
 
 // https://jsperf.com/merge-challenge
 
-run(merge, 'dop')
+run(dop.merge, 'dop')
 run(_.merge, 'lodash')
 
 function run(merge, name) {
@@ -30,6 +30,16 @@ function run(merge, name) {
         }
 
         t.deepEqual(merge(names, ages, heights), expected)
+    })
+
+    test(name + ': must be a completly new references', function(t) {
+        var object = { obj: { a: 1 }, arr: [2] }
+        var actual = merge({}, object)
+
+        t.deepEqual(actual, object)
+        t.not(object, actual)
+        t.not(object.obj, actual.obj)
+        t.not(object.arr, actual.arr)
     })
 
     test(name + ': should work with four arguments', function(t) {

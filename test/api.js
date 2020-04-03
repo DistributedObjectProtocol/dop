@@ -35,3 +35,10 @@ test('isRemoteFunction', async t => {
     t.false(isRemoteFunction(() => {}))
     t.false(isRemoteFunction('other'))
 })
+
+test('Types must be same instance when creating new dop', function(t) {
+    const dopcopy = dop.factory()
+    t.is(dop.TYPE.Inner, dopcopy.TYPE.Inner)
+    t.is(dop.TYPE.Replace, dopcopy.TYPE.Replace)
+    t.is(dop.TYPE.Splice, dopcopy.TYPE.Splice)
+})
