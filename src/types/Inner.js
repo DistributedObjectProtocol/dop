@@ -1,7 +1,7 @@
 import { ESCAPE_KEY, INNER_KEY } from '../const'
 import { isValidToEscape } from '../util/isValid'
-import { isArray, isPlainObject } from '../util/is'
 import { getUniqueKey } from '../util/get'
+import { isArray, isPlainObject } from '../util/is'
 import Delete from './Delete'
 
 export default function Inner(patch) {
@@ -13,7 +13,7 @@ export default function Inner(patch) {
     this.patch = patch
 }
 
-Inner.patch = function({ patch, target, prop, old_value, applyPatch }) {
+Inner.patch = function ({ patch, target, prop, old_value, applyPatch }) {
     const patch_value = patch[prop]
     if (patch_value instanceof Inner) {
         target[prop] = old_value
@@ -42,7 +42,7 @@ Inner.patch = function({ patch, target, prop, old_value, applyPatch }) {
     return old_value
 }
 
-Inner.encode = function({ value, encode }) {
+Inner.encode = function ({ value, encode }) {
     if (value instanceof Inner) {
         return { [INNER_KEY]: encode(value.patch) }
     } else if (isValidToDecodeInner({ value })) {
@@ -51,7 +51,7 @@ Inner.encode = function({ value, encode }) {
     return value
 }
 
-Inner.decode = function({ value, decode }) {
+Inner.decode = function ({ value, decode }) {
     if (isValidToDecodeInner({ value })) {
         return new Inner(decode(value[INNER_KEY]))
     } else if (

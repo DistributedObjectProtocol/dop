@@ -1,15 +1,15 @@
 import { ESCAPE_KEY, FUNCTION_KEY } from '../const'
+import { isValidToEscape, isValidToDecode } from '../util/isValid'
 import { getUniqueKey } from '../util/get'
 import { isInteger, isFunction } from '../util/is'
-import { isValidToDecode, isValidToEscape } from '../util/isValid'
 
 export default function Function() {}
 
-Function.encode = function({
+Function.encode = function ({
     value,
     remote_functions,
     local_functions,
-    registerLocalFunctionFromEncode
+    registerLocalFunctionFromEncode,
 }) {
     if (isFunction(value)) {
         if (remote_functions.has(value)) return null
@@ -23,10 +23,10 @@ Function.encode = function({
     return value
 }
 
-Function.decode = function({
+Function.decode = function ({
     value,
     remote_functions_id,
-    createRemoteFunction
+    createRemoteFunction,
 }) {
     if (
         getUniqueKey(value) === FUNCTION_KEY &&

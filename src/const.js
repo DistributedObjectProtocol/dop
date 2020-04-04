@@ -1,6 +1,7 @@
+export const ESCAPE_KEY = '$escape'
 export const DELETE_KEY = '$d'
 export const FUNCTION_KEY = '$f'
 export const REPLACE_KEY = '$r'
 export const SPLICE_KEY = '$s'
 export const INNER_KEY = '$i'
-export const ESCAPE_KEY = '$escape'
+export const SWAP_KEY = '$w'

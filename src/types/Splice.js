@@ -1,7 +1,7 @@
-import { isArray } from '../util/is'
-import { isValidToEscape } from '../util/isValid'
 import { ESCAPE_KEY, SPLICE_KEY } from '../const'
+import { isValidToEscape } from '../util/isValid'
 import { getUniqueKey } from '../util/get'
+import { isArray } from '../util/is'
 
 export default function Splice(...args) {
     if (!(this instanceof Splice)) {
@@ -10,7 +10,7 @@ export default function Splice(...args) {
     this.args = args
 }
 
-Splice.patch = function({ patch, target, prop, old_value }) {
+Splice.patch = function ({ patch, target, prop, old_value }) {
     const patch_value = patch[prop]
     if (patch_value instanceof Splice) {
         target[prop] = old_value
@@ -27,7 +27,7 @@ Splice.patch = function({ patch, target, prop, old_value }) {
     return old_value
 }
 
-Splice.encode = function({ value }) {
+Splice.encode = function ({ value }) {
     if (value instanceof Splice) {
         return { [SPLICE_KEY]: value.args }
     } else if (isValidToDecode({ value, key: SPLICE_KEY })) {
@@ -36,7 +36,7 @@ Splice.encode = function({ value }) {
     return value
 }
 
-Splice.decode = function({ value }) {
+Splice.decode = function ({ value }) {
     if (isValidToDecode({ value, key: SPLICE_KEY })) {
         return Splice.apply(null, value[SPLICE_KEY])
     } else if (
