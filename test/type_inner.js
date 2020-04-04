@@ -124,6 +124,7 @@ test('Editing subobject and creating a new one', function (t) {
     const patch = TYPE.Inner({ 0: { a: true }, 1: { b: true } })
     const expected = [{ a: true }, { b: true }]
     testPatchUnpatch(t, target, patch, expected)
+    console.log(target)
 })
 
 test('Encoding unpatch', function (t) {

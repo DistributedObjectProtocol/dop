@@ -1,6 +1,7 @@
 import { ESCAPE_KEY, SWAP_KEY } from '../const'
 import { isValidToEscape } from '../util/isValid'
 import { getUniqueKey } from '../util/get'
+import { isArray } from '../util/is'
 
 export default function Swap(...args) {
     if (!(this instanceof Swap)) {
@@ -25,9 +26,11 @@ Swap.patch = function ({ patch, target, prop, old_value }) {
                     array[swap_a] = array[swap_b]
                     array[swap_b] = temp_item
                 }
+                return Swap.apply(null, swaps.slice(0).reverse())
             }
         }
     }
+    return old_value
 }
 
 Swap.encode = function ({ value }) {

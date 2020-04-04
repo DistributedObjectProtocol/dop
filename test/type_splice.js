@@ -34,12 +34,12 @@ test('API', function (t) {
     t.is(mutations.length, 1)
     t.is(result.array, target.array)
     t.true(unpatch.array instanceof TYPE.Splice)
-    // t.deepEqual(unpatch.array.args, [1, 1])
+    t.deepEqual(unpatch.array.args, [1, 1])
 })
 
 test('Patching a non array must do nothing', function (t) {
     const target = { array: 1234 }
-    const patch = { array: TYPE.Splice({ 0: 'b' }) }
+    const patch = { array: TYPE.Splice(0, 0, 5678) }
     const expected = { array: 1234 }
     const { mutations } = testPatchUnpatch(t, target, patch, expected)
     t.is(mutations.length, 0)
