@@ -13,45 +13,44 @@ export default function applyPatchFactory(patchers) {
             patch_root,
             target_root,
             ({ origin, destiny, prop, path }) => {
-                const origin_value = origin[prop]
-                const destiny_value = destiny[prop]
-                const had_prop = destiny.hasOwnProperty(prop)
+                const target = destiny
+                const patch = origin
+                const patch_value = patch[prop]
+                const target_value = target[prop]
+                const had_prop = target.hasOwnProperty(prop)
                 if (
                     !had_prop ||
-                    (origin_value !== destiny_value &&
+                    (patch_value !== target_value &&
                         !(
-                            isPlainObject(origin_value) &&
-                            isPlainObject(destiny_value)
+                            isPlainObject(patch_value) &&
+                            isPlainObject(target_value)
                         ))
                 ) {
-                    // This is where the merge with plain objects happen
-                    destiny[prop] = isPlainObject(origin_value)
-                        ? applyPatch({}, origin_value).result
-                        : origin_value
+                    target[prop] = patch_value
 
                     // Applying patches
                     const old_value = patchers.reduce(
                         (old_value, p) =>
                             p({
-                                patch: origin,
-                                target: destiny,
+                                patch,
+                                target,
                                 prop,
                                 path,
                                 old_value,
                                 had_prop,
-                                applyPatch
+                                applyPatch,
                             }),
-                        destiny_value
+                        target_value
                     )
 
                     // We register the mutation if old_value is different to the new value
-                    if (destiny[prop] !== old_value) {
+                    if (target[prop] !== old_value) {
                         setDeep(unpatch_root, path.slice(0), old_value)
                         mutations.push({
                             old_value,
-                            object: destiny,
+                            object: target,
                             prop,
-                            path: path.slice(1)
+                            path: path.slice(1),
                         })
                     }
 
@@ -63,7 +62,7 @@ export default function applyPatchFactory(patchers) {
         return {
             result: target_root[''],
             unpatch: unpatch_root[''],
-            mutations
+            mutations,
         }
     }
 }
