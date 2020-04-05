@@ -1,4 +1,4 @@
-import { isPlainObject } from '../util/is'
+import { isPlainObject, isPlain } from '../util/is'
 import { setDeep } from '../util/set'
 import forEachObject from '../util/forEachObject'
 
@@ -12,9 +12,7 @@ export default function applyPatchFactory(patchers) {
         forEachObject(
             patch_root,
             target_root,
-            ({ origin, destiny, prop, path }) => {
-                const target = destiny
-                const patch = origin
+            ({ patch, target, prop, path }) => {
                 const patch_value = patch[prop]
                 const target_value = target[prop]
                 const had_prop = target.hasOwnProperty(prop)

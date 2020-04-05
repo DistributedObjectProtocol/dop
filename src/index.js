@@ -7,8 +7,7 @@ import createStoreFactory from './api/createStoreFactory'
 import applyPatchFactory from './api/applyPatchFactory'
 
 import Function from './types/Function'
-import Object from './types/Object'
-import Array from './types/Array'
+import Plain from './types/Plain'
 import Delete from './types/Delete'
 import Replace from './types/Replace'
 import Inner from './types/Inner'
@@ -33,8 +32,7 @@ function factory() {
     }
 
     addType(Function)
-    addType(Object)
-    addType(Array)
+    addType(Plain)
     addType(Delete)
     addType(Replace)
     addType(Inner)

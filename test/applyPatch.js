@@ -251,7 +251,7 @@ test('array complex', function (t) {
 })
 
 test('from target to array', function (t) {
-    const target = { objarr: { value: true } }
+    const target = { objarr: { length: 5 } }
     const patch = { objarr: [0, 1] }
     const expected = { objarr: [0, 1] }
 
@@ -433,11 +433,19 @@ test('checking different types and mutating multiple deep values', function (t) 
 })
 
 test.skip('Inner plain array', function (t) {
-    const target = { a: [{ b: false }] }
-    const patch = { a: { 0: { b: true } } }
-    const expected = { a: [{ b: true }] }
+    const target = [{ b: false }]
+    const patch = { 0: { b: true } }
+    const expected = [{ b: true }]
 
-    testPatchUnpatch(t, target, patch, expected, false)
+    // console.log(target, expected)
+    const { result, unpatch } = testPatchUnpatch(
+        t,
+        target,
+        patch,
+        expected,
+        true
+    )
+    // console.log(target, result, unpatch)
 })
 
 test('1 / https://tools.ietf.org/html/rfc7386 ', function (t) {
@@ -562,7 +570,7 @@ test('13/c (not sure about this case)', function (t) {
 })
 
 test('14 / https://tools.ietf.org/html/rfc7386 ', function (t) {
-    const target = [1, 2]
+    const target = 'string' // [1, 2]
     const patch = { a: 'b', c: TYPE.Delete() }
     const expected = { a: 'b' }
 
