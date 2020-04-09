@@ -128,7 +128,7 @@ test('14 / https://tools.ietf.org/html/rfc7386 ', function (t) {
     const patch = { a: 'b', c: TYPE.Delete() }
     const expected = { a: 'b' }
 
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch(t, target, patch, expected, false)
 })
 
 test('15 / https://tools.ietf.org/html/rfc7386 ', function (t) {
@@ -392,45 +392,13 @@ test('from object to array', function (t) {
     const patch = { objarr: [0, 1] }
     const expected = { objarr: [0, 1] }
 
-    testPatchUnpatch(t, target, patch, expected)
+    const { unpatch } = testPatchUnpatch(t, target, patch, expected)
 })
 
 test('from array to object', function (t) {
     const target = { objarr: [0, 1] }
     const patch = { objarr: {} }
     const expected = { objarr: [0, 1] }
-
-    testPatchUnpatch(t, target, patch, expected)
-})
-
-test('changing length of array', function (t) {
-    const target = { objarr: [0, 1] }
-    const patch = { objarr: { length: 4 } }
-    const expected = { objarr: [0, 1, undefined, undefined] }
-
-    testPatchUnpatch(t, target, patch, expected)
-})
-
-test('adding item to array ', function (t) {
-    const target = { objarr: [0, 1] }
-    const patch = { objarr: { 3: { hello: 'world' } } }
-    const expected = { objarr: [0, 1, undefined, { hello: 'world' }] }
-
-    testPatchUnpatch(t, target, patch, expected)
-})
-
-test('adding multiple item to array ', function (t) {
-    const target = { objarr: [0, 1] }
-    const patch = { objarr: { 3: 3, 5: 5 } }
-    const expected = { objarr: [0, 1, undefined, 3, undefined, 5] }
-
-    testPatchUnpatch(t, target, patch, expected)
-})
-
-test.skip('editing lenght of array and also adding extra values', function (t) {
-    const target = { objarr: [0, 1] }
-    const patch = { objarr: { 3: 3, length: 5 } }
-    const expected = { objarr: [0, 1, undefined, 3, undefined] }
 
     testPatchUnpatch(t, target, patch, expected)
 })
@@ -599,6 +567,48 @@ test('checking different types and mutating multiple deep values', function (t) 
 
     const { mutations } = testPatchUnpatch(t, target, patch, expected)
     t.is(mutations.length, 30)
+})
+
+// Inner arrays
+// Inner arrays
+// Inner arrays
+// Inner arrays
+// Inner arrays
+// Inner arrays
+// Inner arrays
+// Inner arrays
+// Inner arrays
+
+test('changing length of array', function (t) {
+    const target = { objarr: [0, 1] }
+    const patch = { objarr: { length: 4 } }
+    const expected = { objarr: [0, 1, undefined, undefined] }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('adding item to array ', function (t) {
+    const target = { objarr: [0, 1] }
+    const patch = { objarr: { 3: { hello: 'world' } } }
+    const expected = { objarr: [0, 1, undefined, { hello: 'world' }] }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('adding multiple item to array ', function (t) {
+    const target = { objarr: [0, 1] }
+    const patch = { objarr: { 3: 3, 5: 5 } }
+    const expected = { objarr: [0, 1, undefined, 3, undefined, 5] }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('editing length of array and also adding extra values', function (t) {
+    const target = { objarr: [0, 1] }
+    const patch = { objarr: { 3: 3, length: 5 } }
+    const expected = { objarr: [0, 1, undefined, 3, undefined] }
+
+    testPatchUnpatch(t, target, patch, expected)
 })
 
 test('Inner plain array', function (t) {

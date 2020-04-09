@@ -8,7 +8,7 @@ export default function Delete() {
     }
 }
 
-Delete.patch = function ({ patch, target, prop, old_value, had_prop }) {
+Delete.patch = function ({ patch, target, prop, old_value }) {
     if (patch[prop] instanceof Delete || patch[prop] === Delete) {
         delete target[prop]
     }

@@ -10,39 +10,51 @@ Primitives.patch = function ({
     target,
     prop,
     old_value,
-    path,
     had_prop,
-    unpatch_root,
     applyPatch,
-    registerMutation,
 }) {
     const patch_value = patch[prop]
 
     if (!had_prop) {
-        if (isArray(target)) {
-            const path_length = path.slice(0, path.length - 1).concat('length')
-            // console.log(
-            //     path_length.join('.'),
-            //     unpatch_root,
-            //     getDeep(unpatch_root, path_length.slice(0))
-            // )
-            if (!getDeep(unpatch_root, path_length.slice(0))) {
-                registerMutation(path_length, target, 'length', target.length)
-            }
-        } else {
-            old_value = new Delete()
-        }
-    }
-
-    if (isPlainObject(patch_value)) {
-        // console.log({ path, had_prop, target })
-        target[prop] = applyPatch({}, patch_value).result
+        old_value = new Delete()
     }
 
     // New array
-    else if (isArray(patch_value)) {
+    if (isArray(patch_value)) {
         target[prop] = merge([], patch_value)
-        return isPlainObject(old_value) ? Replace(old_value) : old_value
+        if (isPlainObject(old_value)) {
+            old_value = Replace(old_value)
+        }
+    }
+
+    // Object as patch
+    else if (isPlainObject(patch_value)) {
+        // Mutating array internaly
+        if (isArray(old_value)) {
+            const unpatches = {}
+            const length = old_value.length
+            for (const key in patch_value) {
+                const had_prop = old_value.hasOwnProperty(key)
+                const patched = applyPatch(old_value[key], patch_value[key])
+                if (
+                    old_value[key] !== patched.result ||
+                    isPlainObject(patch_value[key])
+                ) {
+                    old_value[key] = patched.result
+                    unpatches[key] = had_prop ? patched.unpatch : Delete()
+                }
+            }
+            if (old_value.length !== length) {
+                unpatches.length = length
+            }
+
+            return unpatches
+        }
+
+        // New object
+        else {
+            target[prop] = applyPatch({}, patch_value).result
+        }
     }
 
     // Any other
@@ -51,12 +63,4 @@ Primitives.patch = function ({
     }
 
     return old_value
-}
-
-function getDeep(object, path) {
-    if (path.length === 0) {
-        return true
-    }
-    const prop = path.shift()
-    return object.hasOwnProperty(prop) ? getDeep(object[prop], path) : false
 }

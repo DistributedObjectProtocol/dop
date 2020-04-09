@@ -49,7 +49,7 @@ function testPatchUnpatch(t, target, patch, expected, reverse = true) {
     t.deepEqual(target, expected)
     if (reverse) {
         const output2 = applyPatch(target, unpatch)
-        t.deepEqual(output2.result, cloned)
+        t.deepEqual(output2.result, cloned, '(Unpatching)')
     }
     return { unpatch, mutations, result }
 }
