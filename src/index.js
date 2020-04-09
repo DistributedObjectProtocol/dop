@@ -7,10 +7,9 @@ import createStoreFactory from './api/createStoreFactory'
 import applyPatchFactory from './api/applyPatchFactory'
 
 import Function from './types/Function'
-import Plain from './types/Plain'
+import Primitives from './types/Primitives'
 import Delete from './types/Delete'
 import Replace from './types/Replace'
-import Inner from './types/Inner'
 import Splice from './types/Splice'
 import Swap from './types/Swap'
 
@@ -32,10 +31,9 @@ function factory() {
     }
 
     addType(Function)
-    addType(Plain)
+    addType(Primitives)
     addType(Delete)
     addType(Replace)
-    addType(Inner)
     addType(Splice)
     addType(Swap)
 
@@ -52,7 +50,6 @@ function factory() {
         TYPE: {
             Delete,
             Replace,
-            Inner,
             Splice,
             Swap,
         },

@@ -2,6 +2,143 @@ import test from 'ava'
 import { applyPatch, TYPE } from '../'
 import { testPatchUnpatch } from './utils'
 
+test('1 / https://tools.ietf.org/html/rfc7386 ', function (t) {
+    const target = { a: 'b' }
+    const patch = { a: 'c' }
+    const expected = { a: 'c' }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('2 / https://tools.ietf.org/html/rfc7386 ', function (t) {
+    const target = { a: 'b' }
+    const patch = { b: 'c' }
+    const expected = { a: 'b', b: 'c' }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('3 / https://tools.ietf.org/html/rfc7386 ', function (t) {
+    const target = { a: 'b' }
+    const patch = { a: TYPE.Delete() }
+    const expected = {}
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('4 / https://tools.ietf.org/html/rfc7386 ', function (t) {
+    const target = { a: 'b', b: 'c' }
+    const patch = { a: TYPE.Delete() }
+    const expected = { b: 'c' }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('5 / https://tools.ietf.org/html/rfc7386 ', function (t) {
+    const target = { a: ['b'] }
+    const patch = { a: 'c' }
+    const expected = { a: 'c' }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('6 / https://tools.ietf.org/html/rfc7386 ', function (t) {
+    const target = { a: 'c' }
+    const patch = { a: ['b'] }
+    const expected = { a: ['b'] }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('7 / https://tools.ietf.org/html/rfc7386 ', function (t) {
+    const target = { a: { b: 'c' } }
+    const patch = { a: { b: 'd', c: TYPE.Delete() } }
+    const expected = { a: { b: 'd' } }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('8 / https://tools.ietf.org/html/rfc7386 ', function (t) {
+    const target = { a: {} }
+    const patch = { a: [1] }
+    const expected = { a: [1] }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('9 / https://tools.ietf.org/html/rfc7386 ', function (t) {
+    const target = ['a', 'b']
+    const patch = ['c', 'd']
+    const expected = ['c', 'd']
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('10 / https://tools.ietf.org/html/rfc7386 ', function (t) {
+    const target = { a: 'b' }
+    const patch = ['c']
+    const expected = ['c']
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('11 / https://tools.ietf.org/html/rfc7386 ', function (t) {
+    const target = { a: 'foo' }
+    const patch = null
+    const expected = null
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('12 / https://tools.ietf.org/html/rfc7386 ', function (t) {
+    const target = { a: 'foo' }
+    const patch = 'bar'
+    const expected = 'bar'
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('13 / https://tools.ietf.org/html/rfc7386 ', function (t) {
+    const target = { e: null }
+    const patch = { a: 1 }
+    const expected = { e: null, a: 1 }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('13/b', function (t) {
+    const del = TYPE.Delete()
+    const target = { e: del }
+    const patch = { a: 1 }
+    const expected = { e: del, a: 1 }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+test('13/c (not sure about this case)', function (t) {
+    const target = { e: TYPE.Delete() }
+    const patch = { a: 1, e: TYPE.Delete() }
+    const expected = { a: 1 }
+
+    // not sure about this case because the unpatch would result in {}
+    testPatchUnpatch(t, target, patch, expected, false)
+})
+
+test('14 / https://tools.ietf.org/html/rfc7386 ', function (t) {
+    const target = 'string' // [1, 2]
+    const patch = { a: 'b', c: TYPE.Delete() }
+    const expected = { a: 'b' }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('15 / https://tools.ietf.org/html/rfc7386 ', function (t) {
+    const target = {}
+    const patch = { a: { bb: { ccc: TYPE.Delete() } } }
+    const expected = { a: { bb: {} } }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
 test('basic mutation', function (t) {
     const target = { number: 1 }
     const patch = { number: 2 }
@@ -250,18 +387,50 @@ test('array complex', function (t) {
     testPatchUnpatch(t, target, patch, expected)
 })
 
-test('from target to array', function (t) {
-    const target = { objarr: { length: 5 } }
+test('from object to array', function (t) {
+    const target = { objarr: { value: true } }
     const patch = { objarr: [0, 1] }
     const expected = { objarr: [0, 1] }
 
     testPatchUnpatch(t, target, patch, expected)
 })
 
-test('from array to target', function (t) {
+test('from array to object', function (t) {
     const target = { objarr: [0, 1] }
-    const patch = { objarr: { value: true } }
-    const expected = { objarr: { value: true } }
+    const patch = { objarr: {} }
+    const expected = { objarr: [0, 1] }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('changing length of array', function (t) {
+    const target = { objarr: [0, 1] }
+    const patch = { objarr: { length: 4 } }
+    const expected = { objarr: [0, 1, undefined, undefined] }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('adding item to array ', function (t) {
+    const target = { objarr: [0, 1] }
+    const patch = { objarr: { 3: { hello: 'world' } } }
+    const expected = { objarr: [0, 1, undefined, { hello: 'world' }] }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('adding multiple item to array ', function (t) {
+    const target = { objarr: [0, 1] }
+    const patch = { objarr: { 3: 3, 5: 5 } }
+    const expected = { objarr: [0, 1, undefined, 3, undefined, 5] }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test.skip('editing lenght of array and also adding extra values', function (t) {
+    const target = { objarr: [0, 1] }
+    const patch = { objarr: { 3: 3, length: 5 } }
+    const expected = { objarr: [0, 1, undefined, 3, undefined] }
 
     testPatchUnpatch(t, target, patch, expected)
 })
@@ -432,155 +601,100 @@ test('checking different types and mutating multiple deep values', function (t) 
     t.is(mutations.length, 30)
 })
 
-test.skip('Inner plain array', function (t) {
+test('Inner plain array', function (t) {
     const target = [{ b: false }]
     const patch = { 0: { b: true } }
     const expected = [{ b: true }]
 
-    // console.log(target, expected)
-    const { result, unpatch } = testPatchUnpatch(
-        t,
-        target,
-        patch,
-        expected,
-        true
-    )
-    // console.log(target, result, unpatch)
+    const { result } = testPatchUnpatch(t, target, patch, expected)
+    t.is(target, result)
 })
 
-test('1 / https://tools.ietf.org/html/rfc7386 ', function (t) {
-    const target = { a: 'b' }
-    const patch = { a: 'c' }
-    const expected = { a: 'c' }
+test('Editing top level', function (t) {
+    const target = { array: ['a', 'b', 'c'] }
+    const patch = { array: { 0: 'A', 3: 'D', 4: 'E' } }
+    const expected = { array: ['A', 'b', 'c', 'D', 'E'] }
+    const { unpatch } = testPatchUnpatch(t, target, patch, expected)
+    // console.log(target, unpatch)
+})
 
+test('Editing subobjects', function (t) {
+    const target = { array: [{ a: false }] }
+    const patch = { array: { 0: { a: true } } }
+    const expected = { array: [{ a: true }] }
     testPatchUnpatch(t, target, patch, expected)
 })
 
-test('2 / https://tools.ietf.org/html/rfc7386 ', function (t) {
-    const target = { a: 'b' }
-    const patch = { b: 'c' }
-    const expected = { a: 'b', b: 'c' }
-
+test('Deleting subobject', function (t) {
+    const target = { array: [{ a: true }] }
+    const patch = { array: { 0: { a: TYPE.Delete() } } }
+    const expected = { array: [{}] }
     testPatchUnpatch(t, target, patch, expected)
 })
 
-test('3 / https://tools.ietf.org/html/rfc7386 ', function (t) {
-    const target = { a: 'b' }
-    const patch = { a: TYPE.Delete() }
-    const expected = {}
+test('Updating sub-subarray', function (t) {
+    const target = { array: [{ subarray: ['a'] }] }
+    const array = target.array
+    const subarray = target.array[0].subarray
+    const patch = {
+        array: { 0: { subarray: { 0: 'b' } } },
+    }
+    const expected = { array: [{ subarray: ['b'] }] }
+    testPatchUnpatch(t, target, patch, expected)
+    t.is(array, target.array)
+    t.is(subarray, target.array[0].subarray)
+})
 
+test('Replacing sub-subarray', function (t) {
+    const target = { array: [{ subarray: ['a'] }] }
+    const array = target.array
+    const subarray = target.array[0].subarray
+    const patch = {
+        array: { 0: { subarray: ['b', 'c'] } },
+    }
+    const expected = { array: [{ subarray: ['b', 'c'] }] }
+    testPatchUnpatch(t, target, patch, expected)
+    t.is(array, target.array)
+    t.not(subarray, target.array[0].subarray)
+})
+
+test('Pushing subobjects', function (t) {
+    const target = ['A']
+    const patch = { 2: { a: true } }
+    const expected = ['A', undefined, { a: true }]
     testPatchUnpatch(t, target, patch, expected)
 })
 
-test('4 / https://tools.ietf.org/html/rfc7386 ', function (t) {
-    const target = { a: 'b', b: 'c' }
-    const patch = { a: TYPE.Delete() }
-    const expected = { b: 'c' }
-
+test('Editing subobject and creating a new one', function (t) {
+    const target = [{ a: false }]
+    const patch = { 0: { a: true }, 1: { b: true } }
+    const expected = [{ a: true }, { b: true }]
     testPatchUnpatch(t, target, patch, expected)
 })
 
-test('5 / https://tools.ietf.org/html/rfc7386 ', function (t) {
-    const target = { a: ['b'] }
-    const patch = { a: 'c' }
-    const expected = { a: 'c' }
+test('Encoding unpatch', function (t) {
+    const target = [{ a: false }]
+    const patch = { 0: { a: true }, 1: { b: true } }
+    const expected = [{ a: true }, { b: true }]
+    const { unpatch } = testPatchUnpatch(t, target, patch, expected)
+})
 
+test('Mutating array of array with a splice', function (t) {
+    const target = { array: [{ array2: [{ array3: [1, 2] }] }] }
+    const instancearray = target.array[0].array2[0].array3
+    const expected = { array: [{ array2: [{ array3: [1, 2, 3] }] }] }
+    const patch = {
+        array: {
+            0: { array2: { 0: { array3: TYPE.Splice(2, 0, 3) } } },
+        },
+    }
     testPatchUnpatch(t, target, patch, expected)
+    t.is(instancearray, target.array[0].array2[0].array3)
 })
 
-test('6 / https://tools.ietf.org/html/rfc7386 ', function (t) {
-    const target = { a: 'c' }
-    const patch = { a: ['b'] }
-    const expected = { a: ['b'] }
-
-    testPatchUnpatch(t, target, patch, expected)
-})
-
-test('7 / https://tools.ietf.org/html/rfc7386 ', function (t) {
-    const target = { a: { b: 'c' } }
-    const patch = { a: { b: 'd', c: TYPE.Delete() } }
-    const expected = { a: { b: 'd' } }
-
-    testPatchUnpatch(t, target, patch, expected)
-})
-
-test('8 / https://tools.ietf.org/html/rfc7386 ', function (t) {
-    const target = { a: { b: 'c' } }
-    const patch = { a: [1] }
-    const expected = { a: [1] }
-
-    testPatchUnpatch(t, target, patch, expected)
-})
-
-test('9 / https://tools.ietf.org/html/rfc7386 ', function (t) {
-    const target = ['a', 'b']
-    const patch = ['c', 'd']
-    const expected = ['c', 'd']
-
-    testPatchUnpatch(t, target, patch, expected)
-})
-
-test('10 / https://tools.ietf.org/html/rfc7386 ', function (t) {
-    const target = { a: 'b' }
-    const patch = ['c']
-    const expected = ['c']
-
-    testPatchUnpatch(t, target, patch, expected)
-})
-
-test('11 / https://tools.ietf.org/html/rfc7386 ', function (t) {
-    const target = { a: 'foo' }
-    const patch = null
-    const expected = null
-
-    testPatchUnpatch(t, target, patch, expected)
-})
-
-test('12 / https://tools.ietf.org/html/rfc7386 ', function (t) {
-    const target = { a: 'foo' }
-    const patch = 'bar'
-    const expected = 'bar'
-
-    testPatchUnpatch(t, target, patch, expected)
-})
-
-test('13 / https://tools.ietf.org/html/rfc7386 ', function (t) {
-    const target = { e: null }
-    const patch = { a: 1 }
-    const expected = { e: null, a: 1 }
-
-    testPatchUnpatch(t, target, patch, expected)
-})
-
-test('13/b', function (t) {
-    const del = TYPE.Delete()
-    const target = { e: del }
-    const patch = { a: 1 }
-    const expected = { e: del, a: 1 }
-
-    testPatchUnpatch(t, target, patch, expected)
-})
-test('13/c (not sure about this case)', function (t) {
-    const target = { e: TYPE.Delete() }
-    const patch = { a: 1, e: TYPE.Delete() }
-    const expected = { a: 1 }
-
-    // not sure about this case because the unpatch would result in {}
-    testPatchUnpatch(t, target, patch, expected, false)
-})
-
-test('14 / https://tools.ietf.org/html/rfc7386 ', function (t) {
-    const target = 'string' // [1, 2]
-    const patch = { a: 'b', c: TYPE.Delete() }
-    const expected = { a: 'b' }
-
-    testPatchUnpatch(t, target, patch, expected)
-})
-
-test('15 / https://tools.ietf.org/html/rfc7386 ', function (t) {
-    const target = {}
-    const patch = { a: { bb: { ccc: TYPE.Delete() } } }
-    const expected = { a: { bb: {} } }
-
+test('Changing lengh array', function (t) {
+    const target = ['A']
+    const patch = { length: 2 }
+    const expected = ['A', undefined]
     testPatchUnpatch(t, target, patch, expected)
 })

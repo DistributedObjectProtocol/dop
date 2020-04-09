@@ -12,9 +12,6 @@ Delete.patch = function ({ patch, target, prop, old_value, had_prop }) {
     if (patch[prop] instanceof Delete || patch[prop] === Delete) {
         delete target[prop]
     }
-    if (!had_prop) {
-        old_value = new Delete()
-    }
     return old_value
 }
 
