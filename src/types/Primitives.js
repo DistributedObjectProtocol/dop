@@ -5,17 +5,10 @@ import Delete from './Delete'
 
 export default function Primitives() {}
 
-Primitives.patch = function ({
-    patch,
-    target,
-    prop,
-    old_value,
-    had_prop,
-    applyPatch,
-}) {
+Primitives.patch = function ({ patch, target, prop, old_value, applyPatch }) {
     const patch_value = patch[prop]
 
-    if (!had_prop) {
+    if (!target.hasOwnProperty(prop)) {
         old_value = new Delete()
     }
 
@@ -34,14 +27,15 @@ Primitives.patch = function ({
             const unpatches = {}
             const length = old_value.length
             for (const key in patch_value) {
-                const had_prop = old_value.hasOwnProperty(key)
                 const patched = applyPatch(old_value[key], patch_value[key])
                 if (
                     old_value[key] !== patched.result ||
                     isPlainObject(patch_value[key])
                 ) {
                     old_value[key] = patched.result
-                    unpatches[key] = had_prop ? patched.unpatch : Delete()
+                    unpatches[key] = old_value.hasOwnProperty(key)
+                        ? patched.unpatch
+                        : Delete()
                 }
             }
             if (old_value.length !== length) {

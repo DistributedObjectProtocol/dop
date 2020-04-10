@@ -114,6 +114,7 @@ test('13/b', function (t) {
 
     testPatchUnpatch(t, target, patch, expected)
 })
+
 test('13/c (not sure about this case)', function (t) {
     const target = { e: TYPE.Delete() }
     const patch = { a: 1, e: TYPE.Delete() }
@@ -128,7 +129,7 @@ test('14 / https://tools.ietf.org/html/rfc7386 ', function (t) {
     const patch = { a: 'b', c: TYPE.Delete() }
     const expected = { a: 'b' }
 
-    testPatchUnpatch(t, target, patch, expected, false)
+    testPatchUnpatch(t, target, patch, expected)
 })
 
 test('15 / https://tools.ietf.org/html/rfc7386 ', function (t) {
@@ -706,5 +707,21 @@ test('Changing lengh array', function (t) {
     const target = ['A']
     const patch = { length: 2 }
     const expected = ['A', undefined]
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('adding inner arrays', function (t) {
+    const target = { objarr: [0, 1, [false], [[]]] }
+    const patch = { objarr: { 2: [2], 3: { 0: { 0: [3] } } } }
+    const expected = { objarr: [0, 1, [2], [[[3]]]] }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('adding inner arrays as top level', function (t) {
+    const target = [0, 1, [false], [[]]]
+    const patch = { length: 5, 2: [2], 3: { 2: 4, 0: { 0: [3] } } }
+    const expected = [0, 1, [2], [[[3]], undefined, 4], undefined]
+
     testPatchUnpatch(t, target, patch, expected)
 })

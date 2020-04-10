@@ -15,9 +15,8 @@ export default function applyPatchFactory(patchers) {
             ({ patch, target, prop, path }) => {
                 const patch_value = patch[prop]
                 const target_value = target[prop]
-                const had_prop = target.hasOwnProperty(prop)
                 if (
-                    !had_prop ||
+                    !target.hasOwnProperty(prop) ||
                     (patch_value !== target_value &&
                         !(
                             isPlainObject(patch_value) &&
@@ -32,7 +31,6 @@ export default function applyPatchFactory(patchers) {
                                 target,
                                 prop,
                                 old_value,
-                                had_prop,
                                 applyPatch,
                             }),
                         target_value
