@@ -17,6 +17,12 @@ function isInteger(number) {
     )
 }
 
+function encodeDecode(patch, encodedecode = true, serialize = true) {
+    return encodedecode
+        ? decode(serializeDeserialize(encode(patch), serialize))
+        : patch
+}
+
 function serializeDeserialize(patch, serialize = true) {
     return serialize ? JSON.parse(JSON.stringify(patch)) : patch
 }
@@ -45,13 +51,14 @@ function testPatchUnpatch(
     patch,
     expected,
     reverse = true,
+    encodedecode = true,
     serialize = true
 ) {
     const cloned = getNewPlain(target)
-
-    // patch = decode(serializeDeserialize(encode(patch), serialize))
-
-    const output = applyPatch(target, patch)
+    const output = applyPatch(
+        target,
+        encodeDecode(patch, encodedecode, serialize)
+    )
     const { unpatch, mutations, result } = output
     if (isPlainObject(result) && isPlainObject(target)) {
         t.is(target, result)
@@ -59,7 +66,10 @@ function testPatchUnpatch(
     target = result
     t.deepEqual(target, expected)
     if (reverse) {
-        const output2 = applyPatch(target, unpatch)
+        const output2 = applyPatch(
+            target,
+            encodeDecode(unpatch, encodedecode, serialize)
+        )
         t.deepEqual(output2.result, cloned, '(Unpatching)')
     }
     return { unpatch, mutations, result }

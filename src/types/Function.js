@@ -18,7 +18,7 @@ Function.encode = function ({
             : registerLocalFunctionFromEncode(value)
         return { [FUNCTION_KEY]: function_id }
     } else if (isValidToDecode({ value, key: FUNCTION_KEY })) {
-        return { [ESCAPE_KEY]: value } // we don't go deeper
+        return { [ESCAPE_KEY]: value }
     }
     return value
 }

@@ -18,9 +18,9 @@ Replace.patch = function ({ patch, target, prop, old_value }) {
 
 Replace.encode = function ({ value }) {
     if (value instanceof Replace) {
-        return { [REPLACE_KEY]: value.value } // we don't go deeper
+        return { [REPLACE_KEY]: value.value }
     } else if (isValidToDecode({ value, key: REPLACE_KEY })) {
-        return { [ESCAPE_KEY]: value } // we don't go deeper
+        return { [ESCAPE_KEY]: value }
     }
     return value
 }

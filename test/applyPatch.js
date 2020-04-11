@@ -87,7 +87,7 @@ test('11 / https://tools.ietf.org/html/rfc7386 ', function (t) {
     const patch = null
     const expected = null
 
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch(t, target, patch, expected, true, true, false)
 })
 
 test('12 / https://tools.ietf.org/html/rfc7386 ', function (t) {
@@ -155,7 +155,7 @@ test('basic mutations', function (t) {
     const patch = { number: 2, bool: true, string: 'world', func: func2 }
     const expected = { number: 2, bool: true, string: 'world', func: func2 }
 
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch(t, target, patch, expected, true, false)
 })
 
 test('value didnt exists', function (t) {
@@ -251,7 +251,7 @@ test('function to target', function (t) {
     const patch = { prop: {} }
     const expected = { prop: {} }
 
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch(t, target, patch, expected, true, false)
 })
 
 test('target to function', function (t) {
@@ -260,7 +260,7 @@ test('target to function', function (t) {
     const patch = { prop: f }
     const expected = { prop: f }
 
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch(t, target, patch, expected, true, false)
 })
 
 test('plain to noplain', function (t) {
@@ -272,7 +272,14 @@ test('plain to noplain', function (t) {
     const patch = { prop: { deep: true } }
     const expected = { prop: { deep: true } }
 
-    const { mutations } = testPatchUnpatch(t, target, patch, expected)
+    const { mutations } = testPatchUnpatch(
+        t,
+        target,
+        patch,
+        expected,
+        true,
+        false
+    )
     t.is(mutations.length, 1)
 })
 
@@ -285,7 +292,7 @@ test('noplain to plain', function (t) {
     const patch = { prop: instance }
     const expected = { prop: instance }
 
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch(t, target, patch, expected, true, false)
 })
 
 test('syntax mutations', function (t) {
@@ -417,7 +424,7 @@ test('should assign `undefined` values', function (t) {
     const patch = { value: undefined, value2: undefined }
     const expected = { value: undefined, value2: undefined }
 
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch(t, target, patch, expected, true, false)
 })
 
 test('should assign non array/buffer/typed-array/plain-target source values directly', function (t) {
@@ -436,7 +443,7 @@ test('should assign non array/buffer/typed-array/plain-target source values dire
     const patch = { values: values }
     const expected = { values: values }
 
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch(t, target, patch, expected, true, false)
 })
 
 test('same patch as target generate no mutations', function (t) {
@@ -454,7 +461,14 @@ test('same array as patch generate no mutations even if we mutate target object'
     original.push(4)
     const patch = { array: target.array }
     const expected = { array: [1, 2, 3, 4] }
-    const { mutations, unpatch } = testPatchUnpatch(t, target, patch, expected)
+    const { mutations, unpatch } = testPatchUnpatch(
+        t,
+        target,
+        patch,
+        expected,
+        false,
+        false
+    )
     t.is(mutations.length, 0)
     t.deepEqual(unpatch, {})
     t.is(target.array, original)
@@ -566,7 +580,14 @@ test('checking different types and mutating multiple deep values', function (t) 
     }
     const expected = { ...patch, string: 'string' }
 
-    const { mutations } = testPatchUnpatch(t, target, patch, expected)
+    const { mutations } = testPatchUnpatch(
+        t,
+        target,
+        patch,
+        expected,
+        true,
+        false
+    )
     t.is(mutations.length, 30)
 })
 

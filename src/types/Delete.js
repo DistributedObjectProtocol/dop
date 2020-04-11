@@ -17,9 +17,9 @@ Delete.patch = function ({ patch, target, prop, old_value }) {
 
 Delete.encode = function ({ value }) {
     if (value instanceof Delete || value === Delete) {
-        return { [DELETE_KEY]: 0 } // we don't go deeper
+        return { [DELETE_KEY]: 0 }
     } else if (isValidToDecodeDelete({ value })) {
-        return { [ESCAPE_KEY]: value } // we don't go deeper
+        return { [ESCAPE_KEY]: value }
     }
     return value
 }

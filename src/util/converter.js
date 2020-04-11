@@ -3,8 +3,9 @@ import merge, { mergeMutator } from '../util/merge'
 import { isArray } from '../util/is'
 
 export default function converter(patch, params, converters) {
-    const target = isArray(patch) ? [] : {}
-    forEachObject(patch, target, ({ patch, prop, target, path }) => {
+    const patch_root = { '': patch } // a trick to allow top level
+    const target_root = { '': isArray(patch) ? [] : {} } // a trick to allow top level
+    forEachObject(patch_root, target_root, ({ patch, prop, target, path }) => {
         const value = converters.reduce(
             (value, converter) =>
                 converter(
@@ -28,5 +29,5 @@ export default function converter(patch, params, converters) {
             return mergeMutator({ patch, target, prop })
         }
     })
-    return target
+    return target_root['']
 }
