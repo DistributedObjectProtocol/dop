@@ -31,15 +31,26 @@ function testEncodeDecode(
     const encoded = serializeDeserialize(encode(patch), serialize)
     t.deepEqual(expected, encoded)
     t.not(patch, encoded)
+    const decoded = decode(serializeDeserialize(encoded, serialize))
     if (reverse) {
-        const decoded = decode(serializeDeserialize(encoded, serialize))
         t.deepEqual(patch, decoded)
         t.not(encoded, decoded)
     }
+    return { encoded, decoded }
 }
 
-function testPatchUnpatch(t, target, patch, expected, reverse = true) {
+function testPatchUnpatch(
+    t,
+    target,
+    patch,
+    expected,
+    reverse = true,
+    serialize = true
+) {
     const cloned = getNewPlain(target)
+
+    // patch = decode(serializeDeserialize(encode(patch), serialize))
+
     const output = applyPatch(target, patch)
     const { unpatch, mutations, result } = output
     if (isPlainObject(result) && isPlainObject(target)) {
