@@ -133,3 +133,11 @@ test('same behavior as replace array', function (t) {
 
     testPatchUnpatch(t, target, patch, expected)
 })
+
+test('inner types', function (t) {
+    const target = { value: { a: 1, b: 2 } }
+    const patch = { value: TYPE.Replace({ a: 1, b: TYPE.Swap(1, 2) }) }
+    const expected = { value: { a: 1, b: TYPE.Swap(1, 2) } }
+
+    testPatchUnpatch(t, target, patch, expected, false)
+})

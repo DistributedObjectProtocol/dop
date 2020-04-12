@@ -96,6 +96,14 @@ function testAgainstNative(t, original, params) {
     // console.log({ result: target })
 }
 
+test('inner types', function (t) {
+    const target = { value: [0, 1] }
+    const patch = { value: TYPE.Splice(2, 0, TYPE.Swap(1, 2)) }
+    const expected = { value: [0, 1, TYPE.Swap(1, 2)] }
+
+    testPatchUnpatch(t, target, patch, expected, false)
+})
+
 test('1/ vs Array.splice', function (t) {
     const original = ['angel', 'clown', 'mandarin', 'sturgeon']
     const params = [0, 0]

@@ -27,18 +27,18 @@ Splice.patch = function ({ patch, target, prop, old_value }) {
     return old_value
 }
 
-Splice.encode = function ({ value }) {
+Splice.encode = function ({ value, encode }) {
     if (value instanceof Splice) {
-        return { [SPLICE_KEY]: value.args }
+        return { [SPLICE_KEY]: encode(value.args) }
     } else if (isValidToDecode({ value, key: SPLICE_KEY })) {
         return { [ESCAPE_KEY]: value }
     }
     return value
 }
 
-Splice.decode = function ({ value }) {
+Splice.decode = function ({ value, decode }) {
     if (isValidToDecode({ value, key: SPLICE_KEY })) {
-        return Splice.apply(null, value[SPLICE_KEY])
+        return Splice.apply(null, decode(value[SPLICE_KEY]))
     } else if (
         isValidToEscape({ value }) &&
         isValidToDecode({ value: value[ESCAPE_KEY], key: SPLICE_KEY })

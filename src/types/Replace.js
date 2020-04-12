@@ -16,18 +16,18 @@ Replace.patch = function ({ patch, target, prop, old_value }) {
     return old_value
 }
 
-Replace.encode = function ({ value }) {
+Replace.encode = function ({ value, encode }) {
     if (value instanceof Replace) {
-        return { [REPLACE_KEY]: value.value }
+        return { [REPLACE_KEY]: encode(value.value) }
     } else if (isValidToDecode({ value, key: REPLACE_KEY })) {
         return { [ESCAPE_KEY]: value }
     }
     return value
 }
 
-Replace.decode = function ({ value }) {
+Replace.decode = function ({ value, decode }) {
     if (isValidToDecode({ value, key: REPLACE_KEY })) {
-        return new Replace(value[REPLACE_KEY])
+        return new Replace(decode(value[REPLACE_KEY]))
     } else if (
         isValidToEscape({ value }) &&
         isValidToDecode({ value: value[ESCAPE_KEY], key: REPLACE_KEY })
