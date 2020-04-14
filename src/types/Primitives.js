@@ -8,6 +8,7 @@ export default function Primitives() {}
 Primitives.patch = function ({ patch, target, prop, old_value, applyPatch }) {
     const patch_value = patch[prop]
 
+    // If target[prop] is not defined yet
     if (!target.hasOwnProperty(prop)) {
         old_value = new Delete()
     }
@@ -22,33 +23,7 @@ Primitives.patch = function ({ patch, target, prop, old_value, applyPatch }) {
 
     // Object as patch
     else if (isPlainObject(patch_value)) {
-        // Mutating array internaly
-        if (isArray(old_value)) {
-            const unpatches = {}
-            const length = old_value.length
-            for (const key in patch_value) {
-                const patched = applyPatch(old_value[key], patch_value[key])
-                if (
-                    old_value[key] !== patched.result ||
-                    isPlainObject(patch_value[key])
-                ) {
-                    old_value[key] = patched.result
-                    unpatches[key] = old_value.hasOwnProperty(key)
-                        ? patched.unpatch
-                        : Delete()
-                }
-            }
-            if (old_value.length !== length) {
-                unpatches.length = length
-            }
-
-            return unpatches
-        }
-
-        // New object
-        else {
-            target[prop] = applyPatch({}, patch_value).result
-        }
+        target[prop] = applyPatch({}, patch_value).result
     }
 
     // Any other

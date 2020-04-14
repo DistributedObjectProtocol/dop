@@ -295,7 +295,7 @@ test('noplain to plain', function (t) {
     testPatchUnpatch(t, target, patch, expected, true, false)
 })
 
-test('syntax mutations', function (t) {
+test.skip('syntax mutations', function (t) {
     const target = {
         value: false,
         prop: false,
@@ -337,7 +337,7 @@ test('syntax mutations', function (t) {
     })
 })
 
-test('syntax mutations on top level', function (t) {
+test.skip('syntax mutations on top level', function (t) {
     const target = {}
     const patch = 'bar'
 
@@ -351,7 +351,7 @@ test('syntax mutations on top level', function (t) {
     })
 })
 
-test('syntax mutations when using delete', function (t) {
+test.skip('syntax mutations when using delete', function (t) {
     const target = {}
     const patch = TYPE.Delete()
 
@@ -745,4 +745,20 @@ test('adding inner arrays as top level', function (t) {
     const expected = [0, 1, [2], [[[3]], undefined, 4], undefined]
 
     testPatchUnpatch(t, target, patch, expected)
+})
+
+test('complex patch to array', function (t) {
+    const target = { objarr: [0, 1, { value: false }] }
+    const patch = {
+        objarr: {
+            2: { value: true },
+            4: { value: true },
+            5: TYPE.Multi([2, 3], TYPE.Swap(0, 1)),
+        },
+    }
+    const expected = {
+        objarr: [0, 1, { value: true }, undefined, { value: true }, [3, 2]],
+    }
+
+    const { mutations, unpatch } = testPatchUnpatch(t, target, patch, expected)
 })
