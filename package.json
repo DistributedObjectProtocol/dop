@@ -1,8 +1,9 @@
 {
     "name": "dop",
-    "version": "1.2.0-rc1",
+    "version": "1.2.0",
     "main": "dist/dop.js",
     "browser": "dist/dop.umd.js",
+    "module": "src/",
     "license": "MIT",
     "url": "https://distributedobjectprotocol.org/",
     "repository": {
@@ -49,7 +50,8 @@
         "testing": "npm test -- --watch"
     },
     "files": [
-        "dist"
+        "dist",
+        "src"
     ],
     "ava": {
         "files": [

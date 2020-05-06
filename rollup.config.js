@@ -20,24 +20,33 @@ export default [
         input: 'src/index',
         external: ['ms'],
         output: [
-            { file: pkg.main, format: 'cjs' }
             // { file: pkg.module, format: 'es' }
+            {
+                file: pkg.main,
+                format: 'cjs',
+                exports: 'named',
+            },
         ],
-        plugins: [json(), buble()]
+        plugins: [json(), buble()],
     },
 
     // dop.umd.js
     {
         input: 'src/index',
-        output: { name: 'dop', file: pkg.browser, format: 'umd' },
+        output: {
+            name: 'dop',
+            file: pkg.browser,
+            format: 'umd',
+            exports: 'named',
+        },
         plugins: [
             json(),
             buble(),
             uglify({
                 mangle: {
-                    reserved: Object.keys(dop.TYPE)
-                }
-            })
-        ]
-    }
+                    reserved: Object.keys(dop.TYPE),
+                },
+            }),
+        ],
+    },
 ]

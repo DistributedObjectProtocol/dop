@@ -59,4 +59,27 @@ function factory() {
     }
 }
 
-export default factory()
+const dop = factory()
+const {
+    encode,
+    decode,
+    applyPatch,
+    createNode,
+    createStore,
+    addType,
+    TYPE,
+} = dop
+
+export default dop
+export {
+    version,
+    factory,
+    merge,
+    encode,
+    decode,
+    applyPatch,
+    createNode,
+    createStore,
+    addType,
+    TYPE,
+}
