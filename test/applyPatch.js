@@ -601,26 +601,28 @@ test('checking different types and mutating multiple deep values', function (t) 
 // Inner arrays
 // Inner arrays
 
-test('changing length of array', function (t) {
-    const target = { objarr: [0, 1] }
-    const patch = { objarr: { length: 4 } }
-    const expected = { objarr: [0, 1, undefined, undefined] }
-
-    testPatchUnpatch(t, target, patch, expected)
-})
-
 test('adding item to array ', function (t) {
     const target = { objarr: [0, 1] }
     const patch = { objarr: { 3: { hello: 'world' } } }
     const expected = { objarr: [0, 1, undefined, { hello: 'world' }] }
 
-    testPatchUnpatch(t, target, patch, expected)
+    const { mutations } = testPatchUnpatch(t, target, patch, expected)
+    t.is(mutations.length, 2)
+    t.is(mutations[1].prop, 'length')
 })
 
 test('adding multiple item to array ', function (t) {
     const target = { objarr: [0, 1] }
     const patch = { objarr: { 3: 3, 5: 5 } }
     const expected = { objarr: [0, 1, undefined, 3, undefined, 5] }
+
+    testPatchUnpatch(t, target, patch, expected)
+})
+
+test('changing length of array', function (t) {
+    const target = { objarr: [0, 1] }
+    const patch = { objarr: { length: 4 } }
+    const expected = { objarr: [0, 1, undefined, undefined] }
 
     testPatchUnpatch(t, target, patch, expected)
 })
