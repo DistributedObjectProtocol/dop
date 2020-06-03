@@ -1,7 +1,7 @@
 import test from 'ava'
 import { createNode } from '../'
 
-test('Api', async t => {
+test('Api', async (t) => {
     const server = createNode()
     const client = createNode()
 
@@ -28,7 +28,7 @@ test('Api', async t => {
     t.is(typeof promise.createdAt, 'number')
 })
 
-test('Checking api req', async t => {
+test('Checking api req', async (t) => {
     const server = createNode()
     const client = createNode()
     server.open(client.message, (...args) => {
@@ -39,7 +39,7 @@ test('Checking api req', async t => {
     callServer()
 })
 
-test('Callback pattern example', async t => {
+test('Callback pattern example', async (t) => {
     const server = createNode()
     const client = createNode()
 
@@ -50,44 +50,44 @@ test('Callback pattern example', async t => {
 
     // client side
     const callServer = client.open(server.message)
-    callServer(3, 3, value => {
+    callServer(3, 3, (value) => {
         t.is(value, 9)
     })
 })
 
-test('Calling a defined function .message must return true', async t => {
+test('Calling a defined function .message must return true', async (t) => {
     const server = createNode()
     const client = createNode()
     const callClient = server.open(client.message, () => {})
-    const callServer = client.open(msg => {
+    const callServer = client.open((msg) => {
         t.is(server.message(msg), true)
     })
     callServer()
 })
 
-test('Calling a not defined function .message must return false', async t => {
+test('Calling a not defined function .message must return false', async (t) => {
     const server = createNode()
     const client = createNode()
     const callClient = server.open(client.message)
-    const callServer = client.open(msg => {
+    const callServer = client.open((msg) => {
         t.is(server.message(msg), false)
     })
     callServer()
 })
 
-test('Response (reject or resolve must delete request)', async t => {
+test('Response (reject or resolve must delete request)', async (t) => {
     const server = createNode()
     const client = createNode()
-    server.open(client.message, v => {})
+    server.open(client.message, (v) => {})
     const callServer = client.open(server.message)
     t.is(Object.keys(client.requests).length, 0)
-    callServer().then(v => {
+    callServer().then((v) => {
         t.is(Object.keys(client.requests).length, 0)
     })
     t.is(Object.keys(client.requests).length, 1)
 })
 
-test('Passing same functions should not create a new one', async t => {
+test('Passing same functions should not create a new one', async (t) => {
     const server = createNode()
     const client = createNode()
 
@@ -107,7 +107,7 @@ test('Passing same functions should not create a new one', async t => {
     callClient(repeated, repeated, receiveFromClient)
 })
 
-test('Sending remote functions that is from the same node must be replaced as null', async t => {
+test('Sending remote functions that is from the same node must be replaced as null', async (t) => {
     const server = createNode()
     const client = createNode()
 
@@ -126,19 +126,19 @@ test('Sending remote functions that is from the same node must be replaced as nu
     t.is(resu, null)
 })
 
-test('Testing messages', async t => {
-    const serdes = { serialize: m => m, deserialize: m => m }
+test('Testing messages', async (t) => {
+    const serdes = { serialize: (m) => m, deserialize: (m) => m }
     const server = createNode(serdes)
     const client = createNode(serdes)
 
     client.open(
-        msg => {
+        (msg) => {
             t.deepEqual(msg, [-1, 0, 10])
             server.message(msg)
         },
         (a, b) => a * b
     )
-    const callClient = server.open(msg => {
+    const callClient = server.open((msg) => {
         t.deepEqual(msg, [1, 0, [2, 5]])
         client.message(msg)
     })
@@ -146,25 +146,25 @@ test('Testing messages', async t => {
     t.is(ten, 10)
 })
 
-test('Escaping $f', async t => {
-    const serdes = { serialize: m => m, deserialize: m => m }
+test('Escaping $f', async (t) => {
+    const serdes = { serialize: (m) => m, deserialize: (m) => m }
     const server = createNode(serdes)
     const client = createNode(serdes)
 
     // server side
     server.open(
-        msg => {
+        (msg) => {
             t.deepEqual(msg, [-1, 0, { $escape: { $f: 1 } }])
             client.message(msg)
         },
-        arg => {
+        (arg) => {
             t.deepEqual(arg, { $f: 0 })
             return { $f: 1 }
         }
     )
 
     // client side
-    const callServer = client.open(msg => {
+    const callServer = client.open((msg) => {
         t.deepEqual(msg, [1, 0, [{ $escape: { $f: 0 } }]])
         server.message(msg)
     })
@@ -172,7 +172,7 @@ test('Escaping $f', async t => {
     t.deepEqual(resu, { $f: 1 })
 })
 
-test('Using resolve', async t => {
+test('Using resolve', async (t) => {
     const server = createNode()
     const client = createNode()
     server.open(client.message)
@@ -180,14 +180,14 @@ test('Using resolve', async t => {
     const callServer = client.open(server.message)
     const req = callServer()
     t.is(Object.keys(client.requests).length, 1)
-    req.then(value => {
+    req.then((value) => {
         t.is(value, 'resolved')
     })
     req.resolve('resolved')
     t.is(Object.keys(client.requests).length, 0)
 })
 
-test('Using reject', async t => {
+test('Using reject', async (t) => {
     const server = createNode()
     const client = createNode()
     server.open(client.message)
@@ -195,14 +195,14 @@ test('Using reject', async t => {
     const callServer = client.open(server.message)
     const req = callServer()
     t.is(Object.keys(client.requests).length, 1)
-    req.catch(error => {
+    req.catch((error) => {
         t.is(error, 'rejected')
     })
     req.reject('rejected')
     t.is(Object.keys(client.requests).length, 0)
 })
 
-test('Using stub', async t => {
+test('Using stub', async (t) => {
     const server = createNode()
     const client = createNode()
     server.open(client.message, (...args) => {
@@ -215,7 +215,7 @@ test('Using stub', async t => {
     t.is(Object.keys(client.requests).length, 0)
 })
 
-test('Sending remote stub functions that is from the same node must be replaced as null', async t => {
+test('Sending remote stub functions that is from the same node must be replaced as null', async (t) => {
     const server = createNode()
     const client = createNode()
 
@@ -234,7 +234,7 @@ test('Sending remote stub functions that is from the same node must be replaced 
     t.is(resu, null)
 })
 
-test('Calling functions from client to server with another node in the middle', async t => {
+test('Calling functions from client to server with another node in the middle', async (t) => {
     // connection 1
     const server = createNode()
     const middleServer = createNode()
@@ -246,15 +246,15 @@ test('Calling functions from client to server with another node in the middle', 
     server.open(middleServer.message, () => ({
         multiply: (a, b) => ({
             sum: (c, d) => c + d,
-            value: a * b
-        })
+            value: a * b,
+        }),
     }))
 
     // middle side
     const callServer = middleServer.open(server.message)
     const objectServer = await callServer()
     middleClient.open(client.message, () => ({
-        multiply: objectServer.multiply
+        multiply: objectServer.multiply,
     }))
 
     // client side
@@ -266,8 +266,11 @@ test('Calling functions from client to server with another node in the middle', 
     t.is(result, 10)
 })
 
-test('Limiting remote functions', async t => {
-    const server = createNode({ max_remote_functions: 3 })
+test('Limiting remote functions', async (t) => {
+    const server = createNode({
+        createRemoteFunctionFilter: () => server.remote_functions.size < 6,
+    })
+    t.is(server.remote_functions.size, 0)
     const client = createNode()
     server.open(client.message, (fn, isLast) => {
         if (isLast) t.is(fn, null)
@@ -283,10 +286,10 @@ test('Limiting remote functions', async t => {
     t.is(server.remote_functions.size, 6)
 })
 
-test('Limiting remote functions to 0', async t => {
-    const server = createNode({ max_remote_functions: 0 })
-    const client = createNode({ max_remote_functions: 1 })
-    const callClient = server.open(client.message, fn => fn)
+test('Limiting remote functions to 0', async (t) => {
+    const server = createNode({ createRemoteFunctionFilter: () => false })
+    const client = createNode()
+    const callClient = server.open(client.message, (fn) => fn)
     t.is(callClient, null)
     const callServer = client.open(server.message)
     await callServer(() => {})
