@@ -7,6 +7,7 @@ export default function createNodeFactory({ encode, decode }) {
         serialize = JSON.stringify,
         deserialize = JSON.parse,
         createRemoteFunctionFilter = () => true,
+        errorInstances = [Error],
     } = {}) {
         const requests = {}
         const local_functions_id = {}
@@ -114,7 +115,7 @@ export default function createNodeFactory({ encode, decode }) {
                             api.send(encode(response, encode_params))
                         })
                         args.push(req)
-                        localProcedureCall(fn, req, args)
+                        localProcedureCall(fn, req, args, errorInstances)
                     }
                     return true
                 }
