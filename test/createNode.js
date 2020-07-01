@@ -1,5 +1,6 @@
 import test from 'ava'
 import { createNode } from '../'
+import { FUNCTION_CREATOR } from '../src/const'
 
 test('Api', async (t) => {
     const server = createNode()
@@ -302,4 +303,59 @@ test('Limiting remote functions to 0', async (t) => {
     t.is(server.message(JSON.stringify([111, 0])), true)
     t.is(server.message(JSON.stringify([222, 1])), false)
     t.is(client.message(JSON.stringify([222, 0])), false)
+})
+
+test('createRemoteFunctionFilter API', async (t) => {
+    function login({ value, fn }) {
+        t.is(typeof fn, 'function')
+    }
+    function entryFunction(fn0) {
+        fn0()
+        return {
+            value: 1,
+            login,
+        }
+    }
+
+    const createRemoteFunctionFilter = ({
+        node,
+        function_id,
+        function_creator,
+        caller,
+        path,
+    }) => {
+        // console.log({ function_id, function_creator, caller, path })
+        t.is(node, server)
+        if (function_id === 0) {
+            t.is(function_creator, FUNCTION_CREATOR.ENTRY)
+            t.is(caller, undefined)
+            t.is(path, undefined)
+        }
+        if (function_id === 1) {
+            t.is(function_creator, FUNCTION_CREATOR.REQUEST)
+            t.is(caller, entryFunction)
+            t.deepEqual(path, [0])
+        }
+        if (function_id === 2) {
+            t.is(function_creator, FUNCTION_CREATOR.RESPONSE)
+            t.is(caller, undefined)
+            t.deepEqual(path, [])
+        }
+        if (function_id === 3) {
+            t.is(function_creator, FUNCTION_CREATOR.REQUEST)
+            t.is(caller, login)
+            t.deepEqual(path, [0, 'fn'])
+        }
+        return true
+    }
+    const server = createNode({ createRemoteFunctionFilter })
+    const client = createNode()
+    server.ENV = 'SERVER'
+    client.ENV = 'CLIENT'
+    server.open(client.message, entryFunction)
+    const callServer = client.open(server.message)
+    const objServer = await callServer(() => {
+        return () => {}
+    })
+    objServer.login({ value: 2, fn: () => {} })
 })

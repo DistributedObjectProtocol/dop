@@ -1,6 +1,7 @@
 import { isFunction, isInteger, isArray } from '../util/is'
 import createRequest from '../util/createRequest'
 import localProcedureCall from '../util/localProcedureCall'
+import { FUNCTION_CREATOR } from '../const'
 
 export default function createNodeFactory({ encode, decode }) {
     return function createNode({
@@ -18,15 +19,10 @@ export default function createNodeFactory({ encode, decode }) {
         let remote_function_index = 0
         let request_id_index = 0
 
-        // encode / decode params
         const encode_params = {
             remote_functions,
             local_functions,
             registerLocalFunctionFromEncode,
-        }
-        const decode_params = {
-            remote_functions_id,
-            createRemoteFunction,
         }
 
         function registerLocalFunction(function_id, fn) {
@@ -35,8 +31,23 @@ export default function createNodeFactory({ encode, decode }) {
             return function_id
         }
 
-        function createRemoteFunction(function_id) {
-            if (!createRemoteFunctionFilter({ node: api, function_id })) {
+        function createRemoteFunction({
+            function_id,
+            target,
+            path,
+            caller,
+            function_creator,
+        }) {
+            if (
+                !createRemoteFunctionFilter({
+                    node: api,
+                    function_id,
+                    target,
+                    path,
+                    caller,
+                    function_creator,
+                })
+            ) {
                 return null
             }
             const makeCall = (request_id, args) => {
@@ -75,61 +86,75 @@ export default function createNodeFactory({ encode, decode }) {
         function open(send, fn) {
             const remote_function_id = remote_function_index++
             const local_function_id = local_function_index++
-            api.send = (msg) => send(serialize(msg))
             if (isFunction(fn)) registerLocalFunction(local_function_id, fn)
-            return createRemoteFunction(remote_function_id)
+            api.send = (msg) => send(serialize(msg))
+            return createRemoteFunction({
+                function_id: remote_function_id,
+                function_creator: FUNCTION_CREATOR.ENTRY,
+            })
         }
 
         function message(msg) {
             msg = deserialize(msg)
-            if (!isArray(msg)) return false
-            msg = decode(msg, decode_params)
+            if (!isArray(msg) || !isInteger(msg[0])) {
+                return false
+            }
 
-            let [id, function_id, args] = msg
+            const [id, function_id] = msg
+            const is_request = id > -1
+            const fn = is_request ? local_functions_id[function_id] : undefined
+
+            msg = decode(msg, {
+                createRemoteFunction,
+                remote_functions_id,
+                caller: fn,
+                function_creator: is_request
+                    ? FUNCTION_CREATOR.REQUEST
+                    : FUNCTION_CREATOR.RESPONSE,
+            })
+
+            let args = msg[2]
             const response_id = -id
 
-            if (isInteger(id)) {
-                const fn = local_functions_id[function_id]
+            if (is_request && isFunction(fn)) {
+                args = isArray(msg[2]) ? msg[2] : []
 
-                if (id > -1 && isFunction(fn)) {
-                    args = isArray(msg[2]) ? msg[2] : []
-
-                    // Request without response
-                    if (id === 0) {
-                        const req = { node: api }
-                        args.push(req)
-                        fn.apply(req, args)
-                    }
-
-                    // Request
-                    else {
-                        const req = createRequest()
-                        const response = [response_id]
-                        req.node = api
-                        req.then((value) => {
-                            response.push(0) // no errors
-                            if (value !== undefined) response.push(value)
-                            api.send(encode(response, encode_params))
-                        }).catch((error) => {
-                            response.push(error === 0 ? null : error)
-                            api.send(encode(response, encode_params))
-                        })
-                        args.push(req)
-                        localProcedureCall(fn, req, args, errorInstances)
-                    }
-                    return true
+                // Request without response
+                if (id === 0) {
+                    const req = { node: api }
+                    args.push(req)
+                    fn.apply(req, args)
                 }
 
-                // Response
-                else if (id < 0 && requests.hasOwnProperty(response_id)) {
-                    const response_status = function_id
-                    const req = requests[response_id]
-                    response_status === 0
-                        ? req.resolve(args)
-                        : req.reject(response_status)
-                    return true
+                // Request
+                else {
+                    const req = createRequest()
+                    const response = [response_id]
+                    req.node = api
+                    req.then((value) => {
+                        response.push(0) // no errors
+                        if (value !== undefined) response.push(value)
+                        api.send(encode(response, encode_params))
+                    }).catch((error) => {
+                        response.push(error === 0 ? null : error)
+                        api.send(encode(response, encode_params))
+                    })
+                    args.push(req)
+                    localProcedureCall(fn, req, args, errorInstances)
                 }
+                return true
             }
+
+            // Response
+            else if (id < 0 && requests.hasOwnProperty(response_id)) {
+                const response_status = function_id
+                const req = requests[response_id]
+                response_status === 0
+                    ? req.resolve(args)
+                    : req.reject(response_status)
+                return true
+            }
+
             return false
         }
 
