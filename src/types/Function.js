@@ -7,12 +7,10 @@ export default function Function() {}
 
 Function.encode = function ({
     value,
-    remote_functions,
     local_functions,
     registerLocalFunctionFromEncode,
 }) {
     if (isFunction(value)) {
-        if (remote_functions.has(value)) return null
         const function_id = local_functions.has(value)
             ? local_functions.get(value)
             : registerLocalFunctionFromEncode(value)
@@ -25,7 +23,6 @@ Function.encode = function ({
 
 Function.decode = function ({
     value,
-    remote_functions_id,
     createRemoteFunction,
     path,
     caller,
@@ -35,16 +32,12 @@ Function.decode = function ({
         getUniqueKey(value) === FUNCTION_KEY &&
         isInteger(value[FUNCTION_KEY])
     ) {
-        const function_id = value[FUNCTION_KEY]
-        const fn = remote_functions_id[function_id]
-        return isFunction(fn)
-            ? fn
-            : createRemoteFunction({
-                  function_id,
-                  function_creator,
-                  caller,
-                  path: path.slice(2),
-              })
+        return createRemoteFunction({
+            function_id: value[FUNCTION_KEY],
+            function_creator,
+            caller,
+            path: path.slice(2),
+        })
     } else if (
         isValidToEscape({ value }) &&
         isValidToDecode({ value: value[ESCAPE_KEY], key: FUNCTION_KEY })

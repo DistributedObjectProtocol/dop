@@ -18,7 +18,7 @@ test('Api', async (t) => {
     const callClient = server.open(client.message)
     const promise = callClient(2, 5)
 
-    t.deepEqual(Object.keys(server).length, 5)
+    t.deepEqual(Object.keys(server).length, 4)
 
     t.deepEqual(Object.keys(promise).length, 5)
     t.true(promise instanceof Promise)
@@ -89,8 +89,20 @@ test('Response (reject or resolve must delete request)', async (t) => {
 })
 
 test('Passing same functions should not create a new one', async (t) => {
+    function rpcFilter() {
+        const rpcs = {}
+        return ({ rpc, function_id }) => {
+            if (rpcs.hasOwnProperty(function_id)) {
+                return rpcs[function_id]
+            } else {
+                rpcs[function_id] = rpc
+                return rpc
+            }
+        }
+    }
+
     const server = createNode()
-    const client = createNode()
+    const client = createNode({ rpcFilter: rpcFilter() })
 
     // Client side
     const callServer = client.open(
@@ -106,25 +118,6 @@ test('Passing same functions should not create a new one', async (t) => {
     const repeated = () => {}
     const callClient = server.open(client.message, receiveFromClient)
     callClient(repeated, repeated, receiveFromClient)
-})
-
-test('Sending remote functions that is from the same node must be replaced as null', async (t) => {
-    const server = createNode()
-    const client = createNode()
-
-    // server side
-    server.open(client.message, (...args) => {
-        t.is(args.length, 3)
-        t.is(args[0], null)
-        t.is(typeof args[1], 'function')
-        t.is(typeof args[2], 'object')
-        return args[1]
-    })
-
-    // client side
-    const callServer = client.open(server.message)
-    const resu = await callServer(callServer, () => {})
-    t.is(resu, null)
 })
 
 test('Testing messages', async (t) => {
@@ -203,7 +196,7 @@ test('Using reject', async (t) => {
     t.is(Object.keys(client.requests).length, 0)
 })
 
-test('Using stub', async (t) => {
+test('Using push', async (t) => {
     const server = createNode()
     const client = createNode()
     server.open(client.message, (...args) => {
@@ -212,27 +205,8 @@ test('Using stub', async (t) => {
     })
     const callServer = client.open(server.message)
     t.is(Object.keys(client.requests).length, 0)
-    t.is(callServer.stub(), undefined)
+    t.is(callServer.push(), undefined)
     t.is(Object.keys(client.requests).length, 0)
-})
-
-test('Sending remote stub functions that is from the same node must be replaced as null', async (t) => {
-    const server = createNode()
-    const client = createNode()
-
-    // server side
-    server.open(client.message, (...args) => {
-        t.is(args.length, 3)
-        t.is(args[0], null)
-        t.is(typeof args[1], 'function')
-        t.is(typeof args[2], 'object')
-        return args[1]
-    })
-
-    // client side
-    const callServer = client.open(server.message)
-    const resu = await callServer(callServer.stub, () => {})
-    t.is(resu, null)
 })
 
 test('Calling functions from client to server with another node in the middle', async (t) => {
@@ -267,45 +241,19 @@ test('Calling functions from client to server with another node in the middle', 
     t.is(result, 10)
 })
 
-test('Limiting remote functions', async (t) => {
-    const server = createNode({
-        createRemoteFunctionFilter: () => server.remote_functions.size < 6,
-    })
-    t.is(server.remote_functions.size, 0)
+test('rpc is created if rpcFilter returns the rpc itself', async (t) => {
+    const n = Math.random()
+    const server = createNode({ rpcFilter: () => n })
     const client = createNode()
-    server.open(client.message, (fn, isLast) => {
-        if (isLast) t.is(fn, null)
-        else t.is(typeof fn, 'function')
+    const callClient = server.open(client.message, (fn) => {
+        t.is(fn, n)
     })
+    t.is(callClient, n)
     const callServer = client.open(server.message)
-    t.is(server.remote_functions.size, 2)
-    await callServer(() => {}, false)
-    t.is(server.remote_functions.size, 4)
-    await callServer(() => {}, false)
-    t.is(server.remote_functions.size, 6)
-    await callServer(() => {}, true)
-    t.is(server.remote_functions.size, 6)
+    callServer(() => {})
 })
 
-test('Limiting remote functions to 0', async (t) => {
-    const server = createNode({ createRemoteFunctionFilter: () => false })
-    const client = createNode()
-    const callClient = server.open(client.message, (fn) => fn)
-    t.is(callClient, null)
-    const callServer = client.open(server.message)
-    await callServer(() => {})
-    t.is(server.remote_functions.size, 0)
-    t.is(client.remote_functions.size, 2)
-    await callServer(() => {})
-    t.is(client.remote_functions.size, 2)
-
-    // faking calls
-    t.is(server.message(JSON.stringify([111, 0])), true)
-    t.is(server.message(JSON.stringify([222, 1])), false)
-    t.is(client.message(JSON.stringify([222, 0])), false)
-})
-
-test('createRemoteFunctionFilter API', async (t) => {
+test('rpcFilter API', async (t) => {
     function login({ value, fn }) {
         t.is(typeof fn, 'function')
     }
@@ -317,7 +265,8 @@ test('createRemoteFunctionFilter API', async (t) => {
         }
     }
 
-    const createRemoteFunctionFilter = ({
+    const rpcFilter = ({
+        rpc,
         node,
         function_id,
         function_creator,
@@ -346,9 +295,9 @@ test('createRemoteFunctionFilter API', async (t) => {
             t.is(caller, login)
             t.deepEqual(path, [0, 'fn'])
         }
-        return true
+        return rpc
     }
-    const server = createNode({ createRemoteFunctionFilter })
+    const server = createNode({ rpcFilter })
     const client = createNode()
     server.ENV = 'SERVER'
     client.ENV = 'CLIENT'

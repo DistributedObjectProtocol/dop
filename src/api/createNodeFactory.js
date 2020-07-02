@@ -7,20 +7,16 @@ export default function createNodeFactory({ encode, decode }) {
     return function createNode({
         serialize = JSON.stringify,
         deserialize = JSON.parse,
-        createRemoteFunctionFilter = () => true,
+        rpcFilter = (props) => props.rpc,
         errorInstances = [Error],
     } = {}) {
         const requests = {}
         const local_functions_id = {}
         const local_functions = new Map()
-        const remote_functions_id = {}
-        const remote_functions = new Set()
         let local_function_index = 0
-        let remote_function_index = 0
         let request_id_index = 0
 
         const encode_params = {
-            remote_functions,
             local_functions,
             registerLocalFunctionFromEncode,
         }
@@ -38,25 +34,14 @@ export default function createNodeFactory({ encode, decode }) {
             caller,
             function_creator,
         }) {
-            if (
-                !createRemoteFunctionFilter({
-                    node: api,
-                    function_id,
-                    target,
-                    path,
-                    caller,
-                    function_creator,
-                })
-            ) {
-                return null
-            }
             const makeCall = (request_id, args) => {
                 const data = [request_id, function_id]
                 if (args.length > 0) data.push(args)
                 api.send(encode(data, encode_params))
                 return data
             }
-            const fn = (...args) => {
+
+            const rpc = (...args) => {
                 const request_id = ++request_id_index
                 const req = createRequest()
                 const { resolve, reject } = req
@@ -73,23 +58,27 @@ export default function createNodeFactory({ encode, decode }) {
                 requests[request_id] = req
                 return req
             }
-            fn.stub = (...args) => {
+
+            rpc.push = (...args) => {
                 makeCall(0, args)
             }
 
-            remote_functions.add(fn)
-            remote_functions.add(fn.stub)
-            remote_functions_id[function_id] = fn
-            return fn
+            return rpcFilter({
+                rpc,
+                node: api,
+                function_id,
+                function_creator,
+                caller,
+                path,
+            })
         }
 
         function open(send, fn) {
-            const remote_function_id = remote_function_index++
             const local_function_id = local_function_index++
             if (isFunction(fn)) registerLocalFunction(local_function_id, fn)
             api.send = (msg) => send(serialize(msg))
             return createRemoteFunction({
-                function_id: remote_function_id,
+                function_id: 0,
                 function_creator: FUNCTION_CREATOR.ENTRY,
             })
         }
@@ -106,7 +95,6 @@ export default function createNodeFactory({ encode, decode }) {
 
             msg = decode(msg, {
                 createRemoteFunction,
-                remote_functions_id,
                 caller: fn,
                 function_creator: is_request
                     ? FUNCTION_CREATOR.REQUEST
@@ -166,7 +154,6 @@ export default function createNodeFactory({ encode, decode }) {
             open,
             message,
             requests,
-            remote_functions, // Exposing this can be used to know if a function is a remote function
         }
 
         return api
