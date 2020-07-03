@@ -4,72 +4,72 @@ import { testEncodeDecode, testPatchUnpatch } from './utils'
 
 test('Valid type', function (t) {
     const patch = { convert: TYPE.Replace({ hello: 'world' }) }
-    const expected = { convert: { $r: { hello: 'world' } } }
+    const expected = { convert: { $e: { hello: 'world' } } }
     testEncodeDecode(t, patch, expected)
 })
 
 test('Escape', function (t) {
-    const patch = { escape: { $r: 1 } }
-    const expected = { escape: { $escape: { $r: 1 } } }
+    const patch = { escape: { $e: 1 } }
+    const expected = { escape: { $escape: { $e: 1 } } }
     testEncodeDecode(t, patch, expected)
 })
 
 test('Ignore', function (t) {
-    const patch = { ignore: { $r: 1, $other: 1 } }
-    const expected = { ignore: { $r: 1, $other: 1 } }
+    const patch = { ignore: { $e: 1, $other: 1 } }
+    const expected = { ignore: { $e: 1, $other: 1 } }
     testEncodeDecode(t, patch, expected)
 })
 
 test('$escaping', function (t) {
     const patch = {
         convert: TYPE.Replace([1, 2, 3]),
-        escape: { $r: 1 },
+        escape: { $e: 1 },
     }
     const expected = {
-        convert: { $r: [1, 2, 3] },
-        escape: { $escape: { $r: 1 } },
+        convert: { $e: [1, 2, 3] },
+        escape: { $escape: { $e: 1 } },
     }
     testEncodeDecode(t, patch, expected)
 })
 
-test('This should not be escaped because $r has another valid prop', function (t) {
+test('This should not be escaped because $e has another valid prop', function (t) {
     const patch = {
         convert: TYPE.Replace([1, 2, 3]),
-        ignored: { $r: [1, 2, 3], $escape: [1, 2, 3] },
+        ignored: { $e: [1, 2, 3], $escape: [1, 2, 3] },
     }
     const expected = {
-        convert: { $r: [1, 2, 3] },
-        ignored: { $r: [1, 2, 3], $escape: [1, 2, 3] },
+        convert: { $e: [1, 2, 3] },
+        ignored: { $e: [1, 2, 3], $escape: [1, 2, 3] },
     }
     testEncodeDecode(t, patch, expected)
 })
 
-test('This should not be escaped because $r has another valid prop 2', function (t) {
+test('This should not be escaped because $e has another valid prop 2', function (t) {
     const patch = {
         convert: TYPE.Replace([1, 2, 3]),
-        escape: { $escape: [1, 2, 3], $r: TYPE.Replace([1, 2, 3]) },
+        escape: { $escape: [1, 2, 3], $e: TYPE.Replace([1, 2, 3]) },
     }
     const expected = {
-        convert: { $r: [1, 2, 3] },
-        escape: { $escape: [1, 2, 3], $r: { $r: [1, 2, 3] } },
+        convert: { $e: [1, 2, 3] },
+        escape: { $escape: [1, 2, 3], $e: { $e: [1, 2, 3] } },
     }
     testEncodeDecode(t, patch, expected)
 })
 
 test('Decode alone', function (t) {
     const patch = {
-        convert: { $r: [1, 2, 3] },
-        string: { $r: 'string' },
-        escape: { $escape: { $r: [1, 2, 3] } },
+        convert: { $e: [1, 2, 3] },
+        string: { $e: 'string' },
+        escape: { $escape: { $e: [1, 2, 3] } },
         ignore: {
-            $escape: { $r: [1, 2, 3] },
-            two: { $r: [1, 2, 3] },
+            $escape: { $e: [1, 2, 3] },
+            two: { $e: [1, 2, 3] },
         },
     }
     const expected = {
         convert: TYPE.Replace([1, 2, 3]),
         string: TYPE.Replace('string'),
-        escape: { $r: [1, 2, 3] },
+        escape: { $e: [1, 2, 3] },
         ignore: {
             $escape: TYPE.Replace([1, 2, 3]),
             two: TYPE.Replace([1, 2, 3]),
