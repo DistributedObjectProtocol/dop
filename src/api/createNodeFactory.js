@@ -164,6 +164,8 @@ export default function createNodeFactory({ encode, decode }) {
             open,
             message,
             requests,
+            registerLocalRpc,
+            createRpc,
         }
 
         return node

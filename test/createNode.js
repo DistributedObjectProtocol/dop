@@ -18,7 +18,7 @@ test('Api', async (t) => {
     const callClient = server.open(client.message)
     const promise = callClient(2, 5)
 
-    t.deepEqual(Object.keys(server).length, 4)
+    t.deepEqual(Object.keys(server).length, 6)
 
     t.deepEqual(Object.keys(promise).length, 5)
     t.true(promise instanceof Promise)
@@ -307,4 +307,20 @@ test('rpcFilter API', async (t) => {
         return () => {}
     })
     objServer.login({ value: 2, fn: () => {} })
+})
+
+test('registerLocalRpc & createRpc', async (t) => {
+    const server = createNode()
+    const client = createNode()
+    server.open(client.message)
+    client.open(server.message)
+
+    const number = Math.random()
+    server.registerLocalRpc('Login', (n) => {
+        t.is(n, number)
+        return n + 1
+    })
+    const rpc = client.createRpc('Login')
+    const result = await rpc(number)
+    t.is(number + 1, result)
 })
