@@ -11,10 +11,10 @@ export default function createNodeFactory({ encode, decode }) {
         errorInstances = [Error],
     } = {}) {
         const requests = {}
+        let request_id_index = 0
         const local_functions_id = {}
         const local_functions = new Map()
-        let local_function_index = 0
-        let request_id_index = 0
+        let local_function_index = 1 // 0 is reserved for the entry function used in open()
 
         const encode_params = {
             local_functions,
@@ -29,15 +29,14 @@ export default function createNodeFactory({ encode, decode }) {
 
         function createRemoteFunction({
             function_id,
-            target,
-            path,
-            caller,
             function_creator,
+            caller,
+            path,
         }) {
             const makeCall = (request_id, args) => {
                 const data = [request_id, function_id]
                 if (args.length > 0) data.push(args)
-                api.send(encode(data, encode_params))
+                node.send(encode(data, encode_params))
                 return data
             }
 
@@ -51,7 +50,7 @@ export default function createNodeFactory({ encode, decode }) {
                     return req
                 }
                 req.data = makeCall(request_id, args)
-                req.node = api
+                req.node = node
                 req.createdAt = new Date().getTime()
                 req.resolve = (value) => resolveOrReject(resolve, value)
                 req.reject = (error) => resolveOrReject(reject, error)
@@ -65,7 +64,7 @@ export default function createNodeFactory({ encode, decode }) {
 
             return rpcFilter({
                 rpc,
-                node: api,
+                node,
                 function_id,
                 function_creator,
                 caller,
@@ -73,12 +72,19 @@ export default function createNodeFactory({ encode, decode }) {
             })
         }
 
+        function getNextLocalFunctionId() {
+            while (local_functions_id.hasOwnProperty(local_function_index)) {
+                local_function_index += 1
+            }
+            return local_function_index
+        }
+
         function open(send, fn) {
-            const local_function_id = local_function_index++
-            if (isFunction(fn)) registerLocalFunction(local_function_id, fn)
-            api.send = (msg) => send(serialize(msg))
+            const function_id = 0
+            if (isFunction(fn)) registerLocalFunction(function_id, fn)
+            node.send = (msg) => send(serialize(msg))
             return createRemoteFunction({
-                function_id: 0,
+                function_id,
                 function_creator: FUNCTION_CREATOR.ENTRY,
             })
         }
@@ -109,7 +115,7 @@ export default function createNodeFactory({ encode, decode }) {
 
                 // Request without response
                 if (id === 0) {
-                    const req = { node: api }
+                    const req = { node }
                     args.push(req)
                     fn.apply(req, args)
                 }
@@ -118,14 +124,14 @@ export default function createNodeFactory({ encode, decode }) {
                 else {
                     const req = createRequest()
                     const response = [response_id]
-                    req.node = api
+                    req.node = node
                     req.then((value) => {
                         response.push(0) // no errors
                         if (value !== undefined) response.push(value)
-                        api.send(encode(response, encode_params))
+                        node.send(encode(response, encode_params))
                     }).catch((error) => {
                         response.push(error === 0 ? null : error)
-                        api.send(encode(response, encode_params))
+                        node.send(encode(response, encode_params))
                     })
                     args.push(req)
                     localProcedureCall(fn, req, args, errorInstances)
@@ -147,15 +153,15 @@ export default function createNodeFactory({ encode, decode }) {
         }
 
         function registerLocalFunctionFromEncode(fn) {
-            return registerLocalFunction(local_function_index++, fn)
+            return registerLocalFunction(getNextLocalFunctionId(), fn)
         }
 
-        const api = {
+        const node = {
             open,
             message,
             requests,
         }
 
-        return api
+        return node
     }
 }
