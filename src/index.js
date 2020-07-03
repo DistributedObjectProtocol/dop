@@ -6,8 +6,8 @@ import createNodeFactory from './api/createNodeFactory'
 import createStoreFactory from './api/createStoreFactory'
 import applyPatchFactory from './api/applyPatchFactory'
 
-import Rpc from './types/Rpc'
 import Primitives from './types/Primitives'
+import Rpc from './types/Rpc'
 import Delete from './types/Delete'
 import Replace from './types/Replace'
 import Splice from './types/Splice'
@@ -31,8 +31,8 @@ function factory() {
         if (isFunction(decode)) decoders.push(decode)
     }
 
-    addType(Rpc)
     addType(Primitives)
+    addType(Rpc)
     addType(Delete)
     addType(Replace)
     addType(Splice)
