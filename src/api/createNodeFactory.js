@@ -12,27 +12,22 @@ export default function createNodeFactory({ encode, decode }) {
     } = {}) {
         const requests = {}
         let request_id_index = 0
-        const local_functions_id = {}
-        const local_functions = new Map()
+        const local_rpcs_id = {}
+        const local_rpcs = new Map()
         let local_function_index = 1 // 0 is reserved for the entry function used in open()
 
         const encode_params = {
-            local_functions,
-            registerLocalFunctionFromEncode,
+            local_rpcs,
+            registerLocalRpcFromEncode,
         }
 
-        function registerLocalFunction(function_id, fn) {
-            local_functions_id[function_id] = fn
-            local_functions.set(fn, function_id)
+        function registerLocalRpc(function_id, fn) {
+            local_rpcs_id[function_id] = fn
+            local_rpcs.set(fn, function_id)
             return function_id
         }
 
-        function createRemoteFunction({
-            function_id,
-            function_creator,
-            caller,
-            path,
-        }) {
+        function createRpc(function_id) {
             const makeCall = (request_id, args) => {
                 const data = [request_id, function_id]
                 if (args.length > 0) data.push(args)
@@ -62,8 +57,17 @@ export default function createNodeFactory({ encode, decode }) {
                 makeCall(0, args)
             }
 
+            return rpc
+        }
+
+        function createRemoteFunction({
+            function_id,
+            function_creator,
+            caller,
+            path,
+        }) {
             return rpcFilter({
-                rpc,
+                rpc: createRpc(function_id),
                 node,
                 function_id,
                 function_creator,
@@ -73,7 +77,7 @@ export default function createNodeFactory({ encode, decode }) {
         }
 
         function getNextLocalFunctionId() {
-            while (local_functions_id.hasOwnProperty(local_function_index)) {
+            while (local_rpcs_id.hasOwnProperty(local_function_index)) {
                 local_function_index += 1
             }
             return local_function_index
@@ -81,7 +85,7 @@ export default function createNodeFactory({ encode, decode }) {
 
         function open(send, fn) {
             const function_id = 0
-            if (isFunction(fn)) registerLocalFunction(function_id, fn)
+            if (isFunction(fn)) registerLocalRpc(function_id, fn)
             node.send = (msg) => send(serialize(msg))
             return createRemoteFunction({
                 function_id,
@@ -97,7 +101,7 @@ export default function createNodeFactory({ encode, decode }) {
 
             const [id, function_id] = msg
             const is_request = id > -1
-            const fn = is_request ? local_functions_id[function_id] : undefined
+            const fn = is_request ? local_rpcs_id[function_id] : undefined
 
             msg = decode(msg, {
                 createRemoteFunction,
@@ -152,8 +156,8 @@ export default function createNodeFactory({ encode, decode }) {
             return false
         }
 
-        function registerLocalFunctionFromEncode(fn) {
-            return registerLocalFunction(getNextLocalFunctionId(), fn)
+        function registerLocalRpcFromEncode(fn) {
+            return registerLocalRpc(getNextLocalFunctionId(), fn)
         }
 
         const node = {

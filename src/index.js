@@ -6,7 +6,7 @@ import createNodeFactory from './api/createNodeFactory'
 import createStoreFactory from './api/createStoreFactory'
 import applyPatchFactory from './api/applyPatchFactory'
 
-import Function from './types/Function'
+import Rpc from './types/Rpc'
 import Primitives from './types/Primitives'
 import Delete from './types/Delete'
 import Replace from './types/Replace'
@@ -31,7 +31,7 @@ function factory() {
         if (isFunction(decode)) decoders.push(decode)
     }
 
-    addType(Function)
+    addType(Rpc)
     addType(Primitives)
     addType(Delete)
     addType(Replace)
