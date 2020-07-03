@@ -1,6 +1,6 @@
 import test from 'ava'
 import { createNode } from '../'
-import { FUNCTION_CREATOR } from '../src/const'
+import { RPC_CREATOR } from '../src/const'
 
 test('Api', async (t) => {
     const server = createNode()
@@ -276,22 +276,22 @@ test('rpcFilter API', async (t) => {
         // console.log({ function_id, function_creator, caller, path })
         t.is(node, server)
         if (function_id === 0) {
-            t.is(function_creator, FUNCTION_CREATOR.ENTRY)
+            t.is(function_creator, RPC_CREATOR.ENTRY)
             t.is(caller, undefined)
             t.is(path, undefined)
         }
         if (function_id === 1) {
-            t.is(function_creator, FUNCTION_CREATOR.REQUEST)
+            t.is(function_creator, RPC_CREATOR.REQUEST)
             t.is(caller, entryFunction)
             t.deepEqual(path, [0])
         }
         if (function_id === 2) {
-            t.is(function_creator, FUNCTION_CREATOR.RESPONSE)
+            t.is(function_creator, RPC_CREATOR.RESPONSE)
             t.is(caller, undefined)
             t.deepEqual(path, [])
         }
         if (function_id === 3) {
-            t.is(function_creator, FUNCTION_CREATOR.REQUEST)
+            t.is(function_creator, RPC_CREATOR.REQUEST)
             t.is(caller, login)
             t.deepEqual(path, [0, 'fn'])
         }

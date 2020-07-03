@@ -1,7 +1,7 @@
 import { isFunction, isInteger, isArray } from '../util/is'
 import createRequest from '../util/createRequest'
 import localProcedureCall from '../util/localProcedureCall'
-import { FUNCTION_CREATOR } from '../const'
+import { RPC_CREATOR } from '../const'
 
 export default function createNodeFactory({ encode, decode }) {
     return function createNode({
@@ -89,7 +89,7 @@ export default function createNodeFactory({ encode, decode }) {
             node.send = (msg) => send(serialize(msg))
             return createRemoteFunction({
                 function_id,
-                function_creator: FUNCTION_CREATOR.ENTRY,
+                function_creator: RPC_CREATOR.ENTRY,
             })
         }
 
@@ -107,8 +107,8 @@ export default function createNodeFactory({ encode, decode }) {
                 createRemoteFunction,
                 caller: fn,
                 function_creator: is_request
-                    ? FUNCTION_CREATOR.REQUEST
-                    : FUNCTION_CREATOR.RESPONSE,
+                    ? RPC_CREATOR.REQUEST
+                    : RPC_CREATOR.RESPONSE,
             })
 
             let args = msg[2]
