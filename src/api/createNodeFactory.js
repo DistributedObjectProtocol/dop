@@ -21,7 +21,7 @@ export default function createNodeFactory({ encode, decode }) {
             registerLocalRpcFromEncode,
         }
 
-        function registerLocalRpc(function_id, fn) {
+        function registerRpc(function_id, fn) {
             local_rpcs_id[function_id] = fn
             local_rpcs.set(fn, function_id)
             return function_id
@@ -85,7 +85,7 @@ export default function createNodeFactory({ encode, decode }) {
 
         function open(send, fn) {
             const function_id = 0
-            if (isFunction(fn)) registerLocalRpc(function_id, fn)
+            if (isFunction(fn)) registerRpc(function_id, fn)
             node.send = (msg) => send(serialize(msg))
             return createRemoteFunction({
                 function_id,
@@ -157,14 +157,14 @@ export default function createNodeFactory({ encode, decode }) {
         }
 
         function registerLocalRpcFromEncode(fn) {
-            return registerLocalRpc(getNextLocalFunctionId(), fn)
+            return registerRpc(getNextLocalFunctionId(), fn)
         }
 
         const node = {
             open,
             message,
             requests,
-            registerLocalRpc,
+            registerRpc,
             createRpc,
         }
 

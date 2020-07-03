@@ -309,14 +309,14 @@ test('rpcFilter API', async (t) => {
     objServer.login({ value: 2, fn: () => {} })
 })
 
-test('registerLocalRpc & createRpc', async (t) => {
+test('registerRpc & createRpc', async (t) => {
     const server = createNode()
     const client = createNode()
     server.open(client.message)
     client.open(server.message)
 
     const number = Math.random()
-    server.registerLocalRpc('Login', (n) => {
+    server.registerRpc('Login', (n) => {
         t.is(n, number)
         return n + 1
     })
