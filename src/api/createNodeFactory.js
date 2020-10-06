@@ -10,11 +10,11 @@ export default function createNodeFactory({ encode, decode }) {
         rpcFilter = (props) => props.rpc,
         errorInstances = [Error],
     } = {}) {
-        const requests = {}
-        let request_id_index = 0
         const local_rpcs_id = {}
         const local_rpcs = new Map()
-        let local_function_index = 1 // 0 is reserved for the entry function used in open()
+        let local_rpc_index = 1 // 0 is reserved for the entry function used in open()
+        const requests = {}
+        let request_id_index = 0
 
         const encode_params = {
             local_rpcs,
@@ -77,10 +77,10 @@ export default function createNodeFactory({ encode, decode }) {
         }
 
         function getNextLocalFunctionId() {
-            while (local_rpcs_id.hasOwnProperty(local_function_index)) {
-                local_function_index += 1
+            while (local_rpcs_id.hasOwnProperty(local_rpc_index)) {
+                local_rpc_index += 1
             }
-            return local_function_index
+            return local_rpc_index
         }
 
         function open(send, fn) {
