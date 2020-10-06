@@ -1,4 +1,4 @@
-import { isPlainObject } from '../util/is'
+import { isPlainObject, isPlain, isArray } from '../util/is'
 import { setDeep } from '../util/set'
 import forEachObject from '../util/forEachObject'
 
@@ -9,50 +9,52 @@ export default function applyPatchFactory(patchers) {
         const patch_root = { '': patch } // a trick to allow top level patches
         const unpatch_root = { '': {} }
 
+        function addMutation(target, prop, old_value, path) {
+            mutations.push({
+                target,
+                prop,
+                old_value,
+                path,
+            })
+        }
+
         forEachObject(
             patch_root,
             target_root,
-            ({ origin, destiny, prop, path }) => {
-                const origin_value = origin[prop]
-                const destiny_value = destiny[prop]
-                const had_prop = destiny.hasOwnProperty(prop)
+            ({ patch, target, prop, path }) => {
+                const patch_value = patch[prop]
+                const target_value = target[prop]
                 if (
-                    !had_prop ||
-                    (origin_value !== destiny_value &&
-                        !(
-                            isPlainObject(origin_value) &&
-                            isPlainObject(destiny_value)
-                        ))
+                    !target.hasOwnProperty(prop) ||
+                    (patch_value !== target_value &&
+                        !(isPlainObject(patch_value) && isPlain(target_value)))
                 ) {
-                    // This is where the merge with plain objects happen
-                    destiny[prop] = isPlainObject(origin_value)
-                        ? applyPatch({}, origin_value).result
-                        : origin_value
+                    const length = target.length
 
                     // Applying patches
-                    const oldValue = patchers.reduce(
-                        (oldValue, p) =>
-                            p({
-                                origin,
-                                destiny,
+                    const old_value = patchers.reduce(
+                        (old_value, patcher) =>
+                            patcher({
+                                patch,
+                                target,
                                 prop,
-                                path,
-                                oldValue,
-                                had_prop,
-                                applyPatch
+                                old_value,
+                                applyPatch,
                             }),
-                        destiny_value
+                        target_value
                     )
 
-                    // We register the mutation if oldValue is different to the new value
-                    if (destiny[prop] !== oldValue) {
-                        setDeep(unpatch_root, path.slice(0), oldValue)
-                        mutations.push({
-                            oldValue,
-                            object: destiny,
-                            prop,
-                            path: path.slice(1)
-                        })
+                    // We register the mutation if old_value is different to the new value
+                    if (target[prop] !== old_value) {
+                        addMutation(target, prop, old_value, path.slice(1))
+                        if (target.length !== length) {
+                            addMutation(
+                                target,
+                                'length',
+                                length,
+                                path.slice(1, path.length - 1).concat('length')
+                            )
+                        }
                     }
 
                     return false // we don't go deeper
@@ -60,10 +62,16 @@ export default function applyPatchFactory(patchers) {
             }
         )
 
+        // Creating unpatch
+        for (let index = mutations.length - 1; index >= 0; --index) {
+            const { path, old_value } = mutations[index]
+            setDeep(unpatch_root, [''].concat(path), old_value)
+        }
+
         return {
             result: target_root[''],
             unpatch: unpatch_root[''],
-            mutations
+            mutations,
         }
     }
 }

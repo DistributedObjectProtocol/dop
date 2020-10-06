@@ -2,31 +2,32 @@ import forEachObject from '../util/forEachObject'
 import merge, { mergeMutator } from '../util/merge'
 import { isArray } from '../util/is'
 
-export default function converter(origin, params, converters) {
-    const destiny = isArray(origin) ? [] : {}
-    forEachObject(origin, destiny, ({ origin, prop, destiny, path }) => {
+export default function converter(patch, params, converters) {
+    const patch_root = { '': patch } // a trick to allow top level
+    const target_root = { '': isArray(patch) ? [] : {} } // a trick to allow top level
+    forEachObject(patch_root, target_root, ({ patch, prop, target, path }) => {
         const value = converters.reduce(
             (value, converter) =>
                 converter(
                     merge(
                         {
                             value,
-                            origin,
-                            destiny,
+                            patch,
+                            target,
                             prop,
-                            path
+                            path,
                         },
                         params
                     )
                 ),
-            origin[prop]
+            patch[prop]
         )
-        if (origin[prop] !== value) {
-            destiny[prop] = value
+        if (patch[prop] !== value) {
+            target[prop] = value
             return false // we don't go deeper
         } else {
-            return mergeMutator({ origin, destiny, prop })
+            return mergeMutator({ patch, target, prop })
         }
     })
-    return destiny
+    return target_root['']
 }

@@ -11,13 +11,13 @@ function Push(...elements) {
     }
     this.elements = elements
 }
-Push.patch = function({ origin, destiny, prop, oldValue }) {
-    const originValue = origin[prop]
-    if (isArray(oldValue) && originValue instanceof Push) {
-        destiny[prop] = oldValue
+Push.patch = function({ patch, target, prop, old_value }) {
+    const originValue = patch[prop]
+    if (isArray(old_value) && originValue instanceof Push) {
+        target[prop] = old_value
         return Push.apply(null, originValue.elements)
     }
-    return oldValue
+    return old_value
 }
 Push.encode = function({ value }) {
     if (value instanceof Push) {

@@ -1,8 +1,9 @@
 {
     "name": "dop",
-    "version": "1.1.0",
+    "version": "1.4.0",
     "main": "dist/dop.js",
     "browser": "dist/dop.umd.js",
+    "module": "src/",
     "license": "MIT",
     "url": "https://distributedobjectprotocol.org/",
     "repository": {
@@ -49,7 +50,8 @@
         "testing": "npm test -- --watch"
     },
     "files": [
-        "dist"
+        "dist",
+        "src"
     ],
     "ava": {
         "files": [
@@ -58,12 +60,5 @@
         "require": [
             "esm"
         ]
-    },
-    "prettier": {
-        "printWidth": 80,
-        "tabWidth": 4,
-        "semi": false,
-        "singleQuote": true,
-        "bracketSpacing": true
     }
 }

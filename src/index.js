@@ -6,12 +6,13 @@ import createNodeFactory from './api/createNodeFactory'
 import createStoreFactory from './api/createStoreFactory'
 import applyPatchFactory from './api/applyPatchFactory'
 
-import Function from './types/Function'
-import Array from './types/Array'
+import Primitives from './types/Primitives'
+import Rpc from './types/Rpc'
 import Delete from './types/Delete'
 import Replace from './types/Replace'
 import Splice from './types/Splice'
-import Inner from './types/Inner'
+import Swap from './types/Swap'
+import Multi from './types/Multi'
 
 function factory() {
     const patchers = []
@@ -30,12 +31,13 @@ function factory() {
         if (isFunction(decode)) decoders.push(decode)
     }
 
-    addType(Function)
-    addType(Array)
+    addType(Primitives)
+    addType(Rpc)
     addType(Delete)
     addType(Replace)
     addType(Splice)
-    addType(Inner)
+    addType(Swap)
+    addType(Multi)
 
     return {
         version,
@@ -51,9 +53,33 @@ function factory() {
             Delete,
             Replace,
             Splice,
-            Inner
-        }
+            Swap,
+            Multi,
+        },
     }
 }
 
-export default factory()
+const dop = factory()
+const {
+    encode,
+    decode,
+    applyPatch,
+    createNode,
+    createStore,
+    addType,
+    TYPE,
+} = dop
+
+export default dop
+export {
+    version,
+    factory,
+    merge,
+    encode,
+    decode,
+    applyPatch,
+    createNode,
+    createStore,
+    addType,
+    TYPE,
+}

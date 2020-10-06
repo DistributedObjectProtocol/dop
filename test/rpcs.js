@@ -2,142 +2,169 @@ import test from 'ava'
 import { createNode } from '../'
 
 const localFunctions = {
-    okSync: function(req) {
+    okSync: function (req) {
         return 'Ok'
     },
-    okAsync: async function(req) {
+    okAsync: async function (req) {
         return 'Ok'
     },
-    okPromise: function(req) {
-        return new Promise(function(resolve, reject) {
+    okPromise: function (req) {
+        return new Promise(function (resolve, reject) {
             resolve('Ok')
         })
     },
 
-    undefinedSync: function(req) {},
-    undefinedAsync: async function(req) {},
-    undefinedPromise: function(req) {
-        return new Promise(function(resolve, reject) {
+    undefinedSync: function (req) {},
+    undefinedAsync: async function (req) {},
+    undefinedPromise: function (req) {
+        return new Promise(function (resolve, reject) {
             resolve(undefined)
         })
     },
 
-    errorSync: function(req) {
+    errorSync: function (req) {
         throw 'Error'
     },
-    errorAsync: async function(req) {
+    errorAsync: async function (req) {
         throw 'Error'
     },
-    errorPromise: function(req) {
-        return new Promise(function(resolve, reject) {
+    errorPromise: function (req) {
+        return new Promise(function (resolve, reject) {
             reject('Error')
         })
     },
 
-    timeoutSync: function(req) {
-        setTimeout(function() {
+    timeoutSync: function (req) {
+        setTimeout(function () {
             req.resolve('Ok')
         }, 10)
         return req
     },
-    timeoutAsync: async function(req) {
-        setTimeout(function() {
+    timeoutAsync: async function (req) {
+        setTimeout(function () {
             req.resolve('Ok')
         }, 10)
         return req
     },
-    timeoutPromise: async function(req) {
-        return new Promise(function(resolve, reject) {
-            setTimeout(function() {
+    timeoutPromise: async function (req) {
+        return new Promise(function (resolve, reject) {
+            setTimeout(function () {
                 req.resolve('Ok')
             }, 10)
             resolve(req)
         })
     },
 
-    reqresolveSync: function(req) {
+    reqresolveSync: function (req) {
         return req.resolve('ok')
     },
-    reqresolveAsync: async function(req) {
+    reqresolveAsync: async function (req) {
         return req.resolve('ok')
     },
-    reqresolvePromise: function(req) {
-        return new Promise(function(resolve, reject) {
+    reqresolvePromise: function (req) {
+        return new Promise(function (resolve, reject) {
             resolve(req.resolve('ok'))
         })
     },
 
-    presolveSync: function(req) {
+    presolveSync: function (req) {
         return Promise.resolve('ok')
     },
-    presolveAsync: async function(req) {
+    presolveAsync: async function (req) {
         return Promise.resolve('ok')
     },
-    presolvePromise: function(req) {
-        return new Promise(function(resolve, reject) {
+    presolvePromise: function (req) {
+        return new Promise(function (resolve, reject) {
             resolve(Promise.resolve('ok'))
         })
     },
 
-    reqrejectSync: function(req) {
+    reqrejectSync: function (req) {
         return req.reject('Error')
     },
-    reqrejectAsync: async function(req) {
+    reqrejectAsync: async function (req) {
         return req.reject('Error')
     },
-    reqrejectPromise: function(req) {
-        return new Promise(function(resolve, reject) {
+    reqrejectPromise: function (req) {
+        return new Promise(function (resolve, reject) {
             reject(req.reject('Error'))
         })
     },
 
-    prejectSync: function(req) {
+    prejectSync: function (req) {
         return Promise.reject('Error')
     },
-    prejectAsync: async function(req) {
+    prejectAsync: async function (req) {
         return Promise.reject('Error')
     },
-    prejectPromise: function(req) {
-        return new Promise(function(resolve, reject) {
+    prejectPromise: function (req) {
+        return new Promise(function (resolve, reject) {
             resolve(Promise.reject('Error'))
         })
     },
 
-    referenceError: function() {
+    referenceError: function () {
         functionThatDoesNotExists()
     },
 
-    throwError: function() {
+    throwError: function () {
         throw new Error('whatever')
     },
 
-    throwUndefined: function() {
+    throwErrorAsync: async function () {
+        throw new Error('async whatever')
+    },
+
+    throwErrorAsyncRemote: async function () {
+        throw new Error('async whatever')
+    },
+
+    throwUndefined: function () {
         throw undefined
     },
 
-    throwNull: function() {
+    throwNull: function () {
         throw null
     },
 
-    throwZero: function() {
+    throwZero: function () {
         throw 0
-    }
+    },
 }
 
 const server = createNode()
 const client = createNode()
 let remoteFunctions
-client.open(server.message, r => {
+client.open(server.message, (r) => {
     remoteFunctions = r
 })
 const callClient = server.open(client.message)
 callClient(localFunctions)
 
-test('Matching same values', async function(t) {
+test('throw a real error from async/await local', async function (t) {
+    try {
+        await localFunctions.throwErrorAsync()
+        t.true(false)
+    } catch (e) {
+        t.true(e instanceof Error)
+    }
+})
+
+// Don't know how to test this because it should break the script
+test.skip('throw a real error from async/await remote', async function (t) {
+    try {
+        await remoteFunctions.throwErrorAsyncRemote()
+        t.true(true)
+    } catch (e) {
+        t.true(false)
+    }
+})
+
+test('Matching same values', async function (t) {
     t.deepEqual(Object.keys(remoteFunctions), Object.keys(localFunctions))
 })
 
-test('Ok', async function(t) {
+test('Ok', async function (t) {
     t.is(await remoteFunctions.okSync(), await remoteFunctions.okAsync())
     t.is(await remoteFunctions.okSync(), await remoteFunctions.okPromise())
     t.is(await remoteFunctions.okSync(), await localFunctions.okSync())
@@ -145,7 +172,7 @@ test('Ok', async function(t) {
     t.is(await remoteFunctions.okPromise(), await localFunctions.okPromise())
 })
 
-test('Error', async function(t) {
+test('Error', async function (t) {
     t.is(1, 1)
     try {
         await remoteFunctions.errorSync()
@@ -186,7 +213,7 @@ test('Error', async function(t) {
     }
 })
 
-test('timeout', async function(t) {
+test('timeout', async function (t) {
     t.is(
         await remoteFunctions.timeoutSync(),
         await remoteFunctions.timeoutAsync()
@@ -197,7 +224,7 @@ test('timeout', async function(t) {
     )
 })
 
-test('req.resolve', async function(t) {
+test('req.resolve', async function (t) {
     t.is(
         await remoteFunctions.reqresolveSync(),
         await remoteFunctions.reqresolveAsync()
@@ -208,7 +235,7 @@ test('req.resolve', async function(t) {
     )
 })
 
-test('Promise.resolve', async function(t) {
+test('Promise.resolve', async function (t) {
     t.is(
         await remoteFunctions.reqresolveSync(),
         await remoteFunctions.reqresolveAsync()
@@ -219,7 +246,7 @@ test('Promise.resolve', async function(t) {
     )
 })
 
-test('req.reject', async function(t) {
+test('req.reject', async function (t) {
     try {
         await remoteFunctions.reqrejectSync()
         t.is(1, 2, 'this should not happen')
@@ -240,7 +267,7 @@ test('req.reject', async function(t) {
     }
 })
 
-test('Promise.reject', async function(t) {
+test('Promise.reject', async function (t) {
     try {
         await remoteFunctions.prejectSync()
         t.is(1, 2, 'this should not happen')
@@ -261,7 +288,7 @@ test('Promise.reject', async function(t) {
     }
 })
 
-test('Undefined', async function(t) {
+test('Undefined', async function (t) {
     t.is(
         await remoteFunctions.undefinedSync(),
         await remoteFunctions.undefinedAsync()
@@ -284,7 +311,7 @@ test('Undefined', async function(t) {
     )
 })
 
-test('throw "Error"', async function(t) {
+test('throw "Error"', async function (t) {
     try {
         remoteFunctions.errorSync().catch(() => {})
         t.true(true)
@@ -299,7 +326,7 @@ test('throw "Error"', async function(t) {
     }
 })
 
-test('ReferenceError error', async function(t) {
+test('ReferenceError error', async function (t) {
     try {
         remoteFunctions.referenceError()
         t.true(false)
@@ -314,7 +341,7 @@ test('ReferenceError error', async function(t) {
     }
 })
 
-test('throw new Error()', async function(t) {
+test('throw new Error()', async function (t) {
     try {
         localFunctions.throwError()
         t.true(false)
@@ -329,7 +356,7 @@ test('throw new Error()', async function(t) {
     }
 })
 
-test('throwUndefined', async function(t) {
+test('throwUndefined', async function (t) {
     try {
         localFunctions.throwUndefined()
         t.true(false)
@@ -344,7 +371,7 @@ test('throwUndefined', async function(t) {
     }
 })
 
-test('throwNull', async function(t) {
+test('throwNull', async function (t) {
     try {
         localFunctions.throwNull()
         t.true(false)
@@ -359,7 +386,7 @@ test('throwNull', async function(t) {
     }
 })
 
-test('throwZero', async function(t) {
+test('throwZero', async function (t) {
     try {
         localFunctions.throwZero()
         t.true(false)

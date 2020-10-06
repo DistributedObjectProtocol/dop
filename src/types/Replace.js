@@ -1,5 +1,5 @@
 import { ESCAPE_KEY, REPLACE_KEY } from '../const'
-import { isValidToDecode, isValidToEscape } from '../util/isValid'
+import { isValidToEscape, isValidToDecode } from '../util/isValid'
 
 export default function Replace(value) {
     if (!(this instanceof Replace)) {
@@ -8,26 +8,26 @@ export default function Replace(value) {
     this.value = value
 }
 
-Replace.patch = function({ origin, destiny, prop, oldValue }) {
-    if (origin[prop] instanceof Replace) {
-        destiny[prop] = origin[prop].value
-        return new Replace(oldValue)
+Replace.patch = function ({ patch, target, prop, old_value }) {
+    if (patch[prop] instanceof Replace) {
+        target[prop] = patch[prop].value
+        return new Replace(old_value)
     }
-    return oldValue
+    return old_value
 }
 
-Replace.encode = function({ value }) {
+Replace.encode = function ({ value, encode }) {
     if (value instanceof Replace) {
-        return { [REPLACE_KEY]: value.value } // we don't go deeper
+        return { [REPLACE_KEY]: encode(value.value) }
     } else if (isValidToDecode({ value, key: REPLACE_KEY })) {
-        return { [ESCAPE_KEY]: value } // we don't go deeper
+        return { [ESCAPE_KEY]: value }
     }
     return value
 }
 
-Replace.decode = function({ value }) {
+Replace.decode = function ({ value, decode }) {
     if (isValidToDecode({ value, key: REPLACE_KEY })) {
-        return new Replace(value[REPLACE_KEY])
+        return new Replace(decode(value[REPLACE_KEY]))
     } else if (
         isValidToEscape({ value }) &&
         isValidToDecode({ value: value[ESCAPE_KEY], key: REPLACE_KEY })

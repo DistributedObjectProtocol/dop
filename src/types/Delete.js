@@ -1,6 +1,6 @@
 import { ESCAPE_KEY, DELETE_KEY } from '../const'
-import { getUniqueKey } from '../util/get'
 import { isValidToEscape } from '../util/isValid'
+import { getUniqueKey } from '../util/get'
 
 export default function Delete() {
     if (!(this instanceof Delete)) {
@@ -8,26 +8,23 @@ export default function Delete() {
     }
 }
 
-Delete.patch = function({ origin, destiny, prop, oldValue, had_prop }) {
-    if (origin[prop] instanceof Delete || origin[prop] === Delete) {
-        delete destiny[prop]
+Delete.patch = function ({ patch, target, prop, old_value }) {
+    if (patch[prop] instanceof Delete || patch[prop] === Delete) {
+        delete target[prop]
     }
-    if (!had_prop) {
-        oldValue = new Delete()
-    }
-    return oldValue
+    return old_value
 }
 
-Delete.encode = function({ value }) {
+Delete.encode = function ({ value }) {
     if (value instanceof Delete || value === Delete) {
-        return { [DELETE_KEY]: 0 } // we don't go deeper
+        return { [DELETE_KEY]: 0 }
     } else if (isValidToDecodeDelete({ value })) {
-        return { [ESCAPE_KEY]: value } // we don't go deeper
+        return { [ESCAPE_KEY]: value }
     }
     return value
 }
 
-Delete.decode = function({ value }) {
+Delete.decode = function ({ value }) {
     if (isValidToDecodeDelete({ value })) {
         return new Delete()
     } else if (

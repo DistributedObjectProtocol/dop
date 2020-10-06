@@ -1,7 +1,7 @@
-import { isArray } from '../util/is'
-import { isValidToEscape } from '../util/isValid'
 import { ESCAPE_KEY, SPLICE_KEY } from '../const'
+import { isValidToEscape } from '../util/isValid'
 import { getUniqueKey } from '../util/get'
+import { isArray } from '../util/is'
 
 export default function Splice(...args) {
     if (!(this instanceof Splice)) {
@@ -10,35 +10,35 @@ export default function Splice(...args) {
     this.args = args
 }
 
-Splice.patch = function({ origin, destiny, prop, oldValue }) {
-    const origin_value = origin[prop]
-    if (origin_value instanceof Splice) {
-        destiny[prop] = oldValue
-        if (isArray(oldValue)) {
-            const { args } = origin_value
+Splice.patch = function ({ patch, target, prop, old_value }) {
+    const patch_value = patch[prop]
+    if (patch_value instanceof Splice) {
+        target[prop] = old_value
+        if (isArray(old_value)) {
+            const { args } = patch_value
             if (args[0] < 0) {
-                args[0] = oldValue.length + args[0]
+                args[0] = old_value.length + args[0]
             }
-            const spliced = oldValue.splice.apply(oldValue, args)
+            const spliced = old_value.splice.apply(old_value, args)
             const inverted = [args[0], args.length - 2].concat(spliced)
             return Splice.apply(null, inverted)
         }
     }
-    return oldValue
+    return old_value
 }
 
-Splice.encode = function({ value }) {
+Splice.encode = function ({ value, encode }) {
     if (value instanceof Splice) {
-        return { [SPLICE_KEY]: value.args }
+        return { [SPLICE_KEY]: encode(value.args) }
     } else if (isValidToDecode({ value, key: SPLICE_KEY })) {
         return { [ESCAPE_KEY]: value }
     }
     return value
 }
 
-Splice.decode = function({ value }) {
+Splice.decode = function ({ value, decode }) {
     if (isValidToDecode({ value, key: SPLICE_KEY })) {
-        return Splice.apply(null, value[SPLICE_KEY])
+        return Splice.apply(null, decode(value[SPLICE_KEY]))
     } else if (
         isValidToEscape({ value }) &&
         isValidToDecode({ value: value[ESCAPE_KEY], key: SPLICE_KEY })

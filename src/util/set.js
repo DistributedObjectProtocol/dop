@@ -13,9 +13,9 @@ export function setDeep(unpatch, path, value) {
 export function createPatchFromMutations(mutations) {
     const patch = {}
     const unpatch = {}
-    mutations.forEach(({ object, prop, path, oldValue }) => {
-        setDeep(patch, path.slice(0), object[prop])
-        setDeep(unpatch, path.slice(0), oldValue)
+    mutations.forEach(({ target, prop, path, old_value }) => {
+        setDeep(patch, path.slice(0), target[prop])
+        setDeep(unpatch, path.slice(0), old_value)
     })
     return { patch, unpatch }
 }
