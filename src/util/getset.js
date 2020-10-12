@@ -1,4 +1,4 @@
-import { is, isPlain } from './is'
+import { is, isPlain, isObject } from './is'
 import merge from './merge'
 
 export function getUniqueKey(object) {
@@ -17,9 +17,11 @@ export function getNewPlain(value) {
 }
 
 export function getDeep(object, path) {
-    path = path.slice(0)
-    const prop = path.shift()
-    return path.length > 0 ? getDeep(object[prop], path) : object[prop]
+    if (isObject(object)) {
+        path = path.slice(0)
+        const prop = path.shift()
+        return path.length > 0 ? getDeep(object[prop], path) : object[prop]
+    }
 }
 
 export function setDeep(object, path, value) {

@@ -8,11 +8,11 @@ forEachObject(
     },
     {},
     ({ patch, target, prop, path }) => {
+        // if (!isPlainObject(patch[prop])) {
+        console.log(Object.keys(patch), target, path)
         target[prop] = {}
-        if (!isPlainObject(patch[prop])) {
-            console.log(path)
-            return !isArray(patch[prop])
-        }
+        // return !isArray(patch[prop])
+        // }
     }
 )
 
