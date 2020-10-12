@@ -17,3 +17,25 @@ function forEachObjectLoop(patch, target, mutator, path) {
         path.pop()
     })
 }
+
+// export default function forEachObject(patch, target, mutator) {
+//     console.log(patch, target)
+//     forEachObjectBase(patch, ({ object, prop, path }) => {
+//         mutator({ patch: object, target: target[prop], prop, path })
+//     })
+// }
+
+// function forEachObjectBase(object, callback) {
+//     function forEachObjectLoop(object, callback, path) {
+//         forEach(object, (value_origin, prop) => {
+//             path.push(prop)
+//             callback({ object, prop, path })
+//             if (isObject(value_origin)) {
+//                 forEachObjectLoop(value_origin, mutator, path)
+//             }
+//             path.pop()
+//         })
+//     }
+
+//     forEachObjectLoop(object, callback, [])
+// }

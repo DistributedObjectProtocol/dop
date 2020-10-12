@@ -1,16 +1,34 @@
-function mergePatches(state, patches, resolver) {
-    const [patch1, patch2] = patches
-}
+import { isPlainObject, isArray } from '../src/util/is'
+import forEachObject from '../src/util/forEachObject'
 
-const newpatch = mergePatches(
-    state,
-    [patch1, patch2],
-    ([mutation1, mutation2], oldv_alue, path, delta) => {
-        const { value, index } = mutation1
-        const { value, index } = mutation2
-        return mutation1.value
+forEachObject(
+    {
+        first: { a: 1, b: 2 },
+        second: { c: 3, d: [{ e: 4 }] },
+    },
+    {},
+    ({ patch, target, prop, path }) => {
+        target[prop] = {}
+        if (!isPlainObject(patch[prop])) {
+            console.log(path)
+            return !isArray(patch[prop])
+        }
     }
 )
+
+// function mergePatches(state, patches, resolver) {
+//     const [patch1, patch2] = patches
+// }
+
+// const newpatch = mergePatches(
+//     state,
+//     [patch1, patch2],
+//     ([mutation1, mutation2], oldv_alue, path, delta) => {
+//         const { value, index } = mutation1
+//         const { value, index } = mutation2
+//         return mutation1.value
+//     }
+// )
 
 // const tree = {
 //     [delta_0]: {
