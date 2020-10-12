@@ -1,5 +1,5 @@
 import { applyPatch, encode, decode } from '../'
-import { getNewPlain } from '../src/util/get'
+import { getNewPlain } from '../src/util/getset'
 import { isPlainObject } from '../src/util/is'
 
 function newDate(d = new Date().getDate()) {

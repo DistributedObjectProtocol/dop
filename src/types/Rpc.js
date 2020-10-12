@@ -1,6 +1,6 @@
 import { ESCAPE_KEY, RPC_KEY } from '../const'
 import { isValidToEscape, isValidToDecode } from '../util/isValid'
-import { getUniqueKey } from '../util/get'
+import { getUniqueKey } from '../util/getset'
 import { isInteger, isFunction } from '../util/is'
 
 export default function Rpc() {}

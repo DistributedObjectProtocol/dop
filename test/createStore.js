@@ -1,7 +1,8 @@
 import test from 'ava'
-import { createStore } from '../'
+import { createStore, TYPE } from '../'
+import { getDeep } from '../src/util/getset'
 
-test('createStore', function(t) {
+test('createStore', function (t) {
     const state = { number: 1 }
     const store = createStore(state)
 
@@ -16,7 +17,7 @@ test('createStore', function(t) {
 //     t.deepEqual(state, store.getState())
 // })
 
-test('subscribe', function(t) {
+test('subscribe', function (t) {
     const state = { prop: true }
     const store = createStore(state)
     const listener = () => {}
@@ -30,7 +31,7 @@ test('subscribe', function(t) {
     t.is(store.listeners.get(listener), undefined)
 })
 
-test('unsubscribe from subscribe', function(t) {
+test('unsubscribe from subscribe', function (t) {
     const state = { prop: true }
     const store = createStore(state)
     const listener = () => {}
@@ -42,7 +43,7 @@ test('unsubscribe from subscribe', function(t) {
     t.false(store.listeners.has(listener))
 })
 
-test('unsubscribe', function(t) {
+test('unsubscribe', function (t) {
     const state = { prop: true }
     const store = createStore(state)
     const listener = () => {}
@@ -54,11 +55,11 @@ test('unsubscribe', function(t) {
     t.false(store.listeners.has(listener))
 })
 
-test('applyPatch', function(t) {
+test('applyPatch', function (t) {
     const state = { prop: false }
     const store = createStore(state)
     const patch = { prop: true }
-    const listener = p => {}
+    const listener = (p) => {}
     store.subscribe(listener)
     const outputs = store.applyPatch(patch)
     t.true(Array.isArray(outputs))
@@ -91,10 +92,10 @@ test('applyPatch', function(t) {
 //     t.is(outputs[0], toreturnfromlistener)
 // })
 
-test('subscribe filter', function(t) {
+test('subscribe filter', function (t) {
     const store = createStore({ prop: false })
     const patch = { prop: true, newprop: true }
-    const filter = mutation => mutation.prop !== 'newprop'
+    const filter = (mutation) => mutation.prop !== 'newprop'
     store.subscribe(() => {}, filter)
     const result = store.applyPatch(patch)
     const [output] = result
@@ -105,7 +106,7 @@ test('subscribe filter', function(t) {
     t.is(result.mutations.length, 2)
 })
 
-test('subscribe output of applyPatch must return same length that listeners', function(t) {
+test('subscribe output of applyPatch must return same length that listeners', function (t) {
     const store = createStore({ prop: false })
     const patch = { prop: true, newprop: true }
     store.subscribe(
@@ -122,4 +123,21 @@ test('subscribe output of applyPatch must return same length that listeners', fu
     t.deepEqual(output[1].patch, patch)
     t.deepEqual(output[0].mutations.length, 0)
     t.deepEqual(output[1].mutations.length, 2)
+})
+
+test('patch generated mutations listeners must be the same that original patch', function (t) {
+    const store = createStore({ params: { a: 1, b: 2 } })
+    const patch = { params: TYPE.Replace({ c: 3 }) }
+    store.subscribe(
+        () => {},
+        () => false
+    )
+    store.subscribe(
+        () => {},
+        () => true
+    )
+    const output = store.applyPatch(patch)
+    t.is(output.length, 2)
+    t.deepEqual(output[0].patch, {})
+    t.deepEqual(output[1].patch, patch)
 })

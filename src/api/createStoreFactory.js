@@ -1,4 +1,4 @@
-import { createPatchFromMutations } from '../util/set'
+import { createPatchFromMutations } from '../util/getset'
 import { isFunction } from '../util/is'
 
 export default function createStoreFactory(applyPatchFunction) {
@@ -14,10 +14,10 @@ export default function createStoreFactory(applyPatchFunction) {
             listeners.delete(listener)
         }
 
-        function applyPatch(patch) {
+        function applyPatch(patch_original) {
             const { mutations, result, unpatch } = applyPatchFunction(
                 api.state,
-                patch
+                patch_original
             )
             api.state = result
 
@@ -27,12 +27,15 @@ export default function createStoreFactory(applyPatchFunction) {
                         ? mutations.filter(filter)
                         : mutations.slice(0)
 
-                    const { patch, unpatch } = createPatchFromMutations(mts)
+                    const { patch, unpatch } = createPatchFromMutations(
+                        mts,
+                        patch_original
+                    )
                     return {
                         listener,
                         patch,
                         unpatch,
-                        mutations: mts
+                        mutations: mts,
                     }
                 }
             )
@@ -48,7 +51,7 @@ export default function createStoreFactory(applyPatchFunction) {
             listeners,
             subscribe,
             unsubscribe,
-            applyPatch
+            applyPatch,
         }
 
         return api

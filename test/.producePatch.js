@@ -2,7 +2,7 @@ import test from 'ava'
 import { applyPatch, TYPE } from '../'
 import forEachObject from '../src/util/forEachObject'
 import { is, isPlain, isPlainObject } from '../src/util/is'
-import { setDeep } from '../src/util/set'
+import { setDeep } from '../src/util/getset'
 
 export function producePatch(object, fn) {
     const root = {}
@@ -30,7 +30,7 @@ export function producePatch(object, fn) {
                                     path_copy.concat(prop),
                                     isPlainObject(value)
                                         ? TYPE.Replace(value)
-                                        : value
+                                        : value,
                                 ])
                             }
                             object[prop] = value
@@ -40,12 +40,12 @@ export function producePatch(object, fn) {
                             if (storing) {
                                 mutations.push([
                                     path_copy.concat(prop),
-                                    TYPE.Delete()
+                                    TYPE.Delete(),
                                 ])
                             }
                             delete object[prop]
                             return true
-                        }
+                        },
                     })
                 }
             } else {
@@ -58,15 +58,15 @@ export function producePatch(object, fn) {
     storing = true
     fn(root.draft)
     storing = false
-    mutations.forEach(mutation => setDeep(patch, mutation[0], mutation[1]))
+    mutations.forEach((mutation) => setDeep(patch, mutation[0], mutation[1]))
     return patch
 }
 
-test('basic', function(t) {
+test('basic', function (t) {
     let copy_draft
     const object = { change: false, obj: { deepchange: false, delete: 0 } }
 
-    const patch = producePatch(object, draft => {
+    const patch = producePatch(object, (draft) => {
         copy_draft = draft
         draft.change = true
         draft.obj.deepchange = true
