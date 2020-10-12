@@ -1,4 +1,4 @@
-import { getUniqueKey } from '../util/get'
+import { getUniqueKey } from '../util/getset'
 import { ESCAPE_KEY } from '../const'
 
 export function isValidToDecode({ value, key }) {

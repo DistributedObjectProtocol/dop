@@ -1,5 +1,5 @@
 import { isPlainObject, isPlain, isArray } from '../util/is'
-import { setDeep } from '../util/set'
+import { setDeep } from '../util/getset'
 import forEachObject from '../util/forEachObject'
 
 export default function applyPatchFactory(patchers) {
