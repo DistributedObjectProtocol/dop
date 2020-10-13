@@ -1,8 +1,19 @@
-import forEachObject from './forEachObject'
 import { is, isPlain } from './is'
+import { forEachDeep } from './forEach'
+import { getDeep } from './getset'
+
+// https://jsperf.com/dop-foreachobject
+// https://2ality.com/2019/10/shared-mutable-state.html
+export function mergeCore(patch, target_root, mutator) {
+    forEachDeep(patch, ({ object, prop, path }) => {
+        const target = getDeep(target_root, path.slice(0, path.length - 1))
+        const output = mutator({ patch: object, target, prop, path })
+        return output !== false
+    })
+}
 
 // https://jsperf.com/merge-challenge
-export default function merge(target, patch) {
+export function merge(target, patch) {
     const args = arguments
     if (args.length > 2) {
         // Remove the target 2 arguments of the arguments and add thoose arguments as merged at the begining
@@ -12,7 +23,7 @@ export default function merge(target, patch) {
     } else if (patch === target) {
         return target
     } else {
-        forEachObject(patch, target, mergeMutator)
+        mergeCore(patch, target, mergeMutator)
         return target
     }
 }
@@ -32,53 +43,14 @@ export function mergeMutator({ patch, target, prop }) {
     }
 }
 
-// export default createCustomMerge('merge', ({ patch, target, prop }) => {
-//     const origin_value = patch[prop]
-//     const destiny_value = target[prop]
-//     const tof_origin = is(origin_value)
-//     const tof_destiny = is(destiny_value)
-//     if (isPlain(origin_value)) {
-//         if (!target.hasOwnProperty(prop) || tof_origin !== tof_destiny) {
-//             target[prop] = tof_origin === 'array' ? [] : {}
-//             if (tof_origin === 'array') {
-//                 const array = []
-//                 if (tof_destiny === 'object') {
-//                     Object.keys(destiny_value)
-//                         .filter(key => !isNaN(Number(key)))
-//                         .forEach(key => (array[key] = destiny_value[key]))
-//                 }
-//                 target[prop] = array
-//             } else {
-//                 target[prop] = {}
-//             }
+// Old version
+// export default function mergeCore(patch, target, mutator, path = []) {
+//     forEach(patch, (value_origin, prop) => {
+//         path.push(prop)
+//         const shallWeGoDown = mutator({ patch, target, prop, path })
+//         if (shallWeGoDown !== false && isObject(value_origin)) {
+//             mergeCore(value_origin, target[prop], mutator, path)
 //         }
-//     } else if (tof_origin === 'undefined' && target.hasOwnProperty(prop)) {
-//         //skipping
-//     } else {
-//         target[prop] = origin_value
-//         return true // skipping
-//     }
-// })
-
-// // https://stackoverflow.com/questions/5905492/dynamic-function-name-in-javascript
-// export default function createCustomMerge(function_name, mutator) {
-//     return createFunction(function_name, function recursive(target, patch) {
-//         const args = arguments
-//         if (args.length > 2) {
-//             // Remove the target 2 arguments of the arguments and add thoose arguments as recursived at the begining
-//             Array.prototype.splice.call(
-//                 args,
-//                 0,
-//                 2,
-//                 recursive.call(this, target, patch)
-//             )
-//             // Recursion
-//             return recursive.apply(this, args)
-//         } else if (patch === target) {
-//             return target
-//         } else {
-//             forEachObject(patch, mutator, target)
-//             return target
-//         }
+//         path.pop()
 //     })
 // }

@@ -1,11 +1,11 @@
-import forEachObject from '../util/forEachObject'
-import merge, { mergeMutator } from '../util/merge'
+import { mergeCore } from '../util/merge'
+import { merge, mergeMutator } from '../util/merge'
 import { isArray } from '../util/is'
 
 export default function converter(patch, params, converters) {
     const patch_root = { '': patch } // a trick to allow top level
     const target_root = { '': isArray(patch) ? [] : {} } // a trick to allow top level
-    forEachObject(patch_root, target_root, ({ patch, prop, target, path }) => {
+    mergeCore(patch_root, target_root, ({ patch, prop, target, path }) => {
         const value = converters.reduce(
             (value, converter) =>
                 converter(

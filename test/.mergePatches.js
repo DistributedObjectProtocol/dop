@@ -1,7 +1,7 @@
 import { isPlainObject, isArray } from '../src/util/is'
-import forEachObject from '../src/util/forEachObject'
+import { mergeCore } from '../util/merge'
 
-forEachObject(
+mergeCore(
     {
         first: { a: 1, b: 2 },
         second: { c: 3, d: [{ e: 4 }] },
@@ -9,10 +9,11 @@ forEachObject(
     {},
     ({ patch, target, prop, path }) => {
         // if (!isPlainObject(patch[prop])) {
-        console.log(Object.keys(patch), target, path)
-        target[prop] = {}
+        console.log(path.join('.'), Object.keys(target))
         // return !isArray(patch[prop])
         // }
+        target[prop] = {}
+        return 'cacadevaca'
     }
 )
 

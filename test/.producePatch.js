@@ -1,6 +1,6 @@
 import test from 'ava'
 import { applyPatch, TYPE } from '../'
-import forEachObject from '../src/util/forEachObject'
+import { mergeCore } from '../util/merge'
 import { is, isPlain, isPlainObject } from '../src/util/is'
 import { setDeep } from '../src/util/getset'
 
@@ -9,51 +9,44 @@ export function producePatch(object, fn) {
     const mutations = []
     const patch = {}
     let storing = false
-    forEachObject(
-        { draft: object },
-        root,
-        ({ origin, destiny, prop, path }) => {
-            const origin_value = origin[prop]
-            const destiny_value = destiny[prop]
-            const tof_origin = is(origin_value)
-            const tof_destiny = is(destiny_value)
-            if (isPlain(origin_value)) {
-                if (
-                    !destiny.hasOwnProperty(prop) ||
-                    tof_origin != tof_destiny
-                ) {
-                    const path_copy = path.slice(1)
-                    destiny[prop] = new Proxy(tof_origin == 'array' ? [] : {}, {
-                        set: (object, prop, value) => {
-                            if (storing) {
-                                mutations.push([
-                                    path_copy.concat(prop),
-                                    isPlainObject(value)
-                                        ? TYPE.Replace(value)
-                                        : value,
-                                ])
-                            }
-                            object[prop] = value
-                            return true
-                        },
-                        deleteProperty: (object, prop) => {
-                            if (storing) {
-                                mutations.push([
-                                    path_copy.concat(prop),
-                                    TYPE.Delete(),
-                                ])
-                            }
-                            delete object[prop]
-                            return true
-                        },
-                    })
-                }
-            } else {
-                destiny[prop] = origin_value
-                return false // we dont go deeper
+    mergeCore({ draft: object }, root, ({ origin, destiny, prop, path }) => {
+        const origin_value = origin[prop]
+        const destiny_value = destiny[prop]
+        const tof_origin = is(origin_value)
+        const tof_destiny = is(destiny_value)
+        if (isPlain(origin_value)) {
+            if (!destiny.hasOwnProperty(prop) || tof_origin != tof_destiny) {
+                const path_copy = path.slice(1)
+                destiny[prop] = new Proxy(tof_origin == 'array' ? [] : {}, {
+                    set: (object, prop, value) => {
+                        if (storing) {
+                            mutations.push([
+                                path_copy.concat(prop),
+                                isPlainObject(value)
+                                    ? TYPE.Replace(value)
+                                    : value,
+                            ])
+                        }
+                        object[prop] = value
+                        return true
+                    },
+                    deleteProperty: (object, prop) => {
+                        if (storing) {
+                            mutations.push([
+                                path_copy.concat(prop),
+                                TYPE.Delete(),
+                            ])
+                        }
+                        delete object[prop]
+                        return true
+                    },
+                })
             }
+        } else {
+            destiny[prop] = origin_value
+            return false // we dont go deeper
         }
-    )
+    })
 
     storing = true
     fn(root.draft)
