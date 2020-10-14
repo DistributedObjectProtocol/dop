@@ -1,4 +1,4 @@
-import { isPlainObject, isPlain, isArray } from '../util/is'
+import { isPlainObject, isPlain } from '../util/is'
 import { setDeep } from '../util/getset'
 import { mergeCore } from '../util/merge'
 

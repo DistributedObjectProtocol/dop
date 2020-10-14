@@ -1,5 +1,4 @@
-import { mergeCore } from '../util/merge'
-import { merge, mergeMutator } from '../util/merge'
+import { mergeCore, merge, mergeMutator } from '../util/merge'
 import { isArray } from '../util/is'
 
 export default function converter(patch, params, converters) {

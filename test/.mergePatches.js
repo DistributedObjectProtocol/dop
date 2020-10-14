@@ -1,19 +1,23 @@
 import { isPlainObject, isArray } from '../src/util/is'
-import { mergeCore } from '../util/merge'
+import { forEachDeep } from '../src/util/forEach'
 
-mergeCore(
+function getPathId(path, id = '') {
+    const prop = path[0]
+    id += `${prop}.${prop}`
+    return path.length - 1 > 0 ? getPathId(path.slice(1), id) : id
+}
+
+forEachDeep(
     {
         first: { a: 1, b: 2 },
-        second: { c: 3, d: [{ e: 4 }] },
+        second: { c: 3, d: { array: [{ e: 4 }], str: 'hi' } },
     },
-    {},
-    ({ patch, target, prop, path }) => {
-        // if (!isPlainObject(patch[prop])) {
-        console.log(path.join('.'), Object.keys(target))
-        // return !isArray(patch[prop])
-        // }
-        target[prop] = {}
-        return 'cacadevaca'
+    ({ object, prop, path }) => {
+        if (!isPlainObject(object[prop])) {
+            console.log(path, object[prop])
+            return !isArray(object[prop])
+        }
+        return true
     }
 )
 
