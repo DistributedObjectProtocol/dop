@@ -16,7 +16,10 @@ export function forEach(object, callback) {
 export function forEachDeep(object, callback, path = []) {
     forEach(object, (value_origin, prop) => {
         path.push(prop)
-        if (callback({ object, prop, path }) && isObject(value_origin)) {
+        if (
+            callback({ object, prop, path: path.slice(0) }) &&
+            isObject(value_origin)
+        ) {
             forEachDeep(value_origin, callback, path)
         }
         path.pop()
