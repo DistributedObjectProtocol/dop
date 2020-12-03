@@ -1,6 +1,5 @@
 import test from 'ava'
 import { createStore, TYPE } from '../'
-import { getDeep } from '../src/util/getset'
 
 test('createStore', function (t) {
     const state = { number: 1 }

@@ -1,5 +1,5 @@
 import { isArray, isPlainObject } from '../util/is'
-import merge from '../util/merge'
+import { merge } from '../util/merge'
 import Replace from './Replace'
 import Delete from './Delete'
 

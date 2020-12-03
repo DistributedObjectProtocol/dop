@@ -1,5 +1,5 @@
 import { version } from '../package.json'
-import merge from './util/merge'
+import { merge } from './util/merge'
 import converter from './util/converter'
 import { isFunction } from './util/is'
 import createNodeFactory from './api/createNodeFactory'
