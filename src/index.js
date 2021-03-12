@@ -1,4 +1,3 @@
-import { version } from '../package.json'
 import { merge } from './util/merge'
 import converter from './util/converter'
 import { isFunction } from './util/is'
@@ -13,6 +12,8 @@ import Replace from './types/Replace'
 import Splice from './types/Splice'
 import Swap from './types/Swap'
 import Multi from './types/Multi'
+
+const version = '1.4.3' // deno does not allow importing json
 
 function factory() {
     const patchers = []
