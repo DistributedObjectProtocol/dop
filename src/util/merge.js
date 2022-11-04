@@ -2,16 +2,6 @@ import { is, isPlain } from './is'
 import { forEachDeep } from './forEach'
 import { getDeep } from './getset'
 
-// https://jsperf.com/dop-foreachobject
-// https://2ality.com/2019/10/shared-mutable-state.html
-export function mergeCore(patch, target_root, mutator) {
-    forEachDeep(patch, ({ object, prop, path }) => {
-        const target = getDeep(target_root, path.slice(0, path.length - 1))
-        const output = mutator({ patch: object, target, prop, path })
-        return output !== false
-    })
-}
-
 // https://jsperf.com/merge-challenge
 export function merge(target, patch) {
     const args = arguments
@@ -26,6 +16,16 @@ export function merge(target, patch) {
         mergeCore(patch, target, mergeMutator)
         return target
     }
+}
+
+// https://jsperf.com/dop-foreachobject
+// https://2ality.com/2019/10/shared-mutable-state.html
+export function mergeCore(patch, target_root, mutator) {
+    forEachDeep(patch, ({ object, prop, path }) => {
+        const target = getDeep(target_root, path.slice(0, path.length - 1))
+        const output = mutator({ patch: object, target, prop, path })
+        return output !== false
+    })
 }
 
 export function mergeMutator({ patch, target, prop }) {
