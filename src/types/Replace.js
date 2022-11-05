@@ -1,5 +1,5 @@
 import { ESCAPE_KEY, REPLACE_KEY } from '../const'
-import { isValidToEscape, isValidToDecode } from '../util/isValid'
+import { isValidToEscape, isValidToDecode } from '../util/is'
 
 export default function Replace(value) {
     if (!(this instanceof Replace)) {

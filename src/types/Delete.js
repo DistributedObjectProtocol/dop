@@ -1,5 +1,5 @@
 import { ESCAPE_KEY, DELETE_KEY } from '../const'
-import { isValidToEscape } from '../util/isValid'
+import { isValidToEscape } from '../util/is'
 import { getUniqueKey } from '../util/getset'
 
 export default function Delete() {

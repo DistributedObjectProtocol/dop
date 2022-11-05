@@ -1,9 +1,8 @@
 {
     "name": "dop",
-    "version": "1.4.3",
-    "main": "dist/dop.js",
+    "version": "1.5.0",
+    "main": "src/",
     "browser": "dist/dop.umd.js",
-    "module": "src/",
     "license": "MIT",
     "url": "https://distributedobjectprotocol.org/",
     "repository": {

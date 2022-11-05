@@ -1,3 +1,6 @@
+import { getUniqueKey } from '../util/getset'
+import { ESCAPE_KEY } from '../const'
+
 export function is(value) {
     if (value === null) return 'null'
     if (isArray(value)) return 'array'
@@ -37,4 +40,24 @@ export function isInteger(number) {
 
 export function isString(string) {
     return typeof string === 'string'
+}
+
+// export function isProxy(object) {
+//     if (typeof Proxy !== 'function') {
+//         return false
+//     }
+//     try {
+//         object instanceof Proxy
+//         return false
+//     } catch (e) {
+//         return true
+//     }
+// }
+
+export function isValidToDecode({ value, key }) {
+    return getUniqueKey(value) === key && value.hasOwnProperty(key)
+}
+
+export function isValidToEscape({ value }) {
+    return getUniqueKey(value) === ESCAPE_KEY
 }

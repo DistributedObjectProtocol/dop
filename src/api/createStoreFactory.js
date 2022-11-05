@@ -1,4 +1,4 @@
-import { createPatchFromMutations } from '../util/getset'
+import { createPatchAndUnpatchFromMutations } from '../util/patches'
 import { isFunction } from '../util/is'
 
 export default function createStoreFactory(applyPatchFunction) {
@@ -27,10 +27,8 @@ export default function createStoreFactory(applyPatchFunction) {
                         ? mutations.filter(filter)
                         : mutations.slice(0)
 
-                    const { patch, unpatch } = createPatchFromMutations(
-                        mts,
-                        patch_original
-                    )
+                    const { patch, unpatch } =
+                        createPatchAndUnpatchFromMutations(mts, patch_original)
                     return {
                         listener,
                         patch,

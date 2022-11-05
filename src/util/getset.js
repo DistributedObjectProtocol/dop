@@ -25,6 +25,7 @@ export function getDeep(object, path) {
 }
 
 export function setDeep(object, path, value) {
+    path = path.slice(0)
     const prop = path.shift()
     if (path.length === 0) {
         object[prop] = value
@@ -34,14 +35,4 @@ export function setDeep(object, path, value) {
         object[prop] = {}
     }
     return setDeep(object[prop], path, value)
-}
-
-export function createPatchFromMutations(mutations, patch_original) {
-    const patch = {}
-    const unpatch = {}
-    mutations.forEach(({ path, old_value }) => {
-        setDeep(patch, path.slice(0), getDeep(patch_original, path))
-        setDeep(unpatch, path.slice(0), old_value)
-    })
-    return { patch, unpatch }
 }

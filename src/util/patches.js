@@ -1,4 +1,4 @@
-import { TYPE } from '../'
+import { TYPE } from '../index'
 import { is, isPlain, isPlainObject } from './is'
 import { setDeep, getDeep } from './getset'
 import { forEachDeep } from './forEach'
@@ -7,6 +7,7 @@ export function producePatch(baseobject, callback) {
     const draft = {}
     const mutations = []
     let storing = false
+
     forEachDeep({ draft: baseobject }, ({ object, prop, path }) => {
         const origin = object
         const destiny = getDeep(draft, path.slice(0, path.length - 1))
@@ -48,10 +49,26 @@ export function producePatch(baseobject, callback) {
         }
     })
 
-    const patch = {}
     storing = true
     callback(draft.draft)
     storing = false
+
+    const patch = createPatchFromMutations(mutations)
+    return { patch, mutations }
+}
+
+export function createPatchFromMutations(mutations) {
+    const patch = {}
     mutations.forEach((mutation) => setDeep(patch, mutation[0], mutation[1]))
     return patch
+}
+
+export function createPatchAndUnpatchFromMutations(mutations, object) {
+    const patch = {}
+    const unpatch = {}
+    mutations.forEach(({ path, old_value }) => {
+        setDeep(patch, path, getDeep(object, path))
+        setDeep(unpatch, path, old_value)
+    })
+    return { patch, unpatch }
 }

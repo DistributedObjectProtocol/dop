@@ -1,6 +1,5 @@
 import { isFunction, isInteger, isArray } from '../util/is'
-import createRequest from '../util/createRequest'
-import localProcedureCall from '../util/localProcedureCall'
+import { createRequest, localProcedureCall } from '../util/nodes'
 import { RPC_CREATOR } from '../const'
 
 export default function createNodeFactory({ encode, decode }) {

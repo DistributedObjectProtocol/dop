@@ -1,7 +1,6 @@
 import { ESCAPE_KEY, MULTI_KEY } from '../const'
-import { isValidToEscape } from '../util/isValid'
 import { getUniqueKey } from '../util/getset'
-import { isArray } from '../util/is'
+import { isArray, isValidToEscape } from '../util/is'
 
 export default function Multi(...values) {
     if (!(this instanceof Multi)) {

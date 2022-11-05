@@ -124,7 +124,7 @@ test('subscribe output of applyPatch must return same length that listeners', fu
     t.deepEqual(output[1].mutations.length, 2)
 })
 
-test('filtered patches by createPatchFromMutations must be the same as original patch', function (t) {
+test('filtered patches by createPatchAndUnpatchFromMutations must be the same as original patch', function (t) {
     const store = createStore({ params: { a: 1, b: 2 } })
     const patch = { params: TYPE.Replace({ c: 3 }) }
     store.subscribe(
