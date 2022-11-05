@@ -1,3 +1,4 @@
+// import { version } from '../package.json'
 import { merge } from './util/merge'
 import converter from './util/converter'
 import { isFunction } from './util/is'
@@ -13,7 +14,8 @@ import Splice from './types/Splice'
 import Swap from './types/Swap'
 import Multi from './types/Multi'
 
-const version = '1.4.3' // deno does not allow importing json
+// Deno does not support json imports: https://stackoverflow.com/questions/61907155/deno-import-json-file-as-module
+const version = '1.5.0'
 
 function factory() {
     const patchers = []
@@ -61,15 +63,8 @@ function factory() {
 }
 
 const dop = factory()
-const {
-    encode,
-    decode,
-    applyPatch,
-    createNode,
-    createStore,
-    addType,
-    TYPE,
-} = dop
+const { encode, decode, applyPatch, createNode, createStore, addType, TYPE } =
+    dop
 
 export default dop
 export {
