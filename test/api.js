@@ -2,21 +2,26 @@ import test from 'ava'
 import dop from '../'
 import { createNode } from '../'
 
-const exported = [
-    'version',
-    'factory',
-    'merge',
-    'encode',
-    'decode',
-    'applyPatch',
-    'createNode',
-    'createStore',
-    'addType',
-    'TYPE',
-]
+const exported = {
+    version: true,
+    factory: true,
+    merge: true,
+    encode: true,
+    decode: true,
+    producePatch: true,
+    applyPatch: true,
+    createNode: true,
+    createStore: true,
+    TYPE: true,
+    addType: true,
+}
 
 test('Checking exported params', function (t) {
-    t.deepEqual(Object.keys(dop), exported)
+    const keys = {}
+    Object.keys(dop).forEach((key) => {
+        keys[key] = true
+    })
+    t.deepEqual(keys, exported)
 })
 
 test('Checking factory', function (t) {

@@ -53,7 +53,7 @@ function factory() {
         applyPatch,
         createNode,
         createStore,
-        // addType,
+        addType,
         TYPE: {
             Delete,
             Replace,
