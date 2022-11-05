@@ -1,7 +1,8 @@
 // import { version } from '../package.json'
-import { merge } from './util/merge'
-import converter from './util/converter'
 import { isFunction } from './util/is'
+import { merge, converter } from './util/merge'
+import { producePatch } from './util/patches'
+
 import createNodeFactory from './api/createNodeFactory'
 import createStoreFactory from './api/createStoreFactory'
 import applyPatchFactory from './api/applyPatchFactory'
@@ -48,10 +49,11 @@ function factory() {
         merge,
         encode,
         decode,
+        producePatch,
         applyPatch,
         createNode,
         createStore,
-        addType,
+        // addType,
         TYPE: {
             Delete,
             Replace,

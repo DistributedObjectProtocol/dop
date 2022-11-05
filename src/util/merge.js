@@ -1,4 +1,4 @@
-import { is, isPlain } from './is'
+import { is, isPlain, isArray } from './is'
 import { forEachDeep } from './forEach'
 import { getDeep } from './getset'
 
@@ -43,14 +43,32 @@ export function mergeMutator({ patch, target, prop }) {
     }
 }
 
-// Old version
-// export default function mergeCore(patch, target, mutator, path = []) {
-//     forEach(patch, (value_origin, prop) => {
-//         path.push(prop)
-//         const shallWeGoDown = mutator({ patch, target, prop, path })
-//         if (shallWeGoDown !== false && isObject(value_origin)) {
-//             mergeCore(value_origin, target[prop], mutator, path)
-//         }
-//         path.pop()
-//     })
-// }
+export function converter(patch, params, converters) {
+    const patch_root = { '': patch } // a trick to allow top level
+    const target_root = { '': isArray(patch) ? [] : {} } // a trick to allow top level
+    mergeCore(patch_root, target_root, ({ patch, prop, target, path }) => {
+        const value = converters.reduce(
+            (value, converter) =>
+                converter(
+                    merge(
+                        {
+                            value,
+                            patch,
+                            target,
+                            prop,
+                            path,
+                        },
+                        params
+                    )
+                ),
+            patch[prop]
+        )
+        if (patch[prop] !== value) {
+            target[prop] = value
+            return false // we don't go deeper
+        } else {
+            return mergeMutator({ patch, target, prop })
+        }
+    })
+    return target_root['']
+}

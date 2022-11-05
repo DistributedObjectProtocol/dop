@@ -764,3 +764,15 @@ test('complex patch to array', function (t) {
 
     const { mutations, unpatch } = testPatchUnpatch(t, target, patch, expected)
 })
+
+test.skip('testing producePatch', function (t) {
+    const target = { hello: 1, world: 2 }
+
+    applyPatch(target, (draft) => {
+        draft.hello = 3
+        draft.new = 4
+        delete draft.world
+    })
+
+    t.deepEqual(target, { hello: 3, new: 4 })
+})

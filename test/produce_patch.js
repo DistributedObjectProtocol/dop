@@ -69,6 +69,7 @@ test('mutations: *', function (t) {
         draft.array.reverse()
         draft.array.shift()
         draft.array.reverse()
+        draft.array.unshift('added')
         arr.push(1234)
         draft.obj.deepchange = true
         draft.obj.new = 'string'
@@ -78,6 +79,7 @@ test('mutations: *', function (t) {
         t.deepEqual(copy_draft, draft)
     })
 
+    console.log(mutations)
     console.log(patch)
     applyPatch(object, patch)
     t.deepEqual(object, copy_draft)

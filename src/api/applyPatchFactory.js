@@ -1,8 +1,16 @@
-import { isPlainObject, isPlain } from '../util/is'
+import { isPlainObject, isPlain, isFunction } from '../util/is'
 import { setDeep } from '../util/getset'
 import { mergeCore } from '../util/merge'
+import { producePatch } from '../util/patches'
 
 export default function applyPatchFactory(patchers) {
+    // return function applyPatch(target, patch_or_fn) {
+    //     const patch = isFunction(patch_or_fn)
+    //         ? producePatch(target, patch_or_fn).patch
+    //         : patch_or_fn
+    //     return applyPatchRaw(target, patch)
+    // }
+
     return function applyPatch(target, patch) {
         const mutations = []
         const target_root = { '': target } // a trick to allow top level patches
@@ -66,6 +74,7 @@ export default function applyPatchFactory(patchers) {
 
         return {
             result: target_root[''],
+            patch,
             unpatch: unpatch_root[''],
             mutations,
         }
