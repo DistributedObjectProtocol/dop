@@ -1,5 +1,5 @@
 import test from 'ava'
-import dop from '../'
+import dop from '../src'
 import _ from 'lodash' // https://github.com/lodash/lodash/blob/master/test/merge.test.js
 import R from 'ramda'
 
@@ -9,30 +9,30 @@ run(dop.merge, 'dop')
 run(_.merge, 'lodash')
 
 function run(merge, name) {
-    test(name + ': should merge `source` into `object`', function(t) {
+    test(name + ': should merge `source` into `object`', function (t) {
         var names = {
-            characters: [{ name: 'barney' }, { name: 'fred' }]
+            characters: [{ name: 'barney' }, { name: 'fred' }],
         }
 
         var ages = {
-            characters: [{ age: 36 }, { age: 40 }]
+            characters: [{ age: 36 }, { age: 40 }],
         }
 
         var heights = {
-            characters: [{ height: '5\'4"' }, { height: '5\'5"' }]
+            characters: [{ height: '5\'4"' }, { height: '5\'5"' }],
         }
 
         var expected = {
             characters: [
                 { name: 'barney', age: 36, height: '5\'4"' },
-                { name: 'fred', age: 40, height: '5\'5"' }
-            ]
+                { name: 'fred', age: 40, height: '5\'5"' },
+            ],
         }
 
         t.deepEqual(merge(names, ages, heights), expected)
     })
 
-    test(name + ': must be a completly new references', function(t) {
+    test(name + ': must be a completly new references', function (t) {
         var object = { obj: { a: 1 }, arr: [2] }
         var actual = merge({}, object)
 
@@ -42,14 +42,14 @@ function run(merge, name) {
         t.not(object.arr, actual.arr)
     })
 
-    test(name + ': should work with four arguments', function(t) {
+    test(name + ': should work with four arguments', function (t) {
         var expected = { a: 4 },
             actual = merge({ a: 1 }, { a: 2 }, { a: 3 }, expected)
 
         t.deepEqual(actual, expected)
     })
 
-    test(name + ': should merge onto function `object` values', function(t) {
+    test(name + ': should merge onto function `object` values', function (t) {
         function Foo() {}
 
         var source = { a: 1 },
@@ -61,8 +61,8 @@ function run(merge, name) {
 
     test(
         name + ': should merge first source object properties to function',
-        function(t) {
-            var fn = function() {},
+        function (t) {
+            var fn = function () {},
                 object = { prop: {} },
                 actual = merge({ prop: fn }, object)
 
@@ -73,8 +73,8 @@ function run(merge, name) {
     test(
         name +
             ': should merge first and second source object properties to function',
-        function(t) {
-            var fn = function() {},
+        function (t) {
+            var fn = function () {},
                 object = { prop: {} },
                 actual = merge({ prop: fn }, { prop: fn }, object)
 
@@ -82,22 +82,23 @@ function run(merge, name) {
         }
     )
 
-    test(name + ': should not merge onto function values of sources', function(
-        t
-    ) {
-        var source1 = { a: function() {} },
-            source2 = { a: { b: 2 } },
-            expected = { a: { b: 2 } },
-            actual = merge({}, source1, source2)
+    test(
+        name + ': should not merge onto function values of sources',
+        function (t) {
+            var source1 = { a: function () {} },
+                source2 = { a: { b: 2 } },
+                expected = { a: { b: 2 } },
+                actual = merge({}, source1, source2)
 
-        t.deepEqual(actual, expected)
-        t.true(!('b' in source1.a))
+            t.deepEqual(actual, expected)
+            t.true(!('b' in source1.a))
 
-        actual = merge(source1, source2)
-        t.deepEqual(actual, expected)
-    })
+            actual = merge(source1, source2)
+            t.deepEqual(actual, expected)
+        }
+    )
 
-    test(name + ': should merge onto non-plain `object` values', function(t) {
+    test(name + ': should merge onto non-plain `object` values', function (t) {
         function Foo() {}
 
         var object = new Foo(),
@@ -107,7 +108,7 @@ function run(merge, name) {
         t.deepEqual(object.a, 1)
     })
 
-    test(name + ': should treat sparse array sources as dense', function(t) {
+    test(name + ': should treat sparse array sources as dense', function (t) {
         var array = [1]
         array[2] = 3
 
@@ -120,7 +121,7 @@ function run(merge, name) {
         t.deepEqual(actual, expected)
     })
 
-    test(name + ': should assign `null` values', function(t) {
+    test(name + ': should assign `null` values', function (t) {
         var actual = merge({ a: 1 }, { a: null })
         t.deepEqual(actual.a, null)
     })
@@ -128,7 +129,7 @@ function run(merge, name) {
     test(
         name +
             ': should assign non array/buffer/typed-array/plain-object source values directly',
-        function(t) {
+        function (t) {
             function Foo() {}
 
             var values = [
@@ -138,11 +139,11 @@ function run(merge, name) {
                     Foo,
                     new Number(),
                     new String(),
-                    new RegExp()
+                    new RegExp(),
                 ],
                 expected = _.map(values, () => true)
 
-            var actual = _.map(values, function(value) {
+            var actual = _.map(values, function (value) {
                 var object = merge({}, { a: value, b: { c: value } })
                 return object.a === value && object.b.c === value
             })
@@ -150,7 +151,7 @@ function run(merge, name) {
         }
     )
 
-    test(name + ': should not augment source objects', function(t) {
+    test(name + ': should not augment source objects', function (t) {
         var source1 = { a: [{ a: 1 }] },
             source2 = { a: [{ b: 2 }] },
             actual = merge({}, source1, source2)
@@ -168,40 +169,41 @@ function run(merge, name) {
         t.deepEqual(actual.a, [[3, 4, 3]])
     })
 
-    test(name + ': should merge plain objects onto non-plain objects', function(
-        t
-    ) {
-        function Foo(object) {
-            _.assign(this, object)
+    test(
+        name + ': should merge plain objects onto non-plain objects',
+        function (t) {
+            function Foo(object) {
+                _.assign(this, object)
+            }
+
+            var object = { a: 1 },
+                actual = merge(new Foo(), object)
+
+            t.true(actual instanceof Foo)
+            t.deepEqual(actual, new Foo(object))
+
+            actual = merge([new Foo()], [object])
+            t.true(actual[0] instanceof Foo)
+            t.deepEqual(actual, [new Foo(object)])
         }
-
-        var object = { a: 1 },
-            actual = merge(new Foo(), object)
-
-        t.true(actual instanceof Foo)
-        t.deepEqual(actual, new Foo(object))
-
-        actual = merge([new Foo()], [object])
-        t.true(actual[0] instanceof Foo)
-        t.deepEqual(actual, [new Foo(object)])
-    })
+    )
 
     test(
         name +
             ': should skip merging when `object` and `source` are the same value',
-        function(t) {
+        function (t) {
             var object = {},
                 pass = true
 
             Object.defineProperty(object, 'a', {
                 configurable: true,
                 enumerable: true,
-                get: function() {
+                get: function () {
                     pass = false
                 },
-                set: function() {
+                set: function () {
                     pass = false
-                }
+                },
             })
 
             merge(object, object)
@@ -212,7 +214,7 @@ function run(merge, name) {
     test(
         name +
             ': should convert strings to arrays when merging arrays of `source`',
-        function(t) {
+        function (t) {
             var object = { a: 'abcde' },
                 actual = merge(object, { a: ['x', 'y', 'z'] })
 
@@ -220,7 +222,7 @@ function run(merge, name) {
         }
     )
 
-    test(name + ': checking different types', function(t) {
+    test(name + ': checking different types', function (t) {
         const object = {
             string: 'string',
             boolean: true,
@@ -235,7 +237,7 @@ function run(merge, name) {
             date: new Date(),
             regexp: /molamazo/g,
             f: () => {},
-            function: function() {
+            function: function () {
                 console.log(arguments)
             },
             obj: { lolo: 111 },
@@ -253,10 +255,10 @@ function run(merge, name) {
                             d221: 12,
                             d223: {
                                 hola: 'hola',
-                                undefined: undefined
-                            }
-                        }
-                    }
+                                undefined: undefined,
+                            },
+                        },
+                    },
                 },
                 arrobj: ['a', 'b', 'c', 'd'],
                 g: 123,
@@ -264,11 +266,11 @@ function run(merge, name) {
                     d22: {
                         d222: 25,
                         d223: {
-                            hola: 'mundo'
-                        }
-                    }
-                }
-            }
+                            hola: 'mundo',
+                        },
+                    },
+                },
+            },
         }
 
         var actual = merge({}, object)

@@ -41,7 +41,7 @@ test('types: If is not plain object or array we ignore it', function (t) {
     })
 })
 
-test('api: If is not plain object or array we ignore it', function (t) {
+test('api: patch and mutations is the output', function (t) {
     const date = new Date()
     const { patch, mutations } = producePatch(date, () => {})
     t.true(isPlainObject(patch))

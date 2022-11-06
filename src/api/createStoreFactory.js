@@ -15,11 +15,10 @@ export default function createStoreFactory(applyPatchFunction) {
         }
 
         function applyPatch(patch_original) {
-            const { mutations, result, unpatch } = applyPatchFunction(
+            const { mutations, unpatch } = applyPatchFunction(
                 api.state,
                 patch_original
             )
-            api.state = result
 
             const outputs = Array.from(listeners.entries()).map(
                 ([listener, filter]) => {

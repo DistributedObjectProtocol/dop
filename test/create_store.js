@@ -1,5 +1,5 @@
 import test from 'ava'
-import { createStore, TYPE } from '../'
+import { createStore, TYPE } from '../src'
 
 test('createStore', function (t) {
     const state = { number: 1 }
@@ -92,7 +92,8 @@ test('applyPatch', function (t) {
 // })
 
 test('subscribe filter', function (t) {
-    const store = createStore({ prop: false })
+    const initialstate = { prop: false }
+    const store = createStore(initialstate)
     const patch = { prop: true, newprop: true }
     const filter = (mutation) => mutation.prop !== 'newprop'
     store.subscribe(() => {}, filter)

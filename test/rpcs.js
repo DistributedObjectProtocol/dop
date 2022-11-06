@@ -1,5 +1,5 @@
 import test from 'ava'
-import { createNode } from '../'
+import { createNode } from '../src'
 
 const localFunctions = {
     okSync: function (req) {

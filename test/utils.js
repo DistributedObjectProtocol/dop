@@ -1,4 +1,4 @@
-import { applyPatch, encode, decode } from '../'
+import { applyPatch, encode, decode } from '../src'
 import { getNewPlain } from '../src/util/getset'
 import { isPlainObject } from '../src/util/is'
 

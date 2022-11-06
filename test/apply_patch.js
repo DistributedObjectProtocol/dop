@@ -1,5 +1,5 @@
 import test from 'ava'
-import { applyPatch, TYPE } from '../'
+import { applyPatch, TYPE } from '../src'
 import { testPatchUnpatch } from './utils'
 
 test('1 / https://tools.ietf.org/html/rfc7386 ', function (t) {
@@ -370,6 +370,7 @@ test('Deep objects/array must be merged instead of referenced', function (t) {
     const patch = { object: { a: true }, array: [{ b: true }] }
     const { result } = applyPatch(target, patch)
 
+    t.is(result, target)
     t.deepEqual(result, patch)
     t.not(result.object, patch.object)
     t.not(result.array, patch.array)
@@ -766,13 +767,14 @@ test('complex patch to array', function (t) {
 })
 
 test('testing producePatch', function (t) {
-    const target = { hello: 1, world: 2 }
+    const target = { hello: 1, world: 2, name: 'enzo' }
 
-    applyPatch(target, (draft) => {
+    const { patch } = applyPatch(target, (draft) => {
         draft.hello = 3
         draft.new = 4
         delete draft.world
     })
 
-    t.deepEqual(target, { hello: 3, new: 4 })
+    t.deepEqual(patch, { hello: 3, new: 4, world: TYPE.Delete() })
+    t.deepEqual(target, { hello: 3, new: 4, name: 'enzo' })
 })

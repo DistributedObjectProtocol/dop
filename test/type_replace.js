@@ -1,5 +1,5 @@
 import test from 'ava'
-import { decode, TYPE } from '../'
+import { decode, TYPE } from '../src'
 import { testEncodeDecode, testPatchUnpatch } from './utils'
 
 test('Valid type', function (t) {

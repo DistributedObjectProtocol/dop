@@ -1,6 +1,5 @@
 import test from 'ava'
-import { applyPatch } from '../'
-import { TYPE } from '../'
+import { TYPE, applyPatch } from '../src'
 import { testEncodeDecode, testPatchUnpatch } from './utils'
 
 test('Valid type', function (t) {

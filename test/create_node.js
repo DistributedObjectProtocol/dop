@@ -1,5 +1,5 @@
 import test from 'ava'
-import { createNode } from '../'
+import { createNode } from '../src'
 import { RPC_CREATOR } from '../src/const'
 
 test('Api', async (t) => {
