@@ -6,64 +6,89 @@ test('1 / https://tools.ietf.org/html/rfc7386 ', function (t) {
     const target = { a: 'b' }
     const patch = { a: 'c' }
     const expected = { a: 'c' }
+    const fnpatch = (d) => {
+        d.a = 'c'
+    }
 
-    testPatchUnpatch({ t, target, patch, expected })
+    testPatchUnpatch({ t, target, patch, expected, fnpatch })
 })
 
 test('2 / https://tools.ietf.org/html/rfc7386 ', function (t) {
     const target = { a: 'b' }
     const patch = { b: 'c' }
     const expected = { a: 'b', b: 'c' }
+    const fnpatch = (d) => {
+        d.b = 'c'
+    }
 
-    testPatchUnpatch({ t, target, patch, expected })
+    testPatchUnpatch({ t, target, patch, expected, fnpatch })
 })
 
 test('3 / https://tools.ietf.org/html/rfc7386 ', function (t) {
     const target = { a: 'b' }
     const patch = { a: TYPE.Delete() }
     const expected = {}
+    const fnpatch = (d) => {
+        delete d.a
+    }
 
-    testPatchUnpatch({ t, target, patch, expected })
+    testPatchUnpatch({ t, target, patch, expected, fnpatch })
 })
 
 test('4 / https://tools.ietf.org/html/rfc7386 ', function (t) {
     const target = { a: 'b', b: 'c' }
     const patch = { a: TYPE.Delete() }
     const expected = { b: 'c' }
+    const fnpatch = (d) => {
+        delete d.a
+    }
 
-    testPatchUnpatch({ t, target, patch, expected })
+    testPatchUnpatch({ t, target, patch, expected, fnpatch })
 })
 
 test('5 / https://tools.ietf.org/html/rfc7386 ', function (t) {
     const target = { a: ['b'] }
     const patch = { a: 'c' }
     const expected = { a: 'c' }
+    const fnpatch = (d) => {
+        d.a = 'c'
+    }
 
-    testPatchUnpatch({ t, target, patch, expected })
+    testPatchUnpatch({ t, target, patch, expected, fnpatch })
 })
 
 test('6 / https://tools.ietf.org/html/rfc7386 ', function (t) {
     const target = { a: 'c' }
     const patch = { a: ['b'] }
     const expected = { a: ['b'] }
+    const fnpatch = (d) => {
+        d.a = ['b']
+    }
 
-    testPatchUnpatch({ t, target, patch, expected })
+    testPatchUnpatch({ t, target, patch, expected, fnpatch })
 })
 
 test('7 / https://tools.ietf.org/html/rfc7386 ', function (t) {
     const target = { a: { b: 'c' } }
     const patch = { a: { b: 'd', c: TYPE.Delete() } }
     const expected = { a: { b: 'd' } }
+    const fnpatch = (d) => {
+        d.a.b = 'd'
+        delete d.a.c
+    }
 
-    testPatchUnpatch({ t, target, patch, expected })
+    testPatchUnpatch({ t, target, patch, expected, fnpatch })
 })
 
 test('8 / https://tools.ietf.org/html/rfc7386 ', function (t) {
     const target = { a: {} }
     const patch = { a: [1] }
     const expected = { a: [1] }
+    const fnpatch = (d) => {
+        d.a = [1]
+    }
 
-    testPatchUnpatch({ t, target, patch, expected })
+    testPatchUnpatch({ t, target, patch, expected, fnpatch })
 })
 
 test('9 / https://tools.ietf.org/html/rfc7386 ', function (t) {
@@ -102,26 +127,35 @@ test('13 / https://tools.ietf.org/html/rfc7386 ', function (t) {
     const target = { e: null }
     const patch = { a: 1 }
     const expected = { e: null, a: 1 }
+    const fnpatch = (d) => {
+        d.a = 1
+    }
 
-    testPatchUnpatch({ t, target, patch, expected })
+    testPatchUnpatch({ t, target, patch, expected, fnpatch })
 })
 
 test('13/b', function (t) {
-    const del = TYPE.Delete()
-    const target = { e: del }
+    const target = { e: TYPE.Delete() }
     const patch = { a: 1 }
-    const expected = { e: del, a: 1 }
+    const expected = { e: TYPE.Delete(), a: 1 }
+    const fnpatch = (d) => {
+        d.a = 1
+    }
 
-    testPatchUnpatch({ t, target, patch, expected })
+    testPatchUnpatch({ t, target, patch, expected, fnpatch })
 })
 
 test('13/c (not sure about this case)', function (t) {
     const target = { e: TYPE.Delete() }
     const patch = { a: 1, e: TYPE.Delete() }
     const expected = { a: 1 }
+    const fnpatch = (d) => {
+        d.a = 1
+        delete d.e
+    }
 
     // not sure about this case because the unpatch would result in {}
-    testPatchUnpatch({ t, target, patch, expected, reverse: false })
+    testPatchUnpatch({ t, target, patch, expected, reverse: false, fnpatch })
 })
 
 test('14 / https://tools.ietf.org/html/rfc7386 ', function (t) {
@@ -136,16 +170,30 @@ test('15 / https://tools.ietf.org/html/rfc7386 ', function (t) {
     const target = {}
     const patch = { a: { bb: { ccc: TYPE.Delete() } } }
     const expected = { a: { bb: {} } }
+    const fnpatch = (d) => {
+        d.a = { bb: { ccc: true } }
+        delete d.a.bb.ccc
+    }
 
-    testPatchUnpatch({ t, target, patch, expected })
+    testPatchUnpatch({
+        t,
+        target,
+        patch,
+        expected,
+        fnpatch,
+        // reversefn: false,
+    })
 })
 
 test('basic mutation', function (t) {
     const target = { number: 1 }
     const patch = { number: 2 }
     const expected = { number: 2 }
+    const fnpatch = (d) => {
+        d.number = 2
+    }
 
-    testPatchUnpatch({ t, target, patch, expected })
+    testPatchUnpatch({ t, target, patch, expected, fnpatch })
 })
 
 test('basic mutations', function (t) {
@@ -154,24 +202,43 @@ test('basic mutations', function (t) {
     const target = { number: 1, bool: false, string: 'hello', func: func1 }
     const patch = { number: 2, bool: true, string: 'world', func: func2 }
     const expected = { number: 2, bool: true, string: 'world', func: func2 }
+    const fnpatch = (d) => {
+        d.number = 2
+        d.bool = true
+        d.string = 'world'
+        d.func = func2
+    }
 
-    testPatchUnpatch({ t, target, patch, expected, encodedecode: false })
+    testPatchUnpatch({
+        t,
+        target,
+        patch,
+        expected,
+        fnpatch,
+        encodedecode: false,
+    })
 })
 
 test('value didnt exists', function (t) {
     const target = {}
     const patch = { value: true }
     const expected = { value: true }
+    const fnpatch = (d) => {
+        d.value = true
+    }
 
-    testPatchUnpatch({ t, target, patch, expected })
+    testPatchUnpatch({ t, target, patch, fnpatch, expected })
 })
 
 test('deletion', function (t) {
     const target = { value: 12345 }
     const patch = { value: TYPE.Delete() }
     const expected = {}
+    const fnpatch = (d) => {
+        delete d.value
+    }
 
-    testPatchUnpatch({ t, target, patch, expected })
+    testPatchUnpatch({ t, target, patch, fnpatch, expected })
 })
 
 test('patch new target should not be same target', function (t) {
@@ -793,10 +860,10 @@ test('complex patch to array', function (t) {
 test('testing producePatch', function (t) {
     const target = { hello: 1, world: 2, name: 'enzo' }
 
-    const { patch } = applyPatch(target, (draft) => {
-        draft.hello = 3
-        draft.new = 4
-        delete draft.world
+    const { patch } = applyPatch(target, (d) => {
+        d.hello = 3
+        d.new = 4
+        delete d.world
     })
 
     t.deepEqual(patch, { hello: 3, new: 4, world: TYPE.Delete() })

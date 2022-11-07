@@ -2,6 +2,7 @@ import test from 'ava'
 import { applyPatch, merge } from '../src'
 import { producePatch } from '../src/util/patches'
 import { isPlainObject, isArray } from '../src/util/is'
+import { testPatchUnpatch } from './utils'
 
 test('types: Draft is a completly new copy with proxies', function (t) {
     const object = {
@@ -48,17 +49,26 @@ test('api: patch and mutations is the output', function (t) {
     t.true(isArray(mutations))
 })
 
+test('mutations: new object', function (t) {
+    const target = {}
+    const expected = { a: { bb: {} } }
+    const { patch } = producePatch(target, (d) => {
+        d.a = { bb: {} }
+    })
+
+    testPatchUnpatch({ t, target, patch, expected })
+})
+
 test('mutations: *', function (t) {
     let copy_draft
-    const object = {
+    const target = {
         change: false,
         array: [1, new Date(), 3],
         obj: { deepchange: false, delete: 0 },
     }
-    const newobject = { hello: 'world' }
 
-    const { patch, mutations } = producePatch(object, (draft) => {
-        t.deepEqual(object, draft)
+    const { patch, mutations } = producePatch(target, (draft) => {
+        t.deepEqual(target, draft)
 
         // mutations
         delete draft.obj.delete
@@ -71,7 +81,7 @@ test('mutations: *', function (t) {
         arr.push(1234)
         draft.obj.deepchange = true
         draft.obj.new = 'string'
-        draft.obj.newobject = newobject
+        draft.obj.newobject = { hello: 'world' }
 
         copy_draft = merge({}, draft)
         t.deepEqual(copy_draft, draft)
@@ -79,7 +89,6 @@ test('mutations: *', function (t) {
 
     // console.log(mutations)
     // console.log(patch)
-    applyPatch(object, patch)
-    t.is(object.obj.newobject, newobject)
-    t.deepEqual(object, copy_draft)
+    applyPatch(target, patch)
+    t.deepEqual(target, copy_draft)
 })

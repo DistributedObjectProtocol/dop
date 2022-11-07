@@ -1,5 +1,6 @@
 import { ESCAPE_KEY, REPLACE_KEY } from '../const'
 import { isValidToEscape, isValidToDecode } from '../util/is'
+import Delete from './Delete'
 
 export default function Replace(value) {
     if (!(this instanceof Replace)) {
@@ -11,7 +12,7 @@ export default function Replace(value) {
 Replace.patch = function ({ patch, target, prop, old_value }) {
     if (patch[prop] instanceof Replace) {
         target[prop] = patch[prop].value
-        return new Replace(old_value)
+        return old_value instanceof Delete ? old_value : new Replace(old_value)
     }
     return old_value
 }

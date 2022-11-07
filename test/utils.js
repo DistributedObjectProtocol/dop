@@ -1,6 +1,6 @@
-import { applyPatch, encode, decode } from '../src'
+import { applyPatch, producePatch, encode, decode, merge } from '../src'
 import { getNewPlain } from '../src/util/getset'
-import { isPlainObject } from '../src/util/is'
+import { isPlainObject, isFunction } from '../src/util/is'
 
 function newDate(d = new Date().getDate()) {
     const date = new Date(d)
@@ -49,11 +49,16 @@ function testPatchUnpatch({
     t,
     target,
     patch,
+    fnpatch,
     expected,
     reverse = true,
+    reversefn = true,
     encodedecode = true,
     serialize = true,
 }) {
+    let patch2
+    const copytarget = merge({}, target)
+
     const cloned = getNewPlain(target)
     const output = applyPatch(
         target,
@@ -72,7 +77,24 @@ function testPatchUnpatch({
         )
         t.deepEqual(output2.result, cloned, '(Unpatching)')
     }
-    return { unpatch, mutations, result }
+
+    // producePatch
+    if (isFunction(fnpatch)) {
+        const resu = producePatch(copytarget, fnpatch)
+        patch2 = resu.patch
+        // console.log(resu.mutations.length)
+        testPatchUnpatch({
+            t,
+            target: copytarget,
+            patch: patch2,
+            expected,
+            reverse: reverse && reversefn,
+            encodedecode,
+            serialize,
+        })
+    }
+
+    return { unpatch, mutations, result, patch2 }
 }
 
 module.exports = { newDate, isInteger, testEncodeDecode, testPatchUnpatch }

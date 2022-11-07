@@ -148,3 +148,11 @@ test('inner types', function (t) {
 
     testPatchUnpatch({ t, target, patch, expected, reverse: false })
 })
+
+test('replace when is not defined yet', function (t) {
+    const target = {}
+    const patch = { value: TYPE.Replace({ a: 1 }) }
+    const expected = { value: { a: 1 } }
+
+    testPatchUnpatch({ t, target, patch, expected })
+})

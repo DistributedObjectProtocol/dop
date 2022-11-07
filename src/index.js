@@ -75,6 +75,7 @@ export {
     merge,
     encode,
     decode,
+    producePatch,
     applyPatch,
     createNode,
     createStore,
