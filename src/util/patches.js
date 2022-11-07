@@ -25,7 +25,7 @@ export function producePatch(baseobject, callback) {
                     if (storing) {
                         mutations.push([
                             path.slice(1).concat(prop),
-                            isPlainObject(value) && isPlainObject(object[prop])
+                            isPlainObject(value) //&& isPlainObject(object[prop])
                                 ? TYPE.Replace(value)
                                 : value,
                         ])

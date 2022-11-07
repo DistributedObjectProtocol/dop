@@ -1,6 +1,6 @@
 import { applyPatch, producePatch, encode, decode, merge } from '../src'
 import { getNewPlain } from '../src/util/getset'
-import { isPlainObject, isFunction } from '../src/util/is'
+import { isPlainObject, isArray, isFunction } from '../src/util/is'
 
 function newDate(d = new Date().getDate()) {
     const date = new Date(d)
@@ -57,7 +57,7 @@ function testPatchUnpatch({
     serialize = true,
 }) {
     let patch2
-    const copytarget = merge({}, target)
+    const copytarget = merge(isArray(target) ? [] : {}, target)
 
     const cloned = getNewPlain(target)
     const output = applyPatch(

@@ -66,6 +66,7 @@ test('mutations: *', function (t) {
         array: [1, new Date(), 3],
         obj: { deepchange: false, delete: 0 },
     }
+    const newobject = { hello: 'world' }
 
     const { patch, mutations } = producePatch(target, (draft) => {
         t.deepEqual(target, draft)
@@ -81,7 +82,7 @@ test('mutations: *', function (t) {
         arr.push(1234)
         draft.obj.deepchange = true
         draft.obj.new = 'string'
-        draft.obj.newobject = { hello: 'world' }
+        draft.obj.newobject = newobject
 
         copy_draft = merge({}, draft)
         t.deepEqual(copy_draft, draft)
@@ -90,5 +91,6 @@ test('mutations: *', function (t) {
     // console.log(mutations)
     // console.log(patch)
     applyPatch(target, patch)
+    t.is(target.obj.newobject, newobject)
     t.deepEqual(target, copy_draft)
 })
