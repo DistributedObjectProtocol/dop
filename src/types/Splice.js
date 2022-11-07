@@ -1,6 +1,6 @@
-import { ESCAPE_KEY, SPLICE_KEY } from '../const'
-import { isArray, isValidToEscape } from '../util/is'
-import { getUniqueKey } from '../util/getset'
+import { ESCAPE_KEY, SPLICE_KEY } from '../const.js'
+import { isArray, isValidToEscape } from '../util/is.js'
+import { getUniqueKey } from '../util/getset.js'
 
 export default function Splice(...args) {
     if (!(this instanceof Splice)) {

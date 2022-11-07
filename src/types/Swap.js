@@ -1,6 +1,6 @@
-import { ESCAPE_KEY, SWAP_KEY } from '../const'
-import { isArray, isValidToEscape } from '../util/is'
-import { getUniqueKey } from '../util/getset'
+import { ESCAPE_KEY, SWAP_KEY } from '../const.js'
+import { isArray, isValidToEscape } from '../util/is.js'
+import { getUniqueKey } from '../util/getset.js'
 
 export default function Swap(...args) {
     if (!(this instanceof Swap)) {

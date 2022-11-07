@@ -1,6 +1,6 @@
-import { ESCAPE_KEY, DELETE_KEY } from '../const'
-import { isValidToEscape } from '../util/is'
-import { getUniqueKey } from '../util/getset'
+import { ESCAPE_KEY, DELETE_KEY } from '../const.js'
+import { isValidToEscape } from '../util/is.js'
+import { getUniqueKey } from '../util/getset.js'
 
 export default function Delete() {
     if (!(this instanceof Delete)) {

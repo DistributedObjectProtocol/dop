@@ -1,5 +1,5 @@
-import { is, isPlain, isObject } from './is'
-import { merge } from './merge'
+import { is, isPlain, isObject } from './is.js'
+import { merge } from './merge.js'
 
 export function getUniqueKey(object) {
     let key_name

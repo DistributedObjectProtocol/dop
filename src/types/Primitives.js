@@ -1,7 +1,7 @@
-import { isArray, isPlainObject } from '../util/is'
-import { merge } from '../util/merge'
-import Replace from './Replace'
-import Delete from './Delete'
+import { isArray, isPlainObject } from '../util/is.js'
+import { merge } from '../util/merge.js'
+import Replace from './Replace.js'
+import Delete from './Delete.js'
 
 export default function Primitives() {}
 

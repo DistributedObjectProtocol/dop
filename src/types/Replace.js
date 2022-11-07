@@ -1,6 +1,6 @@
-import { ESCAPE_KEY, REPLACE_KEY } from '../const'
-import { isValidToEscape, isValidToDecode } from '../util/is'
-import Delete from './Delete'
+import { ESCAPE_KEY, REPLACE_KEY } from '../const.js'
+import { isValidToEscape, isValidToDecode } from '../util/is.js'
+import Delete from './Delete.js'
 
 export default function Replace(value) {
     if (!(this instanceof Replace)) {

@@ -1,11 +1,11 @@
-import { ESCAPE_KEY, RPC_KEY } from '../const'
-import { getUniqueKey } from '../util/getset'
+import { ESCAPE_KEY, RPC_KEY } from '../const.js'
+import { getUniqueKey } from '../util/getset.js'
 import {
     isInteger,
     isFunction,
     isValidToEscape,
     isValidToDecode,
-} from '../util/is'
+} from '../util/is.js'
 
 export default function Rpc() {}
 

@@ -1,5 +1,5 @@
-import { createPatchAndUnpatchFromMutations } from '../util/patches'
-import { isFunction } from '../util/is'
+import { createPatchAndUnpatchFromMutations } from '../util/patches.js'
+import { isFunction } from '../util/is.js'
 
 export default function createStoreFactory(applyPatchFunction) {
     return function createStore(state) {

@@ -1,7 +1,7 @@
-import { TYPE } from '../index'
-import { is, isPlain, isPlainObject } from './is'
-import { setDeep, getDeep } from './getset'
-import { forEachDeep } from './forEach'
+import { TYPE } from '../index.js'
+import { is, isPlain, isPlainObject } from './is.js'
+import { setDeep, getDeep } from './getset.js'
+import { forEachDeep } from './forEach.js'
 
 export function producePatch(baseobject, callback) {
     const draft = {}

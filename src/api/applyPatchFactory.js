@@ -1,7 +1,7 @@
-import { isPlainObject, isPlain, isFunction } from '../util/is'
-import { setDeep } from '../util/getset'
-import { mergeCore } from '../util/merge'
-import { producePatch } from '../util/patches'
+import { isPlainObject, isPlain, isFunction } from '../util/is.js'
+import { setDeep } from '../util/getset.js'
+import { mergeCore } from '../util/merge.js'
+import { producePatch } from '../util/patches.js'
 
 export default function applyPatchFactory(patchers) {
     function applyPatch(target, patch_or_fn) {

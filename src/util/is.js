@@ -1,5 +1,5 @@
-import { getUniqueKey } from '../util/getset'
-import { ESCAPE_KEY } from '../const'
+import { getUniqueKey } from '../util/getset.js'
+import { ESCAPE_KEY } from '../const.js'
 
 export function is(value) {
     if (value === null) return 'null'

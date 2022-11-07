@@ -1,6 +1,6 @@
-import { isFunction, isInteger, isArray } from '../util/is'
-import { createRequest, localProcedureCall } from '../util/nodes'
-import { RPC_CREATOR } from '../const'
+import { isFunction, isInteger, isArray } from '../util/is.js'
+import { createRequest, localProcedureCall } from '../util/nodes.js'
+import { RPC_CREATOR } from '../const.js'
 
 export default function createNodeFactory({ encode, decode }) {
     return function createNode({

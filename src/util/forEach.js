@@ -1,4 +1,4 @@
-import { isArray, isObject } from './is'
+import { isArray, isObject } from './is.js'
 
 // https://stackoverflow.com/questions/27433075/using-a-for-each-loop-on-an-empty-array-in-javascript
 export function forEach(object, callback) {

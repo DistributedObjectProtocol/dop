@@ -1,6 +1,6 @@
-import { ESCAPE_KEY, MULTI_KEY } from '../const'
-import { getUniqueKey } from '../util/getset'
-import { isArray, isValidToEscape } from '../util/is'
+import { ESCAPE_KEY, MULTI_KEY } from '../const.js'
+import { getUniqueKey } from '../util/getset.js'
+import { isArray, isValidToEscape } from '../util/is.js'
 
 export default function Multi(...values) {
     if (!(this instanceof Multi)) {

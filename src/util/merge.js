@@ -1,6 +1,6 @@
-import { is, isPlain, isArray } from './is'
-import { forEachDeep } from './forEach'
-import { getDeep } from './getset'
+import { is, isPlain, isArray } from './is.js'
+import { forEachDeep } from './forEach.js'
+import { getDeep } from './getset.js'
 
 // https://jsperf.com/merge-challenge
 export function merge(target, patch) {
