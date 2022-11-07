@@ -16,7 +16,7 @@ import Swap from './types/Swap.js'
 import Multi from './types/Multi.js'
 
 // Deno does not support json imports: https://stackoverflow.com/questions/61907155/deno-import-json-file-as-module
-const version = '1.5.1'
+const version = '1.5.2'
 
 function factory() {
     const patchers = []
