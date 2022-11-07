@@ -75,21 +75,25 @@ test('applyPatch', function (t) {
     t.deepEqual(mutations, outputs[0].mutations)
 })
 
-// test('patchAndEmit', function(t) {
-//     const store = createStore({ prop: false })
-//     const patch = { prop: true, newprop: true }
-//     const toreturnfromlistener = {}
-//     const listener = p => {
-//         t.not(p, patch)
-//         t.deepEqual(p, patch)
-//         return toreturnfromlistener
-//     }
-//     store.subscribe(listener)
-//     const outputs = store.patchAndEmit(patch)
-//     t.true(Array.isArray(outputs))
-//     t.is(outputs.length, 1)
-//     t.is(outputs[0], toreturnfromlistener)
-// })
+test('applyPatch with function', function (t) {
+    const state = { prop: false }
+    const store = createStore(state)
+    const listener = (p) => {}
+    store.subscribe(listener)
+    const outputs = store.applyPatch((draft) => {
+        draft.prop = true
+    })
+    t.true(Array.isArray(outputs))
+    t.is(outputs.length, 1)
+    t.is(outputs[0].listener, listener)
+    t.deepEqual(outputs[0].unpatch, { prop: false })
+    t.true(Array.isArray(outputs[0].mutations))
+
+    const { unpatch, mutations } = outputs
+    t.deepEqual(unpatch, { prop: false })
+    t.true(Array.isArray(mutations))
+    t.deepEqual(mutations, outputs[0].mutations)
+})
 
 test('subscribe filter', function (t) {
     const initialstate = { prop: false }

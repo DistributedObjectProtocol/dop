@@ -45,15 +45,15 @@ function testEncodeDecode(
     return { encoded, decoded }
 }
 
-function testPatchUnpatch(
+function testPatchUnpatch({
     t,
     target,
     patch,
     expected,
     reverse = true,
     encodedecode = true,
-    serialize = true
-) {
+    serialize = true,
+}) {
     const cloned = getNewPlain(target)
     const output = applyPatch(
         target,

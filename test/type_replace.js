@@ -83,7 +83,7 @@ test('patch array', function (t) {
     const patch = { value: TYPE.Replace([1, 2, 3]) }
     const expected = { value: [1, 2, 3] }
 
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch({ t, target, patch, expected })
 })
 
 test('patch object', function (t) {
@@ -91,7 +91,7 @@ test('patch object', function (t) {
     const patch = { value: TYPE.Replace({ c: 3 }) }
     const expected = { value: { c: 3 } }
 
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch({ t, target, patch, expected })
 })
 
 test('patch should replace the complete object', function (t) {
@@ -101,7 +101,14 @@ test('patch should replace the complete object', function (t) {
     const expected = { value: { c: 3 } }
     const copyvalue = target.value
 
-    testPatchUnpatch(t, target, patch, expected, false, false)
+    testPatchUnpatch({
+        t,
+        target,
+        patch,
+        expected,
+        reverse: false,
+        encodedecode: false,
+    })
     t.is(obj_to_replace, target.value)
     t.not(copyvalue, target.value)
 })
@@ -113,7 +120,7 @@ test('testing that last test works correctly without replace', function (t) {
 
     const copyvalue = target.value
 
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch({ t, target, patch, expected })
     t.is(copyvalue, target.value)
     t.deepEqual(copyvalue, target.value)
 })
@@ -123,7 +130,7 @@ test('replace array', function (t) {
     const patch = TYPE.Replace([1, 2])
     const expected = [1, 2]
 
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch({ t, target, patch, expected })
 })
 
 test('same behavior as replace array', function (t) {
@@ -131,7 +138,7 @@ test('same behavior as replace array', function (t) {
     const patch = [1, 2]
     const expected = [1, 2]
 
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch({ t, target, patch, expected })
 })
 
 test('inner types', function (t) {
@@ -139,5 +146,5 @@ test('inner types', function (t) {
     const patch = { value: TYPE.Replace({ a: 1, b: TYPE.Swap(1, 2) }) }
     const expected = { value: { a: 1, b: TYPE.Swap(1, 2) } }
 
-    testPatchUnpatch(t, target, patch, expected, false)
+    testPatchUnpatch({ t, target, patch, expected, reverse: false })
 })

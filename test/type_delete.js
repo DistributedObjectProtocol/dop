@@ -96,5 +96,5 @@ test('patch', function (t) {
     const patch = { value: TYPE.Delete() }
     const expected = {}
 
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch({ t, target, patch, expected })
 })

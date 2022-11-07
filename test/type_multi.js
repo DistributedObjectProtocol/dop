@@ -38,12 +38,12 @@ test('API', function (t) {
         ),
     }
     const expected = { array: ['b', 'c', 'a'] }
-    const { unpatch, result, mutations } = testPatchUnpatch(
+    const { unpatch, result, mutations } = testPatchUnpatch({
         t,
         target,
         patch,
-        expected
-    )
+        expected,
+    })
     t.is(mutations.length, 1)
     t.is(result.array, target.array)
     t.is(array, target.array)
@@ -55,19 +55,19 @@ test('Deleting', function (t) {
     const target = { array: false }
     const patch = { array: TYPE.Multi(TYPE.Delete()) }
     const expected = {}
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch({ t, target, patch, expected })
 })
 
 test('Adding array and swaping', function (t) {
     const target = { array: 1234 }
     const patch = { array: TYPE.Multi([1, 2], TYPE.Swap(0, 1)) }
     const expected = { array: [2, 1] }
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch({ t, target, patch, expected })
 })
 
 test('Undefined before applying Multi', function (t) {
     const target = {}
     const patch = { array: TYPE.Multi(true) }
     const expected = { array: true }
-    testPatchUnpatch(t, target, patch, expected)
+    testPatchUnpatch({ t, target, patch, expected })
 })
