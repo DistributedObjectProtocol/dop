@@ -1,6 +1,5 @@
 import test from 'ava'
-import { applyPatch, merge } from '../src'
-import { producePatch } from '../src/util/patches'
+import { applyPatch, merge, producePatch } from '../src'
 import { isPlainObject, isArray } from '../src/util/is'
 import { testPatchUnpatch } from './utils'
 
@@ -59,7 +58,19 @@ test('mutations: new object', function (t) {
     testPatchUnpatch({ t, target, patch, expected })
 })
 
-test('mutations: *', function (t) {
+test('mutations: Array.unshift', function (t) {
+    const target = { array: [1, 2, 3, 4] }
+    const expected = { array: [0, 1, 2, 3, 4] }
+    const { patch, mutations } = producePatch(target, (d) => {
+        d.array.unshift(0)
+    })
+
+    // console.log(mutations.length, mutations)
+
+    testPatchUnpatch({ t, target, patch, expected, reverse: false })
+})
+
+test.only('mutations: *', function (t) {
     let copy_draft
     const target = {
         change: false,
@@ -78,7 +89,7 @@ test('mutations: *', function (t) {
         const arr = []
         draft.array.shift()
         draft.array.reverse()
-        draft.array.unshift()
+        draft.array.unshift('new')
         arr.push(1234)
         draft.obj.deepchange = true
         draft.obj.new = 'string'
@@ -88,7 +99,7 @@ test('mutations: *', function (t) {
         t.deepEqual(copy_draft, draft)
     })
 
-    // console.log(mutations)
+    // console.log(mutations.length)
     // console.log(patch)
     applyPatch(target, patch)
     t.is(target.obj.newobject, newobject)

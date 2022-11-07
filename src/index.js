@@ -1,7 +1,7 @@
 // import { version } from '../package.json.js'
 import { isFunction } from './util/is.js'
 import { merge, converter } from './util/merge.js'
-import { producePatch } from './util/patches.js'
+import producePatch from './util/producePatch.js'
 
 import createNodeFactory from './api/createNodeFactory.js'
 import createStoreFactory from './api/createStoreFactory.js'

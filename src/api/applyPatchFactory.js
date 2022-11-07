@@ -1,7 +1,7 @@
 import { isPlainObject, isPlain, isFunction } from '../util/is.js'
 import { setDeep } from '../util/getset.js'
 import { mergeCore } from '../util/merge.js'
-import { producePatch } from '../util/patches.js'
+import producePatch from '../util/producePatch.js'
 
 export default function applyPatchFactory(patchers) {
     function applyPatch(target, patch_or_fn) {
