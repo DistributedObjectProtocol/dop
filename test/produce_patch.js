@@ -78,7 +78,7 @@ test('mutations: *', function (t) {
         const arr = []
         draft.array.shift()
         draft.array.reverse()
-        draft.array.unshift()
+        draft.array.unshift('first')
         arr.push(1234)
         draft.obj.deepchange = true
         draft.obj.new = 'string'

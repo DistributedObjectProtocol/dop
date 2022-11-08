@@ -185,7 +185,17 @@ test('15 / https://tools.ietf.org/html/rfc7386 ', function (t) {
     })
 })
 
-test('applyPatch as function instead of patch', function (t) {
+test('api: patch result is the same that patch argument', function (t) {
+    const target = { hello: 1, world: 2, name: 'enzo' }
+    const patch_expected = { hello: 3, new: 4, world: TYPE.Delete() }
+    const { patch } = applyPatch(target, patch_expected)
+
+    t.is(patch, patch_expected)
+    t.deepEqual(patch, patch_expected)
+    t.deepEqual(target, { hello: 3, new: 4, name: 'enzo' })
+})
+
+test('api: applyPatch as function instead of patch', function (t) {
     const target = { hello: 1, world: 2, name: 'enzo' }
 
     const { patch } = applyPatch(target, (d) => {
