@@ -1,6 +1,6 @@
 {
     "name": "dop",
-    "version": "1.5.3",
+    "version": "1.5.4",
     "main": "dist/dop.js",
     "browser": "dist/dop.umd.js",
     "module": "src/index.js",

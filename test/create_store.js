@@ -69,10 +69,10 @@ test('applyPatch', function (t) {
     t.deepEqual(outputs[0].unpatch, { prop: false })
     t.true(Array.isArray(outputs[0].mutations))
 
-    const { unpatch, mutations } = outputs
-    t.deepEqual(unpatch, { prop: false })
-    t.true(Array.isArray(mutations))
-    t.deepEqual(mutations, outputs[0].mutations)
+    t.deepEqual(outputs.patch, patch)
+    t.deepEqual(outputs.unpatch, { prop: false })
+    t.deepEqual(outputs.mutations, outputs[0].mutations)
+    t.true(Array.isArray(outputs.mutations))
 })
 
 test('applyPatch with function', function (t) {
@@ -144,4 +144,20 @@ test('filtered patches by createPatchAndUnpatchFromMutations must be the same as
     t.is(output.length, 2)
     t.deepEqual(output[0].patch, {})
     t.deepEqual(output[1].patch, patch)
+})
+
+test('Matching subscriber patch and original patch', function (t) {
+    const store = createStore({
+        ['one']: {},
+    })
+    store.subscribe((patch) => {
+        t.deepEqual(patch, { one: { two: TYPE.Replace({ three: true }) } })
+    })
+
+    const listeners = store.applyPatch((d) => {
+        d['one']['two'] = { three: true }
+    })
+
+    t.deepEqual(listeners[0].patch, listeners.patch)
+    t.deepEqual(store.state, { one: { two: { three: true } } })
 })

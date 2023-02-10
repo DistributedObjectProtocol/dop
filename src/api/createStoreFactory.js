@@ -14,31 +14,33 @@ export default function createStoreFactory(applyPatchFunction) {
             listeners.delete(listener)
         }
 
-        function applyPatch(patch_original) {
-            const { mutations, unpatch } = applyPatchFunction(
-                api.state,
-                patch_original
-            )
+        function applyPatch(patch_or_fn) {
+            const applied = applyPatchFunction(api.state, patch_or_fn)
 
             const outputs = Array.from(listeners.entries()).map(
                 ([listener, filter]) => {
-                    const mts = isFunction(filter)
-                        ? mutations.filter(filter)
-                        : mutations.slice(0)
+                    const mutations = isFunction(filter)
+                        ? applied.mutations.filter(filter)
+                        : applied.mutations.slice(0)
 
                     const { patch, unpatch } =
-                        createPatchAndUnpatchFromMutations(mts, patch_original)
+                        createPatchAndUnpatchFromMutations(
+                            mutations,
+                            applied.patch
+                        )
+
                     return {
                         listener,
                         patch,
                         unpatch,
-                        mutations: mts,
+                        mutations,
                     }
                 }
             )
 
-            outputs.mutations = mutations
-            outputs.unpatch = unpatch
+            outputs.mutations = applied.mutations
+            outputs.patch = applied.patch
+            outputs.unpatch = applied.unpatch
 
             return outputs
         }
