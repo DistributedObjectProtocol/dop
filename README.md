@@ -59,7 +59,9 @@ const store = createStore({ players: 0 })
 
 function subscribeToServerStore(listener) {
     // Incrementing number of player as a patch
-    const listeners = store.applyPatch({ players: store.state.players + 1 })
+    const listeners = store.applyPatch((state) => {
+        state.players += 1
+    })
     // We emit the patch to all the subscribers
     listeners.forEach(({ listener, patch }) => listener(patch))
     // Here we subscribe our client
