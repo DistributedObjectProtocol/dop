@@ -1,6 +1,7 @@
 import test from 'ava'
-import { decode, TYPE } from '../src'
-import { testEncodeDecode, testPatchUnpatch } from './utils'
+import { decode, TYPE } from '../src/index.js'
+import { testEncodeDecode, testPatchUnpatch } from './utils.js'
+
 const DELETE = TYPE.Delete()
 
 test('Valid type', function (t) {

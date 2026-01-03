@@ -1,5 +1,5 @@
 import test from 'ava'
-import { createStore, TYPE } from '../src'
+import { createStore, TYPE } from '../src/index.js'
 
 test('createStore', function (t) {
     const state = { number: 1 }
@@ -19,8 +19,8 @@ test('createStore', function (t) {
 test('subscribe', function (t) {
     const state = { prop: true }
     const store = createStore(state)
-    const listener = () => {}
-    const filter = () => {}
+    const listener = () => { }
+    const filter = () => { }
     store.subscribe(listener, filter)
     t.true(store.listeners.has(listener))
     t.is(store.listeners.get(listener), filter)
@@ -33,7 +33,7 @@ test('subscribe', function (t) {
 test('unsubscribe from subscribe', function (t) {
     const state = { prop: true }
     const store = createStore(state)
-    const listener = () => {}
+    const listener = () => { }
     const unsubscribe = store.subscribe(listener)
     t.true(store.listeners.has(listener))
     t.is(store.listeners.size, 1)
@@ -45,7 +45,7 @@ test('unsubscribe from subscribe', function (t) {
 test('unsubscribe', function (t) {
     const state = { prop: true }
     const store = createStore(state)
-    const listener = () => {}
+    const listener = () => { }
     store.subscribe(listener)
     t.true(store.listeners.has(listener))
     t.is(store.listeners.size, 1)
@@ -58,7 +58,7 @@ test('applyPatch', function (t) {
     const state = { prop: false }
     const store = createStore(state)
     const patch = { prop: true }
-    const listener = (p) => {}
+    const listener = (p) => { }
     store.subscribe(listener)
     const outputs = store.applyPatch(patch)
     t.true(Array.isArray(outputs))
@@ -78,7 +78,7 @@ test('applyPatch', function (t) {
 test('applyPatch with function', function (t) {
     const state = { prop: false }
     const store = createStore(state)
-    const listener = (p) => {}
+    const listener = (p) => { }
     store.subscribe(listener)
     const outputs = store.applyPatch((draft) => {
         draft.prop = true
@@ -100,7 +100,7 @@ test('subscribe filter', function (t) {
     const store = createStore(initialstate)
     const patch = { prop: true, newprop: true }
     const filter = (mutation) => mutation.prop !== 'newprop'
-    store.subscribe(() => {}, filter)
+    store.subscribe(() => { }, filter)
     const result = store.applyPatch(patch)
     const [output] = result
     t.not(output.patch, patch)
@@ -114,11 +114,11 @@ test('subscribe output of applyPatch must return same length that listeners', fu
     const store = createStore({ prop: false })
     const patch = { prop: true, newprop: true }
     store.subscribe(
-        () => {},
+        () => { },
         () => false
     )
     store.subscribe(
-        () => {},
+        () => { },
         () => true
     )
     const output = store.applyPatch(patch)
@@ -133,11 +133,11 @@ test('filtered patches by createPatchAndUnpatchFromMutations must be the same as
     const store = createStore({ params: { a: 1, b: 2 } })
     const patch = { params: TYPE.Replace({ c: 3 }) }
     store.subscribe(
-        () => {},
+        () => { },
         () => false
     )
     store.subscribe(
-        () => {},
+        () => { },
         () => true
     )
     const output = store.applyPatch(patch)

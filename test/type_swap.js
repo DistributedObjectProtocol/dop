@@ -1,6 +1,6 @@
 import test from 'ava'
-import { TYPE, applyPatch } from '../src'
-import { testEncodeDecode, testPatchUnpatch } from './utils'
+import { TYPE, applyPatch } from '../src/index.js'
+import { testEncodeDecode, testPatchUnpatch } from './utils.js'
 
 test('Valid type', function (t) {
     const patch = { convert: TYPE.Swap(0, 1) }

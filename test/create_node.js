@@ -1,6 +1,6 @@
 import test from 'ava'
-import { createNode } from '../src'
-import { RPC_CREATOR } from '../src/const'
+import { createNode } from '../src/index.js'
+import { RPC_CREATOR } from '../src/const.js'
 
 test('Api', async (t) => {
     const server = createNode()
@@ -59,7 +59,7 @@ test('Callback pattern example', async (t) => {
 test('Calling a defined function .message must return true', async (t) => {
     const server = createNode()
     const client = createNode()
-    const callClient = server.open(client.message, () => {})
+    const callClient = server.open(client.message, () => { })
     const callServer = client.open((msg) => {
         t.is(server.message(msg), true)
     })
@@ -79,7 +79,7 @@ test('Calling a not defined function .message must return false', async (t) => {
 test('Response (reject or resolve must delete request)', async (t) => {
     const server = createNode()
     const client = createNode()
-    server.open(client.message, (v) => {})
+    server.open(client.message, (v) => { })
     const callServer = client.open(server.message)
     t.is(Object.keys(client.requests).length, 0)
     callServer().then((v) => {
@@ -114,8 +114,8 @@ test('Passing same functions should not create a new one', async (t) => {
     )
 
     // Server side
-    const receiveFromClient = () => {}
-    const repeated = () => {}
+    const receiveFromClient = () => { }
+    const repeated = () => { }
     const callClient = server.open(client.message, receiveFromClient)
     callClient(repeated, repeated, receiveFromClient)
 })
@@ -250,7 +250,7 @@ test('rpc is created if rpcFilter returns the rpc itself', async (t) => {
     })
     t.is(callClient, n)
     const callServer = client.open(server.message)
-    callServer(() => {})
+    callServer(() => { })
 })
 
 test('rpcFilter API', async (t) => {
@@ -304,9 +304,9 @@ test('rpcFilter API', async (t) => {
     server.open(client.message, entryFunction)
     const callServer = client.open(server.message)
     const objServer = await callServer(() => {
-        return () => {}
+        return () => { }
     })
-    objServer.login({ value: 2, fn: () => {} })
+    objServer.login({ value: 2, fn: () => { } })
 })
 
 test('registerRpc & createRpc', async (t) => {

@@ -1,7 +1,7 @@
 import test from 'ava'
-import { applyPatch } from '../src'
-import { TYPE } from '../src'
-import { testEncodeDecode, testPatchUnpatch } from './utils'
+import { applyPatch } from '../src/index.js'
+import { TYPE } from '../src/index.js'
+import { testEncodeDecode, testPatchUnpatch } from './utils.js'
 
 test('Valid type', function (t) {
     const patch = { convert: TYPE.Multi(0, 1) }

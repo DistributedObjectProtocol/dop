@@ -1,8 +1,8 @@
 import test from 'ava'
-import { applyPatch, merge } from '../src'
-import { producePatch } from '../src/util/patches'
-import { isPlainObject, isArray } from '../src/util/is'
-import { testPatchUnpatch } from './utils'
+import { applyPatch, merge } from '../src/index.js'
+import { producePatch } from '../src/util/patches.js'
+import { isPlainObject, isArray } from '../src/util/is.js'
+import { testPatchUnpatch } from './utils.js'
 
 test('types: Draft is a completly new copy with proxies', function (t) {
     const object = {
@@ -44,7 +44,7 @@ test('types: If is not plain object or array we ignore it', function (t) {
 
 test('api: patch and mutations is the output', function (t) {
     const date = new Date()
-    const { patch, mutations } = producePatch(date, () => {})
+    const { patch, mutations } = producePatch(date, () => { })
     t.true(isPlainObject(patch))
     t.true(isArray(mutations))
 })

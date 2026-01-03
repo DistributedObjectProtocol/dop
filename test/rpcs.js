@@ -1,5 +1,5 @@
 import test from 'ava'
-import { createNode } from '../src'
+import { createNode } from '../src/index.js'
 
 const localFunctions = {
     okSync: function (req) {
@@ -14,8 +14,8 @@ const localFunctions = {
         })
     },
 
-    undefinedSync: function (req) {},
-    undefinedAsync: async function (req) {},
+    undefinedSync: function (req) { },
+    undefinedAsync: async function (req) { },
     undefinedPromise: function (req) {
         return new Promise(function (resolve, reject) {
             resolve(undefined)
@@ -313,7 +313,7 @@ test('Undefined', async function (t) {
 
 test('throw "Error"', async function (t) {
     try {
-        remoteFunctions.errorSync().catch(() => {})
+        remoteFunctions.errorSync().catch(() => { })
         t.true(true)
     } catch (e) {
         t.true(false)

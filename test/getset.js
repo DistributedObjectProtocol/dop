@@ -1,5 +1,5 @@
 import test from 'ava'
-import { getDeep } from '../src/util/getset'
+import { getDeep } from '../src/util/getset.js'
 
 test('getDeep', function (t) {
     const object = { first: 1, second: { third: 4 } }

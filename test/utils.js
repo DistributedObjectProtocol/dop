@@ -1,15 +1,15 @@
-import { applyPatch, producePatch, encode, decode, merge } from '../src'
-import { getNewPlain } from '../src/util/getset'
-import { isPlainObject, isArray, isFunction } from '../src/util/is'
+import { applyPatch, producePatch, encode, decode, merge } from '../src/index.js'
+import { getNewPlain } from '../src/util/getset.js'
+import { isPlainObject, isArray, isFunction } from '../src/util/is.js'
 
-function newDate(d = new Date().getDate()) {
+export function newDate(d = new Date().getDate()) {
     const date = new Date(d)
     date.toISOString = () => date
     date.replace = () => date
     return date
 }
 
-function isInteger(number) {
+export function isInteger(number) {
     return (
         typeof number === 'number' &&
         isFinite(number) &&
@@ -17,17 +17,17 @@ function isInteger(number) {
     )
 }
 
-function encodeDecode(patch, encodedecode = true, serialize = true) {
+export function encodeDecode(patch, encodedecode = true, serialize = true) {
     return encodedecode
         ? decode(serializeDeserialize(encode(patch), serialize))
         : patch
 }
 
-function serializeDeserialize(patch, serialize = true) {
+export function serializeDeserialize(patch, serialize = true) {
     return serialize ? JSON.parse(JSON.stringify(patch)) : patch
 }
 
-function testEncodeDecode(
+export function testEncodeDecode(
     t,
     patch,
     expected,
@@ -45,7 +45,7 @@ function testEncodeDecode(
     return { encoded, decoded }
 }
 
-function testPatchUnpatch({
+export function testPatchUnpatch({
     t,
     target,
     patch,
@@ -97,4 +97,3 @@ function testPatchUnpatch({
     return { unpatch, mutations, result, patch2 }
 }
 
-module.exports = { newDate, isInteger, testEncodeDecode, testPatchUnpatch }

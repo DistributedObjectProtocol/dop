@@ -1,5 +1,5 @@
 import test from 'ava'
-import { applyPatch, encode, decode, addType } from '../src'
+import { applyPatch, encode, decode, addType } from '../src/index.js'
 import Splice from '../src/types/Splice'
 import { getNewPlain } from '../src/util/getset'
 import { isPlainObject } from '../src/util/is'

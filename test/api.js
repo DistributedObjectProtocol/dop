@@ -1,6 +1,5 @@
 import test from 'ava'
-import dop from '../src'
-import { createNode } from '../src'
+import dop from '../src/index.js'
 
 const exported = {
     version: true,

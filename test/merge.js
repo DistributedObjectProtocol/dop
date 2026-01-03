@@ -1,5 +1,5 @@
 import test from 'ava'
-import dop from '../src'
+import dop from '../src/index.js'
 import _ from 'lodash' // https://github.com/lodash/lodash/blob/master/test/merge.test.js
 import R from 'ramda'
 
@@ -50,7 +50,7 @@ function run(merge, name) {
     })
 
     test(name + ': should merge onto function `object` values', function (t) {
-        function Foo() {}
+        function Foo() { }
 
         var source = { a: 1 },
             actual = merge(Foo, source)
@@ -62,7 +62,7 @@ function run(merge, name) {
     test(
         name + ': should merge first source object properties to function',
         function (t) {
-            var fn = function () {},
+            var fn = function () { },
                 object = { prop: {} },
                 actual = merge({ prop: fn }, object)
 
@@ -72,9 +72,9 @@ function run(merge, name) {
 
     test(
         name +
-            ': should merge first and second source object properties to function',
+        ': should merge first and second source object properties to function',
         function (t) {
-            var fn = function () {},
+            var fn = function () { },
                 object = { prop: {} },
                 actual = merge({ prop: fn }, { prop: fn }, object)
 
@@ -85,7 +85,7 @@ function run(merge, name) {
     test(
         name + ': should not merge onto function values of sources',
         function (t) {
-            var source1 = { a: function () {} },
+            var source1 = { a: function () { } },
                 source2 = { a: { b: 2 } },
                 expected = { a: { b: 2 } },
                 actual = merge({}, source1, source2)
@@ -99,7 +99,7 @@ function run(merge, name) {
     )
 
     test(name + ': should merge onto non-plain `object` values', function (t) {
-        function Foo() {}
+        function Foo() { }
 
         var object = new Foo(),
             actual = merge(object, { a: 1 })
@@ -128,19 +128,19 @@ function run(merge, name) {
 
     test(
         name +
-            ': should assign non array/buffer/typed-array/plain-object source values directly',
+        ': should assign non array/buffer/typed-array/plain-object source values directly',
         function (t) {
-            function Foo() {}
+            function Foo() { }
 
             var values = [
-                    new Foo(),
-                    new Boolean(),
-                    new Date(),
-                    Foo,
-                    new Number(),
-                    new String(),
-                    new RegExp(),
-                ],
+                new Foo(),
+                new Boolean(),
+                new Date(),
+                Foo,
+                new Number(),
+                new String(),
+                new RegExp(),
+            ],
                 expected = _.map(values, () => true)
 
             var actual = _.map(values, function (value) {
@@ -190,7 +190,7 @@ function run(merge, name) {
 
     test(
         name +
-            ': should skip merging when `object` and `source` are the same value',
+        ': should skip merging when `object` and `source` are the same value',
         function (t) {
             var object = {},
                 pass = true
@@ -213,7 +213,7 @@ function run(merge, name) {
 
     test(
         name +
-            ': should convert strings to arrays when merging arrays of `source`',
+        ': should convert strings to arrays when merging arrays of `source`',
         function (t) {
             var object = { a: 'abcde' },
                 actual = merge(object, { a: ['x', 'y', 'z'] })
@@ -236,7 +236,7 @@ function run(merge, name) {
             symbol: Symbol('sym'),
             date: new Date(),
             regexp: /molamazo/g,
-            f: () => {},
+            f: () => { },
             function: function () {
                 console.log(arguments)
             },

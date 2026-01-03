@@ -1,6 +1,6 @@
 import test from 'ava'
-import { applyPatch, TYPE } from '../src'
-import { testPatchUnpatch } from './utils'
+import { applyPatch, TYPE } from '../src/index.js'
+import { testPatchUnpatch } from './utils.js'
 
 test('1 / https://tools.ietf.org/html/rfc7386 ', function (t) {
     const target = { a: 'b' }
@@ -220,8 +220,8 @@ test('basic mutation', function (t) {
 })
 
 test('basic mutations', function (t) {
-    const func1 = () => {}
-    const func2 = () => {}
+    const func1 = () => { }
+    const func2 = () => { }
     const target = { number: 1, bool: false, string: 'hello', func: func1 }
     const patch = { number: 2, bool: true, string: 'world', func: func2 }
     const expected = { number: 2, bool: true, string: 'world', func: func2 }
@@ -365,7 +365,7 @@ test('mutating multiple levels not defineds / inverted', function (t) {
 })
 
 test('function to target', function (t) {
-    const target = { prop: () => {} }
+    const target = { prop: () => { } }
     const patch = { prop: {} }
     const expected = { prop: {} }
     const fnpatch = (d) => {
@@ -383,7 +383,7 @@ test('function to target', function (t) {
 })
 
 test('target to function', function (t) {
-    const f = () => {}
+    const f = () => { }
     const target = { prop: {} }
     const patch = { prop: f }
     const expected = { prop: f }
@@ -402,7 +402,7 @@ test('target to function', function (t) {
 })
 
 test('plain to noplain', function (t) {
-    function Foo() {}
+    function Foo() { }
     const instance = new Foo()
     instance.prop = 2
 
@@ -425,7 +425,7 @@ test('plain to noplain', function (t) {
 })
 
 test('noplain to plain', function (t) {
-    function Foo() {}
+    function Foo() { }
     const instance = new Foo()
     instance.prop = 2
 
@@ -605,7 +605,7 @@ test('should assign `undefined` values', function (t) {
 })
 
 test('should assign non array/buffer/typed-array/plain-target source values directly', function (t) {
-    function Foo() {}
+    function Foo() { }
     const values = [
         new Foo(),
         new Boolean(),
