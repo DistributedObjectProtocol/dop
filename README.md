@@ -4,8 +4,8 @@
 
 [![npm](https://img.shields.io/npm/v/dop?style=flat-square)](https://www.npmjs.com/package/dop)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/dop?style=flat-square)](https://bundlephobia.com/result?p=dop)
-[![Build Status](https://api.travis-ci.org/DistributedObjectProtocol/dop.svg?branch=master&style=flat-square)](https://travis-ci.org/DistributedObjectProtocol/dop)
-<!--[![Join the community](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/dop)-->
+<!--[![Build Status](https://api.travis-ci.org/DistributedObjectProtocol/dop.svg?branch=master&style=flat-square)](https://travis-ci.org/DistributedObjectProtocol/dop)
+[![Join the community](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/dop)-->
 
 <br/>
 <a href="https://distributedobjectprotocol.org/guide/javascript">https://distributedobjectprotocol.org/</a>
@@ -59,7 +59,9 @@ const store = createStore({ players: 0 })
 
 function subscribeToServerStore(listener) {
     // Incrementing number of player as a patch
-    const listeners = store.applyPatch({ players: store.state.players + 1 })
+    const listeners = store.applyPatch((state) => {
+        state.players += 1
+    })
     // We emit the patch to all the subscribers
     listeners.forEach(({ listener, patch }) => listener(patch))
     // Here we subscribe our client
